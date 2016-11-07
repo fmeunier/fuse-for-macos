@@ -1,6 +1,6 @@
-FUSE for Mac OS X Source Distribution
+Fuse for macOS Source Distribution
 
-This is the source distribution of the Mac OS X version of Fuse. Full source is
+This is the source distribution of the macOS version of Fuse. Full source is
 included for fuse and libspectrum.
 
 Your Mac is expected to be running OS X 10.11 with the Xcode development
