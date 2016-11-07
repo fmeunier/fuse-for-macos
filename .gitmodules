@@ -1,0 +1,15 @@
+[submodule "FuseGenerator"]
+	path = FuseGenerator
+	url = git://git.code.sf.net/p/fuse-for-macosx/fuse-generator
+[submodule "FuseImporter"]
+	path = FuseImporter
+	url = git://git.code.sf.net/p/fuse-for-macosx/fuse-importer
+[submodule "audiofile"]
+	path = audiofile
+	url = git://git.code.sf.net/p/fuse-for-macosx/audiofile
+[submodule "fuse"]
+	path = fuse
+	url = git://git.code.sf.net/p/fuse-for-macosx/fuse
+[submodule "libgcrypt"]
+	path = libgcrypt
+	url = git://git.code.sf.net/p/fuse-for-macosx/libgcrypt

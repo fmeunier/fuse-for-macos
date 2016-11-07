@@ -1,0 +1,31 @@
+FUSE for Mac OS X Source Distribution
+
+This is the source distribution of the Mac OS X version of Fuse. Full source is
+included for fuse and libspectrum.
+
+Your Mac is expected to be running OS X 10.11 with the Xcode development
+environment.
+
+Full build instructions:
+Uncompress the source package, and cd into the directory created. Then:
+
+cd audiofile
+xcodebuild -configuration Deployment
+cd ..
+cd libgcrypt
+xcodebuild -configuration Deployment
+cd ..
+cd FuseGenerator
+xcodebuild -configuration Release
+cd ..
+cd FuseImporter
+xcodebuild -configuration Deployment
+cd ..
+cd fuse/fusepb
+make
+xcodebuild 
+
+If you have any problems you can email me at fredm@spamcop.net, and I look
+forward to your patches and bug fixes!
+
+Fred
