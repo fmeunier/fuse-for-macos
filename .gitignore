@@ -2,3 +2,4 @@
 .grepai/
 .dolt/
 *.db
+AGENTS.md
