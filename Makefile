@@ -22,15 +22,15 @@ NOTARYTOOL_PROFILE  ?= fuse-notarize
 FUSE_APP   = fuse/fusepb/build/Deployment/Fuse.app
 XCODEPROJ  = fuse/fusepb/Fuse.xcodeproj
 
-.PHONY: all fuse archive adhoc notarize dist list-teams clean clean-3rdparty
+.PHONY: third-party fuse archive adhoc notarize dist list-teams clean clean-3rdparty
 
 ## Build the third-party frameworks (audiofile and libgcrypt).
-all:
+third-party:
 	cd audiofile && xcodebuild -configuration Deployment
 	cd libgcrypt  && xcodebuild -configuration Deployment
 
 ## Build Fuse.app (Deployment configuration).
-## Run 'make all' first to ensure the frameworks are present.
+## Run 'make third-party' first to ensure the frameworks are present.
 fuse:
 	cd fuse/fusepb && make
 	xcodebuild -project $(XCODEPROJ) -configuration Deployment \
