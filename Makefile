@@ -22,17 +22,23 @@ NOTARYTOOL_PROFILE  ?= fuse-notarize
 FUSE_APP   = fuse/fusepb/build/Deployment/Fuse.app
 XCODEPROJ  = fuse/fusepb/Fuse.xcodeproj
 
-.PHONY: third-party fuse archive adhoc notarize dist list-teams clean clean-3rdparty
+.PHONY: deps third-party plugins fuse archive adhoc notarize dist list-teams clean clean-deps clean-3rdparty clean-plugins
 
-## Build the third-party dependencies (audiofile, libgcrypt, FuseGenerator, FuseImporter).
+## Build all prerequisites (third-party frameworks and plugins).
+deps: third-party plugins
+
+## Build the third-party frameworks (audiofile and libgcrypt).
 third-party:
-	cd audiofile      && xcodebuild -configuration Deployment
-	cd libgcrypt      && xcodebuild -configuration Deployment
-	cd FuseGenerator  && xcodebuild -configuration Release
-	cd FuseImporter   && xcodebuild -configuration Deployment
+	cd audiofile && xcodebuild -configuration Deployment
+	cd libgcrypt && xcodebuild -configuration Deployment
+
+## Build the Fuse plugins (FuseGenerator and FuseImporter).
+plugins:
+	cd FuseGenerator && xcodebuild -configuration Release
+	cd FuseImporter  && xcodebuild -configuration Deployment
 
 ## Build Fuse.app (Deployment configuration).
-## Run 'make third-party' first to ensure the frameworks are present.
+## Run 'make deps' first to ensure all prerequisites are present.
 fuse:
 	cd fuse/fusepb && make
 	xcodebuild -project $(XCODEPROJ) -configuration Deployment \
@@ -80,9 +86,15 @@ clean:
 	xcodebuild -project $(XCODEPROJ) -configuration Deployment clean
 	rm -f Fuse-adhoc.zip
 
-## Clean the third-party dependency build products.
+## Clean all prerequisite build products.
+clean-deps: clean-3rdparty clean-plugins
+
+## Clean the third-party framework build products.
 clean-3rdparty:
-	cd audiofile     && xcodebuild -configuration Deployment clean
-	cd libgcrypt     && xcodebuild -configuration Deployment clean
+	cd audiofile && xcodebuild -configuration Deployment clean
+	cd libgcrypt && xcodebuild -configuration Deployment clean
+
+## Clean the plugin build products.
+clean-plugins:
 	cd FuseGenerator && xcodebuild -configuration Release clean
 	cd FuseImporter  && xcodebuild -configuration Deployment clean
