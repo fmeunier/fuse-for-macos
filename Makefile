@@ -24,10 +24,12 @@ XCODEPROJ  = fuse/fusepb/Fuse.xcodeproj
 
 .PHONY: third-party fuse archive adhoc notarize dist list-teams clean clean-3rdparty
 
-## Build the third-party frameworks (audiofile and libgcrypt).
+## Build the third-party dependencies (audiofile, libgcrypt, FuseGenerator, FuseImporter).
 third-party:
-	cd audiofile && xcodebuild -configuration Deployment
-	cd libgcrypt  && xcodebuild -configuration Deployment
+	cd audiofile      && xcodebuild -configuration Deployment
+	cd libgcrypt      && xcodebuild -configuration Deployment
+	cd FuseGenerator  && xcodebuild -configuration Release
+	cd FuseImporter   && xcodebuild -configuration Deployment
 
 ## Build Fuse.app (Deployment configuration).
 ## Run 'make third-party' first to ensure the frameworks are present.
@@ -78,7 +80,9 @@ clean:
 	xcodebuild -project $(XCODEPROJ) -configuration Deployment clean
 	rm -f Fuse-adhoc.zip
 
-## Clean the third-party framework build products.
+## Clean the third-party dependency build products.
 clean-3rdparty:
-	cd audiofile && xcodebuild -configuration Deployment clean
-	cd libgcrypt  && xcodebuild -configuration Deployment clean
+	cd audiofile     && xcodebuild -configuration Deployment clean
+	cd libgcrypt     && xcodebuild -configuration Deployment clean
+	cd FuseGenerator && xcodebuild -configuration Release clean
+	cd FuseImporter  && xcodebuild -configuration Deployment clean
