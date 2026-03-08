@@ -57,9 +57,29 @@ archive:
 ## Ad-hoc sign Fuse.app and package it as Fuse-adhoc.zip for local testing.
 ## The resulting zip is NOT suitable for distribution — Gatekeeper will reject
 ## it on other machines.  Use 'make notarize && make dist' for that (Phase 2).
+##
+## Framework binaries inside the bundle must be re-signed with explicit
+## --identifier flags so dyld can verify them on macOS 26+.  The Xcode
+## CodeSignOnCopy step signs the Mach-O binaries without an Info.plist
+## binding, producing a hash-derived identifier; the explicit codesign
+## calls below replace that with proper reverse-DNS identifiers.
 adhoc: fuse
-	codesign --sign "$(CODE_SIGN_IDENTITY)" --deep --force \
-		--options runtime "$(FUSE_APP)"
+	codesign --sign "$(CODE_SIGN_IDENTITY)" --force --options runtime \
+		--identifier "net.sourceforge.fuse-for-macosx.gcrypt" \
+		"$(FUSE_APP)/Contents/Frameworks/gcrypt.framework/Versions/1.2.4/gcrypt"
+	codesign --sign "$(CODE_SIGN_IDENTITY)" --force --options runtime \
+		--identifier "net.sourceforge.fuse-for-macosx.audiofile" \
+		"$(FUSE_APP)/Contents/Frameworks/audiofile.framework/Versions/0.2.6/audiofile"
+	codesign --sign "$(CODE_SIGN_IDENTITY)" --force --options runtime \
+		"$(FUSE_APP)/Contents/Frameworks/gcrypt.framework"
+	codesign --sign "$(CODE_SIGN_IDENTITY)" --force --options runtime \
+		"$(FUSE_APP)/Contents/Frameworks/audiofile.framework"
+	codesign --sign "$(CODE_SIGN_IDENTITY)" --force --options runtime \
+		"$(FUSE_APP)/Contents/Library/QuickLook/FuseGenerator.qlgenerator"
+	codesign --sign "$(CODE_SIGN_IDENTITY)" --force --options runtime \
+		"$(FUSE_APP)/Contents/Library/Spotlight/FuseImporter.mdimporter"
+	codesign --sign "$(CODE_SIGN_IDENTITY)" --force --options runtime \
+		--entitlements "fuse/fusepb/Fuse.entitlements" "$(FUSE_APP)"
 	rm -f Fuse-adhoc.zip
 	ditto -c -k --keepParent "$(FUSE_APP)" Fuse-adhoc.zip
 	@echo "Ad-hoc build packaged as Fuse-adhoc.zip"
