@@ -39,31 +39,18 @@ plugins:
 
 ## Build Fuse.app (Deployment configuration).
 ## Run 'make deps' first to ensure all prerequisites are present.
+##
+## After xcodebuild, the embedded framework binaries are re-signed with
+## explicit --identifier flags.  Xcode's CodeSignOnCopy step signs the
+## Mach-O binaries without an Info.plist binding, producing a hash-derived
+## identifier; the explicit codesign calls below replace that with proper
+## reverse-DNS identifiers so dyld can verify them on macOS 26+.
+## Fuse.app is then re-signed to seal the corrected framework hashes.
 fuse:
 	cd fuse/fusepb && make
 	xcodebuild -project $(XCODEPROJ) -configuration Deployment \
 		CODE_SIGN_IDENTITY="$(CODE_SIGN_IDENTITY)" \
 		DEVELOPMENT_TEAM="$(DEVELOPMENT_TEAM)"
-
-## Build an Xcode archive (.xcarchive) — useful for manual export workflows.
-archive:
-	xcodebuild archive \
-		-project $(XCODEPROJ) \
-		-configuration Deployment \
-		-archivePath fuse/fusepb/build/Fuse.xcarchive \
-		CODE_SIGN_IDENTITY="$(CODE_SIGN_IDENTITY)" \
-		DEVELOPMENT_TEAM="$(DEVELOPMENT_TEAM)"
-
-## Ad-hoc sign Fuse.app and package it as Fuse-adhoc.zip for local testing.
-## The resulting zip is NOT suitable for distribution — Gatekeeper will reject
-## it on other machines.  Use 'make notarize && make dist' for that (Phase 2).
-##
-## Framework binaries inside the bundle must be re-signed with explicit
-## --identifier flags so dyld can verify them on macOS 26+.  The Xcode
-## CodeSignOnCopy step signs the Mach-O binaries without an Info.plist
-## binding, producing a hash-derived identifier; the explicit codesign
-## calls below replace that with proper reverse-DNS identifiers.
-adhoc: fuse
 	codesign --sign "$(CODE_SIGN_IDENTITY)" --force --options runtime \
 		--identifier "net.sourceforge.fuse-for-macosx.gcrypt" \
 		"$(FUSE_APP)/Contents/Frameworks/gcrypt.framework/Versions/1.2.4/gcrypt"
@@ -80,6 +67,20 @@ adhoc: fuse
 		"$(FUSE_APP)/Contents/Library/Spotlight/FuseImporter.mdimporter"
 	codesign --sign "$(CODE_SIGN_IDENTITY)" --force --options runtime \
 		--entitlements "fuse/fusepb/Fuse.entitlements" "$(FUSE_APP)"
+
+## Build an Xcode archive (.xcarchive) — useful for manual export workflows.
+archive:
+	xcodebuild archive \
+		-project $(XCODEPROJ) \
+		-configuration Deployment \
+		-archivePath fuse/fusepb/build/Fuse.xcarchive \
+		CODE_SIGN_IDENTITY="$(CODE_SIGN_IDENTITY)" \
+		DEVELOPMENT_TEAM="$(DEVELOPMENT_TEAM)"
+
+## Ad-hoc sign Fuse.app and package it as Fuse-adhoc.zip for local testing.
+## The resulting zip is NOT suitable for distribution — Gatekeeper will reject
+## it on other machines.  Use 'make notarize && make dist' for that (Phase 2).
+adhoc: fuse
 	rm -f Fuse-adhoc.zip
 	ditto -c -k --keepParent "$(FUSE_APP)" Fuse-adhoc.zip
 	@echo "Ad-hoc build packaged as Fuse-adhoc.zip"
