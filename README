@@ -42,6 +42,12 @@ Note: the app is ad-hoc signed by default. It will run on the machine it was
 built on but Gatekeeper will block it on other machines. Notarized distribution
 requires an Apple Developer Program membership.
 
+Maintainers can keep personal Developer ID settings out of git by copying
+`fuse/fusepb/LocalSigning.xcconfig.example` to
+`fuse/fusepb/LocalSigning.xcconfig` and filling in their own Team ID. The
+shared Xcode project loads that file only when it exists, so contributor builds
+stay portable.
+
 If you have any problems you can email me at fredm@spamcop.net, and I look
 forward to your patches and bug fixes!
 
