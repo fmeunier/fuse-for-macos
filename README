@@ -33,10 +33,14 @@ The finished app is at:
 
 Other useful targets:
 
-  make adhoc         # ad-hoc sign and package as Fuse-adhoc.zip (local testing only)
-  make list-teams    # list available Developer ID signing identities
-  make clean         # clean Fuse.app build products
-  make clean-deps    # clean all prerequisite build products
+  make adhoc            # ad-hoc sign and package as Fuse-adhoc.zip (local testing only)
+  make notarize         # submit, wait, and staple Fuse.app (Developer ID required)
+  make notarize-status  # inspect the current notarization submission
+  make notarize-log     # fetch the current notarization log into .notary-log.json
+  make dist             # create Fuse.zip from the stapled app (Developer ID required)
+  make list-teams       # list available Developer ID signing identities
+  make clean            # clean Fuse.app build products
+  make clean-deps       # clean all prerequisite build products
 
 Note: the app is ad-hoc signed by default. It will run on the machine it was
 built on but Gatekeeper will block it on other machines. Notarized distribution
@@ -47,6 +51,32 @@ Maintainers can keep personal Developer ID settings out of git by copying
 `fuse/fusepb/LocalSigning.xcconfig` and filling in their own Team ID. The
 shared Xcode project loads that file only when it exists, so contributor builds
 stay portable.
+
+The top-level `Makefile` uses the same local file as its default source for
+`DEVELOPMENT_TEAM`, and resolves the matching `Developer ID Application`
+certificate from your keychain automatically. You can still override either
+value explicitly on the `make` command line when needed.
+
+After creating `fuse/fusepb/LocalSigning.xcconfig` with your Team ID and
+installing your Developer ID certificate in the keychain, you can usually just
+run:
+
+  make dist
+
+If you need to force a specific identity or team, you can still do so
+explicitly, for example:
+
+  make dist CODE_SIGN_IDENTITY='Developer ID Application: Your Name (XXXXXXXXXX)' \
+            DEVELOPMENT_TEAM=XXXXXXXXXX
+
+`make dist` runs the full release flow: build, notarize, staple, and then zip
+the stapled app as `Fuse.zip`. `make notarize` stops after stapling.
+
+If Apple's notary service is slow, you do not need to keep a terminal blocked in
+`--wait`. `make notarize` now stores the submission ID in
+`.notary-submission-id`, so you can check progress later with
+`make notarize-status`, fetch details with `make notarize-log`, or resume the
+wait-and-staple steps with `make notarize-wait` and `make notarize-staple`.
 
 If you have any problems you can email me at fredm@spamcop.net, and I look
 forward to your patches and bug fixes!

@@ -2,4 +2,7 @@
 .grepai/
 .dolt/
 *.db
+*.zip
 AGENTS.md
+.notary-submission-id
+.notary-log.json
