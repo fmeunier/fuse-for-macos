@@ -41,6 +41,47 @@ xcodebuild -configuration Release
 
 Run a Release build before pushing migration or dependency updates.
 
+## Release process
+
+Releases are built by GitHub Actions using `FuseGenerator/.github/workflows/release.yml`.
+
+### Trigger
+
+- Push a tag that matches `fuse-generator-*` (for example `fuse-generator-1.5.6`).
+
+### What the workflow does
+
+1. Checks out the repository.
+2. Builds `FuseGenerator` in `Release` configuration.
+3. Packages `FuseGenerator.qlgenerator` as `FuseGenerator-<tag>.qlgenerator.zip`.
+4. Computes SHA-256 for the zip.
+5. Creates a GitHub Release for the tag and uploads the zip.
+6. Writes the checksum in the release body.
+
+### Running a release
+
+```sh
+git tag fuse-generator-1.5.6
+git push origin fuse-generator-1.5.6
+```
+
+After the workflow completes, verify on GitHub:
+
+- The release exists for the pushed tag.
+- The zip asset is attached.
+- The SHA-256 value appears in release notes.
+
+### Testing the workflow safely
+
+Use a throwaway pre-release style tag first (still matches `fuse-generator-*`):
+
+```sh
+git tag fuse-generator-1.5.6-rc1
+git push origin fuse-generator-1.5.6-rc1
+```
+
+After validation, delete the test tag and release in GitHub UI (or CLI), then create the real release tag.
+
 ## Updating libspectrum
 
 `libspectrum/` is vendored as a **squashed git subtree** (not a submodule).

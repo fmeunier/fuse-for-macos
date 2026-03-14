@@ -1,0 +1,56 @@
+name: Release FuseGenerator
+
+on:
+  push:
+    tags:
+      - "fuse-generator-*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: macos-26
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Build Release bundle
+        run: |
+          xcodebuild \
+            -project FuseGenerator.xcodeproj \
+            -scheme FuseGenerator \
+            -configuration Release \
+            -derivedDataPath "$RUNNER_TEMP/DerivedData" \
+            build
+
+      - name: Package release artifact
+        env:
+          TAG_NAME: ${{ github.ref_name }}
+        run: |
+          PRODUCT_DIR="$RUNNER_TEMP/DerivedData/Build/Products/Release"
+          BUNDLE_NAME="FuseGenerator.qlgenerator"
+          ARCHIVE_NAME="FuseGenerator-${TAG_NAME}.qlgenerator.zip"
+
+          test -d "$PRODUCT_DIR/$BUNDLE_NAME"
+
+          mkdir -p dist
+          ditto -c -k --sequesterRsrc --keepParent \
+            "$PRODUCT_DIR/$BUNDLE_NAME" \
+            "dist/$ARCHIVE_NAME"
+
+          CHECKSUM="$(shasum -a 256 "dist/$ARCHIVE_NAME" | cut -d ' ' -f 1)"
+          printf '%s' "$CHECKSUM" > dist/checksum.txt
+
+          {
+            printf 'SHA-256: `%s`\n' "$CHECKSUM"
+          } > dist/release-notes.md
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.zip
+          body_path: dist/release-notes.md
