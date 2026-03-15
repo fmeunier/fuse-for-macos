@@ -12,7 +12,7 @@ $ gem install jekyll bundler
 
 Full build instructions:
 
-Clone the repository and initialise all submodules:
+Clone the repository and initialise submodules:
 
   git clone --recurse-submodules git://git.code.sf.net/p/fuse-for-macosx/fuse-for-macos
   cd fuse-for-macos
@@ -26,6 +26,15 @@ Or broken down by stage:
   make third-party   # builds audiofile.framework and gcrypt.framework
   make plugins       # builds FuseGenerator.qlgenerator and FuseImporter.mdimporter
   make fuse          # runs code generation then builds Fuse.app (Deployment config)
+
+Note: `FuseGenerator/` is vendored as a git subtree in this repository (not a
+git submodule). The current subtree baseline is from
+`git@github.com:fmeunier/FuseGenerator.git` tag `fuse-generator-1.5.0`.
+
+Maintainers can update it with:
+
+  git fetch fusegenerator --tags
+  git subtree pull --prefix=FuseGenerator fusegenerator <tag> --squash
 
 The finished app is at:
 
