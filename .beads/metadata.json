@@ -1,6 +1,6 @@
 {
   "database": "dolt",
-  "jsonl_export": "issues.jsonl",
   "backend": "dolt",
-  "dolt_database": "beads_fuse-for-macos-arm64"
+  "dolt_database": "beads_fuse-for-macos-arm64",
+  "project_id": "ff1c1a5d-8f7b-49c4-8040-a80db336440a"
 }
