@@ -27,14 +27,20 @@ Or broken down by stage:
   make plugins       # builds FuseGenerator.qlgenerator and FuseImporter.mdimporter
   make fuse          # runs code generation then builds Fuse.app (Deployment config)
 
-Note: `FuseGenerator/` is vendored as a git subtree in this repository (not a
-git submodule). The current subtree baseline is from
-`git@github.com:fmeunier/FuseGenerator.git` tag `fuse-generator-1.5.0`.
+Note: `FuseGenerator/` and `FuseImporter/` are vendored as git subtrees in this
+repository (not git submodules).
 
-Maintainers can update it with:
+- `FuseGenerator/` subtree baseline: `git@github.com:fmeunier/FuseGenerator.git`
+  tag `fuse-generator-1.5.0`
+- `FuseImporter/` subtree baseline: `git@github.com:fmeunier/FuseImporter.git`
+  branch `master` (contains libspectrum subtree conversion)
+
+Maintainers can update them with:
 
   git fetch fusegenerator --tags
   git subtree pull --prefix=FuseGenerator fusegenerator <tag> --squash
+  git fetch fuseimporter
+  git subtree pull --prefix=FuseImporter fuseimporter <ref> --squash
 
 The finished app is at:
 
