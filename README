@@ -37,10 +37,17 @@ repository (not git submodules).
 
 Maintainers can update them with:
 
+  # one-time maintainer remote setup for subtree pulls
+  git remote add fusegenerator git@github.com:fmeunier/FuseGenerator.git || true
+  git remote add fuseimporter  git@github.com:fmeunier/FuseImporter.git  || true
+
   git fetch fusegenerator --tags
   git subtree pull --prefix=FuseGenerator fusegenerator <tag> --squash
   git fetch fuseimporter
   git subtree pull --prefix=FuseImporter fuseimporter <ref> --squash
+
+These remotes are used only for subtree maintenance; normal project work uses
+`origin` (the top-level `fuse-for-macos` GitHub repository).
 
 The finished app is at:
 
