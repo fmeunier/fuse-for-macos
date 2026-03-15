@@ -1,0 +1,64 @@
+name: Release FuseGenerator
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "fuse-generator-*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: macos-latest
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      - name: Build Release bundle
+        run: |
+          xcodebuild \
+            -project FuseGenerator.xcodeproj \
+            -scheme FuseGenerator \
+            -configuration Release \
+            -derivedDataPath "$RUNNER_TEMP/DerivedData" \
+            build
+
+      - name: Package release artifact
+        env:
+          TAG_NAME: ${{ github.ref_name }}
+        run: |
+          PRODUCT_DIR="$RUNNER_TEMP/DerivedData/Build/Products/Release"
+          BUNDLE_NAME="FuseGenerator.qlgenerator"
+          VERSION_SUFFIX="${TAG_NAME#fuse-generator-}"
+          ARCHIVE_NAME="FuseGenerator-${VERSION_SUFFIX}.qlgenerator.zip"
+
+          test -d "$PRODUCT_DIR/$BUNDLE_NAME"
+
+          mkdir -p dist
+          ditto -c -k --sequesterRsrc --keepParent \
+            "$PRODUCT_DIR/$BUNDLE_NAME" \
+            "dist/$ARCHIVE_NAME"
+
+          CHECKSUM="$(shasum -a 256 "dist/$ARCHIVE_NAME" | cut -d ' ' -f 1)"
+          printf '%s' "$CHECKSUM" > dist/checksum.txt
+
+          {
+            printf 'SHA-256: `%s`\n' "$CHECKSUM"
+          } > dist/release-notes.md
+
+      - name: Create or update GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG_NAME: ${{ github.ref_name }}
+        run: |
+          if gh release view "$TAG_NAME" >/dev/null 2>&1; then
+            gh release upload "$TAG_NAME" dist/*.zip --clobber
+            gh release edit "$TAG_NAME" --title "$TAG_NAME" --notes-file dist/release-notes.md
+          else
+            gh release create "$TAG_NAME" dist/*.zip --title "$TAG_NAME" --notes-file dist/release-notes.md
+          fi
