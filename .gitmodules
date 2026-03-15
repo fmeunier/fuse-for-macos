@@ -1,6 +1,3 @@
-[submodule "FuseGenerator"]
-	path = FuseGenerator
-	url = git://git.code.sf.net/p/fuse-for-macosx/fuse-generator
 [submodule "FuseImporter"]
 	path = FuseImporter
 	url = git://git.code.sf.net/p/fuse-for-macosx/fuse-importer
