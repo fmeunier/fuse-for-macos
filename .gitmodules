@@ -3,7 +3,7 @@
 	url = git://git.code.sf.net/p/fuse-for-macosx/audiofile
 [submodule "fuse"]
 	path = fuse
-	url = git://git.code.sf.net/p/fuse-for-macosx/fuse
+	url = git@github.com:fmeunier/fuse.git
 [submodule "libgcrypt"]
 	path = libgcrypt
 	url = git://git.code.sf.net/p/fuse-for-macosx/libgcrypt
