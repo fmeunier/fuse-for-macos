@@ -1,6 +1,6 @@
 [submodule "FuseImporter"]
 	path = FuseImporter
-	url = git://git.code.sf.net/p/fuse-for-macosx/fuse-importer
+	url = git@github.com:fmeunier/FuseImporter.git
 [submodule "audiofile"]
 	path = audiofile
 	url = git://git.code.sf.net/p/fuse-for-macosx/audiofile
