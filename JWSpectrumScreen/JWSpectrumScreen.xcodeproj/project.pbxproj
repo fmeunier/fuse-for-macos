@@ -1,0 +1,373 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 44;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1A9A363B0CECB74300FFF49A /* AttributeBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9A36340CECB74300FFF49A /* AttributeBlock.m */; };
+		1A9A363C0CECB74300FFF49A /* AttributeBlockIterator.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9A36350CECB74300FFF49A /* AttributeBlockIterator.m */; };
+		1A9A363D0CECB74300FFF49A /* AttributeBlockTimex.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9A36360CECB74300FFF49A /* AttributeBlockTimex.m */; };
+		1A9A363E0CECB74300FFF49A /* AttributeBlockTimexHiRes.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9A36370CECB74300FFF49A /* AttributeBlockTimexHiRes.m */; };
+		1A9A363F0CECB74300FFF49A /* AttributeManager.c in Sources */ = {isa = PBXBuildFile; fileRef = 1A9A36380CECB74300FFF49A /* AttributeManager.c */; };
+		1A9A36400CECB74300FFF49A /* ColourMacros.c in Sources */ = {isa = PBXBuildFile; fileRef = 1A9A36390CECB74300FFF49A /* ColourMacros.c */; };
+		1A9A36410CECB74300FFF49A /* JWSpectrumScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9A363A0CECB74300FFF49A /* JWSpectrumScreen.m */; };
+		1A9A368E0CECBBC100FFF49A /* AttributeManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9A36850CECBBC100FFF49A /* AttributeManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1A9A368F0CECBBC100FFF49A /* AttributeBlockTimexHiRes.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9A36860CECBBC100FFF49A /* AttributeBlockTimexHiRes.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1A9A36900CECBBC100FFF49A /* JWSpectrumScreenConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9A36870CECBBC100FFF49A /* JWSpectrumScreenConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1A9A36910CECBBC100FFF49A /* AttributeBlockIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9A36880CECBBC100FFF49A /* AttributeBlockIterator.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1A9A36920CECBBC100FFF49A /* AttributeBlockTimex.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9A36890CECBBC100FFF49A /* AttributeBlockTimex.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1A9A36930CECBBC100FFF49A /* AttributeBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9A368A0CECBBC100FFF49A /* AttributeBlock.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1A9A36940CECBBC100FFF49A /* PixelData.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9A368B0CECBBC100FFF49A /* PixelData.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1A9A36950CECBBC100FFF49A /* ColourMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9A368C0CECBBC100FFF49A /* ColourMacros.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1A9A36960CECBBC100FFF49A /* JWSpectrumScreen.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9A368D0CECBBC100FFF49A /* JWSpectrumScreen.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
+		8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0867D69BFE84028FC02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		0867D6A5FE840307C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
+		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		1A9A36340CECB74300FFF49A /* AttributeBlock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AttributeBlock.m; sourceTree = "<group>"; };
+		1A9A36350CECB74300FFF49A /* AttributeBlockIterator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AttributeBlockIterator.m; sourceTree = "<group>"; };
+		1A9A36360CECB74300FFF49A /* AttributeBlockTimex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AttributeBlockTimex.m; sourceTree = "<group>"; };
+		1A9A36370CECB74300FFF49A /* AttributeBlockTimexHiRes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AttributeBlockTimexHiRes.m; sourceTree = "<group>"; };
+		1A9A36380CECB74300FFF49A /* AttributeManager.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AttributeManager.c; sourceTree = "<group>"; };
+		1A9A36390CECB74300FFF49A /* ColourMacros.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ColourMacros.c; sourceTree = "<group>"; };
+		1A9A363A0CECB74300FFF49A /* JWSpectrumScreen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JWSpectrumScreen.m; sourceTree = "<group>"; };
+		1A9A36850CECBBC100FFF49A /* AttributeManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttributeManager.h; sourceTree = "<group>"; };
+		1A9A36860CECBBC100FFF49A /* AttributeBlockTimexHiRes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttributeBlockTimexHiRes.h; sourceTree = "<group>"; };
+		1A9A36870CECBBC100FFF49A /* JWSpectrumScreenConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JWSpectrumScreenConstants.h; sourceTree = "<group>"; };
+		1A9A36880CECBBC100FFF49A /* AttributeBlockIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttributeBlockIterator.h; sourceTree = "<group>"; };
+		1A9A36890CECBBC100FFF49A /* AttributeBlockTimex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttributeBlockTimex.h; sourceTree = "<group>"; };
+		1A9A368A0CECBBC100FFF49A /* AttributeBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttributeBlock.h; sourceTree = "<group>"; };
+		1A9A368B0CECBBC100FFF49A /* PixelData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PixelData.h; sourceTree = "<group>"; };
+		1A9A368C0CECBBC100FFF49A /* ColourMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColourMacros.h; sourceTree = "<group>"; };
+		1A9A368D0CECBBC100FFF49A /* JWSpectrumScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JWSpectrumScreen.h; sourceTree = "<group>"; };
+		32DBCF5E0370ADEE00C91783 /* JWSpectrumScreen_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JWSpectrumScreen_Prefix.pch; sourceTree = "<group>"; };
+		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8DC2EF5B0486A6940098B216 /* JWSpectrumScreen.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JWSpectrumScreen.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D2F7E79907B2D74100F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8DC2EF560486A6940098B216 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		034768DFFF38A50411DB9C8B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8DC2EF5B0486A6940098B216 /* JWSpectrumScreen.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0867D691FE84028FC02AAC07 /* JWSpectrumScreen */ = {
+			isa = PBXGroup;
+			children = (
+				08FB77AEFE84172EC02AAC07 /* Classes */,
+				32C88DFF0371C24200C91783 /* Other Sources */,
+				089C1665FE841158C02AAC07 /* Resources */,
+				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
+			);
+			name = JWSpectrumScreen;
+			sourceTree = "<group>";
+		};
+		0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				1058C7B0FEA5585E11CA2CBB /* Linked Frameworks */,
+				1058C7B2FEA5585E11CA2CBB /* Other Frameworks */,
+			);
+			name = "External Frameworks and Libraries";
+			sourceTree = "<group>";
+		};
+		089C1665FE841158C02AAC07 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				8DC2EF5A0486A6940098B216 /* Info.plist */,
+				089C1666FE841158C02AAC07 /* InfoPlist.strings */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		08FB77AEFE84172EC02AAC07 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				1A9A36340CECB74300FFF49A /* AttributeBlock.m */,
+				1A9A36350CECB74300FFF49A /* AttributeBlockIterator.m */,
+				1A9A36360CECB74300FFF49A /* AttributeBlockTimex.m */,
+				1A9A36370CECB74300FFF49A /* AttributeBlockTimexHiRes.m */,
+				1A9A363A0CECB74300FFF49A /* JWSpectrumScreen.m */,
+				034768DFFF38A50411DB9C8B /* Products */,
+			);
+			name = Classes;
+			sourceTree = "<group>";
+		};
+		1058C7B0FEA5585E11CA2CBB /* Linked Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */,
+			);
+			name = "Linked Frameworks";
+			sourceTree = "<group>";
+		};
+		1058C7B2FEA5585E11CA2CBB /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				0867D6A5FE840307C02AAC07 /* AppKit.framework */,
+				D2F7E79907B2D74100F64583 /* CoreData.framework */,
+				0867D69BFE84028FC02AAC07 /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		32C88DFF0371C24200C91783 /* Other Sources */ = {
+			isa = PBXGroup;
+			children = (
+				1A9A36850CECBBC100FFF49A /* AttributeManager.h */,
+				1A9A36860CECBBC100FFF49A /* AttributeBlockTimexHiRes.h */,
+				1A9A36870CECBBC100FFF49A /* JWSpectrumScreenConstants.h */,
+				1A9A36880CECBBC100FFF49A /* AttributeBlockIterator.h */,
+				1A9A36890CECBBC100FFF49A /* AttributeBlockTimex.h */,
+				1A9A368A0CECBBC100FFF49A /* AttributeBlock.h */,
+				1A9A368B0CECBBC100FFF49A /* PixelData.h */,
+				1A9A368C0CECBBC100FFF49A /* ColourMacros.h */,
+				1A9A368D0CECBBC100FFF49A /* JWSpectrumScreen.h */,
+				1A9A36380CECB74300FFF49A /* AttributeManager.c */,
+				1A9A36390CECB74300FFF49A /* ColourMacros.c */,
+				32DBCF5E0370ADEE00C91783 /* JWSpectrumScreen_Prefix.pch */,
+			);
+			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		8DC2EF500486A6940098B216 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A9A368E0CECBBC100FFF49A /* AttributeManager.h in Headers */,
+				1A9A368F0CECBBC100FFF49A /* AttributeBlockTimexHiRes.h in Headers */,
+				1A9A36900CECBBC100FFF49A /* JWSpectrumScreenConstants.h in Headers */,
+				1A9A36910CECBBC100FFF49A /* AttributeBlockIterator.h in Headers */,
+				1A9A36920CECBBC100FFF49A /* AttributeBlockTimex.h in Headers */,
+				1A9A36930CECBBC100FFF49A /* AttributeBlock.h in Headers */,
+				1A9A36940CECBBC100FFF49A /* PixelData.h in Headers */,
+				1A9A36950CECBBC100FFF49A /* ColourMacros.h in Headers */,
+				1A9A36960CECBBC100FFF49A /* JWSpectrumScreen.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		8DC2EF4F0486A6940098B216 /* JWSpectrumScreen */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "JWSpectrumScreen" */;
+			buildPhases = (
+				8DC2EF500486A6940098B216 /* Headers */,
+				8DC2EF520486A6940098B216 /* Resources */,
+				8DC2EF540486A6940098B216 /* Sources */,
+				8DC2EF560486A6940098B216 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = JWSpectrumScreen;
+			productInstallPath = "$(HOME)/Library/Frameworks";
+			productName = JWSpectrumScreen;
+			productReference = 8DC2EF5B0486A6940098B216 /* JWSpectrumScreen.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0867D690FE84028FC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "JWSpectrumScreen" */;
+			compatibilityVersion = "Xcode 3.0";
+			hasScannedForEncodings = 1;
+			mainGroup = 0867D691FE84028FC02AAC07 /* JWSpectrumScreen */;
+			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8DC2EF4F0486A6940098B216 /* JWSpectrumScreen */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		8DC2EF520486A6940098B216 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8DC2EF540486A6940098B216 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A9A363B0CECB74300FFF49A /* AttributeBlock.m in Sources */,
+				1A9A363C0CECB74300FFF49A /* AttributeBlockIterator.m in Sources */,
+				1A9A363D0CECB74300FFF49A /* AttributeBlockTimex.m in Sources */,
+				1A9A363E0CECB74300FFF49A /* AttributeBlockTimexHiRes.m in Sources */,
+				1A9A363F0CECB74300FFF49A /* AttributeManager.c in Sources */,
+				1A9A36400CECB74300FFF49A /* ColourMacros.c in Sources */,
+				1A9A36410CECB74300FFF49A /* JWSpectrumScreen.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		089C1666FE841158C02AAC07 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				089C1667FE841158C02AAC07 /* English */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		1DEB91AE08733DA50010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = JWSpectrumScreen_Prefix.pch;
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = /Library/Frameworks;
+				LD_DYLIB_INSTALL_NAME = "$(DYLIB_INSTALL_NAME_BASE:standardizepath)/$(EXECUTABLE_PATH)";
+				PRODUCT_NAME = JWSpectrumScreen;
+				WRAPPER_EXTENSION = framework;
+				ZERO_LINK = YES;
+			};
+			name = Debug;
+		};
+		1DEB91AF08733DA50010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = JWSpectrumScreen_Prefix.pch;
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = /Library/Frameworks;
+				LD_DYLIB_INSTALL_NAME = "$(DYLIB_INSTALL_NAME_BASE:standardizepath)/$(EXECUTABLE_PATH)";
+				PRODUCT_NAME = JWSpectrumScreen;
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Release;
+		};
+		1DEB91B208733DA50010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (
+					ppc,
+					i386,
+				);
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_EFFECTIVE_CPLUSPLUS_VIOLATIONS = YES;
+				GCC_WARN_MISSING_PARENTHESES = YES;
+				GCC_WARN_PEDANTIC = NO;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = NO;
+				GCC_WARN_UNUSED_FUNCTION = NO;
+				GCC_WARN_UNUSED_PARAMETER = YES;
+				GCC_WARN_UNUSED_VALUE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PREBINDING = NO;
+				PUBLIC_HEADERS_FOLDER_PATH = $CONTENTS_FOLDER_PATH/PublicHeaders;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
+			};
+			name = Debug;
+		};
+		1DEB91B308733DA50010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (
+					ppc,
+					i386,
+				);
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_EFFECTIVE_CPLUSPLUS_VIOLATIONS = YES;
+				GCC_WARN_MISSING_PARENTHESES = YES;
+				GCC_WARN_PEDANTIC = NO;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = NO;
+				GCC_WARN_UNUSED_PARAMETER = YES;
+				GCC_WARN_UNUSED_VALUE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PREBINDING = NO;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "JWSpectrumScreen" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB91AE08733DA50010E9CD /* Debug */,
+				1DEB91AF08733DA50010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "JWSpectrumScreen" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB91B208733DA50010E9CD /* Debug */,
+				1DEB91B308733DA50010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0867D690FE84028FC02AAC07 /* Project object */;
+}
