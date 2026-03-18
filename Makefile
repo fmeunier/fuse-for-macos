@@ -60,13 +60,12 @@ endif
 
 .PHONY: deps third-party plugins fuse archive adhoc notarize notarize-submit notarize-status notarize-log notarize-wait notarize-staple notarize-reset dist list-teams clean clean-deps clean-3rdparty clean-plugins
 
-## Build all prerequisites (third-party frameworks and plugins).
+## Build all prerequisites for packaging.
 deps: third-party plugins
 
-## Build the third-party frameworks (audiofile and libgcrypt).
+## Build the remaining third-party frameworks.
 third-party:
-	cd audiofile && xcodebuild -configuration Deployment
-	cd libgcrypt && xcodebuild -configuration Deployment
+	@:
 
 ## Build the Fuse plugins (FuseGenerator and FuseImporter).
 plugins:
@@ -76,27 +75,13 @@ plugins:
 ## Build Fuse.app (Deployment configuration).
 ## Run 'make deps' first to ensure all prerequisites are present.
 ##
-## After xcodebuild, the embedded framework binaries are re-signed with
-## explicit --identifier flags.  Xcode's CodeSignOnCopy step signs the
-## Mach-O binaries without an Info.plist binding, producing a hash-derived
-## identifier; the explicit codesign calls below replace that with proper
-## reverse-DNS identifiers so dyld can verify them on macOS 26+.
-## Fuse.app is then re-signed to seal the corrected framework hashes.
+## After xcodebuild, embedded bundled components are re-signed explicitly and
+## Fuse.app is then re-signed to seal the corrected nested-code hashes.
 fuse:
 	cd fuse/fusepb && make
 	xcodebuild -project $(XCODEPROJ) -configuration Deployment \
 		CODE_SIGN_IDENTITY="$(EFFECTIVE_CODE_SIGN_IDENTITY)" \
 		DEVELOPMENT_TEAM="$(EFFECTIVE_DEVELOPMENT_TEAM)"
-	codesign --sign "$(EFFECTIVE_CODE_SIGN_IDENTITY)" --force --options runtime $(CODESIGN_TIMESTAMP) \
-		--identifier "net.sourceforge.fuse-for-macosx.gcrypt" \
-		"$(FUSE_APP)/Contents/Frameworks/gcrypt.framework/Versions/1.2.4/gcrypt"
-	codesign --sign "$(EFFECTIVE_CODE_SIGN_IDENTITY)" --force --options runtime $(CODESIGN_TIMESTAMP) \
-		--identifier "net.sourceforge.fuse-for-macosx.audiofile" \
-		"$(FUSE_APP)/Contents/Frameworks/audiofile.framework/Versions/0.2.6/audiofile"
-	codesign --sign "$(EFFECTIVE_CODE_SIGN_IDENTITY)" --force --options runtime $(CODESIGN_TIMESTAMP) \
-		"$(FUSE_APP)/Contents/Frameworks/gcrypt.framework"
-	codesign --sign "$(EFFECTIVE_CODE_SIGN_IDENTITY)" --force --options runtime $(CODESIGN_TIMESTAMP) \
-		"$(FUSE_APP)/Contents/Frameworks/audiofile.framework"
 	codesign --sign "$(EFFECTIVE_CODE_SIGN_IDENTITY)" --force --options runtime $(CODESIGN_TIMESTAMP) \
 		"$(FUSE_APP)/Contents/Library/QuickLook/FuseGenerator.qlgenerator"
 	codesign --sign "$(EFFECTIVE_CODE_SIGN_IDENTITY)" --force --options runtime $(CODESIGN_TIMESTAMP) \
@@ -242,7 +227,7 @@ clean-deps: clean-3rdparty clean-plugins
 
 ## Clean the third-party framework build products.
 clean-3rdparty:
-	cd audiofile && xcodebuild -configuration Deployment clean
+	@:
 	cd libgcrypt && xcodebuild -configuration Deployment clean
 
 ## Clean the plugin build products.
