@@ -47,6 +47,7 @@ NOTARY_POLL_INTERVAL ?= 60
 
 FUSE_APP   = fuse/fusepb/build/Deployment/Fuse.app
 XCODEPROJ  = fuse/fusepb/Fuse.xcodeproj
+XCODE_BUILD_ROOT = $(CURDIR)/fuse/fusepb/build
 NOTARIZE_ZIP = Fuse-notarize.zip
 DIST_ZIP     = Fuse.zip
 NOTARY_SUBMISSION_ID_FILE = .notary-submission-id
@@ -68,7 +69,9 @@ endif
 ## Fuse.app is then re-signed to seal the corrected nested-code hashes.
 fuse:
 	cd fuse/fusepb && make
-	xcodebuild -project $(XCODEPROJ) -target Fuse -configuration Deployment \
+	xcodebuild -project $(XCODEPROJ) -scheme Fuse -configuration Deployment \
+		-destination 'platform=macOS' \
+		SYMROOT='$(XCODE_BUILD_ROOT)' OBJROOT='$(XCODE_BUILD_ROOT)' \
 		CODE_SIGN_IDENTITY="$(EFFECTIVE_CODE_SIGN_IDENTITY)" \
 		DEVELOPMENT_TEAM="$(EFFECTIVE_DEVELOPMENT_TEAM)"
 	codesign --sign "$(EFFECTIVE_CODE_SIGN_IDENTITY)" --force --options runtime $(CODESIGN_TIMESTAMP) \
@@ -83,6 +86,8 @@ archive:
 	xcodebuild archive \
 		-project $(XCODEPROJ) \
 		-scheme Fuse \
+		-destination 'platform=macOS' \
+		SYMROOT='$(XCODE_BUILD_ROOT)' OBJROOT='$(XCODE_BUILD_ROOT)' \
 		-configuration Deployment \
 		-archivePath fuse/fusepb/build/Fuse.xcarchive \
 		CODE_SIGN_IDENTITY="$(EFFECTIVE_CODE_SIGN_IDENTITY)" \
