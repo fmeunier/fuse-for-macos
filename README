@@ -19,16 +19,16 @@ Clone the repository and initialise submodules:
 
 Build everything in one step:
 
-  make deps && make fuse
+  make fuse
 
-Or broken down by stage:
-
-  make third-party   # builds audiofile.framework and gcrypt.framework
-  make plugins       # builds FuseGenerator.qlgenerator and FuseImporter.mdimporter
-  make fuse          # runs code generation then builds Fuse.app (Deployment config)
+The top-level `Fuse.xcodeproj` now builds the shared staged dependency pipeline
+(`libgpg-error`, `libgcrypt`, and `libspectrum`) plus the embedded Quick Look
+generator and Spotlight importer targets as part of the normal app build.
 
 Note: `FuseGenerator/` and `FuseImporter/` are vendored as git subtrees in this
-repository (not git submodules).
+repository (not git submodules). Their sources are now built via
+`fuse/fusepb/Fuse.xcodeproj`; the standalone plugin Xcode projects are no
+longer part of the top-level build flow.
 
 - `FuseGenerator/` subtree baseline: `git@github.com:fmeunier/FuseGenerator.git`
   tag `fuse-generator-1.5.0`
@@ -62,7 +62,6 @@ Other useful targets:
   make dist             # create Fuse.zip from the stapled app (Developer ID required)
   make list-teams       # list available Developer ID signing identities
   make clean            # clean Fuse.app build products
-  make clean-deps       # clean all prerequisite build products
 
 Note: the app is ad-hoc signed by default. It will run on the machine it was
 built on but Gatekeeper will block it on other machines. Notarized distribution

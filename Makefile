@@ -58,22 +58,11 @@ else
 CODESIGN_TIMESTAMP = --timestamp
 endif
 
-.PHONY: deps third-party plugins fuse archive adhoc notarize notarize-submit notarize-status notarize-log notarize-wait notarize-staple notarize-reset dist list-teams clean clean-deps clean-3rdparty clean-plugins
-
-## Build all prerequisites for packaging.
-deps: third-party plugins
-
-## Build the remaining third-party frameworks.
-third-party:
-	@:
-
-## Build the Fuse plugins (FuseGenerator and FuseImporter).
-plugins:
-	cd FuseGenerator && xcodebuild -configuration Release
-	cd FuseImporter  && xcodebuild -configuration Deployment
+.PHONY: fuse archive adhoc notarize notarize-submit notarize-status notarize-log notarize-wait notarize-staple notarize-reset dist list-teams clean
 
 ## Build Fuse.app (Deployment configuration).
-## Run 'make deps' first to ensure all prerequisites are present.
+## This single Xcode build now also builds the shared staged dependencies plus
+## the embedded Quick Look and Spotlight plugin targets.
 ##
 ## After xcodebuild, embedded bundled components are re-signed explicitly and
 ## Fuse.app is then re-signed to seal the corrected nested-code hashes.
@@ -221,16 +210,3 @@ clean:
 	xcodebuild -project $(XCODEPROJ) -configuration Deployment clean
 	rm -f Fuse-adhoc.zip
 	rm -f $(NOTARIZE_ZIP) $(DIST_ZIP)
-
-## Clean all prerequisite build products.
-clean-deps: clean-3rdparty clean-plugins
-
-## Clean the third-party framework build products.
-clean-3rdparty:
-	@:
-	cd libgcrypt && xcodebuild -configuration Deployment clean
-
-## Clean the plugin build products.
-clean-plugins:
-	cd FuseGenerator && xcodebuild -configuration Release clean
-	cd FuseImporter  && xcodebuild -configuration Deployment clean
