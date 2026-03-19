@@ -68,7 +68,7 @@ endif
 ## Fuse.app is then re-signed to seal the corrected nested-code hashes.
 fuse:
 	cd fuse/fusepb && make
-	xcodebuild -project $(XCODEPROJ) -configuration Deployment \
+	xcodebuild -project $(XCODEPROJ) -target Fuse -configuration Deployment \
 		CODE_SIGN_IDENTITY="$(EFFECTIVE_CODE_SIGN_IDENTITY)" \
 		DEVELOPMENT_TEAM="$(EFFECTIVE_DEVELOPMENT_TEAM)"
 	codesign --sign "$(EFFECTIVE_CODE_SIGN_IDENTITY)" --force --options runtime $(CODESIGN_TIMESTAMP) \
@@ -82,6 +82,7 @@ fuse:
 archive:
 	xcodebuild archive \
 		-project $(XCODEPROJ) \
+		-scheme Fuse \
 		-configuration Deployment \
 		-archivePath fuse/fusepb/build/Fuse.xcarchive \
 		CODE_SIGN_IDENTITY="$(EFFECTIVE_CODE_SIGN_IDENTITY)" \
