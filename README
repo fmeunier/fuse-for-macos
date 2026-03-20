@@ -21,66 +21,43 @@ Build everything in one step:
 
   make fuse
 
-The top-level `Fuse.xcodeproj` now builds the shared staged dependency pipeline
-(`libgpg-error`, `libgcrypt`, and `libspectrum`) plus the embedded Quick Look
-generator and Spotlight importer targets as part of the normal app build.
+This builds `Fuse.app`, the embedded Quick Look generator, the Spotlight
+importer, and the staged Unix library dependencies used by the application.
 
-Note: `FuseGenerator/` and `FuseImporter/` are vendored as git subtrees in this
-repository (not git submodules). Their sources are now built via
-`fuse/fusepb/Fuse.xcodeproj`; the standalone plugin Xcode projects are no
-longer part of the top-level build flow.
-
-- `FuseGenerator/` subtree baseline: `git@github.com:fmeunier/FuseGenerator.git`
-  tag `fuse-generator-1.5.0`
-- `FuseImporter/` subtree baseline: `git@github.com:fmeunier/FuseImporter.git`
-  branch `master` (contains libspectrum subtree conversion)
-
-Maintainers can update them with:
-
-  # one-time maintainer remote setup for subtree pulls
-  git remote add fusegenerator git@github.com:fmeunier/FuseGenerator.git || true
-  git remote add fuseimporter  git@github.com:fmeunier/FuseImporter.git  || true
-
-  git fetch fusegenerator --tags
-  git subtree pull --prefix=FuseGenerator fusegenerator <tag> --squash
-  git fetch fuseimporter
-  git subtree pull --prefix=FuseImporter fuseimporter <ref> --squash
-
-These remotes are used only for subtree maintenance; normal project work uses
-`origin` (the top-level `fuse-for-macos` GitHub repository).
-
-The finished app is at:
+The finished app is written to:
 
   fuse/fusepb/build/Deployment/Fuse.app
 
 Other useful targets:
 
-  make adhoc            # ad-hoc sign and package as Fuse-adhoc.zip (local testing only)
-  make notarize         # submit, wait, and staple Fuse.app (Developer ID required)
+  make clean            # remove Fuse build products
+  make adhoc            # ad-hoc sign and package as Fuse-adhoc.zip
+  make notarize         # build, notarize, and staple Fuse.app
   make notarize-status  # inspect the current notarization submission
   make notarize-log     # fetch the current notarization log into .notary-log.json
-  make dist             # create Fuse.zip from the stapled app (Developer ID required)
+  make dist             # build, notarize, staple, and package as Fuse.zip
   make list-teams       # list available Developer ID signing identities
-  make clean            # clean Fuse.app build products
 
-Note: the app is ad-hoc signed by default. It will run on the machine it was
-built on but Gatekeeper will block it on other machines. Notarized distribution
-requires an Apple Developer Program membership.
+Signing and notarization
 
-Maintainers can keep personal Developer ID settings out of git by copying
-`fuse/fusepb/LocalSigning.xcconfig.example` to
-`fuse/fusepb/LocalSigning.xcconfig` and filling in their own Team ID. The
-shared Xcode project loads that file only when it exists, so contributor builds
-stay portable.
+The default build is ad-hoc signed. It will run on the machine it was built on,
+but Gatekeeper will block it on other machines. Notarized distribution requires
+an Apple Developer Program membership.
 
-The top-level `Makefile` uses the same local file as its default source for
-`DEVELOPMENT_TEAM`, and resolves the matching `Developer ID Application`
-certificate from your keychain automatically. You can still override either
-value explicitly on the `make` command line when needed.
+To keep signing settings out of git, copy:
 
-After creating `fuse/fusepb/LocalSigning.xcconfig` with your Team ID and
-installing your Developer ID certificate in the keychain, you can usually just
-run:
+  fuse/fusepb/LocalSigning.xcconfig.example
+
+to:
+
+  fuse/fusepb/LocalSigning.xcconfig
+
+and fill in your own Team ID. The top-level `Makefile` uses that file as the
+default source for `DEVELOPMENT_TEAM` and resolves the matching
+`Developer ID Application` certificate from your keychain automatically.
+
+After creating `fuse/fusepb/LocalSigning.xcconfig` and installing your
+Developer ID certificate, you can usually just run:
 
   make dist
 
@@ -90,14 +67,22 @@ explicitly, for example:
   make dist CODE_SIGN_IDENTITY='Developer ID Application: Your Name (XXXXXXXXXX)' \
             DEVELOPMENT_TEAM=XXXXXXXXXX
 
-`make dist` runs the full release flow: build, notarize, staple, and then zip
+`make dist` runs the full release flow: build, notarize, staple, and package
 the stapled app as `Fuse.zip`. `make notarize` stops after stapling.
 
-If Apple's notary service is slow, you do not need to keep a terminal blocked in
-`--wait`. `make notarize` now stores the submission ID in
-`.notary-submission-id`, so you can check progress later with
-`make notarize-status`, fetch details with `make notarize-log`, or resume the
-wait-and-staple steps with `make notarize-wait` and `make notarize-staple`.
+If Apple's notary service is slow, `make notarize` stores the submission ID in
+`.notary-submission-id`, so you can continue later with:
+
+  make notarize-status
+  make notarize-log
+  make notarize-wait
+  make notarize-staple
+
+Maintainer notes
+
+`FuseGenerator/` and `FuseImporter/` are vendored in this repository for the
+integrated macOS build. Maintainers updating those directories should use the
+same vendoring workflow already established for this tree.
 
 If you have any problems you can email me at fredm@spamcop.net, and I look
 forward to your patches and bug fixes!
