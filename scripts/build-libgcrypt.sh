@@ -74,9 +74,12 @@ else
 fi
 
 (
-  make -C "$BUILD_DIR/mpi" -j1 all-am
-  make -C "$BUILD_DIR/cipher" -j1 all-am
-  make -C "$BUILD_DIR/src" -j1 all-am
+  env PATH="$GPG_ERROR_PREFIX/bin:$PATH" GPG_ERROR_CONFIG="$GPG_ERROR_CONFIG" \
+    make -C "$BUILD_DIR/mpi" -j1 all-am
+  env PATH="$GPG_ERROR_PREFIX/bin:$PATH" GPG_ERROR_CONFIG="$GPG_ERROR_CONFIG" \
+    make -C "$BUILD_DIR/cipher" -j1 all-am
+  env PATH="$GPG_ERROR_PREFIX/bin:$PATH" GPG_ERROR_CONFIG="$GPG_ERROR_CONFIG" \
+    make -C "$BUILD_DIR/src" -j1 all-am
 ) > "$STATE_DIR/make.log" 2>&1
 
 install -c -m 644 "$BUILD_DIR/src/gcrypt.h" "$PREFIX_DIR/include/gcrypt.h"
