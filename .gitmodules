@@ -1,6 +1,3 @@
-[submodule "audiofile"]
-	path = audiofile
-	url = git://git.code.sf.net/p/fuse-for-macosx/audiofile
 [submodule "fuse"]
 	path = fuse
 	url = git@github.com:fmeunier/fuse.git
