@@ -35,6 +35,7 @@
 				<string>net.sourceforge.projects.fuse-emulator.scr</string>
 				<string>net.sourceforge.projects.fuse-emulator.slt</string>
 				<string>net.sourceforge.projects.fuse-emulator.sna</string>
+				<string>net.sourceforge.projects.fuse-emulator.s</string>
 				<string>net.sourceforge.projects.fuse-emulator.snp</string>
 				<string>net.sourceforge.projects.fuse-emulator.sp</string>
 				<string>net.sourceforge.projects.fuse-emulator.spc</string>
@@ -469,6 +470,23 @@
 				<key>public.filename-extension</key>
 				<array>
 					<string>zxs</string>
+				</array>
+			</dict>
+		</dict>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>net.sourceforge.projects.fuse-emulator.Snapshot</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>ZX Spectrum D40/D80 Snapshot</string>
+			<key>UTTypeIdentifier</key>
+			<string>net.sourceforge.projects.fuse-emulator.s</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>s</string>
 				</array>
 			</dict>
 		</dict>
