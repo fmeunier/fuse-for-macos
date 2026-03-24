@@ -35,7 +35,7 @@ Other useful targets:
   make notarize         # build, notarize, and staple Fuse.app
   make notarize-status  # inspect the current notarization submission
   make notarize-log     # fetch the current notarization log into .notary-log.json
-  make dist             # build, notarize, staple, and package as Fuse.zip
+  make dist             # build, notarize, staple, and package the full release zip
   make list-teams       # list available Developer ID signing identities
 
 Signing and notarization
@@ -68,7 +68,9 @@ explicitly, for example:
             DEVELOPMENT_TEAM=XXXXXXXXXX
 
 `make dist` runs the full release flow: build, notarize, staple, and package
-the stapled app as `Fuse.zip`. `make notarize` stops after stapling.
+the final `Fuse.zip` release archive. That archive contains the top-level
+`Fuse for macOS/` folder with `Fuse.app`, the bundled docs/resources, and
+`Debug Symbols/Fuse.app.dSYM`. `make notarize` stops after stapling.
 
 If Apple's notary service is slow, `make notarize` stores the submission ID in
 `.notary-submission-id`, so you can continue later with:

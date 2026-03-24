@@ -46,10 +46,14 @@ NOTARYTOOL_PROFILE  ?= fuse-notarize
 NOTARY_POLL_INTERVAL ?= 60
 
 FUSE_APP   = fuse/fusepb/build/Deployment/Fuse.app
+FUSE_DSYM  = fuse/fusepb/build/Deployment/Fuse.app.dSYM
 XCODEPROJ  = fuse/fusepb/Fuse.xcodeproj
 XCODE_BUILD_ROOT = $(CURDIR)/fuse/fusepb/build
 NOTARIZE_ZIP = Fuse-notarize.zip
 DIST_ZIP     = Fuse.zip
+DIST_DIR     = Fuse for macOS
+DIST_STAGE   = .dist-stage
+DIST_STAGE_DIR = $(DIST_STAGE)/$(DIST_DIR)
 NOTARY_SUBMISSION_ID_FILE = .notary-submission-id
 NOTARY_LOG_FILE           = .notary-log.json
 
@@ -202,9 +206,20 @@ notarize-reset:
 	rm -f $(NOTARIZE_ZIP) $(NOTARY_SUBMISSION_ID_FILE) $(NOTARY_LOG_FILE)
 
 ## Create the distributable Fuse.zip from a notarized app.
+## The final zip contains the staged "Fuse for macOS" folder layout.
 dist: notarize
 	rm -f $(DIST_ZIP)
-	ditto -c -k --keepParent "$(FUSE_APP)" $(DIST_ZIP)
+	rm -rf $(DIST_STAGE)
+	mkdir -p "$(DIST_STAGE)"
+	ditto --norsrc "$(DIST_DIR)" "$(DIST_STAGE_DIR)"
+	rm -rf "$(DIST_STAGE_DIR)/Fuse.app"
+	ditto --norsrc "$(FUSE_APP)" "$(DIST_STAGE_DIR)/Fuse.app"
+	mkdir -p "$(DIST_STAGE_DIR)/Debug Symbols"
+	rm -rf "$(DIST_STAGE_DIR)/Debug Symbols/Fuse.app.dSYM"
+	ditto --norsrc "$(FUSE_DSYM)" "$(DIST_STAGE_DIR)/Debug Symbols/Fuse.app.dSYM"
+	python3 -c 'import os, pathlib; root = pathlib.Path("$(DIST_STAGE_DIR)"); [p.unlink() for p in root.rglob("*") if p.name == ".DS_Store" or p.name.startswith("._")]'
+	cd "$(DIST_STAGE)" && COPYFILE_DISABLE=1 zip -q -r -X "$(CURDIR)/$(DIST_ZIP)" "$(DIST_DIR)"
+	rm -rf $(DIST_STAGE)
 	@echo "Notarized build packaged as $(DIST_ZIP)"
 
 ## List available signing identities in the keychain.
@@ -216,3 +231,4 @@ clean:
 	xcodebuild -project $(XCODEPROJ) -configuration Deployment clean
 	rm -f Fuse-adhoc.zip
 	rm -f $(NOTARIZE_ZIP) $(DIST_ZIP)
+	rm -rf $(DIST_STAGE)
