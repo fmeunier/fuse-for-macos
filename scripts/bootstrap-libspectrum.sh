@@ -7,7 +7,7 @@ SCRIPT_DIR="$(cd -- "$(dirname -- "$0")" && pwd -P)"
 
 prepend_common_paths
 ROOT="$(workspace_root)"
-SOURCE_DIR="$ROOT/fuse/fusepb/libspectrum"
+SOURCE_DIR="$ROOT/fusepb/libspectrum"
 
 [ -d "$SOURCE_DIR" ] || die "Missing source directory: $SOURCE_DIR"
 

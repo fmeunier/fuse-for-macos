@@ -10,7 +10,7 @@ resolve_build_context
 resolve_toolchain
 
 ROOT="$(workspace_root)"
-SOURCE_DIR="$ROOT/fuse/fusepb/libspectrum"
+SOURCE_DIR="$ROOT/fusepb/libspectrum"
 BUILD_DIR="$TARGET_TEMP_DIR/deps/libspectrum/build"
 STATE_DIR="$TARGET_TEMP_DIR/deps/libspectrum/state"
 PREFIX_DIR="${LIBSPECTRUM_PREFIX:-$DERIVED_FILE_DIR/deps/libspectrum-prefix}"

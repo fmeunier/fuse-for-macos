@@ -15,7 +15,7 @@
 #                            --team-id  YOUR_TEAM_ID \
 #                            --password YOUR_APP_SPECIFIC_PASSWORD
 
-LOCAL_SIGNING_XCCONFIG = fuse/fusepb/LocalSigning.xcconfig
+LOCAL_SIGNING_XCCONFIG = fusepb/LocalSigning.xcconfig
 
 ifeq ($(origin CODE_SIGN_IDENTITY), undefined)
 LOCAL_CODE_SIGN_IDENTITY := $(shell if [ -f "$(LOCAL_SIGNING_XCCONFIG)" ]; then sed -n 's/^CODE_SIGN_IDENTITY[[:space:]]*=[[:space:]]*//p' "$(LOCAL_SIGNING_XCCONFIG)" | sed -n '1p'; fi)
@@ -45,10 +45,10 @@ endif
 NOTARYTOOL_PROFILE  ?= fuse-notarize
 NOTARY_POLL_INTERVAL ?= 60
 
-FUSE_APP   = fuse/fusepb/build/Deployment/Fuse.app
-FUSE_DSYM  = fuse/fusepb/build/Deployment/Fuse.app.dSYM
-XCODEPROJ  = fuse/fusepb/Fuse.xcodeproj
-XCODE_BUILD_ROOT = $(CURDIR)/fuse/fusepb/build
+FUSE_APP   = fusepb/build/Deployment/Fuse.app
+FUSE_DSYM  = fusepb/build/Deployment/Fuse.app.dSYM
+XCODEPROJ  = fusepb/Fuse.xcodeproj
+XCODE_BUILD_ROOT = $(CURDIR)/fusepb/build
 NOTARIZE_ZIP = Fuse-notarize.zip
 DIST_ZIP     = Fuse.zip
 DIST_DIR     = Fuse for macOS
@@ -72,7 +72,7 @@ endif
 ## After xcodebuild, embedded bundled components are re-signed explicitly and
 ## Fuse.app is then re-signed to seal the corrected nested-code hashes.
 fuse:
-	cd fuse/fusepb && make
+	$(MAKE) -C fusepb
 	xcodebuild -project $(XCODEPROJ) -scheme Fuse -configuration Deployment \
 		-destination 'platform=macOS' \
 		SYMROOT='$(XCODE_BUILD_ROOT)' OBJROOT='$(XCODE_BUILD_ROOT)' \
@@ -83,7 +83,7 @@ fuse:
 	codesign --sign "$(EFFECTIVE_CODE_SIGN_IDENTITY)" --force --options runtime $(CODESIGN_TIMESTAMP) \
 		"$(FUSE_APP)/Contents/Library/Spotlight/FuseImporter.mdimporter"
 	codesign --sign "$(EFFECTIVE_CODE_SIGN_IDENTITY)" --force --options runtime $(CODESIGN_TIMESTAMP) \
-		--entitlements "fuse/fusepb/Fuse.entitlements" "$(FUSE_APP)"
+		--entitlements "fusepb/Fuse.entitlements" "$(FUSE_APP)"
 
 ## Build an Xcode archive (.xcarchive) — useful for manual export workflows.
 archive:
@@ -93,7 +93,7 @@ archive:
 		-destination 'platform=macOS' \
 		SYMROOT='$(XCODE_BUILD_ROOT)' OBJROOT='$(XCODE_BUILD_ROOT)' \
 		-configuration Deployment \
-		-archivePath fuse/fusepb/build/Fuse.xcarchive \
+		-archivePath fusepb/build/Fuse.xcarchive \
 		CODE_SIGN_IDENTITY="$(EFFECTIVE_CODE_SIGN_IDENTITY)" \
 		DEVELOPMENT_TEAM="$(EFFECTIVE_DEVELOPMENT_TEAM)"
 
@@ -228,6 +228,7 @@ list-teams:
 
 ## Clean the fuse build products.
 clean:
+	$(MAKE) -C fusepb clean
 	xcodebuild -project $(XCODEPROJ) -configuration Deployment clean
 	rm -f Fuse-adhoc.zip
 	rm -f $(NOTARIZE_ZIP) $(DIST_ZIP)

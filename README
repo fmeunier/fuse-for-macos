@@ -26,7 +26,7 @@ importer, and the staged Unix library dependencies used by the application.
 
 The finished app is written to:
 
-  fuse/fusepb/build/Deployment/Fuse.app
+  fusepb/build/Deployment/Fuse.app
 
 Other useful targets:
 
@@ -46,17 +46,17 @@ an Apple Developer Program membership.
 
 To keep signing settings out of git, copy:
 
-  fuse/fusepb/LocalSigning.xcconfig.example
+  fusepb/LocalSigning.xcconfig.example
 
 to:
 
-  fuse/fusepb/LocalSigning.xcconfig
+  fusepb/LocalSigning.xcconfig
 
 and fill in your own Team ID. The top-level `Makefile` uses that file as the
 default source for `DEVELOPMENT_TEAM` and resolves the matching
 `Developer ID Application` certificate from your keychain automatically.
 
-After creating `fuse/fusepb/LocalSigning.xcconfig` and installing your
+After creating `fusepb/LocalSigning.xcconfig` and installing your
 Developer ID certificate, you can usually just run:
 
   make dist
