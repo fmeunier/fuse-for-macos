@@ -56,6 +56,7 @@ NOTARIZE_ZIP = Fuse-notarize.zip
 DIST_ZIP     = Fuse.zip
 DIST_DIR     = Fuse for macOS
 DIST_STAGE   = .dist-stage
+DIST_SKELETON_DIR = fusepb/release_skeleton/$(DIST_DIR)
 DIST_STAGE_DIR = $(DIST_STAGE)/$(DIST_DIR)
 NOTARY_SUBMISSION_ID_FILE = .notary-submission-id
 NOTARY_LOG_FILE           = .notary-log.json
@@ -220,7 +221,7 @@ dist: notarize
 	rm -f $(DIST_ZIP)
 	rm -rf $(DIST_STAGE)
 	mkdir -p "$(DIST_STAGE)"
-	ditto --norsrc "$(DIST_DIR)" "$(DIST_STAGE_DIR)"
+	ditto --norsrc "$(DIST_SKELETON_DIR)" "$(DIST_STAGE_DIR)"
 	rm -rf "$(DIST_STAGE_DIR)/Fuse.app"
 	ditto --norsrc "$(FUSE_APP)" "$(DIST_STAGE_DIR)/Fuse.app"
 	mkdir -p "$(DIST_STAGE_DIR)/Debug Symbols"
