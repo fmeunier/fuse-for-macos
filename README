@@ -82,6 +82,32 @@ If Apple's notary service is slow, `make notarize` stores the submission ID in
 
 Maintainer notes
 
+`libspectrum` is vendored in this repo as a squashed git subtree at:
+
+  fusepb/deps/libspectrum
+
+To update it:
+
+  git fetch libspectrum --tags
+  git subtree pull --prefix=fusepb/deps/libspectrum libspectrum <tag-or-commit> --squash
+
+If the update changes Autotools inputs inside the vendored tree (for example
+`configure.ac`, `Makefile.am`, or `m4/` files), regenerate the committed
+bootstrap files with:
+
+  ./fusepb/scripts/bootstrap-libspectrum.sh
+
+After any `libspectrum` subtree update, review and resync these locally patched
+files before committing:
+
+  fusepb/config.h
+  fusepb/generate.pl
+  fusepb/libspectrum.h
+
+Then verify with:
+
+  make fuse
+
 `FuseGenerator/` and `FuseImporter/` are vendored in this repository for the
 integrated macOS build. Maintainers updating those directories should use the
 same vendoring workflow already established for this tree.

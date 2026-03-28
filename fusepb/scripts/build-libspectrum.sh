@@ -10,9 +10,10 @@ resolve_build_context
 resolve_toolchain
 
 ROOT="$(workspace_root)"
-SOURCE_DIR="$ROOT/fusepb/libspectrum"
+SOURCE_DIR="$ROOT/fusepb/deps/libspectrum"
 BUILD_DIR="$TARGET_TEMP_DIR/deps/libspectrum/build"
 STATE_DIR="$TARGET_TEMP_DIR/deps/libspectrum/state"
+SOURCE_DIR_FILE="$STATE_DIR/source-dir"
 PREFIX_DIR="${LIBSPECTRUM_PREFIX:-$DERIVED_FILE_DIR/deps/libspectrum-prefix}"
 LIBGCRYPT_PREFIX="${LIBGCRYPT_PREFIX:-$DERIVED_FILE_DIR/deps/libgcrypt-prefix}"
 LIBGPG_ERROR_PREFIX="${LIBGPG_ERROR_PREFIX:-$DERIVED_FILE_DIR/deps/libgpg-error-prefix}"
@@ -23,8 +24,13 @@ ensure_generated_autotools "$SOURCE_DIR"
 [ -f "$LIBGCRYPT_PREFIX/include/gcrypt.h" ] || die "Missing staged libgcrypt headers. Build libgcrypt first."
 [ -f "$LIBGCRYPT_PREFIX/lib/libgcrypt.a" ] || die "Missing staged libgcrypt library. Build libgcrypt first."
 
+if [ -d "$BUILD_DIR" ] && { [ ! -f "$SOURCE_DIR_FILE" ] || [ "$(cat "$SOURCE_DIR_FILE")" != "$SOURCE_DIR" ]; }; then
+  rm -rf "$BUILD_DIR" "$STATE_DIR"
+fi
+
 ensure_parent_dir "$BUILD_DIR"
 ensure_parent_dir "$STATE_DIR"
+printf '%s\n' "$SOURCE_DIR" > "$SOURCE_DIR_FILE"
 ensure_parent_dir "$PREFIX_DIR/include"
 ensure_parent_dir "$PREFIX_DIR/lib"
 
