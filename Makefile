@@ -49,6 +49,9 @@ FUSE_APP   = fusepb/build/Deployment/Fuse.app
 FUSE_DSYM  = fusepb/build/Deployment/Fuse.app.dSYM
 XCODEPROJ  = fusepb/Fuse.xcodeproj
 XCODE_BUILD_ROOT = $(CURDIR)/fusepb/build
+FUSE_REPO_ROOT = $(CURDIR)
+FUSE_SCRIPTS_ROOT = $(FUSE_REPO_ROOT)/scripts
+FUSE_THIRD_PARTY_ROOT = $(FUSE_REPO_ROOT)/third_party
 NOTARIZE_ZIP = Fuse-notarize.zip
 DIST_ZIP     = Fuse.zip
 DIST_DIR     = Fuse for macOS
@@ -76,6 +79,9 @@ fuse:
 	xcodebuild -project $(XCODEPROJ) -scheme Fuse -configuration Deployment \
 		-destination 'platform=macOS' \
 		SYMROOT='$(XCODE_BUILD_ROOT)' OBJROOT='$(XCODE_BUILD_ROOT)' \
+		FUSE_REPO_ROOT='$(FUSE_REPO_ROOT)' \
+		FUSE_SCRIPTS_ROOT='$(FUSE_SCRIPTS_ROOT)' \
+		FUSE_THIRD_PARTY_ROOT='$(FUSE_THIRD_PARTY_ROOT)' \
 		CODE_SIGN_IDENTITY="$(EFFECTIVE_CODE_SIGN_IDENTITY)" \
 		DEVELOPMENT_TEAM="$(EFFECTIVE_DEVELOPMENT_TEAM)"
 	codesign --sign "$(EFFECTIVE_CODE_SIGN_IDENTITY)" --force --options runtime $(CODESIGN_TIMESTAMP) \
@@ -94,6 +100,9 @@ archive:
 		SYMROOT='$(XCODE_BUILD_ROOT)' OBJROOT='$(XCODE_BUILD_ROOT)' \
 		-configuration Deployment \
 		-archivePath fusepb/build/Fuse.xcarchive \
+		FUSE_REPO_ROOT='$(FUSE_REPO_ROOT)' \
+		FUSE_SCRIPTS_ROOT='$(FUSE_SCRIPTS_ROOT)' \
+		FUSE_THIRD_PARTY_ROOT='$(FUSE_THIRD_PARTY_ROOT)' \
 		CODE_SIGN_IDENTITY="$(EFFECTIVE_CODE_SIGN_IDENTITY)" \
 		DEVELOPMENT_TEAM="$(EFFECTIVE_DEVELOPMENT_TEAM)"
 
