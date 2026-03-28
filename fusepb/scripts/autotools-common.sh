@@ -19,7 +19,12 @@ script_dir() {
 }
 
 workspace_root() {
-  cd -- "$(script_dir)/.." && pwd -P
+  if [ -n "${FUSE_REPO_ROOT:-}" ]; then
+    cd -- "$FUSE_REPO_ROOT" && pwd -P
+    return
+  fi
+
+  cd -- "$(script_dir)/../.." && pwd -P
 }
 
 prepend_common_paths() {
@@ -28,7 +33,7 @@ prepend_common_paths() {
   root="$(workspace_root)"
 
   PATH="/opt/homebrew/bin:/usr/local/bin:/opt/local/bin:$PATH"
-  PATH="$root/scripts:$PATH"
+  PATH="$root/fusepb/scripts:$PATH"
   export PATH
 }
 
