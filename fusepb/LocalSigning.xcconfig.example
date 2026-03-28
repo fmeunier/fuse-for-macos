@@ -1,0 +1,7 @@
+// Copy this file to LocalSigning.xcconfig for maintainer-only release signing.
+// Do not commit LocalSigning.xcconfig.
+// The top-level Makefile reads DEVELOPMENT_TEAM from this file and resolves
+// the matching Developer ID Application certificate from the keychain.
+
+CODE_SIGN_IDENTITY = Developer ID Application
+DEVELOPMENT_TEAM = YOUR_TEAM_ID
