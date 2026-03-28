@@ -7,3 +7,11 @@ AGENTS.md
 .notary-submission-id
 .notary-log.json
 build/
+fusepb/LocalSigning.xcconfig
+fusepb/options.h
+fusepb/options.m
+fusepb/options_cocoa.h
+fusepb/settings.h
+fusepb/settings.m
+fusepb/Fuse.xcodeproj/project.xcworkspace/
+fusepb/Fuse.xcodeproj/xcuserdata/
