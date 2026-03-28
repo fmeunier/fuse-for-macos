@@ -2362,7 +2362,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/usr/bin/make -C \"$(dirname \"$PRODUCT_SETTINGS_PATH\")\"";
+			shellScript = "/usr/bin/make -C \"$SRCROOT/FuseHelp\"";
 		};
 /* End PBXShellScriptBuildPhase section */
 
