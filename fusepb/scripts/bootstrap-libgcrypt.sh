@@ -7,7 +7,7 @@ SCRIPT_DIR="$(cd -- "$(dirname -- "$0")" && pwd -P)"
 
 prepend_common_paths
 ROOT="$(workspace_root)"
-SOURCE_DIR="$ROOT/third_party/libgcrypt"
+SOURCE_DIR="$ROOT/fusepb/deps/third_party/libgcrypt"
 
 [ -d "$SOURCE_DIR" ] || die "Missing source directory: $SOURCE_DIR"
 

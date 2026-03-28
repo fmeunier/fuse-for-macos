@@ -10,16 +10,23 @@ resolve_build_context
 resolve_toolchain
 
 ROOT="$(workspace_root)"
-SOURCE_DIR="$ROOT/third_party/libgpg-error"
+SOURCE_DIR="$ROOT/fusepb/deps/third_party/libgpg-error"
 BUILD_DIR="$TARGET_TEMP_DIR/deps/libgpg-error/build"
 STATE_DIR="$TARGET_TEMP_DIR/deps/libgpg-error/state"
+SOURCE_DIR_FILE="$STATE_DIR/source-dir"
 PREFIX_DIR="${LIBGPG_ERROR_PREFIX:-$DERIVED_FILE_DIR/deps/libgpg-error-prefix}"
 STAMP_FILE="${STAMP_FILE:-$PREFIX_DIR/.build-libgpg-error.stamp}"
 SIGNATURE_NAME="configure.signature"
 
 ensure_generated_autotools "$SOURCE_DIR"
+
+if [ -d "$BUILD_DIR" ] && { [ ! -f "$SOURCE_DIR_FILE" ] || [ "$(cat "$SOURCE_DIR_FILE")" != "$SOURCE_DIR" ]; }; then
+  rm -rf "$BUILD_DIR" "$STATE_DIR"
+fi
+
 ensure_parent_dir "$BUILD_DIR"
 ensure_parent_dir "$STATE_DIR"
+printf '%s\n' "$SOURCE_DIR" > "$SOURCE_DIR_FILE"
 ensure_parent_dir "$PREFIX_DIR/include"
 ensure_parent_dir "$PREFIX_DIR/lib"
 ensure_parent_dir "$PREFIX_DIR/bin"

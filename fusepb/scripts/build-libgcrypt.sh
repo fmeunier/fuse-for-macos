@@ -10,9 +10,10 @@ resolve_build_context
 resolve_toolchain
 
 ROOT="$(workspace_root)"
-SOURCE_DIR="$ROOT/third_party/libgcrypt"
+SOURCE_DIR="$ROOT/fusepb/deps/third_party/libgcrypt"
 BUILD_DIR="$TARGET_TEMP_DIR/deps/libgcrypt/build"
 STATE_DIR="$TARGET_TEMP_DIR/deps/libgcrypt/state"
+SOURCE_DIR_FILE="$STATE_DIR/source-dir"
 PREFIX_DIR="${LIBGCRYPT_PREFIX:-$DERIVED_FILE_DIR/deps/libgcrypt-prefix}"
 GPG_ERROR_PREFIX="${LIBGPG_ERROR_PREFIX:-$DERIVED_FILE_DIR/deps/libgpg-error-prefix}"
 GPG_ERROR_CONFIG="$GPG_ERROR_PREFIX/bin/gpg-error-config"
@@ -22,8 +23,13 @@ SIGNATURE_NAME="configure.signature"
 ensure_generated_autotools "$SOURCE_DIR"
 [ -x "$GPG_ERROR_CONFIG" ] || die "Missing $GPG_ERROR_CONFIG. Build libgpg-error first."
 
+if [ -d "$BUILD_DIR" ] && { [ ! -f "$SOURCE_DIR_FILE" ] || [ "$(cat "$SOURCE_DIR_FILE")" != "$SOURCE_DIR" ]; }; then
+  rm -rf "$BUILD_DIR" "$STATE_DIR"
+fi
+
 ensure_parent_dir "$BUILD_DIR"
 ensure_parent_dir "$STATE_DIR"
+printf '%s\n' "$SOURCE_DIR" > "$SOURCE_DIR_FILE"
 ensure_parent_dir "$PREFIX_DIR/include"
 ensure_parent_dir "$PREFIX_DIR/lib"
 
