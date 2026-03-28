@@ -1014,7 +1014,7 @@
 				F5598598038921C501A804BA /* config.h */,
 			);
 			name = "Other Sources";
-			path = "$(FUSE_UPSTREAM_ROOT)";
+			path = ../fuse;
 			sourceTree = "<group>";
 		};
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
@@ -1410,8 +1410,8 @@
 				B7A1C10F3A75380000C0DE01 /* Info.plist */,
 			);
 			name = FuseImporter;
-			path = "$(FUSE_IMPORTER_ROOT)";
-			sourceTree = "<group>";
+			path = plugins/FuseImporter;
+			sourceTree = SOURCE_ROOT;
 		};
 		B7A1C1173A75380000C0DE01 /* Resources */ = {
 			isa = PBXGroup;
@@ -1436,8 +1436,8 @@
 				B7A1C30F3A75A00000C0DE01 /* Info.plist */,
 			);
 			name = FuseGenerator;
-			path = "$(FUSE_GENERATOR_ROOT)";
-			sourceTree = "<group>";
+			path = plugins/FuseGenerator;
+			sourceTree = SOURCE_ROOT;
 		};
 		B7A1C3213A75A00000C0DE01 /* JWSpectrumScreen */ = {
 			isa = PBXGroup;
@@ -1509,8 +1509,8 @@
 				B6DCBBBA114FA0E700DC9A11 /* zxs.c */,
 			);
 			name = libspectrum;
-			path = "$(FUSE_DEPS_ROOT)/libspectrum";
-			sourceTree = "<group>";
+			path = deps/libspectrum;
+			sourceTree = SOURCE_ROOT;
 		};
 		B6DCBB80114FA0E700DC9A11 /* myglib */ = {
 			isa = PBXGroup;
@@ -1643,8 +1643,8 @@
 				B6FEA44C0444C2CC0013916D /* tc2068-1.rom */,
 			);
 			name = roms;
-			path = "$(FUSE_UPSTREAM_ROOT)/roms";
-			sourceTree = "<group>";
+			path = ../fuse/roms;
+			sourceTree = SOURCE_ROOT;
 		};
 		F559859A038921CA01A804BA /* ui */ = {
 			isa = PBXGroup;

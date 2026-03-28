@@ -68,6 +68,8 @@ else
 CODESIGN_TIMESTAMP = --timestamp
 endif
 
+FUSE_CODESIGN_TIMESTAMP =
+
 .PHONY: fuse archive adhoc notarize notarize-submit notarize-status notarize-log notarize-wait notarize-staple notarize-reset dist list-teams clean
 
 ## Build Fuse.app (Deployment configuration).
@@ -78,6 +80,7 @@ endif
 ## Fuse.app is then re-signed to seal the corrected nested-code hashes.
 fuse:
 	$(MAKE) -C fusepb
+	@echo "Running Xcode app build"
 	xcodebuild -project $(XCODEPROJ) -scheme Fuse -configuration Deployment \
 		-destination 'platform=macOS' \
 		SYMROOT='$(XCODE_BUILD_ROOT)' OBJROOT='$(XCODE_BUILD_ROOT)' \
@@ -87,12 +90,16 @@ fuse:
 		FUSE_THIRD_PARTY_ROOT='$(FUSE_THIRD_PARTY_ROOT)' \
 		CODE_SIGN_IDENTITY="$(EFFECTIVE_CODE_SIGN_IDENTITY)" \
 		DEVELOPMENT_TEAM="$(EFFECTIVE_DEVELOPMENT_TEAM)"
-	codesign --sign "$(EFFECTIVE_CODE_SIGN_IDENTITY)" --force --options runtime $(CODESIGN_TIMESTAMP) \
+	@echo "Re-signing Quick Look plugin"
+	codesign --sign "$(EFFECTIVE_CODE_SIGN_IDENTITY)" --force --options runtime $(FUSE_CODESIGN_TIMESTAMP) \
 		"$(FUSE_APP)/Contents/Library/QuickLook/FuseGenerator.qlgenerator"
-	codesign --sign "$(EFFECTIVE_CODE_SIGN_IDENTITY)" --force --options runtime $(CODESIGN_TIMESTAMP) \
+	@echo "Re-signing Spotlight importer"
+	codesign --sign "$(EFFECTIVE_CODE_SIGN_IDENTITY)" --force --options runtime $(FUSE_CODESIGN_TIMESTAMP) \
 		"$(FUSE_APP)/Contents/Library/Spotlight/FuseImporter.mdimporter"
-	codesign --sign "$(EFFECTIVE_CODE_SIGN_IDENTITY)" --force --options runtime $(CODESIGN_TIMESTAMP) \
+	@echo "Re-signing app bundle"
+	codesign --sign "$(EFFECTIVE_CODE_SIGN_IDENTITY)" --force --options runtime $(FUSE_CODESIGN_TIMESTAMP) \
 		--entitlements "fusepb/Fuse.entitlements" "$(FUSE_APP)"
+	@echo "Fuse build complete"
 
 ## Build an Xcode archive (.xcarchive) — useful for manual export workflows.
 archive:
