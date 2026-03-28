@@ -12,10 +12,14 @@ $ gem install jekyll bundler
 
 Full build instructions:
 
-Clone the repository and initialise submodules:
+Clone the repository and initialise the submodule:
 
-  git clone --recurse-submodules git://git.code.sf.net/p/fuse-for-macosx/fuse-for-macos
+  git clone --recurse-submodules git@github.com:fmeunier/fuse-for-macos.git
   cd fuse-for-macos
+
+If you already cloned without submodules, initialise just `fuse` with:
+
+  git submodule update --init fuse
 
 Build everything in one step:
 
@@ -23,6 +27,13 @@ Build everything in one step:
 
 This builds `Fuse.app`, the embedded Quick Look generator, the Spotlight
 importer, and the staged Unix library dependencies used by the application.
+
+Repository layout notes:
+
+- `fuse/` is the upstream emulator source submodule
+- `fusepb/` is the top-level macOS wrapper/app tree
+- plugin source lives in-tree under `fusepb/plugins/`
+- staged managed dependencies live under `fusepb/deps/`
 
 The finished app is written to:
 
