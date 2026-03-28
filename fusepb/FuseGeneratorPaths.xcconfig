@@ -1,4 +1,4 @@
 #include? "FuseDependencyPaths.xcconfig"
 
-FUSE_GENERATOR_ROOT = $(FUSE_REPO_ROOT)/FuseGenerator
+FUSE_GENERATOR_ROOT = $(FUSE_REPO_ROOT)/fusepb/plugins/FuseGenerator
 INFOPLIST_FILE = $(FUSE_GENERATOR_ROOT)/Info.plist

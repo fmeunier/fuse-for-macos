@@ -1,4 +1,4 @@
 #include? "FuseDependencyPaths.xcconfig"
 
-FUSE_IMPORTER_ROOT = $(FUSE_REPO_ROOT)/FuseImporter
+FUSE_IMPORTER_ROOT = $(FUSE_REPO_ROOT)/fusepb/plugins/FuseImporter
 INFOPLIST_FILE = $(FUSE_IMPORTER_ROOT)/Info.plist

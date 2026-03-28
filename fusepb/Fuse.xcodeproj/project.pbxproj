@@ -1410,7 +1410,7 @@
 				B7A1C10F3A75380000C0DE01 /* Info.plist */,
 			);
 			name = FuseImporter;
-			path = "$(FUSE_REPO_ROOT)/FuseImporter";
+			path = "$(FUSE_IMPORTER_ROOT)";
 			sourceTree = "<group>";
 		};
 		B7A1C1173A75380000C0DE01 /* Resources */ = {
@@ -1436,7 +1436,7 @@
 				B7A1C30F3A75A00000C0DE01 /* Info.plist */,
 			);
 			name = FuseGenerator;
-			path = "$(FUSE_REPO_ROOT)/FuseGenerator";
+			path = "$(FUSE_GENERATOR_ROOT)";
 			sourceTree = "<group>";
 		};
 		B7A1C3213A75A00000C0DE01 /* JWSpectrumScreen */ = {
