@@ -9,9 +9,16 @@ An individual setting is available for each Spectrum variant emulated by Fuse
 which allows selection of the ROM(s) used by that machine. Simply select the ROM
 you wish to use, and then reset the Spectrum for the change to take effect.
 
+For ROMs which are not distributed with Fuse, store the files in any readable
+location outside the application bundle, then use this pane to point Fuse at
+them. A location in your home folder such as `Application Support` works well.
+
 Fuse also provides ROM settings for peripherals that require their own ROMs.
-The Currah μSpeech interface requires both the μSpeech interface ROM and the
-SP0256-AL2 speech ROM. These ROM files are not supplied with Fuse for macOS.
+Entries are available here for Beta 128, Didaktik 80, DISCiPLE, Sinclair
+Interface 1, the Multiface variants, Opus Discovery, +D, Currah μSource and
+Currah μSpeech. The Currah μSpeech interface requires both the μSpeech
+interface ROM and the SP0256-AL2 speech ROM. These ROM files are not supplied
+with Fuse for macOS.
 
 The SP0256-AL2 ROM should be named `sp0256-al2.rom`; the ROM expected by Fuse
 has CRC-32 `b504ac15`. An alternative authorised ROM distributed by Joe Zbiciak

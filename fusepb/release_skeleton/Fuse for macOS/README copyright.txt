@@ -1,6 +1,7 @@
 While Fuse can emulate Spectrum clones like the Pentagon and Scorpion series, but their ROM files are not distributed with Fuse as there is no clear permission allowing it.
 
-If you want to emulate these machines, you should provide the following ROM files:
+If you want to emulate these machines, you should provide the following ROM files
+and configure them in Fuse Preferences > ROM:
 128p-0.rom
 128p-1.rom
 trdos.rom
@@ -10,25 +11,31 @@ gluck.rom
 256s-2.rom
 256s-3.rom
 
-The Didaktik disk interface needs the following ROM:
+The Didaktik disk interface needs the following ROM configured in Fuse
+Preferences > ROM:
 didaktik80.rom
 
-The Opus disk interface needs the following ROM:
+The Opus disk interface needs the following ROM configured in Fuse Preferences >
+ROM:
 opus.rom
 
-The Multiface interfaces need the following ROM files:
+The Multiface interfaces need the following ROM files configured in Fuse
+Preferences > ROM:
 mf1.rom
 mf128.rom
 mf3.rom
 
-The Currah μSpeech interface needs the following ROM files:
+The Currah μSpeech interface needs the following ROM files configured in Fuse
+Preferences > ROM:
 sp0256-al2.rom
 uspeech.rom
 
-The Currah µSource interface needs the following ROM:
+The Currah µSource interface needs the following ROM configured in Fuse
+Preferences > ROM:
 usource.rom
 
-The Sinclair Interface 1 needs one of the following ROM files:
+The Sinclair Interface 1 needs one of the following ROM files configured in
+Fuse Preferences > ROM:
 if1-1.rom
 if1-2.rom
 

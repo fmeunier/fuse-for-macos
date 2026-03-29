@@ -20,5 +20,5 @@ To access disks, use the same syntax as the Interface I and Microdrives.
 
 The ROM file for the Opus Discovery is not freely distributable and so is not
 included in this package. In order to use the Opus Discovery emulation you will
-need to download a copy of the ROM file and use the *Preferences > ROM* dialog
-to configure the file for use with Fuse.
+need to download a copy of the ROM file and configure it in the [ROM
+Preferences](roms.html) pane.
