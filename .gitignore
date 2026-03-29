@@ -15,3 +15,6 @@ fusepb/settings.h
 fusepb/settings.m
 fusepb/Fuse.xcodeproj/project.xcworkspace/
 fusepb/Fuse.xcodeproj/xcuserdata/
+
+# Beads / Dolt files (added by bd init)
+.beads-credential-key
