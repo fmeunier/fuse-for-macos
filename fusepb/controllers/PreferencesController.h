@@ -38,7 +38,7 @@
   IBOutlet NSMatrix *externalSoundType;
   IBOutlet NSMatrix *multifaceType;
   IBOutlet NSTabView *tabView;
-  IBOutlet NSToolbar *toolbar;
+  NSToolbar *toolbar;
   IBOutlet NSView *generalPrefsView;
   IBOutlet NSView *soundPrefsView;
   IBOutlet NSView *peripheralsPrefsView;
@@ -75,6 +75,12 @@
 - (IBAction)externalSoundTypeClicked:(id)sender;
 - (IBAction)multifaceTypeClicked:(id)sender;
 - (IBAction)selectPrefPanel:(id)item;
+- (NSArray *)toolbarItemIdentifiers;
+- (NSToolbarItem *)toolbar:(NSToolbar *)bar
+        itemForItemIdentifier:(NSString *)item_identifier
+    willBeInsertedIntoToolbar:(BOOL)flag;
+- (NSArray *)toolbarAllowedItemIdentifiers:(NSToolbar *)bar;
+- (NSArray *)toolbarDefaultItemIdentifiers:(NSToolbar *)bar;
 - (NSArray *)toolbarSelectableItemIdentifiers:(NSToolbar *)bar;
 - (void)setMassStorageType;
 - (void)setExternalSoundType;

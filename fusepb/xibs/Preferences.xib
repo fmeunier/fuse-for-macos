@@ -24,7 +24,6 @@
                 <outlet property="romPrefsView" destination="1582" id="1778"/>
                 <outlet property="rzxPrefsView" destination="1488" id="1779"/>
                 <outlet property="soundPrefsView" destination="1408" id="1780"/>
-                <outlet property="toolbar" destination="1279" id="1307"/>
                 <outlet property="window" destination="5" id="239"/>
             </connections>
         </customObject>
@@ -40,79 +39,6 @@
                 <rect key="frame" x="0.0" y="0.0" width="680" height="403"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             </view>
-            <toolbar key="toolbar" implicitIdentifier="2B5EC7EB-5A6C-4F96-8405-91E5B21A019C" allowsUserCustomization="NO" showsBaselineSeparator="NO" displayMode="iconAndLabel" sizeMode="small" id="1279">
-                <allowedToolbarItems>
-                    <toolbarItem implicitItemIdentifier="75749378-6992-4894-9B4C-43B464285D3E" label="General" paletteLabel="General" image="NSPreferencesGeneral" autovalidates="NO" id="1287">
-                        <size key="minSize" width="22" height="22"/>
-                        <size key="maxSize" width="22" height="22"/>
-                        <connections>
-                            <action selector="selectPrefPanel:" target="-2" id="1296"/>
-                        </connections>
-                    </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="1D3C684F-4B0A-4828-ADF3-E4106D08C1CD" label="Sound" paletteLabel="Sound" tag="1" image="Sound" autovalidates="NO" id="1288">
-                        <size key="minSize" width="22" height="22"/>
-                        <size key="maxSize" width="22" height="22"/>
-                        <connections>
-                            <action selector="selectPrefPanel:" target="-2" id="1297"/>
-                        </connections>
-                    </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="4F5A5E26-7A02-464D-80D8-F49DECE3E69B" label="Peripherals" paletteLabel="Peripherals" tag="2" image="Peripherals" autovalidates="NO" id="1289">
-                        <size key="minSize" width="22" height="22"/>
-                        <size key="maxSize" width="22" height="22"/>
-                        <connections>
-                            <action selector="selectPrefPanel:" target="-2" id="1298"/>
-                        </connections>
-                    </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="BE697B6E-7F18-4D78-9F89-364AF4806055" label="Recording" paletteLabel="Recording" tag="3" image="RZX" autovalidates="NO" id="1290">
-                        <size key="minSize" width="22" height="22"/>
-                        <size key="maxSize" width="22" height="22"/>
-                        <connections>
-                            <action selector="selectPrefPanel:" target="-2" id="1299"/>
-                        </connections>
-                    </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="F897F259-A5D7-4274-A9C8-9D7D7C86199E" label="Inputs" paletteLabel="Inputs" tag="4" image="qs2t_icon" autovalidates="NO" id="1291">
-                        <size key="minSize" width="22" height="22"/>
-                        <size key="maxSize" width="22" height="22"/>
-                        <connections>
-                            <action selector="selectPrefPanel:" target="-2" id="1300"/>
-                        </connections>
-                    </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="D64DF5CD-B687-4DAB-8B9B-CB7BCB98DECE" label="ROM" paletteLabel="ROM" tag="5" image="Select_ROMs" autovalidates="NO" id="1292">
-                        <size key="minSize" width="22" height="22"/>
-                        <size key="maxSize" width="22" height="22"/>
-                        <connections>
-                            <action selector="selectPrefPanel:" target="-2" id="1301"/>
-                        </connections>
-                    </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="FD445694-259E-4F31-A40E-117D01F46BB6" label="Machine" paletteLabel="Machine" tag="6" image="Machine" autovalidates="NO" id="1293">
-                        <size key="minSize" width="22" height="22"/>
-                        <size key="maxSize" width="22" height="22"/>
-                        <connections>
-                            <action selector="selectPrefPanel:" target="-2" id="1302"/>
-                        </connections>
-                    </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="2C4BF74A-9900-4A0E-A2FC-50ADDA64B166" label="Video" paletteLabel="Video" tag="7" image="Graphics_Filter" autovalidates="NO" id="1294">
-                        <size key="minSize" width="22" height="22"/>
-                        <size key="maxSize" width="22" height="22"/>
-                        <connections>
-                            <action selector="selectPrefPanel:" target="-2" id="1303"/>
-                        </connections>
-                    </toolbarItem>
-                </allowedToolbarItems>
-                <defaultToolbarItems>
-                    <toolbarItem reference="1287"/>
-                    <toolbarItem reference="1288"/>
-                    <toolbarItem reference="1289"/>
-                    <toolbarItem reference="1290"/>
-                    <toolbarItem reference="1291"/>
-                    <toolbarItem reference="1292"/>
-                    <toolbarItem reference="1293"/>
-                    <toolbarItem reference="1294"/>
-                </defaultToolbarItems>
-                <connections>
-                    <outlet property="delegate" destination="-2" id="1295"/>
-                </connections>
-            </toolbar>
             <connections>
                 <outlet property="delegate" destination="-2" id="504"/>
                 <outlet property="initialFirstResponder" destination="6" id="1305"/>
@@ -2173,13 +2099,6 @@ FRUVFRUVFRUVFcK1U3BlZWNoIFZvbHVtZQ
         </arrayController>
     </objects>
     <resources>
-        <image name="Graphics_Filter" width="32" height="32"/>
-        <image name="Machine" width="32.450702667236328" height="32.450702667236328"/>
         <image name="NSPreferencesGeneral" width="32" height="32"/>
-        <image name="Peripherals" width="32.450702667236328" height="32.450702667236328"/>
-        <image name="RZX" width="32.450702667236328" height="32.450702667236328"/>
-        <image name="Select_ROMs" width="32.450702667236328" height="32.450702667236328"/>
-        <image name="Sound" width="32" height="32"/>
-        <image name="qs2t_icon" width="23" height="23"/>
     </resources>
 </document>

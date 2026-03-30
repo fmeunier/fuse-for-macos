@@ -55,6 +55,44 @@
 
 #define NONE 100
 
+static NSString *preferences_toolbar_identifiers[] = {
+  @"General",
+  @"Sound",
+  @"Peripherals",
+  @"Recording",
+  @"Inputs",
+  @"ROM",
+  @"Machine",
+  @"Video",
+};
+
+static NSString *preferences_toolbar_symbols[] = {
+  @"gearshape",
+  @"speaker.wave.2",
+  @"externaldrive",
+  @"record.circle",
+  @"gamecontroller",
+  @"memorychip",
+  @"desktopcomputer",
+  @"sparkles.tv",
+};
+
+static NSImage *
+preferences_toolbar_image( NSString *symbol_name )
+{
+  NSImage *image;
+  NSImageSymbolConfiguration *configuration;
+
+  configuration = [NSImageSymbolConfiguration configurationWithPointSize:20.0
+                                                                  weight:NSFontWeightRegular];
+  image = [NSImage imageWithSystemSymbolName:symbol_name
+                       accessibilityDescription:nil];
+  image = [[image imageWithSymbolConfiguration:configuration] copy];
+  [image setTemplate:YES];
+
+  return [image autorelease];
+}
+
 @implementation PreferencesController
 
 +(void) initialize
@@ -118,12 +156,74 @@
 
 - (void)awakeFromNib
 {
+  unsigned int selected_tab;
+  NSToolbarItem *item;
+
+  toolbar = [[NSToolbar alloc] initWithIdentifier:@"PreferencesToolbar"];
+  [toolbar setAllowsUserCustomization:NO];
+  [toolbar setShowsBaselineSeparator:NO];
+  [toolbar setDisplayMode:NSToolbarDisplayModeIconAndLabel];
+  [toolbar setSizeMode:NSToolbarSizeModeRegular];
+  [toolbar setDelegate:self];
+  [[self window] setToolbar:toolbar];
+  [toolbar release];
+  toolbar = [[self window] toolbar];
+
   [[self window] setToolbarStyle:NSWindowToolbarStylePreference];
 
-  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-  NSToolbarItem *item = [[toolbar items] objectAtIndex:[defaults integerForKey:@"preferencestab"]];
+  selected_tab = [[NSUserDefaults standardUserDefaults] integerForKey:@"preferencestab"];
+  item = [[toolbar items] objectAtIndex:selected_tab];
   [toolbar setSelectedItemIdentifier:[item itemIdentifier]];
   [self selectPrefPanel:item];
+}
+
+- (NSArray *)toolbarItemIdentifiers
+{
+  return @[
+    @"General",
+    @"Sound",
+    @"Peripherals",
+    @"Recording",
+    @"Inputs",
+    @"ROM",
+    @"Machine",
+    @"Video",
+  ];
+}
+
+- (NSToolbarItem *)toolbar:(NSToolbar *)bar
+        itemForItemIdentifier:(NSString *)item_identifier
+    willBeInsertedIntoToolbar:(BOOL)flag
+{
+  unsigned int i;
+  NSToolbarItem *item;
+
+  for( i = 0; i < [self toolbarItemIdentifiers].count; i++ ) {
+    if( [item_identifier isEqualToString:preferences_toolbar_identifiers[i]] ) {
+      item = [[[NSToolbarItem alloc] initWithItemIdentifier:item_identifier]
+              autorelease];
+      [item setLabel:preferences_toolbar_identifiers[i]];
+      [item setPaletteLabel:preferences_toolbar_identifiers[i]];
+      [item setImage:preferences_toolbar_image( preferences_toolbar_symbols[i] )];
+      [item setTag:i];
+      [item setTarget:self];
+      [item setAction:@selector(selectPrefPanel:)];
+      [item setAutovalidates:NO];
+      return item;
+    }
+  }
+
+  return nil;
+}
+
+- (NSArray *)toolbarAllowedItemIdentifiers:(NSToolbar *)bar
+{
+  return [self toolbarItemIdentifiers];
+}
+
+- (NSArray *)toolbarDefaultItemIdentifiers:(NSToolbar *)bar
+{
+  return [self toolbarItemIdentifiers];
 }
 
 - (void)showWindow:(id)sender

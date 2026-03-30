@@ -27,13 +27,6 @@
 		B604B21B0DC182BE00981CC7 /* FuseGenerator.qlgenerator in CopyFiles */ = {isa = PBXBuildFile; fileRef = B7A1C3113A75A00000C0DE01 /* FuseGenerator.qlgenerator */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B7A1C31D3A75A10000C0DE01 /* AttributeManager.c in Sources */ = {isa = PBXBuildFile; fileRef = B7A1C31E3A75A10000C0DE01 /* AttributeManager.c */; };
 		B7A1C31F3A75A10000C0DE01 /* ColourMacros.c in Sources */ = {isa = PBXBuildFile; fileRef = B7A1C3203A75A10000C0DE01 /* ColourMacros.c */; };
-		B61159BF0EEE99D50029FEA3 /* Graphics_Filter.png in Resources */ = {isa = PBXBuildFile; fileRef = B61159BE0EEE99D50029FEA3 /* Graphics_Filter.png */; };
-		B61159C10EEE99E20029FEA3 /* Machine.png in Resources */ = {isa = PBXBuildFile; fileRef = B61159C00EEE99E20029FEA3 /* Machine.png */; };
-		B61159C30EEE99EE0029FEA3 /* Peripherals.png in Resources */ = {isa = PBXBuildFile; fileRef = B61159C20EEE99EE0029FEA3 /* Peripherals.png */; };
-		B61159C50EEE99FA0029FEA3 /* qs2t_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = B61159C40EEE99FA0029FEA3 /* qs2t_icon.png */; };
-		B61159C70EEE9A080029FEA3 /* RZX.png in Resources */ = {isa = PBXBuildFile; fileRef = B61159C60EEE9A080029FEA3 /* RZX.png */; };
-		B61159C90EEE9A140029FEA3 /* Select_ROMs.png in Resources */ = {isa = PBXBuildFile; fileRef = B61159C80EEE9A140029FEA3 /* Select_ROMs.png */; };
-		B61159CB0EEE9A1E0029FEA3 /* Sound.png in Resources */ = {isa = PBXBuildFile; fileRef = B61159CA0EEE9A1E0029FEA3 /* Sound.png */; };
 		B61159CD3A76400000C0DE01 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B61159CC3A76400000C0DE01 /* AudioToolbox.framework */; };
 		B615BFE80B4261E50082D535 /* HIDJoysticks.m in Sources */ = {isa = PBXBuildFile; fileRef = B615BFE60B4261E50082D535 /* HIDJoysticks.m */; };
 		B6168CE91F0BC0AC008C99E6 /* buffer.c in Sources */ = {isa = PBXBuildFile; fileRef = B6168CE81F0BC0AC008C99E6 /* buffer.c */; };
@@ -450,13 +443,6 @@
 		B60B11F7059BC7E70048B64B /* machine.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = machine.c; path = machine.c; sourceTree = "<group>"; };
 		B611190206A1FA12006D2711 /* JoystickConfigurationController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JoystickConfigurationController.h; path = controllers/JoystickConfigurationController.h; sourceTree = SOURCE_ROOT; };
 		B611190306A1FA12006D2711 /* JoystickConfigurationController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = JoystickConfigurationController.m; path = controllers/JoystickConfigurationController.m; sourceTree = SOURCE_ROOT; };
-		B61159BE0EEE99D50029FEA3 /* Graphics_Filter.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Graphics_Filter.png; sourceTree = "<group>"; };
-		B61159C00EEE99E20029FEA3 /* Machine.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Machine.png; sourceTree = "<group>"; };
-		B61159C20EEE99EE0029FEA3 /* Peripherals.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Peripherals.png; sourceTree = "<group>"; };
-		B61159C40EEE99FA0029FEA3 /* qs2t_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = qs2t_icon.png; sourceTree = "<group>"; };
-		B61159C60EEE9A080029FEA3 /* RZX.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = RZX.png; sourceTree = "<group>"; };
-		B61159C80EEE9A140029FEA3 /* Select_ROMs.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Select_ROMs.png; sourceTree = "<group>"; };
-		B61159CA0EEE9A1E0029FEA3 /* Sound.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Sound.png; sourceTree = "<group>"; };
 		B61159CC3A76400000C0DE01 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
 		B615BFE50B4261E50082D535 /* HIDJoysticks.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = HIDJoysticks.h; path = content_arrays/HIDJoysticks.h; sourceTree = "<group>"; };
 		B615BFE60B4261E50082D535 /* HIDJoysticks.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = HIDJoysticks.m; path = content_arrays/HIDJoysticks.m; sourceTree = "<group>"; };
@@ -1123,27 +1109,20 @@
 				B6F0480E0952B597006D8005 /* dck.icns */,
 				B643BB8D0403A0FD00A864FD /* dsk.icns */,
 				B6013811164692F5005FD3AE /* Fuse.iconset */,
-				B61159BE0EEE99D50029FEA3 /* Graphics_Filter.png */,
 				B650986A09366C8F003AF1BF /* hdf.icns */,
-				B61159C00EEE99E20029FEA3 /* Machine.png */,
 				B6F048100952B5AD006D8005 /* mdr.icns */,
 				B6CADD6E0C48E1A3004BA954 /* microdrive_green.png */,
 				B6CADD6F0C48E1A3004BA954 /* microdrive_red.png */,
-				B61159C20EEE99EE0029FEA3 /* Peripherals.png */,
 				B6CADD700C48E1A3004BA954 /* plus3disk_green.png */,
 				B6CADD710C48E1A3004BA954 /* plus3disk_red.png */,
-				B61159C40EEE99FA0029FEA3 /* qs2t_icon.png */,
 				B639B7D00A6BB45600927E24 /* raw.icns */,
 				B650986B09366C8F003AF1BF /* rom.icns */,
 				B650986C09366C8F003AF1BF /* rzx.icns */,
-				B61159C60EEE9A080029FEA3 /* RZX.png */,
 				B6F048120952B5C1006D8005 /* scl.icns */,
 				B643BB900403A11B00A864FD /* scr.icns */,
-				B61159C80EEE9A140029FEA3 /* Select_ROMs.png */,
 				B6F048140952B5DA006D8005 /* slt.icns */,
 				B643BB910403A11B00A864FD /* sna.icns */,
 				B6F048160952B5EC006D8005 /* snp.icns */,
-				B61159CA0EEE9A1E0029FEA3 /* Sound.png */,
 				B6F048170952B5EC006D8005 /* sp.icns */,
 				B650987009366CA2003AF1BF /* szx.icns */,
 				B643BB920403A11B00A864FD /* tap.icns */,
@@ -1939,14 +1918,7 @@
 				B6CADD730C48E1A3004BA954 /* microdrive_red.png in Resources */,
 				B6CADD740C48E1A3004BA954 /* plus3disk_green.png in Resources */,
 				B6CADD750C48E1A3004BA954 /* plus3disk_red.png in Resources */,
-				B61159BF0EEE99D50029FEA3 /* Graphics_Filter.png in Resources */,
-				B61159C10EEE99E20029FEA3 /* Machine.png in Resources */,
-				B61159C30EEE99EE0029FEA3 /* Peripherals.png in Resources */,
-				B61159C50EEE99FA0029FEA3 /* qs2t_icon.png in Resources */,
-				B61159C70EEE9A080029FEA3 /* RZX.png in Resources */,
-				B61159C90EEE9A140029FEA3 /* Select_ROMs.png in Resources */,
 				B6D670501DD6D2440014914E /* FuseHelp.help in Resources */,
-				B61159CB0EEE9A1E0029FEA3 /* Sound.png in Resources */,
 				B665EE031052A29F00FCFED8 /* Debugger.xib in Resources */,
 				B665EE081052A34700FCFED8 /* JoystickConfiguration.xib in Resources */,
 				B665EE0B1052A39000FCFED8 /* Keyboard.xib in Resources */,
