@@ -118,6 +118,8 @@
 
 - (void)awakeFromNib
 {
+  [[self window] setToolbarStyle:NSWindowToolbarStylePreference];
+
   NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
   NSToolbarItem *item = [[toolbar items] objectAtIndex:[defaults integerForKey:@"preferencestab"]];
   [toolbar setSelectedItemIdentifier:[item itemIdentifier]];

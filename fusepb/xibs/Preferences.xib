@@ -33,14 +33,14 @@
         <window title="Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="5" userLabel="Preferences" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="24" y="202" width="632" height="403"/>
+            <rect key="contentRect" x="24" y="202" width="680" height="403"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1512" height="948"/>
-            <value key="minSize" type="size" width="213" height="107"/>
+            <value key="minSize" type="size" width="680" height="107"/>
             <view key="contentView" id="6">
-                <rect key="frame" x="0.0" y="0.0" width="632" height="403"/>
+                <rect key="frame" x="0.0" y="0.0" width="680" height="403"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             </view>
-            <toolbar key="toolbar" implicitIdentifier="2B5EC7EB-5A6C-4F96-8405-91E5B21A019C" allowsUserCustomization="NO" showsBaselineSeparator="NO" displayMode="iconAndLabel" sizeMode="regular" id="1279">
+            <toolbar key="toolbar" implicitIdentifier="2B5EC7EB-5A6C-4F96-8405-91E5B21A019C" allowsUserCustomization="NO" showsBaselineSeparator="NO" displayMode="iconAndLabel" sizeMode="small" id="1279">
                 <allowedToolbarItems>
                     <toolbarItem implicitItemIdentifier="75749378-6992-4894-9B4C-43B464285D3E" label="General" paletteLabel="General" image="NSPreferencesGeneral" autovalidates="NO" id="1287">
                         <size key="minSize" width="22" height="22"/>
