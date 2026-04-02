@@ -93,6 +93,22 @@ preferences_toolbar_image( NSString *symbol_name )
   return [image autorelease];
 }
 
+static void
+replace_preferences_view_subviews( NSView *container, NSView *replacement )
+{
+  NSEnumerator *enumerator;
+  NSView *subview;
+
+  enumerator = [[container subviews] objectEnumerator];
+  while( ( subview = [enumerator nextObject] ) ) {
+    [subview removeFromSuperview];
+  }
+
+  [replacement setFrame:[container bounds]];
+  [replacement setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+  [container addSubview:replacement];
+}
+
 @implementation PreferencesController
 
 +(void) initialize
@@ -156,6 +172,8 @@ preferences_toolbar_image( NSString *symbol_name )
 
 - (void)awakeFromNib
 {
+  Class general_preferences_view_class;
+  id general_preferences_view;
   unsigned int selected_tab;
   NSToolbarItem *item;
 
@@ -168,6 +186,17 @@ preferences_toolbar_image( NSString *symbol_name )
   [[self window] setToolbar:toolbar];
   [toolbar release];
   toolbar = [[self window] toolbar];
+
+  general_preferences_view_class = NSClassFromString( @"GeneralPreferencesContainerView" );
+  if( general_preferences_view_class ) {
+    general_preferences_view = [[[general_preferences_view_class alloc]
+                                 initWithFrame:[generalPrefsView bounds]] autorelease];
+    if( [general_preferences_view respondsToSelector:@selector(configureWithResetTarget:action:)] ) {
+      [general_preferences_view configureWithResetTarget:self
+                                                  action:@selector(resetUserDefaults:)];
+    }
+    replace_preferences_view_subviews( generalPrefsView, general_preferences_view );
+  }
 
   [[self window] setToolbarStyle:NSWindowToolbarStylePreference];
 

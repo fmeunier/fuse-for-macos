@@ -46,7 +46,7 @@
             <point key="canvasLocation" x="-560" y="133.5"/>
         </window>
         <customView id="1347" userLabel="General">
-            <rect key="frame" x="0.0" y="0.0" width="576" height="299"/>
+            <rect key="frame" x="0.0" y="0.0" width="548" height="336"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1360">
