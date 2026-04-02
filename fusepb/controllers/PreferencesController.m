@@ -174,6 +174,8 @@ replace_preferences_view_subviews( NSView *container, NSView *replacement )
 {
   Class general_preferences_view_class;
   id general_preferences_view;
+  Class sound_preferences_view_class;
+  id sound_preferences_view;
   unsigned int selected_tab;
   NSToolbarItem *item;
 
@@ -196,6 +198,13 @@ replace_preferences_view_subviews( NSView *container, NSView *replacement )
                                                   action:@selector(resetUserDefaults:)];
     }
     replace_preferences_view_subviews( generalPrefsView, general_preferences_view );
+  }
+
+  sound_preferences_view_class = NSClassFromString( @"SoundPreferencesContainerView" );
+  if( sound_preferences_view_class ) {
+    sound_preferences_view = [[[sound_preferences_view_class alloc]
+                               initWithFrame:[soundPrefsView bounds]] autorelease];
+    replace_preferences_view_subviews( soundPrefsView, sound_preferences_view );
   }
 
   [[self window] setToolbarStyle:NSWindowToolbarStylePreference];
