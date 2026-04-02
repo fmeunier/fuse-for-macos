@@ -119,7 +119,7 @@ private struct SoundPreferencesView: View {
       Text(title)
         .frame(width: 116, alignment: .leading)
 
-      Slider(value: value, in: 0...100, step: 1)
+      Slider(value: value, in: 0...100, step: 10)
         .frame(width: 116)
     }
   }
