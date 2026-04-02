@@ -176,6 +176,8 @@ replace_preferences_view_subviews( NSView *container, NSView *replacement )
   id general_preferences_view;
   Class sound_preferences_view_class;
   id sound_preferences_view;
+  Class peripherals_preferences_view_class;
+  id peripherals_preferences_view;
   unsigned int selected_tab;
   NSToolbarItem *item;
 
@@ -205,6 +207,17 @@ replace_preferences_view_subviews( NSView *container, NSView *replacement )
     sound_preferences_view = [[[sound_preferences_view_class alloc]
                                initWithFrame:[soundPrefsView bounds]] autorelease];
     replace_preferences_view_subviews( soundPrefsView, sound_preferences_view );
+  }
+
+  peripherals_preferences_view_class = NSClassFromString( @"PeripheralsPreferencesContainerView" );
+  if( peripherals_preferences_view_class ) {
+    peripherals_preferences_view = [[[peripherals_preferences_view_class alloc]
+                                     initWithFrame:[peripheralsPrefsView bounds]] autorelease];
+    if( [peripherals_preferences_view respondsToSelector:@selector(configureWithFileChooserTarget:action:)] ) {
+      [peripherals_preferences_view configureWithFileChooserTarget:self
+                                                            action:@selector(chooseFile:)];
+    }
+    replace_preferences_view_subviews( peripheralsPrefsView, peripherals_preferences_view );
   }
 
   [[self window] setToolbarStyle:NSWindowToolbarStylePreference];
@@ -281,9 +294,6 @@ replace_preferences_view_subviews( NSView *container, NSView *replacement )
 
   [super showWindow:sender];
 
-  [self setMassStorageType];
-  [self setExternalSoundType];
-  
   [self fixPhantomTypistMode];
 
   [[NSNotificationCenter defaultCenter] addObserver:self

@@ -474,7 +474,7 @@ FRUVFRUVFRUVFcK1U3BlZWNoIFZvbHVtZQ
             <point key="canvasLocation" x="132" y="885"/>
         </customView>
         <customView id="1432" userLabel="Peripherals">
-            <rect key="frame" x="0.0" y="0.0" width="637" height="509"/>
+            <rect key="frame" x="0.0" y="0.0" width="637" height="585"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <box autoresizesSubviews="NO" fixedFrame="YES" borderType="line" title="External sound interface" translatesAutoresizingMaskIntoConstraints="NO" id="1833">
