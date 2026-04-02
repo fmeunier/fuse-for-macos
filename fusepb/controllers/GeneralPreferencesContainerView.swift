@@ -11,6 +11,37 @@ private let phantomTypistModes = [
   "Plus 3",
 ]
 
+private struct CenteredPreferencesPane<Content: View>: View {
+  let width: CGFloat
+  let height: CGFloat
+  let content: Content
+
+  init(width: CGFloat, height: CGFloat,
+       @ViewBuilder content: () -> Content) {
+    self.width = width
+    self.height = height
+    self.content = content()
+  }
+
+  var body: some View {
+    VStack(spacing: 0) {
+      Spacer(minLength: 0)
+
+      HStack(spacing: 0) {
+        Spacer(minLength: 0)
+
+        content
+          .frame(width: width, height: height, alignment: .topLeading)
+
+        Spacer(minLength: 0)
+      }
+
+      Spacer(minLength: 0)
+    }
+    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+  }
+}
+
 @objc(GeneralPreferencesContainerView)
 @objcMembers
 final class GeneralPreferencesContainerView: NSView {
@@ -79,24 +110,24 @@ private struct GeneralPreferencesView: View {
   }
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 14) {
-      topFields
-        .frame(maxWidth: .infinity, alignment: .center)
+    CenteredPreferencesPane(width: 548, height: 336) {
+      VStack(alignment: .leading, spacing: 14) {
+        topFields
+          .frame(maxWidth: .infinity, alignment: .center)
 
-      HStack(alignment: .top, spacing: 22) {
-        tapeLoadingOptions
-          .frame(maxWidth: .infinity, alignment: .topLeading)
+        HStack(alignment: .top, spacing: 22) {
+          tapeLoadingOptions
+            .frame(maxWidth: .infinity, alignment: .topLeading)
 
-        rightColumn
-          .frame(maxWidth: .infinity, alignment: .topLeading)
+          rightColumn
+            .frame(maxWidth: .infinity, alignment: .topLeading)
+        }
+
+        Button("Reset Preferences", action: resetAction)
+          .frame(maxWidth: .infinity, alignment: .trailing)
       }
-
-      Button("Reset Preferences", action: resetAction)
-        .frame(maxWidth: .infinity, alignment: .trailing)
+      .padding(18)
     }
-    .padding(18)
-    .frame(width: 548, height: 336, alignment: .topLeading)
-    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
   }
 
   private var topFields: some View {
