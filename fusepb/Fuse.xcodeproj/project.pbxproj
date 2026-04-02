@@ -37,6 +37,7 @@
 		B61700FC163EAFC600142336 /* PreferencesPaneLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61700FD163EAFC600142336 /* PreferencesPaneLayout.swift */; };
 		B61700FE163EAFC600142336 /* SoundPreferencesContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61700FF163EAFC600142336 /* SoundPreferencesContainerView.swift */; };
 		B6170100163EAFC600142336 /* PeripheralsPreferencesContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6170101163EAFC600142336 /* PeripheralsPreferencesContainerView.swift */; };
+		B7A1C40B3A75C10000C0DE01 /* RecordingPreferencesContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7A1C40C3A75C10000C0DE01 /* RecordingPreferencesContainerView.swift */; };
 		B61F45FF09121DF100C8096C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		B61F460009121DF100C8096C /* Credits.html in Resources */ = {isa = PBXBuildFile; fileRef = F5F291060396932B01730B00 /* Credits.html */; };
 		B61F460C09121DF100C8096C /* 48.rom in Resources */ = {isa = PBXBuildFile; fileRef = F559854C0389212301A804BA /* 48.rom */; };
@@ -460,6 +461,7 @@
 		B61700FD163EAFC600142336 /* PreferencesPaneLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PreferencesPaneLayout.swift; path = controllers/PreferencesPaneLayout.swift; sourceTree = SOURCE_ROOT; };
 		B61700FF163EAFC600142336 /* SoundPreferencesContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SoundPreferencesContainerView.swift; path = controllers/SoundPreferencesContainerView.swift; sourceTree = SOURCE_ROOT; };
 		B6170101163EAFC600142336 /* PeripheralsPreferencesContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PeripheralsPreferencesContainerView.swift; path = controllers/PeripheralsPreferencesContainerView.swift; sourceTree = SOURCE_ROOT; };
+		B7A1C40C3A75C10000C0DE01 /* RecordingPreferencesContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RecordingPreferencesContainerView.swift; path = controllers/RecordingPreferencesContainerView.swift; sourceTree = SOURCE_ROOT; };
 		B61F46A909121DF100C8096C /* Info-Fuse.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-Fuse.plist"; sourceTree = "<group>"; };
 		B61F46AA09121DF200C8096C /* Fuse.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Fuse.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B688FD9E2F54500000A08A6D /* Signing.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Signing.xcconfig; sourceTree = "<group>"; };
@@ -1100,6 +1102,7 @@
 				B61700FD163EAFC600142336 /* PreferencesPaneLayout.swift */,
 				B650F73E07E7CD3F00E4F3AF /* PreferencesController.h */,
 				B650F73F07E7CD3F00E4F3AF /* PreferencesController.m */,
+				B7A1C40C3A75C10000C0DE01 /* RecordingPreferencesContainerView.swift */,
 				B61700FF163EAFC600142336 /* SoundPreferencesContainerView.swift */,
 				B63F9949077182B4004D6DFA /* RollbackController.h */,
 				B63F994A077182B4004D6DFA /* RollbackController.m */,
@@ -2460,6 +2463,7 @@
 				B61700FA163EAFC600142336 /* GeneralPreferencesContainerView.swift in Sources */,
 				B61700FC163EAFC600142336 /* PreferencesPaneLayout.swift in Sources */,
 				B6170100163EAFC600142336 /* PeripheralsPreferencesContainerView.swift in Sources */,
+				B7A1C40B3A75C10000C0DE01 /* RecordingPreferencesContainerView.swift in Sources */,
 				B61700FE163EAFC600142336 /* SoundPreferencesContainerView.swift in Sources */,
 				B61F468C09121DF100C8096C /* ScalerNameToIdTransformer.m in Sources */,
 				B61F468D09121DF100C8096C /* MachineScalerIsEnabled.m in Sources */,

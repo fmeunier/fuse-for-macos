@@ -178,6 +178,8 @@ replace_preferences_view_subviews( NSView *container, NSView *replacement )
   id sound_preferences_view;
   Class peripherals_preferences_view_class;
   id peripherals_preferences_view;
+  Class recording_preferences_view_class;
+  id recording_preferences_view;
   unsigned int selected_tab;
   NSToolbarItem *item;
 
@@ -218,6 +220,13 @@ replace_preferences_view_subviews( NSView *container, NSView *replacement )
                                                             action:@selector(chooseFile:)];
     }
     replace_preferences_view_subviews( peripheralsPrefsView, peripherals_preferences_view );
+  }
+
+  recording_preferences_view_class = NSClassFromString( @"RecordingPreferencesContainerView" );
+  if( recording_preferences_view_class ) {
+    recording_preferences_view = [[[recording_preferences_view_class alloc]
+                                   initWithFrame:[rzxPrefsView bounds]] autorelease];
+    replace_preferences_view_subviews( rzxPrefsView, recording_preferences_view );
   }
 
   [[self window] setToolbarStyle:NSWindowToolbarStylePreference];
