@@ -1,7 +1,7 @@
 Fuse for macOS Source Distribution
 
 This is the source distribution of the macOS version of Fuse, targeting
-Apple Silicon (arm64) Macs running macOS 11.5 or later, built with Xcode.
+Apple Silicon (arm64) Macs running macOS 13.0 or later, built with Xcode.
 
 You will also need ruby, jekyll and jekyll-apple-help to build the in-app
 help content:

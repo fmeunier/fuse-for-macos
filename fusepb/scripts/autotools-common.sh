@@ -70,7 +70,7 @@ resolve_toolchain() {
   local arch deployment_target sdkroot
 
   arch="$(resolve_arch)"
-  deployment_target="${MACOSX_DEPLOYMENT_TARGET:-11.5}"
+  deployment_target="${MACOSX_DEPLOYMENT_TARGET:-13.0}"
   sdkroot="${SDKROOT:-$(xcrun --sdk macosx --show-sdk-path)}"
 
   SDKROOT="$sdkroot"
