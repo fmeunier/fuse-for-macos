@@ -109,6 +109,21 @@ replace_preferences_view_subviews( NSView *container, NSView *replacement )
   [container addSubview:replacement];
 }
 
+static NSSize
+preferences_view_fitting_size( NSView *prefs_view, CGFloat width )
+{
+  NSSize fitting_size;
+
+  [prefs_view setFrameSize:NSMakeSize( width, [prefs_view frame].size.height )];
+  [prefs_view layoutSubtreeIfNeeded];
+
+  fitting_size = [prefs_view fittingSize];
+  if( fitting_size.width <= 0.0 ) fitting_size.width = width;
+  if( fitting_size.height <= 0.0 ) fitting_size.height = [prefs_view frame].size.height;
+
+  return fitting_size;
+}
+
 NSArray *
 cocoa_inputs_joysticks( void )
 {
@@ -607,12 +622,15 @@ cocoa_video_machine_is_timex_disabled( void )
 - (IBAction)selectPrefPanel:(id)item
 {
   NSString *sender;
+  NSInteger selected_tag;
 
   if( item == nil ){  //set the pane to the default.
     sender = @"General";
     [toolbar setSelectedItemIdentifier:sender];
+    selected_tag = 0;
   } else {
     sender = [item label];
+    selected_tag = [item tag];
   }
 
   NSWindow *window = [self window];
@@ -644,6 +662,15 @@ cocoa_video_machine_is_timex_disabled( void )
   [window setContentView:tempView];
   [tempView release];
 
+  {
+    CGFloat content_width;
+    NSSize fitting_size;
+
+    content_width = [[window contentView] frame].size.width;
+    fitting_size = preferences_view_fitting_size( prefsView, content_width );
+    [prefsView setFrameSize:fitting_size];
+  }
+
   // mojo to get the right frame for the new window.
   NSRect newFrame = [window frame];
   newFrame.size.height = [prefsView frame].size.height +
@@ -658,7 +685,7 @@ cocoa_video_machine_is_timex_disabled( void )
   [window setContentView:prefsView];
 
   [[NSUserDefaults standardUserDefaults]
-    setObject:@([item tag]) forKey:@"preferencestab"];
+    setObject:@(selected_tag) forKey:@"preferencestab"];
 }
 
 // NSToolbar delegate method
