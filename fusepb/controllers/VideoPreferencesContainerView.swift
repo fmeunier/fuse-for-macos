@@ -54,25 +54,8 @@ private let videoFilterRightColumn = [
 
 private let videoFilterOptions = videoFilterLeftColumn + videoFilterRightColumn
 
-@objc(VideoPreferencesContainerView)
-@objcMembers
-final class VideoPreferencesContainerView: NSView {
-  override init(frame frameRect: NSRect) {
-    super.init(frame: frameRect)
-    installHostingView()
-  }
-
-  required init?(coder: NSCoder) {
-    super.init(coder: coder)
-    installHostingView()
-  }
-
-  private func installHostingView() {
-    let hostingView = NSHostingView(rootView: VideoPreferencesView())
-    hostingView.frame = bounds
-    hostingView.autoresizingMask = [.width, .height]
-    addSubview(hostingView)
-  }
+func videoPreferencesPane() -> AnyView {
+  AnyView(VideoPreferencesView())
 }
 
 private struct VideoPreferencesView: View {

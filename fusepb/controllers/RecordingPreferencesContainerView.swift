@@ -10,28 +10,8 @@ private let recordingMovieCompressionLevels = optionChoices(
   ]
 )
 
-@objc(RecordingPreferencesContainerView)
-@objcMembers
-final class RecordingPreferencesContainerView: NSView {
-  private var hostingView: NSHostingView<RecordingPreferencesView>?
-
-  override init(frame frameRect: NSRect) {
-    super.init(frame: frameRect)
-    installHostingView()
-  }
-
-  required init?(coder: NSCoder) {
-    super.init(coder: coder)
-    installHostingView()
-  }
-
-  private func installHostingView() {
-    let hostingView = NSHostingView(rootView: RecordingPreferencesView())
-    hostingView.frame = bounds
-    hostingView.autoresizingMask = [.width, .height]
-    addSubview(hostingView)
-    self.hostingView = hostingView
-  }
+func recordingPreferencesPane() -> AnyView {
+  AnyView(RecordingPreferencesView())
 }
 
 private struct RecordingPreferencesView: View {

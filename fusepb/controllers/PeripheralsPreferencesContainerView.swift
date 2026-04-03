@@ -40,50 +40,12 @@ private enum PrinterFileType: Int {
   case text = 1
 }
 
-@objc(PeripheralsPreferencesContainerView)
-@objcMembers
-final class PeripheralsPreferencesContainerView: NSView {
-  private weak var fileChooserTarget: AnyObject?
-  private var fileChooserAction: Selector?
-  private var hostingView: NSHostingView<PeripheralsPreferencesView>?
-
-  override init(frame frameRect: NSRect) {
-    super.init(frame: frameRect)
-    installHostingView()
-  }
-
-  required init?(coder: NSCoder) {
-    super.init(coder: coder)
-    installHostingView()
-  }
-
-  func configureWithFileChooserTarget(_ target: AnyObject?, action: Selector?) {
-    fileChooserTarget = target
-    fileChooserAction = action
-    hostingView?.rootView = makeRootView()
-  }
-
-  private func installHostingView() {
-    let hostingView = NSHostingView(rootView: makeRootView())
-    hostingView.frame = bounds
-    hostingView.autoresizingMask = [.width, .height]
-    addSubview(hostingView)
-    self.hostingView = hostingView
-  }
-
-  private func makeRootView() -> PeripheralsPreferencesView {
-    PeripheralsPreferencesView { [weak self] fileType in
-      self?.sendChooseFileAction(fileType)
+func peripheralsPreferencesPane(chooseFileAction: @escaping (Int) -> Void) -> AnyView {
+  AnyView(
+    PeripheralsPreferencesView { fileType in
+      chooseFileAction(fileType.rawValue)
     }
-  }
-
-  private func sendChooseFileAction(_ fileType: PrinterFileType) {
-    guard let fileChooserAction else { return }
-
-    let sender = NSButton()
-    sender.tag = fileType.rawValue
-    NSApp.sendAction(fileChooserAction, to: fileChooserTarget, from: sender)
-  }
+  )
 }
 
 private struct PeripheralsPreferencesView: View {

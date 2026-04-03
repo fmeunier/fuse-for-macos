@@ -14,12 +14,25 @@ private let phantomTypistModes = optionChoices(
   ]
 )
 
-@objc(GeneralPreferencesContainerView)
+private enum PreferencesPaneIdentifier: String {
+  case general = "General"
+  case sound = "Sound"
+  case peripherals = "Peripherals"
+  case recording = "Recording"
+  case inputs = "Inputs"
+  case rom = "ROM"
+  case machine = "Machine"
+  case video = "Video"
+}
+
+@objc(PreferencesRootContainerView)
 @objcMembers
-final class GeneralPreferencesContainerView: NSView {
-  private weak var resetTarget: AnyObject?
-  private var resetAction: Selector?
-  private var hostingView: NSHostingView<GeneralPreferencesView>?
+final class PreferencesRootContainerView: NSView {
+  private weak var controller: NSObject?
+  private weak var machineRomsController: NSArrayController?
+  private let romModel = ROMPreferencesModel()
+  private var selectedPane: PreferencesPaneIdentifier = .general
+  private var hostingView: NSHostingView<AnyView>?
 
   override init(frame frameRect: NSRect) {
     super.init(frame: frameRect)
@@ -31,11 +44,22 @@ final class GeneralPreferencesContainerView: NSView {
     installHostingView()
   }
 
-  @objc(configureWithResetTarget:action:)
-  func configure(resetTarget: AnyObject?, action: Selector) {
-    self.resetTarget = resetTarget
-    self.resetAction = action
-    hostingView?.rootView = makeRootView()
+  override var fittingSize: NSSize {
+    hostingView?.fittingSize ?? super.fittingSize
+  }
+
+  @objc(configureWithController:machineRomsController:)
+  func configure(controller: NSObject?, machineRomsController: NSArrayController?) {
+    self.controller = controller
+    self.machineRomsController = machineRomsController
+    romModel.configure(machineRomsController: machineRomsController)
+    updateRootView()
+  }
+
+  @objc(selectPaneWithIdentifier:)
+  func selectPane(withIdentifier identifier: NSString) {
+    selectedPane = PreferencesPaneIdentifier(rawValue: identifier as String) ?? .general
+    updateRootView()
   }
 
   private func installHostingView() {
@@ -46,16 +70,67 @@ final class GeneralPreferencesContainerView: NSView {
     self.hostingView = hostingView
   }
 
-  private func makeRootView() -> GeneralPreferencesView {
-    GeneralPreferencesView { [weak self] in
-      self?.sendResetAction()
+  private func updateRootView() {
+    hostingView?.rootView = makeRootView()
+    layoutSubtreeIfNeeded()
+  }
+
+  private func makeRootView() -> AnyView {
+    switch selectedPane {
+    case .general:
+      return generalPreferencesPane { [weak self] in
+        self?.sendAction("resetUserDefaults:")
+      }
+    case .sound:
+      return soundPreferencesPane()
+    case .peripherals:
+      return peripheralsPreferencesPane { [weak self] tag in
+        self?.sendAction("chooseFile:", tag: tag)
+      }
+    case .recording:
+      return recordingPreferencesPane()
+    case .inputs:
+      return inputsPreferencesPane { [weak self] tag in
+        self?.sendAction("setup:", tag: tag)
+      }
+    case .rom:
+      return romPreferencesPane(
+        model: romModel,
+        chooseROM: { [weak self] tag in
+          self?.sendAction("chooseROMFile:", tag: tag, refreshROMSelection: true)
+        },
+        resetROM: { [weak self] tag in
+          self?.sendAction("resetROMFile:", tag: tag, refreshROMSelection: true)
+        }
+      )
+    case .machine:
+      return machinePreferencesPane()
+    case .video:
+      return videoPreferencesPane()
     }
   }
 
-  private func sendResetAction() {
-    guard let resetAction else { return }
-    NSApp.sendAction(resetAction, to: resetTarget, from: self)
+  private func sendAction(_ selectorName: String, tag: Int? = nil,
+                          refreshROMSelection: Bool = false) {
+    guard let controller else { return }
+
+    let selector = NSSelectorFromString(selectorName)
+    if let tag {
+      let sender = NSButton()
+      sender.tag = tag
+      controller.perform(selector, with: sender)
+    } else {
+      NSApp.sendAction(selector, to: controller, from: self)
+    }
+
+    if refreshROMSelection {
+      romModel.refreshSelection()
+    }
   }
+}
+
+func generalPreferencesPane(resetAction: @escaping () -> Void) -> AnyView {
+  AnyView(GeneralPreferencesView(resetAction: resetAction))
 }
 
 private struct GeneralPreferencesView: View {

@@ -22,51 +22,12 @@ private enum InputsSetupTarget: Int {
   case joystick2 = 2
 }
 
-@objc(InputsPreferencesContainerView)
-@objcMembers
-final class InputsPreferencesContainerView: NSView {
-  private weak var setupTarget: AnyObject?
-  private var setupAction: Selector?
-  private var hostingView: NSHostingView<InputsPreferencesView>?
-
-  override init(frame frameRect: NSRect) {
-    super.init(frame: frameRect)
-    installHostingView()
-  }
-
-  required init?(coder: NSCoder) {
-    super.init(coder: coder)
-    installHostingView()
-  }
-
-  @objc(configureWithSetupTarget:action:)
-  func configure(setupTarget: AnyObject?, action: Selector) {
-    self.setupTarget = setupTarget
-    self.setupAction = action
-    hostingView?.rootView = makeRootView()
-  }
-
-  private func installHostingView() {
-    let hostingView = NSHostingView(rootView: makeRootView())
-    hostingView.frame = bounds
-    hostingView.autoresizingMask = [.width, .height]
-    addSubview(hostingView)
-    self.hostingView = hostingView
-  }
-
-  private func makeRootView() -> InputsPreferencesView {
-    InputsPreferencesView { [weak self] target in
-      self?.sendSetupAction(target)
+func inputsPreferencesPane(setupAction: @escaping (Int) -> Void) -> AnyView {
+  AnyView(
+    InputsPreferencesView { target in
+      setupAction(target.rawValue)
     }
-  }
-
-  private func sendSetupAction(_ target: InputsSetupTarget) {
-    guard let setupTarget = setupTarget as? NSObject, let setupAction else { return }
-
-    let sender = NSButton()
-    sender.tag = target.rawValue
-    setupTarget.perform(setupAction, with: sender)
-  }
+  )
 }
 
 private struct InputsPreferencesView: View {

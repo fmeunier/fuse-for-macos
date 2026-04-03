@@ -17,70 +17,16 @@ private let romEntries = [
   ROMEntry(id: 3, title: "ROM 3:"),
 ]
 
-@objc(ROMPreferencesContainerView)
-@objcMembers
-final class ROMPreferencesContainerView: NSView {
-  private weak var actionTarget: NSObject?
-  private weak var machineRomsController: NSArrayController?
-  private var chooseAction: Selector?
-  private var resetAction: Selector?
-  private var hostingView: NSHostingView<ROMPaneView>?
-  private let model = ROMPreferencesModel()
-
-  override init(frame frameRect: NSRect) {
-    super.init(frame: frameRect)
-    installHostingView()
-  }
-
-  required init?(coder: NSCoder) {
-    super.init(coder: coder)
-    installHostingView()
-  }
-
-  @objc(configureWithMachineRomsController:actionTarget:chooseAction:resetAction:)
-  func configure(machineRomsController: NSArrayController?, actionTarget: NSObject?,
-                 chooseAction: Selector?, resetAction: Selector?) {
-    self.machineRomsController = machineRomsController
-    self.actionTarget = actionTarget
-    self.chooseAction = chooseAction
-    self.resetAction = resetAction
-    model.configure(machineRomsController: machineRomsController)
-    hostingView?.rootView = makeRootView()
-  }
-
-  private func installHostingView() {
-    let hostingView = NSHostingView(rootView: makeRootView())
-    hostingView.frame = bounds
-    hostingView.autoresizingMask = [.width, .height]
-    addSubview(hostingView)
-    self.hostingView = hostingView
-  }
-
-  private func makeRootView() -> ROMPaneView {
+func romPreferencesPane(model: ROMPreferencesModel,
+                        chooseROM: @escaping (Int) -> Void,
+                        resetROM: @escaping (Int) -> Void) -> AnyView {
+  AnyView(
     ROMPaneView(
       model: model,
-      chooseROM: { [weak self] entry in self?.chooseROM(for: entry) },
-      resetROM: { [weak self] entry in self?.resetROM(for: entry) }
+      chooseROM: { entry in chooseROM(entry.id) },
+      resetROM: { entry in resetROM(entry.id) }
     )
-  }
-
-  private func chooseROM(for entry: ROMEntry) {
-    guard let actionTarget, let chooseAction else { return }
-
-    let sender = NSButton()
-    sender.tag = entry.id
-    actionTarget.perform(chooseAction, with: sender)
-    model.refreshSelection()
-  }
-
-  private func resetROM(for entry: ROMEntry) {
-    guard let actionTarget, let resetAction else { return }
-
-    let sender = NSButton()
-    sender.tag = entry.id
-    actionTarget.perform(resetAction, with: sender)
-    model.refreshSelection()
-  }
+  )
 }
 
 final class ROMPreferencesModel: ObservableObject {

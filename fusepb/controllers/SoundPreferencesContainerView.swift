@@ -19,28 +19,8 @@ private let soundStereoModes = optionChoices(
   ]
 )
 
-@objc(SoundPreferencesContainerView)
-@objcMembers
-final class SoundPreferencesContainerView: NSView {
-  private var hostingView: NSHostingView<SoundPreferencesView>?
-
-  override init(frame frameRect: NSRect) {
-    super.init(frame: frameRect)
-    installHostingView()
-  }
-
-  required init?(coder: NSCoder) {
-    super.init(coder: coder)
-    installHostingView()
-  }
-
-  private func installHostingView() {
-    let hostingView = NSHostingView(rootView: SoundPreferencesView())
-    hostingView.frame = bounds
-    hostingView.autoresizingMask = [.width, .height]
-    addSubview(hostingView)
-    self.hostingView = hostingView
-  }
+func soundPreferencesPane() -> AnyView {
+  AnyView(SoundPreferencesView())
 }
 
 private struct SoundPreferencesView: View {

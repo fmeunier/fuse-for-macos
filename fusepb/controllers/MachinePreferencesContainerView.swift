@@ -25,25 +25,8 @@ private let fallbackMachineOptions = [
   MachinePreferenceOption(id: "se", name: "Spectrum SE"),
 ]
 
-@objc(MachinePreferencesContainerView)
-@objcMembers
-final class MachinePreferencesContainerView: NSView {
-  override init(frame frameRect: NSRect) {
-    super.init(frame: frameRect)
-    installHostingView()
-  }
-
-  required init?(coder: NSCoder) {
-    super.init(coder: coder)
-    installHostingView()
-  }
-
-  private func installHostingView() {
-    let hostingView = NSHostingView(rootView: MachinePreferencesView())
-    hostingView.frame = bounds
-    hostingView.autoresizingMask = [.width, .height]
-    addSubview(hostingView)
-  }
+func machinePreferencesPane() -> AnyView {
+  AnyView(MachinePreferencesView())
 }
 
 private struct MachinePreferencesView: View {

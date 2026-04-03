@@ -239,23 +239,8 @@ cocoa_video_machine_is_timex_disabled( void )
 
 - (void)awakeFromNib
 {
-  Class general_preferences_view_class;
-  id general_preferences_view;
-  Class sound_preferences_view_class;
-  id sound_preferences_view;
-  Class peripherals_preferences_view_class;
-  id peripherals_preferences_view;
-  Class recording_preferences_view_class;
-  id recording_preferences_view;
-  Class inputs_preferences_view_class;
-  id inputs_preferences_view;
-  Class machine_preferences_view_class;
-  id machine_preferences_view;
-  Class rom_preferences_view_class;
-  id rom_preferences_view;
-  Class video_preferences_view_class;
-  id video_preferences_view;
-  unsigned int selected_tab;
+  Class preferences_root_view_class;
+  NSUInteger selected_tab;
   NSToolbarItem *item;
 
   toolbar = [[NSToolbar alloc] initWithIdentifier:@"PreferencesToolbar"];
@@ -268,78 +253,12 @@ cocoa_video_machine_is_timex_disabled( void )
   [toolbar release];
   toolbar = [[self window] toolbar];
 
-  general_preferences_view_class = NSClassFromString( @"GeneralPreferencesContainerView" );
-  if( general_preferences_view_class ) {
-    general_preferences_view = [[[general_preferences_view_class alloc]
-                                 initWithFrame:[generalPrefsView bounds]] autorelease];
-    if( [general_preferences_view respondsToSelector:@selector(configureWithResetTarget:action:)] ) {
-      [general_preferences_view configureWithResetTarget:self
-                                                  action:@selector(resetUserDefaults:)];
-    }
-    replace_preferences_view_subviews( generalPrefsView, general_preferences_view );
-  }
-
-  sound_preferences_view_class = NSClassFromString( @"SoundPreferencesContainerView" );
-  if( sound_preferences_view_class ) {
-    sound_preferences_view = [[[sound_preferences_view_class alloc]
-                               initWithFrame:[soundPrefsView bounds]] autorelease];
-    replace_preferences_view_subviews( soundPrefsView, sound_preferences_view );
-  }
-
-  peripherals_preferences_view_class = NSClassFromString( @"PeripheralsPreferencesContainerView" );
-  if( peripherals_preferences_view_class ) {
-    peripherals_preferences_view = [[[peripherals_preferences_view_class alloc]
-                                     initWithFrame:[peripheralsPrefsView bounds]] autorelease];
-    if( [peripherals_preferences_view respondsToSelector:@selector(configureWithFileChooserTarget:action:)] ) {
-      [peripherals_preferences_view configureWithFileChooserTarget:self
-                                                            action:@selector(chooseFile:)];
-    }
-    replace_preferences_view_subviews( peripheralsPrefsView, peripherals_preferences_view );
-  }
-
-  recording_preferences_view_class = NSClassFromString( @"RecordingPreferencesContainerView" );
-  if( recording_preferences_view_class ) {
-    recording_preferences_view = [[[recording_preferences_view_class alloc]
-                                   initWithFrame:[rzxPrefsView bounds]] autorelease];
-    replace_preferences_view_subviews( rzxPrefsView, recording_preferences_view );
-  }
-
-  inputs_preferences_view_class = NSClassFromString( @"InputsPreferencesContainerView" );
-  if( inputs_preferences_view_class ) {
-    inputs_preferences_view = [[[inputs_preferences_view_class alloc]
-                                initWithFrame:[joysticksPrefsView bounds]] autorelease];
-    if( [inputs_preferences_view respondsToSelector:@selector(configureWithSetupTarget:action:)] ) {
-      [inputs_preferences_view configureWithSetupTarget:self
-                                                 action:@selector(setup:)];
-    }
-    replace_preferences_view_subviews( joysticksPrefsView, inputs_preferences_view );
-  }
-
-  machine_preferences_view_class = NSClassFromString( @"MachinePreferencesContainerView" );
-  if( machine_preferences_view_class ) {
-    machine_preferences_view = [[[machine_preferences_view_class alloc]
-                                 initWithFrame:[machinePrefsView bounds]] autorelease];
-    replace_preferences_view_subviews( machinePrefsView, machine_preferences_view );
-  }
-
-  rom_preferences_view_class = NSClassFromString( @"ROMPreferencesContainerView" );
-  if( rom_preferences_view_class ) {
-    rom_preferences_view = [[[rom_preferences_view_class alloc]
-                             initWithFrame:[romPrefsView bounds]] autorelease];
-    if( [rom_preferences_view respondsToSelector:@selector(configureWithMachineRomsController:actionTarget:chooseAction:resetAction:)] ) {
-      [rom_preferences_view configureWithMachineRomsController:machineRomsController
-                                                   actionTarget:self
-                                                   chooseAction:@selector(chooseROMFile:)
-                                                    resetAction:@selector(resetROMFile:)];
-    }
-    replace_preferences_view_subviews( romPrefsView, rom_preferences_view );
-  }
-
-  video_preferences_view_class = NSClassFromString( @"VideoPreferencesContainerView" );
-  if( video_preferences_view_class ) {
-    video_preferences_view = [[[video_preferences_view_class alloc]
-                               initWithFrame:[filterPrefsView bounds]] autorelease];
-    replace_preferences_view_subviews( filterPrefsView, video_preferences_view );
+  preferences_root_view_class = NSClassFromString( @"PreferencesRootContainerView" );
+  if( preferences_root_view_class ) {
+    preferencesRootContainerView = [[[preferences_root_view_class alloc]
+                                     initWithFrame:[[[self window] contentView] bounds]] autorelease];
+    [self configurePreferencesRootContainerView];
+    replace_preferences_view_subviews( [[self window] contentView], preferencesRootContainerView );
   }
 
   [[self window] setToolbarStyle:NSWindowToolbarStylePreference];
@@ -413,6 +332,8 @@ cocoa_video_machine_is_timex_disabled( void )
 
   machineRoms = settings_set_rom_array( &settings_current );
   [machineRoms retain];
+
+  [self configurePreferencesRootContainerView];
 
   [super showWindow:sender];
 
@@ -635,32 +556,12 @@ cocoa_video_machine_is_timex_disabled( void )
 
   NSWindow *window = [self window];
 
-  // make a temp pointer.
-  NSView *prefsView = generalPrefsView;
+  NSView *prefsView = preferencesRootContainerView;
 
   // set the title to the name of the Preference Item.
   [window setTitle:sender];
 
-  if( [sender isEqualToString:@"Sound"] ) {
-    prefsView = soundPrefsView;
-  } else if( [sender isEqualToString:@"Peripherals"] ) {
-    prefsView = peripheralsPrefsView;
-  } else if( [sender isEqualToString:@"Recording"] ) {
-    prefsView = rzxPrefsView;
-  } else if( [sender isEqualToString:@"Inputs"] ) {
-    prefsView = joysticksPrefsView;
-  } else if( [sender isEqualToString:@"ROM"] ) {
-    prefsView = romPrefsView;
-  } else if( [sender isEqualToString:@"Machine"] ) {
-    prefsView = machinePrefsView;
-  } else if( [sender isEqualToString:@"Video"] ) {
-    prefsView = filterPrefsView;
-  }
-
-  // to stop flicker, we make a temp blank view.
-  NSView *tempView = [[NSView alloc] initWithFrame:[[window contentView] frame]];
-  [window setContentView:tempView];
-  [tempView release];
+  [(id)preferencesRootContainerView selectPaneWithIdentifier:sender];
 
   {
     CGFloat content_width;
@@ -681,8 +582,7 @@ cocoa_video_machine_is_timex_disabled( void )
   // set the frame to newFrame and animate it.
   [window setShowsResizeIndicator:YES];
   [window setFrame:newFrame display:YES animate:YES];
-  // set the main content view to the new view we have picked through the if structure above.
-  [window setContentView:prefsView];
+  [[window contentView] setFrameSize:[prefsView frame].size];
 
   [[NSUserDefaults standardUserDefaults]
     setObject:@(selected_tag) forKey:@"preferencestab"];
@@ -693,6 +593,14 @@ cocoa_video_machine_is_timex_disabled( void )
 {
   // Every toolbar icon is selectable
   return [[bar items] valueForKey:@"itemIdentifier"];
+}
+
+- (void)configurePreferencesRootContainerView
+{
+  if( !preferencesRootContainerView ) return;
+
+  [(id)preferencesRootContainerView configureWithController:self
+                                       machineRomsController:machineRomsController];
 }
 
 - (unsigned int)countOfMachineRoms

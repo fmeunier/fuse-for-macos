@@ -26,20 +26,13 @@
 #import <AppKit/AppKit.h>
 
 @class JoystickConfigurationController;
+@class PreferencesRootContainerView;
 
-@interface PreferencesController : NSWindowController
+@interface PreferencesController : NSWindowController <NSToolbarDelegate>
 {
   IBOutlet NSArrayController *machineRomsController;
-  IBOutlet NSTabView *tabView;
   NSToolbar *toolbar;
-  IBOutlet NSView *generalPrefsView;
-  IBOutlet NSView *soundPrefsView;
-  IBOutlet NSView *peripheralsPrefsView;
-  IBOutlet NSView *rzxPrefsView;
-  IBOutlet NSView *joysticksPrefsView;
-  IBOutlet NSView *romPrefsView;
-  IBOutlet NSView *machinePrefsView;
-  IBOutlet NSView *filterPrefsView;
+  NSView *preferencesRootContainerView;
 
   JoystickConfigurationController *joystickConfigurationController;
 
@@ -65,6 +58,7 @@
 - (NSArray *)toolbarDefaultItemIdentifiers:(NSToolbar *)bar;
 - (NSArray *)toolbarSelectableItemIdentifiers:(NSToolbar *)bar;
 - (void)fixPhantomTypistMode;
+- (void)configurePreferencesRootContainerView;
 
 - (unsigned int)countOfMachineRoms;
 - (id)objectInMachineRomsAtIndex:(unsigned int)index;

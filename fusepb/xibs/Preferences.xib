@@ -8,15 +8,7 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="PreferencesController">
             <connections>
-                <outlet property="filterPrefsView" destination="1714" id="1775"/>
-                <outlet property="generalPrefsView" destination="1347" id="1773"/>
-                <outlet property="joysticksPrefsView" destination="1506" id="1774"/>
-                <outlet property="machinePrefsView" destination="1686" id="1776"/>
                 <outlet property="machineRomsController" destination="533" id="991"/>
-                <outlet property="peripheralsPrefsView" destination="1432" id="PWK-Rn-Ckh"/>
-                <outlet property="romPrefsView" destination="1582" id="1778"/>
-                <outlet property="rzxPrefsView" destination="1488" id="1779"/>
-                <outlet property="soundPrefsView" destination="1408" id="1780"/>
                 <outlet property="window" destination="5" id="239"/>
             </connections>
         </customObject>
@@ -38,42 +30,6 @@
             </connections>
             <point key="canvasLocation" x="-560" y="133.5"/>
         </window>
-        <customView id="1347" userLabel="General">
-            <rect key="frame" x="0.0" y="0.0" width="548" height="336"/>
-            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-            <point key="canvasLocation" x="114" y="472.5"/>
-        </customView>
-        <customView id="1408" userLabel="Sound">
-            <rect key="frame" x="0.0" y="0.0" width="628" height="302"/>
-            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-            <point key="canvasLocation" x="132" y="885"/>
-        </customView>
-        <customView id="1432" userLabel="Peripherals">
-            <rect key="frame" x="0.0" y="0.0" width="637" height="585"/>
-            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-            <point key="canvasLocation" x="330.5" y="-551.5"/>
-        </customView>
-        <customView id="1488" userLabel="RZX">
-            <rect key="frame" x="0.0" y="0.0" width="627" height="172"/>
-            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-        </customView>
-        <customView id="1506" userLabel="Joysticks">
-            <rect key="frame" x="0.0" y="0.0" width="630" height="397"/>
-            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-        </customView>
-        <customView id="1582" userLabel="ROM">
-            <rect key="frame" x="0.0" y="0.0" width="627" height="343"/>
-            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-            <point key="canvasLocation" x="139.5" y="168.5"/>
-        </customView>
-        <customView id="1686" userLabel="Machine">
-            <rect key="frame" x="0.0" y="0.0" width="627" height="398"/>
-            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-        </customView>
-        <customView id="1714" userLabel="Graphics Filter">
-            <rect key="frame" x="0.0" y="0.0" width="627" height="296"/>
-            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-        </customView>
         <userDefaultsController representsSharedInstance="YES" id="270" userLabel="Shared Defaults"/>
         <arrayController editable="NO" clearsFilterPredicateOnInsertion="NO" id="533" userLabel="MachineROMSController">
             <declaredKeys>
