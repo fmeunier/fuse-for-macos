@@ -41,6 +41,7 @@ final class PreferencesRootContainerView: NSView {
   private let romModel = ROMPreferencesModel()
   private var selectedPane: PreferencesPaneIdentifier = .general
   private var hostingView: NSHostingView<AnyView>?
+  private var peripheralsHostingView: NSHostingView<AnyView>?
   private var measuredPaneHeights: [PreferencesPaneIdentifier: CGFloat] = [:]
 
   override init(frame frameRect: NSRect) {
@@ -54,7 +55,7 @@ final class PreferencesRootContainerView: NSView {
   }
 
   override var fittingSize: NSSize {
-    hostingView?.fittingSize ?? super.fittingSize
+    activeHostingView?.fittingSize ?? super.fittingSize
   }
 
   @objc(configureWithController:machineRomsController:)
@@ -63,6 +64,13 @@ final class PreferencesRootContainerView: NSView {
     self.machineRomsController = machineRomsController
     romModel.configure(machineRomsController: machineRomsController)
     updateRootView()
+  }
+
+  @objc(schedulePeripheralsWarmup)
+  func schedulePeripheralsWarmup() {
+    DispatchQueue.main.async { [weak self] in
+      self?.warmPeripheralsHostingView()
+    }
   }
 
   @objc(selectPaneWithIdentifier:)
@@ -76,23 +84,50 @@ final class PreferencesRootContainerView: NSView {
     NSSize(width: 0, height: measuredPaneHeights[selectedPane] ?? selectedPane.fallbackContentHeight)
   }
 
+  private var activeHostingView: NSHostingView<AnyView>? {
+    selectedPane == .peripherals ? peripheralsHostingView : hostingView
+  }
+
   private func installHostingView() {
-    let hostingView = NSHostingView(rootView: makeRootView())
+    let hostingView = NSHostingView(rootView: makeRootView(for: selectedPane))
     hostingView.frame = bounds
     hostingView.autoresizingMask = [.width, .height]
     addSubview(hostingView)
     self.hostingView = hostingView
   }
 
+  private func warmPeripheralsHostingView() {
+    guard peripheralsHostingView == nil else { return }
+
+    let hostingView = NSHostingView(rootView: makePeripheralsRootView())
+    hostingView.frame = bounds
+    hostingView.autoresizingMask = [.width, .height]
+    hostingView.isHidden = true
+    addSubview(hostingView)
+    hostingView.layoutSubtreeIfNeeded()
+    peripheralsHostingView = hostingView
+  }
+
   private func updateRootView() {
-    hostingView?.rootView = makeRootView()
+    if selectedPane == .peripherals {
+      warmPeripheralsHostingView()
+      hostingView?.isHidden = true
+      peripheralsHostingView?.isHidden = false
+      peripheralsHostingView?.layoutSubtreeIfNeeded()
+    } else {
+      hostingView?.rootView = makeRootView(for: selectedPane)
+      hostingView?.isHidden = false
+      peripheralsHostingView?.isHidden = true
+      hostingView?.layoutSubtreeIfNeeded()
+    }
+
     layoutSubtreeIfNeeded()
   }
 
-  private func makeRootView() -> AnyView {
+  private func makeRootView(for pane: PreferencesPaneIdentifier) -> AnyView {
     let paneView: AnyView
 
-    switch selectedPane {
+    switch pane {
     case .general:
       paneView = generalPreferencesPane { [weak self] in
         self?.sendAction("resetUserDefaults:")
@@ -100,9 +135,7 @@ final class PreferencesRootContainerView: NSView {
     case .sound:
       paneView = soundPreferencesPane()
     case .peripherals:
-      paneView = peripheralsPreferencesPane { [weak self] tag in
-        self?.sendAction("chooseFile:", tag: tag)
-      }
+      paneView = makePeripheralsPaneView()
     case .recording:
       paneView = recordingPreferencesPane()
     case .inputs:
@@ -128,19 +161,31 @@ final class PreferencesRootContainerView: NSView {
     return AnyView(
       paneView
         .onPreferenceChange(PreferencesPaneHeightKey.self) { [weak self] height in
-          self?.updateMeasuredHeight(height)
+          self?.updateMeasuredHeight(height, for: pane)
         }
     )
   }
 
-  private func updateMeasuredHeight(_ height: CGFloat) {
+  private func makePeripheralsPaneView() -> AnyView {
+    peripheralsPreferencesPane { [weak self] tag in
+      self?.sendAction("chooseFile:", tag: tag)
+    }
+  }
+
+  private func makePeripheralsRootView() -> AnyView {
+    makeRootView(for: .peripherals)
+  }
+
+  private func updateMeasuredHeight(_ height: CGFloat, for pane: PreferencesPaneIdentifier) {
     guard height > 0 else { return }
 
     let roundedHeight = ceil(height)
-    let currentHeight = measuredPaneHeights[selectedPane] ?? selectedPane.fallbackContentHeight
+    let currentHeight = measuredPaneHeights[pane] ?? pane.fallbackContentHeight
     guard abs(currentHeight - roundedHeight) > 0.5 else { return }
 
-    measuredPaneHeights[selectedPane] = roundedHeight
+    measuredPaneHeights[pane] = roundedHeight
+    guard pane == selectedPane else { return }
+
     DispatchQueue.main.async { [weak self] in
       self?.sendAction("applyPreferredPaneSize")
     }

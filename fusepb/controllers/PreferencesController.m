@@ -65,6 +65,7 @@
           machineRomsController:(NSArrayController *)machineRomsController;
 - (void)selectPaneWithIdentifier:(NSString *)identifier;
 - (NSSize)preferredPaneSize;
+- (void)schedulePeripheralsWarmup;
 
 @end
 
@@ -334,6 +335,8 @@ cocoa_video_machine_is_timex_disabled( void )
   [self configurePreferencesRootContainerView];
 
   [super showWindow:sender];
+
+  [preferencesRootContainerView schedulePeripheralsWarmup];
 
   [self fixPhantomTypistMode];
 
