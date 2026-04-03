@@ -36,6 +36,12 @@ func cocoa_string_sound_stereo_ay_bridge(_ value: UnsafePointer<CChar>?) -> Unma
 @_silgen_name("cocoa_string_movie_movie_compr")
 func cocoa_string_movie_movie_compr_bridge(_ value: UnsafePointer<CChar>?) -> Unmanaged<AnyObject>?
 
+@_silgen_name("cocoa_video_machine_is_timex_enabled")
+func cocoa_video_machine_is_timex_enabled_bridge() -> Bool
+
+@_silgen_name("cocoa_video_machine_is_timex_disabled")
+func cocoa_video_machine_is_timex_disabled_bridge() -> Bool
+
 func optionChoices(_ provider: () -> Unmanaged<AnyObject>?, fallback: [String]) -> [String] {
   guard let object = provider()?.takeUnretainedValue() as? [String], !object.isEmpty else {
     return fallback
@@ -60,6 +66,14 @@ func enumeratedStringBinding(for value: Binding<String>,
   } set: { newValue in
     value.wrappedValue = newValue
   }
+}
+
+func videoMachineIsTimexEnabled() -> Bool {
+  cocoa_video_machine_is_timex_enabled_bridge()
+}
+
+func videoMachineIsTimexDisabled() -> Bool {
+  cocoa_video_machine_is_timex_disabled_bridge()
 }
 
 struct CenteredPreferencesPane<Content: View>: View {

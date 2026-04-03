@@ -149,6 +149,24 @@ cocoa_machine_ids( void )
   return machine_ids;
 }
 
+BOOL
+cocoa_video_machine_is_timex_enabled( void )
+{
+  NSUserDefaults *defaults;
+  fuse_machine_info *machine_info;
+
+  defaults = [NSUserDefaults standardUserDefaults];
+  machine_info = machine_get_machine_info( [[defaults stringForKey:@"machine"] UTF8String] );
+
+  return machine_info && machine_info->timex ? YES : NO;
+}
+
+BOOL
+cocoa_video_machine_is_timex_disabled( void )
+{
+  return cocoa_video_machine_is_timex_enabled() ? NO : YES;
+}
+
 @implementation PreferencesController
 
 +(void) initialize
@@ -224,6 +242,10 @@ cocoa_machine_ids( void )
   id inputs_preferences_view;
   Class machine_preferences_view_class;
   id machine_preferences_view;
+  Class rom_preferences_view_class;
+  id rom_preferences_view;
+  Class video_preferences_view_class;
+  id video_preferences_view;
   unsigned int selected_tab;
   NSToolbarItem *item;
 
@@ -289,6 +311,26 @@ cocoa_machine_ids( void )
     machine_preferences_view = [[[machine_preferences_view_class alloc]
                                  initWithFrame:[machinePrefsView bounds]] autorelease];
     replace_preferences_view_subviews( machinePrefsView, machine_preferences_view );
+  }
+
+  rom_preferences_view_class = NSClassFromString( @"ROMPreferencesContainerView" );
+  if( rom_preferences_view_class ) {
+    rom_preferences_view = [[[rom_preferences_view_class alloc]
+                             initWithFrame:[romPrefsView bounds]] autorelease];
+    if( [rom_preferences_view respondsToSelector:@selector(configureWithMachineRomsController:actionTarget:chooseAction:resetAction:)] ) {
+      [rom_preferences_view configureWithMachineRomsController:machineRomsController
+                                                   actionTarget:self
+                                                   chooseAction:@selector(chooseROMFile:)
+                                                    resetAction:@selector(resetROMFile:)];
+    }
+    replace_preferences_view_subviews( romPrefsView, rom_preferences_view );
+  }
+
+  video_preferences_view_class = NSClassFromString( @"VideoPreferencesContainerView" );
+  if( video_preferences_view_class ) {
+    video_preferences_view = [[[video_preferences_view_class alloc]
+                               initWithFrame:[filterPrefsView bounds]] autorelease];
+    replace_preferences_view_subviews( filterPrefsView, video_preferences_view );
   }
 
   [[self window] setToolbarStyle:NSWindowToolbarStylePreference];
