@@ -12,6 +12,12 @@ func cocoa_sound_stereo_ay_bridge() -> Unmanaged<AnyObject>?
 @_silgen_name("cocoa_movie_movie_compr")
 func cocoa_movie_movie_compr_bridge() -> Unmanaged<AnyObject>?
 
+@_silgen_name("cocoa_inputs_joysticks")
+func cocoa_inputs_joysticks_bridge() -> Unmanaged<AnyObject>?
+
+@_silgen_name("cocoa_inputs_hid_joysticks")
+func cocoa_inputs_hid_joysticks_bridge() -> Unmanaged<AnyObject>?
+
 @_silgen_name("cocoa_string_media_phantom_typist_mode")
 func cocoa_string_media_phantom_typist_mode_bridge(_ value: UnsafePointer<CChar>?) -> Unmanaged<AnyObject>?
 

@@ -109,6 +109,18 @@ replace_preferences_view_subviews( NSView *container, NSView *replacement )
   [container addSubview:replacement];
 }
 
+NSArray *
+cocoa_inputs_joysticks( void )
+{
+  return [[Joystick allJoysticks] valueForKey:@"joystickName"];
+}
+
+NSArray *
+cocoa_inputs_hid_joysticks( void )
+{
+  return [[HIDJoystick allJoysticks] valueForKey:@"joystickName"];
+}
+
 @implementation PreferencesController
 
 +(void) initialize
@@ -180,6 +192,8 @@ replace_preferences_view_subviews( NSView *container, NSView *replacement )
   id peripherals_preferences_view;
   Class recording_preferences_view_class;
   id recording_preferences_view;
+  Class inputs_preferences_view_class;
+  id inputs_preferences_view;
   unsigned int selected_tab;
   NSToolbarItem *item;
 
@@ -227,6 +241,17 @@ replace_preferences_view_subviews( NSView *container, NSView *replacement )
     recording_preferences_view = [[[recording_preferences_view_class alloc]
                                    initWithFrame:[rzxPrefsView bounds]] autorelease];
     replace_preferences_view_subviews( rzxPrefsView, recording_preferences_view );
+  }
+
+  inputs_preferences_view_class = NSClassFromString( @"InputsPreferencesContainerView" );
+  if( inputs_preferences_view_class ) {
+    inputs_preferences_view = [[[inputs_preferences_view_class alloc]
+                                initWithFrame:[joysticksPrefsView bounds]] autorelease];
+    if( [inputs_preferences_view respondsToSelector:@selector(configureWithSetupTarget:action:)] ) {
+      [inputs_preferences_view configureWithSetupTarget:self
+                                                 action:@selector(setup:)];
+    }
+    replace_preferences_view_subviews( joysticksPrefsView, inputs_preferences_view );
   }
 
   [[self window] setToolbarStyle:NSWindowToolbarStylePreference];

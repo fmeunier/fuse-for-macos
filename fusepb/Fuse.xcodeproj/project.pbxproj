@@ -34,6 +34,7 @@
 		B61700F4163EAF8D00142336 /* PokeMemory.xib in Resources */ = {isa = PBXBuildFile; fileRef = B61700F3163EAF8D00142336 /* PokeMemory.xib */; };
 		B61700F7163EAFC600142336 /* PokeMemoryController.m in Sources */ = {isa = PBXBuildFile; fileRef = B61700F6163EAFC600142336 /* PokeMemoryController.m */; };
 		B61700FA163EAFC600142336 /* GeneralPreferencesContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61700FB163EAFC600142336 /* GeneralPreferencesContainerView.swift */; };
+		B61700F9163EAFC600142336 /* InputsPreferencesContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61700F8163EAFC600142336 /* InputsPreferencesContainerView.swift */; };
 		B61700FC163EAFC600142336 /* PreferencesPaneLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61700FD163EAFC600142336 /* PreferencesPaneLayout.swift */; };
 		B61700FE163EAFC600142336 /* SoundPreferencesContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61700FF163EAFC600142336 /* SoundPreferencesContainerView.swift */; };
 		B6170100163EAFC600142336 /* PeripheralsPreferencesContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6170101163EAFC600142336 /* PeripheralsPreferencesContainerView.swift */; };
@@ -458,6 +459,7 @@
 		B61700F5163EAFC600142336 /* PokeMemoryController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PokeMemoryController.h; path = controllers/PokeMemoryController.h; sourceTree = "<group>"; };
 		B61700F6163EAFC600142336 /* PokeMemoryController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PokeMemoryController.m; path = controllers/PokeMemoryController.m; sourceTree = "<group>"; };
 		B61700FB163EAFC600142336 /* GeneralPreferencesContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GeneralPreferencesContainerView.swift; path = controllers/GeneralPreferencesContainerView.swift; sourceTree = SOURCE_ROOT; };
+		B61700F8163EAFC600142336 /* InputsPreferencesContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InputsPreferencesContainerView.swift; path = controllers/InputsPreferencesContainerView.swift; sourceTree = SOURCE_ROOT; };
 		B61700FD163EAFC600142336 /* PreferencesPaneLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PreferencesPaneLayout.swift; path = controllers/PreferencesPaneLayout.swift; sourceTree = SOURCE_ROOT; };
 		B61700FF163EAFC600142336 /* SoundPreferencesContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SoundPreferencesContainerView.swift; path = controllers/SoundPreferencesContainerView.swift; sourceTree = SOURCE_ROOT; };
 		B6170101163EAFC600142336 /* PeripheralsPreferencesContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PeripheralsPreferencesContainerView.swift; path = controllers/PeripheralsPreferencesContainerView.swift; sourceTree = SOURCE_ROOT; };
@@ -1098,6 +1100,7 @@
 				B61700F5163EAFC600142336 /* PokeMemoryController.h */,
 				B61700F6163EAFC600142336 /* PokeMemoryController.m */,
 				B61700FB163EAFC600142336 /* GeneralPreferencesContainerView.swift */,
+				B61700F8163EAFC600142336 /* InputsPreferencesContainerView.swift */,
 				B6170101163EAFC600142336 /* PeripheralsPreferencesContainerView.swift */,
 				B61700FD163EAFC600142336 /* PreferencesPaneLayout.swift */,
 				B650F73E07E7CD3F00E4F3AF /* PreferencesController.h */,
@@ -2461,6 +2464,7 @@
 				B61F468A09121DF100C8096C /* sfifo.c in Sources */,
 				B61F468B09121DF100C8096C /* PreferencesController.m in Sources */,
 				B61700FA163EAFC600142336 /* GeneralPreferencesContainerView.swift in Sources */,
+				B61700F9163EAFC600142336 /* InputsPreferencesContainerView.swift in Sources */,
 				B61700FC163EAFC600142336 /* PreferencesPaneLayout.swift in Sources */,
 				B6170100163EAFC600142336 /* PeripheralsPreferencesContainerView.swift in Sources */,
 				B7A1C40B3A75C10000C0DE01 /* RecordingPreferencesContainerView.swift in Sources */,

@@ -1042,7 +1042,7 @@ FRUVFRUVFRUVFcK1U3BlZWNoIFZvbHVtZQ
             </subviews>
         </customView>
         <customView id="1506" userLabel="Joysticks">
-            <rect key="frame" x="0.0" y="0.0" width="630" height="381"/>
+            <rect key="frame" x="0.0" y="0.0" width="630" height="397"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <box fixedFrame="YES" title="Keyboard" translatesAutoresizingMaskIntoConstraints="NO" id="1509">
