@@ -39,7 +39,7 @@ private enum PreferencesPaneIdentifier: String {
     case .rom:
       NSSize(width: 627, height: 343)
     case .machine:
-      NSSize(width: 200, height: 358)
+      NSSize(width: 200, height: 390)
     case .video:
       NSSize(width: 627, height: 296)
     }
