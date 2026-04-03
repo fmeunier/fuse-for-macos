@@ -141,7 +141,9 @@ final class PreferencesRootContainerView: NSView {
     guard abs(currentHeight - roundedHeight) > 0.5 else { return }
 
     measuredPaneHeights[selectedPane] = roundedHeight
-    sendAction("applyPreferredPaneSize")
+    DispatchQueue.main.async { [weak self] in
+      self?.sendAction("applyPreferredPaneSize")
+    }
   }
 
   private func sendAction(_ selectorName: String, tag: Int? = nil,
