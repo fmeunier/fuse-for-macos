@@ -55,6 +55,14 @@
 
 #define NONE 100
 
+@interface PreferencesRootContainerView : NSView
+
+- (void)configureWithController:(NSObject *)controller
+          machineRomsController:(NSArrayController *)machineRomsController;
+- (void)selectPaneWithIdentifier:(NSString *)identifier;
+
+@end
+
 static NSString *preferences_toolbar_identifiers[] = {
   @"General",
   @"Sound",
@@ -561,7 +569,7 @@ cocoa_video_machine_is_timex_disabled( void )
   // set the title to the name of the Preference Item.
   [window setTitle:sender];
 
-  [(id)preferencesRootContainerView selectPaneWithIdentifier:sender];
+  [preferencesRootContainerView selectPaneWithIdentifier:sender];
 
   {
     CGFloat content_width;
@@ -599,8 +607,8 @@ cocoa_video_machine_is_timex_disabled( void )
 {
   if( !preferencesRootContainerView ) return;
 
-  [(id)preferencesRootContainerView configureWithController:self
-                                       machineRomsController:machineRomsController];
+  [preferencesRootContainerView configureWithController:self
+                                  machineRomsController:machineRomsController];
 }
 
 - (unsigned int)countOfMachineRoms

@@ -32,7 +32,7 @@
 {
   IBOutlet NSArrayController *machineRomsController;
   NSToolbar *toolbar;
-  NSView *preferencesRootContainerView;
+  PreferencesRootContainerView *preferencesRootContainerView;
 
   JoystickConfigurationController *joystickConfigurationController;
 
