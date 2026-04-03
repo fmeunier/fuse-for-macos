@@ -663,6 +663,12 @@
                 <menuItem title="Window" id="284">
                     <menu key="submenu" title="Window" systemMenu="window" id="285">
                         <items>
+                            <menuItem title="Close" keyEquivalent="w" id="v4T-pS-cW1">
+                                <connections>
+                                    <action selector="performClose:" target="-1" id="2Xc-H4-0cd"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="bRQ-eM-y7n"/>
                             <menuItem title="Minimize" keyEquivalent="m" id="283">
                                 <connections>
                                     <action selector="performMiniaturize:" target="-1" id="932"/>
