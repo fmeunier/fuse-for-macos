@@ -32,6 +32,7 @@
 #import "FuseController.h"
 #import "DisplayOpenGLView.h"
 #import "JoystickConfigurationController.h"
+#import "PreferencesBridges.h"
 #import "PreferencesController.h"
 #import "CAMachines.h"
 #import "Joysticks.h"
