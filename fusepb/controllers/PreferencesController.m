@@ -27,6 +27,8 @@
 
 #include <string.h>
 
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
+
 #import "FuseController.h"
 #import "DisplayOpenGLView.h"
 #import "JoystickConfigurationController.h"
@@ -405,20 +407,18 @@ cocoa_video_machine_is_timex_disabled( void )
   NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 
   char buffer[PATH_MAX+1];
-  int result;
   NSSavePanel *sPanel = [NSSavePanel savePanel];
 
   switch( [sender tag] ) {
   case 0:	/* graphic */
-    [sPanel setAllowedFileTypes:@[@"pbm"]];
+    [sPanel setAllowedContentTypes:@[UTTypeImage]];
     break;
   case 1:	/* text */
-    [sPanel setAllowedFileTypes:@[@"txt"]];
+    [sPanel setAllowedContentTypes:@[UTTypePlainText]];
     break;
   }
 
-  result = [sPanel runModal];
-  if (result == NSOKButton) {
+  if( [sPanel runModal] == NSModalResponseOK ) {
     NSString *oFile = [[sPanel URL] path];
     [oFile getFileSystemRepresentation:buffer maxLength:PATH_MAX];
 
@@ -449,14 +449,11 @@ cocoa_video_machine_is_timex_disabled( void )
 - (IBAction)chooseROMFile:(id)sender
 {
   char buffer[PATH_MAX+1];
-  int result;
   NSOpenPanel *oPanel = [NSOpenPanel openPanel];
-  NSArray *romFileTypes = @[@"rom", @"ROM"];
   NSString *romString;
 
-  [oPanel setAllowedFileTypes:romFileTypes];
-  result = [oPanel runModal];
-  if (result == NSOKButton) {
+  [oPanel setAllowedFileTypes:@[@"rom", @"ROM"]];
+  if( [oPanel runModal] == NSModalResponseOK ) {
     NSString *key = NULL;
     NSString *oFile = [[oPanel URL] path];
     [oFile getFileSystemRepresentation:buffer maxLength:PATH_MAX];
@@ -516,13 +513,20 @@ cocoa_video_machine_is_timex_disabled( void )
 
 - (IBAction)resetUserDefaults:(id)sender
 {
+  NSAlert *alert;
+  NSModalResponse response;
   int error;
   NSMutableArray *newMachineRoms;
   unsigned int i;
 
-  error = NSRunAlertPanel(@"Are you sure you want to reset all your preferences to the default settings?", @"Fuse will change all custom settings to the values set when the program was first installed.", @"Cancel", @"OK", nil);
+  alert = [[[NSAlert alloc] init] autorelease];
+  [alert setMessageText:@"Are you sure you want to reset all your preferences to the default settings?"];
+  [alert setInformativeText:@"Fuse will change all custom settings to the values set when the program was first installed."];
+  [alert addButtonWithTitle:@"Cancel"];
+  [alert addButtonWithTitle:@"OK"];
+  response = [alert runModal];
 
-  if( error != NSAlertAlternateReturn ) return;
+  if( response != NSAlertSecondButtonReturn ) return;
 
   [[NSUserDefaultsController sharedUserDefaultsController] revertToInitialValues:self];
 
