@@ -121,6 +121,34 @@ cocoa_inputs_hid_joysticks( void )
   return [[HIDJoystick allJoysticks] valueForKey:@"joystickName"];
 }
 
+NSArray *
+cocoa_machine_names( void )
+{
+  return [[Machine allMachines] valueForKey:@"machineName"];
+}
+
+NSArray *
+cocoa_machine_ids( void )
+{
+  NSArray *machines;
+  NSMutableArray *machine_ids;
+  NSEnumerator *enumerator;
+  Machine *machine;
+
+  machines = [Machine allMachines];
+  machine_ids = [NSMutableArray arrayWithCapacity:[machines count]];
+  enumerator = [machines objectEnumerator];
+
+  while( ( machine = [enumerator nextObject] ) ) {
+    const char *machine_id;
+
+    machine_id = machine_get_id( [machine machineType] );
+    [machine_ids addObject:machine_id ? @(machine_id) : @""];
+  }
+
+  return machine_ids;
+}
+
 @implementation PreferencesController
 
 +(void) initialize
@@ -194,6 +222,8 @@ cocoa_inputs_hid_joysticks( void )
   id recording_preferences_view;
   Class inputs_preferences_view_class;
   id inputs_preferences_view;
+  Class machine_preferences_view_class;
+  id machine_preferences_view;
   unsigned int selected_tab;
   NSToolbarItem *item;
 
@@ -252,6 +282,13 @@ cocoa_inputs_hid_joysticks( void )
                                                  action:@selector(setup:)];
     }
     replace_preferences_view_subviews( joysticksPrefsView, inputs_preferences_view );
+  }
+
+  machine_preferences_view_class = NSClassFromString( @"MachinePreferencesContainerView" );
+  if( machine_preferences_view_class ) {
+    machine_preferences_view = [[[machine_preferences_view_class alloc]
+                                 initWithFrame:[machinePrefsView bounds]] autorelease];
+    replace_preferences_view_subviews( machinePrefsView, machine_preferences_view );
   }
 
   [[self window] setToolbarStyle:NSWindowToolbarStylePreference];

@@ -1685,7 +1685,7 @@ FRUVFRUVFRUVFcK1U3BlZWNoIFZvbHVtZQ
             <point key="canvasLocation" x="139.5" y="168.5"/>
         </customView>
         <customView id="1686" userLabel="Machine">
-            <rect key="frame" x="0.0" y="0.0" width="627" height="358"/>
+            <rect key="frame" x="0.0" y="0.0" width="627" height="398"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <matrix verticalHuggingPriority="750" fixedFrame="YES" allowsEmptySelection="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1687">
