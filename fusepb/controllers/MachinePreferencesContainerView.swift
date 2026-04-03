@@ -35,7 +35,7 @@ private struct MachinePreferencesView: View {
   private let machineOptions = availableMachineOptions()
 
   var body: some View {
-    TopAlignedPreferencesPane(width: 200, height: 390) {
+    CenteredPreferencesPane(width: 200, height: 390) {
       Picker("Machine", selection: $machine) {
         ForEach(machineOptions) { option in
           Text(option.name)
@@ -44,6 +44,7 @@ private struct MachinePreferencesView: View {
       }
       .labelsHidden()
       .pickerStyle(.radioGroup)
+      .padding(.top, 16)
       .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     }
   }
