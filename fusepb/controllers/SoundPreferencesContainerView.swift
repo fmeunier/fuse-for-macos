@@ -1,17 +1,23 @@
 import AppKit
 import SwiftUI
 
-private let soundSpeakerTypes = [
-  "TV speaker",
-  "Beeper",
-  "Unfiltered",
-]
+private let soundSpeakerTypes = optionChoices(
+  { cocoa_sound_speaker_type_bridge() },
+  fallback: [
+    "TV speaker",
+    "Beeper",
+    "Unfiltered",
+  ]
+)
 
-private let soundStereoModes = [
-  "None",
-  "ACB",
-  "ABC",
-]
+private let soundStereoModes = optionChoices(
+  { cocoa_sound_stereo_ay_bridge() },
+  fallback: [
+    "None",
+    "ACB",
+    "ABC",
+  ]
+)
 
 @objc(SoundPreferencesContainerView)
 @objcMembers
@@ -47,8 +53,8 @@ private struct SoundPreferencesView: View {
   @AppStorage("volumespecdrum") private var volumeSpecDrum = 100
   @AppStorage("volumecovox") private var volumeCovox = 100
   @AppStorage("volumeuspeech") private var volumeUSpeech = 100
-  @AppStorage("speakertype") private var speakerType = "TV speaker"
-  @AppStorage("separation") private var stereoAY = "None"
+  @AppStorage("speakertype") private var speakerType = ""
+  @AppStorage("separation") private var stereoAY = ""
   @AppStorage("loading-sound") private var loadingSound = true
 
   var body: some View {
@@ -65,7 +71,19 @@ private struct SoundPreferencesView: View {
               Text("Speaker type")
                 .frame(width: menuLabelWidth, alignment: .leading)
 
-              Picker("Speaker type", selection: $speakerType) {
+              Picker(
+                "Speaker type",
+                selection: enumeratedStringBinding(
+                  for: $speakerType,
+                  canonicalize: {
+                    canonicalOptionString(
+                      $0,
+                      enumerator: { cocoa_string_sound_speaker_type_bridge( $0 ) },
+                      fallback: soundSpeakerTypes[0]
+                    )
+                  }
+                )
+              ) {
                 ForEach(soundSpeakerTypes, id: \.self) { value in
                   Text(value).tag(value)
                 }
@@ -79,7 +97,19 @@ private struct SoundPreferencesView: View {
               Text("AY stereo mode")
                 .frame(width: menuLabelWidth, alignment: .leading)
 
-              Picker("AY stereo mode", selection: $stereoAY) {
+              Picker(
+                "AY stereo mode",
+                selection: enumeratedStringBinding(
+                  for: $stereoAY,
+                  canonicalize: {
+                    canonicalOptionString(
+                      $0,
+                      enumerator: { cocoa_string_sound_stereo_ay_bridge( $0 ) },
+                      fallback: soundStereoModes[0]
+                    )
+                  }
+                )
+              ) {
                 ForEach(soundStereoModes, id: \.self) { value in
                   Text(value).tag(value)
                 }

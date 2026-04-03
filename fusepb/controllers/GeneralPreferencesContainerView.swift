@@ -1,15 +1,18 @@
 import AppKit
 import SwiftUI
 
-private let phantomTypistModes = [
-  "Disabled",
-  "Auto",
-  "Keyword",
-  "Keystroke",
-  "Menu",
-  "Plus 2A",
-  "Plus 3",
-]
+private let phantomTypistModes = optionChoices(
+  { cocoa_media_phantom_typist_mode_bridge() },
+  fallback: [
+    "Disabled",
+    "Auto",
+    "Keyword",
+    "Keystroke",
+    "Menu",
+    "Plus 2A",
+    "Plus 3",
+  ]
+)
 
 @objc(GeneralPreferencesContainerView)
 @objcMembers
@@ -70,7 +73,7 @@ private struct GeneralPreferencesView: View {
   @AppStorage("detectloader") private var detectLoader = false
   @AppStorage("fastload") private var fastLoad = false
   @AppStorage("tapetraps") private var tapeTraps = false
-  @AppStorage("phantomtypistmode") private var phantomTypistMode = "Auto"
+  @AppStorage("phantomtypistmode") private var phantomTypistMode = ""
 
   private let resetAction: () -> Void
 
@@ -120,7 +123,19 @@ private struct GeneralPreferencesView: View {
           Text("Auto-load media")
             .frame(minWidth: 120, alignment: .leading)
 
-          Picker("Auto-load media", selection: $phantomTypistMode) {
+          Picker(
+            "Auto-load media",
+            selection: enumeratedStringBinding(
+              for: $phantomTypistMode,
+              canonicalize: {
+                canonicalOptionString(
+                  $0,
+                  enumerator: { cocoa_string_media_phantom_typist_mode_bridge( $0 ) },
+                  fallback: phantomTypistModes[0]
+                )
+              }
+            )
+          ) {
             ForEach(phantomTypistModes, id: \.self) { mode in
               Text(mode).tag(mode)
             }
