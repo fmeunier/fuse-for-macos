@@ -26,7 +26,7 @@ private struct RecordingPreferencesView: View {
   @AppStorage("moviecompr") private var movieCompression = ""
 
   var body: some View {
-    CenteredPreferencesPane(width: 627, height: 172) {
+    CenteredPreferencesPane(width: 627) {
       VStack(alignment: .leading, spacing: 12) {
         VStack(alignment: .leading, spacing: 8) {
           Toggle("Emulator recording create autosaves", isOn: $rzxAutosaves)
@@ -78,9 +78,10 @@ private struct RecordingPreferencesView: View {
           }
         }
       }
-      .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+      .frame(maxWidth: .infinity, alignment: .topLeading)
       .padding(.top, 14)
       .padding(.leading, 183)
+      .padding(.bottom, 14)
     }
   }
 

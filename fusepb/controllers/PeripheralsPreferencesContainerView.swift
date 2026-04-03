@@ -97,7 +97,7 @@ private struct PeripheralsPreferencesView: View {
   }
 
   var body: some View {
-    CenteredPreferencesPane(width: 637, height: 585) {
+    CenteredPreferencesPane(width: 637) {
       VStack(alignment: .leading, spacing: 14) {
         HStack(alignment: .top, spacing: 14) {
           massStorageSection
@@ -107,6 +107,7 @@ private struct PeripheralsPreferencesView: View {
         printersSection
       }
       .padding(.top, 10)
+      .padding(.bottom, 10)
     }
   }
 

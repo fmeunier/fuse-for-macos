@@ -67,7 +67,7 @@ private struct VideoPreferencesView: View {
   @AppStorage("fullscreenpanorama") private var panoramicFullscreen = true
 
   var body: some View {
-    CenteredPreferencesPane(width: 627, height: 296) {
+    CenteredPreferencesPane(width: 627) {
       VStack(alignment: .leading, spacing: 16) {
         HStack(alignment: .top, spacing: 32) {
           filterColumn(options: videoFilterLeftColumn)
@@ -81,11 +81,11 @@ private struct VideoPreferencesView: View {
           Toggle("Panoramic full screen", isOn: $panoramicFullscreen)
         }
 
-        Spacer(minLength: 18)
       }
-      .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+      .frame(maxWidth: .infinity, alignment: .topLeading)
       .padding(.leading, 191)
       .padding(.top, 20)
+      .padding(.bottom, 18)
     }
     .onAppear {
       repairSelectionIfNeeded()

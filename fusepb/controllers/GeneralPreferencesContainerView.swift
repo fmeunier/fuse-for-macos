@@ -24,24 +24,24 @@ private enum PreferencesPaneIdentifier: String {
   case machine = "Machine"
   case video = "Video"
 
-  var contentSize: NSSize {
+  var fallbackContentHeight: CGFloat {
     switch self {
     case .general:
-      NSSize(width: 548, height: 336)
+      336
     case .sound:
-      NSSize(width: 628, height: 302)
+      302
     case .peripherals:
-      NSSize(width: 637, height: 585)
+      585
     case .recording:
-      NSSize(width: 627, height: 172)
+      172
     case .inputs:
-      NSSize(width: 630, height: 397)
+      397
     case .rom:
-      NSSize(width: 627, height: 343)
+      343
     case .machine:
-      NSSize(width: 200, height: 390)
+      390
     case .video:
-      NSSize(width: 627, height: 296)
+      296
     }
   }
 }
@@ -54,6 +54,7 @@ final class PreferencesRootContainerView: NSView {
   private let romModel = ROMPreferencesModel()
   private var selectedPane: PreferencesPaneIdentifier = .general
   private var hostingView: NSHostingView<AnyView>?
+  private var measuredPaneHeights: [PreferencesPaneIdentifier: CGFloat] = [:]
 
   override init(frame frameRect: NSRect) {
     super.init(frame: frameRect)
@@ -85,7 +86,7 @@ final class PreferencesRootContainerView: NSView {
 
   @objc(preferredPaneSize)
   func preferredPaneSize() -> NSSize {
-    selectedPane.contentSize
+    NSSize(width: 0, height: measuredPaneHeights[selectedPane] ?? selectedPane.fallbackContentHeight)
   }
 
   private func installHostingView() {
@@ -102,25 +103,27 @@ final class PreferencesRootContainerView: NSView {
   }
 
   private func makeRootView() -> AnyView {
+    let paneView: AnyView
+
     switch selectedPane {
     case .general:
-      return generalPreferencesPane { [weak self] in
+      paneView = generalPreferencesPane { [weak self] in
         self?.sendAction("resetUserDefaults:")
       }
     case .sound:
-      return soundPreferencesPane()
+      paneView = soundPreferencesPane()
     case .peripherals:
-      return peripheralsPreferencesPane { [weak self] tag in
+      paneView = peripheralsPreferencesPane { [weak self] tag in
         self?.sendAction("chooseFile:", tag: tag)
       }
     case .recording:
-      return recordingPreferencesPane()
+      paneView = recordingPreferencesPane()
     case .inputs:
-      return inputsPreferencesPane { [weak self] tag in
+      paneView = inputsPreferencesPane { [weak self] tag in
         self?.sendAction("setup:", tag: tag)
       }
     case .rom:
-      return romPreferencesPane(
+      paneView = romPreferencesPane(
         model: romModel,
         chooseROM: { [weak self] tag in
           self?.sendAction("chooseROMFile:", tag: tag, refreshROMSelection: true)
@@ -130,10 +133,28 @@ final class PreferencesRootContainerView: NSView {
         }
       )
     case .machine:
-      return machinePreferencesPane()
+      paneView = machinePreferencesPane()
     case .video:
-      return videoPreferencesPane()
+      paneView = videoPreferencesPane()
     }
+
+    return AnyView(
+      paneView
+        .onPreferenceChange(PreferencesPaneHeightKey.self) { [weak self] height in
+          self?.updateMeasuredHeight(height)
+        }
+    )
+  }
+
+  private func updateMeasuredHeight(_ height: CGFloat) {
+    guard height > 0 else { return }
+
+    let roundedHeight = ceil(height)
+    let currentHeight = measuredPaneHeights[selectedPane] ?? selectedPane.fallbackContentHeight
+    guard abs(currentHeight - roundedHeight) > 0.5 else { return }
+
+    measuredPaneHeights[selectedPane] = roundedHeight
+    sendAction("applyPreferredPaneSize")
   }
 
   private func sendAction(_ selectorName: String, tag: Int? = nil,
@@ -183,7 +204,7 @@ private struct GeneralPreferencesView: View {
   }
 
   var body: some View {
-    CenteredPreferencesPane(width: 548, height: 336) {
+    CenteredPreferencesPane(width: 548) {
       VStack(alignment: .leading, spacing: 14) {
         topFields
           .frame(maxWidth: .infinity, alignment: .center)

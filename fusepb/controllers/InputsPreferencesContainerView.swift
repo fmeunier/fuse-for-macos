@@ -32,7 +32,6 @@ func inputsPreferencesPane(setupAction: @escaping (Int) -> Void) -> AnyView {
 
 private struct InputsPreferencesView: View {
   private let panelWidth: CGFloat = 630
-  private let panelHeight: CGFloat = 397
   private let groupWidth: CGFloat = 481
   private let labelWidth: CGFloat = 122
   private let keyboardRowWidth: CGFloat = 452
@@ -58,7 +57,7 @@ private struct InputsPreferencesView: View {
   }
 
   var body: some View {
-    CenteredPreferencesPane(width: panelWidth, height: panelHeight) {
+    CenteredPreferencesPane(width: panelWidth) {
       VStack(alignment: .leading, spacing: 6) {
         keyboardSection
           .frame(width: groupWidth, alignment: .leading)
@@ -78,7 +77,7 @@ private struct InputsPreferencesView: View {
       .padding(.top, 16)
       .padding(.trailing, 76)
       .padding(.bottom, 13)
-      .frame(width: panelWidth, height: panelHeight, alignment: .topLeading)
+      .frame(width: panelWidth, alignment: .topLeading)
       .flexibleButtonSizingIfAvailable()
     }
   }

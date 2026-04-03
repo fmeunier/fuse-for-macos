@@ -1,5 +1,13 @@
 import SwiftUI
 
+struct PreferencesPaneHeightKey: PreferenceKey {
+  static var defaultValue: CGFloat = 0
+
+  static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+    value = max(value, nextValue())
+  }
+}
+
 @_silgen_name("cocoa_media_phantom_typist_mode")
 func cocoa_media_phantom_typist_mode_bridge() -> Unmanaged<AnyObject>?
 
@@ -78,31 +86,29 @@ func videoMachineIsTimexDisabled() -> Bool {
 
 struct CenteredPreferencesPane<Content: View>: View {
   let width: CGFloat
-  let height: CGFloat
   let content: Content
 
-  init(width: CGFloat, height: CGFloat,
+  init(width: CGFloat,
        @ViewBuilder content: () -> Content) {
     self.width = width
-    self.height = height
     self.content = content()
   }
 
   var body: some View {
-    VStack(spacing: 0) {
+    HStack(spacing: 0) {
       Spacer(minLength: 0)
 
-      HStack(spacing: 0) {
-        Spacer(minLength: 0)
-
-        content
-          .frame(width: width, height: height, alignment: .topLeading)
-
-        Spacer(minLength: 0)
-      }
+      content
+        .frame(width: width, alignment: .topLeading)
+        .background {
+          GeometryReader { proxy in
+            Color.clear
+              .preference(key: PreferencesPaneHeightKey.self, value: proxy.size.height)
+          }
+        }
 
       Spacer(minLength: 0)
     }
-    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+    .frame(maxWidth: .infinity, alignment: .top)
   }
 }

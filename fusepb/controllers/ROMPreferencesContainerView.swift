@@ -127,7 +127,6 @@ struct ROMMachineRow: Identifiable {
 
 struct ROMPaneView: View {
   private let panelWidth: CGFloat = 627
-  private let panelHeight: CGFloat = 343
 
   @ObservedObject private var model: ROMPreferencesModel
 
@@ -143,7 +142,7 @@ struct ROMPaneView: View {
   }
 
   var body: some View {
-    CenteredPreferencesPane(width: panelWidth, height: panelHeight) {
+    CenteredPreferencesPane(width: panelWidth) {
       HStack(alignment: .top, spacing: 20) {
         machinesPanel
 
@@ -172,7 +171,7 @@ struct ROMPaneView: View {
       .padding(.top, 20)
       .padding(.trailing, 4)
       .padding(.bottom, 20)
-      .frame(width: panelWidth, height: panelHeight, alignment: .topLeading)
+      .frame(width: panelWidth, alignment: .topLeading)
       .flexibleButtonSizingIfAvailable()
     }
     .onAppear {

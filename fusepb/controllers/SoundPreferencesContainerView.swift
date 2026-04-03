@@ -38,7 +38,7 @@ private struct SoundPreferencesView: View {
   @AppStorage("loading-sound") private var loadingSound = true
 
   var body: some View {
-    CenteredPreferencesPane(width: 628, height: 302) {
+    CenteredPreferencesPane(width: 628) {
       VStack(alignment: .leading, spacing: 18) {
         Toggle("Enabled", isOn: $soundEnabled)
 
@@ -104,7 +104,7 @@ private struct SoundPreferencesView: View {
             .padding(.top, 10)
         }
       }
-      .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+      .frame(maxWidth: .infinity, alignment: .topLeading)
       .padding(.leading, 217)
       .padding(.top, 22)
       .padding(.trailing, 28)

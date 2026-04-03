@@ -550,14 +550,26 @@ cocoa_video_machine_is_timex_disabled( void )
   }
 
   NSWindow *window = [self window];
-  NSRect current_frame;
-  NSRect new_frame;
-  NSSize content_size;
-
   // set the title to the name of the Preference Item.
   [window setTitle:sender];
 
   [preferencesRootContainerView selectPaneWithIdentifier:sender];
+  [self applyPreferredPaneSize];
+
+  [[NSUserDefaults standardUserDefaults]
+    setObject:@(selected_tag) forKey:@"preferencestab"];
+}
+
+- (void)applyPreferredPaneSize
+{
+  NSWindow *window;
+  NSRect current_frame;
+  NSRect new_frame;
+  NSSize content_size;
+
+  if( !preferencesRootContainerView ) return;
+
+  window = [self window];
   content_size = [preferencesRootContainerView preferredPaneSize];
   content_size.width = PREFERENCES_CONTENT_WIDTH;
 
@@ -568,12 +580,8 @@ cocoa_video_machine_is_timex_disabled( void )
   new_frame.origin.x = current_frame.origin.x;
   new_frame.origin.y = NSMaxY( current_frame ) - new_frame.size.height;
 
-  // set the frame to newFrame and animate it.
   [window setShowsResizeIndicator:YES];
   [window setFrame:new_frame display:YES animate:YES];
-
-  [[NSUserDefaults standardUserDefaults]
-    setObject:@(selected_tag) forKey:@"preferencestab"];
 }
 
 // NSToolbar delegate method
