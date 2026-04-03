@@ -23,6 +23,27 @@ private enum PreferencesPaneIdentifier: String {
   case rom = "ROM"
   case machine = "Machine"
   case video = "Video"
+
+  var contentSize: NSSize {
+    switch self {
+    case .general:
+      NSSize(width: 548, height: 336)
+    case .sound:
+      NSSize(width: 628, height: 302)
+    case .peripherals:
+      NSSize(width: 637, height: 585)
+    case .recording:
+      NSSize(width: 627, height: 172)
+    case .inputs:
+      NSSize(width: 630, height: 397)
+    case .rom:
+      NSSize(width: 627, height: 343)
+    case .machine:
+      NSSize(width: 200, height: 358)
+    case .video:
+      NSSize(width: 627, height: 296)
+    }
+  }
 }
 
 @objc(PreferencesRootContainerView)
@@ -60,6 +81,11 @@ final class PreferencesRootContainerView: NSView {
   func selectPane(withIdentifier identifier: NSString) {
     selectedPane = PreferencesPaneIdentifier(rawValue: identifier as String) ?? .general
     updateRootView()
+  }
+
+  @objc(preferredPaneSize)
+  func preferredPaneSize() -> NSSize {
+    selectedPane.contentSize
   }
 
   private func installHostingView() {

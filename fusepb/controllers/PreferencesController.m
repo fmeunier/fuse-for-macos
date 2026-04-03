@@ -60,6 +60,7 @@
 - (void)configureWithController:(NSObject *)controller
           machineRomsController:(NSArrayController *)machineRomsController;
 - (void)selectPaneWithIdentifier:(NSString *)identifier;
+- (NSSize)preferredPaneSize;
 
 @end
 
@@ -115,21 +116,6 @@ replace_preferences_view_subviews( NSView *container, NSView *replacement )
   [replacement setFrame:[container bounds]];
   [replacement setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
   [container addSubview:replacement];
-}
-
-static NSSize
-preferences_view_fitting_size( NSView *prefs_view, CGFloat width )
-{
-  NSSize fitting_size;
-
-  [prefs_view setFrameSize:NSMakeSize( width, [prefs_view frame].size.height )];
-  [prefs_view layoutSubtreeIfNeeded];
-
-  fitting_size = [prefs_view fittingSize];
-  if( fitting_size.width <= 0.0 ) fitting_size.width = width;
-  if( fitting_size.height <= 0.0 ) fitting_size.height = [prefs_view frame].size.height;
-
-  return fitting_size;
 }
 
 NSArray *
@@ -563,34 +549,26 @@ cocoa_video_machine_is_timex_disabled( void )
   }
 
   NSWindow *window = [self window];
-
-  NSView *prefsView = preferencesRootContainerView;
+  NSRect current_frame;
+  NSRect new_frame;
+  NSSize content_size;
 
   // set the title to the name of the Preference Item.
   [window setTitle:sender];
 
   [preferencesRootContainerView selectPaneWithIdentifier:sender];
+  content_size = [preferencesRootContainerView preferredPaneSize];
 
-  {
-    CGFloat content_width;
-    NSSize fitting_size;
-
-    content_width = [[window contentView] frame].size.width;
-    fitting_size = preferences_view_fitting_size( prefsView, content_width );
-    [prefsView setFrameSize:fitting_size];
-  }
-
-  // mojo to get the right frame for the new window.
-  NSRect newFrame = [window frame];
-  newFrame.size.height = [prefsView frame].size.height +
-    ([window frame].size.height - [[window contentView] frame].size.height);
-  newFrame.origin.y += ([[window contentView] frame].size.height -
-                        [prefsView frame].size.height);
+  current_frame = [window frame];
+  new_frame = [window frameRectForContentRect:NSMakeRect( 0, 0,
+                                                          content_size.width,
+                                                          content_size.height )];
+  new_frame.origin.x = current_frame.origin.x;
+  new_frame.origin.y = NSMaxY( current_frame ) - new_frame.size.height;
 
   // set the frame to newFrame and animate it.
   [window setShowsResizeIndicator:YES];
-  [window setFrame:newFrame display:YES animate:YES];
-  [[window contentView] setFrameSize:[prefsView frame].size];
+  [window setFrame:new_frame display:YES animate:YES];
 
   [[NSUserDefaults standardUserDefaults]
     setObject:@(selected_tag) forKey:@"preferencestab"];
