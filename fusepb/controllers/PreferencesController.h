@@ -29,14 +29,7 @@
 
 @interface PreferencesController : NSWindowController
 {
-  IBOutlet NSFormCell *rom0Filename;
-  IBOutlet NSFormCell *rom1Filename;
-  IBOutlet NSFormCell *rom2Filename;
-  IBOutlet NSFormCell *rom3Filename;
   IBOutlet NSArrayController *machineRomsController;
-  IBOutlet NSMatrix *massStorageType;
-  IBOutlet NSMatrix *externalSoundType;
-  IBOutlet NSMatrix *multifaceType;
   IBOutlet NSTabView *tabView;
   NSToolbar *toolbar;
   IBOutlet NSView *generalPrefsView;
@@ -51,11 +44,6 @@
   JoystickConfigurationController *joystickConfigurationController;
 
   NSMutableArray *machineRoms;
-  NSArray *speakerTypes;
-  NSArray *soundStereoAY;
-  NSArray *diskTryMerge;
-  NSArray *movieCompression;
-  NSArray *phantomTypistMode;
 }
 + (void)initialize;
 
@@ -65,15 +53,9 @@
 - (void)handleWillClose:(NSNotification *)note;
 - (IBAction)chooseFile:(id)sender;
 - (IBAction)setup:(id)sender;
-- (NSArray *)machines;
-- (NSArray *)joysticks;
-- (NSArray *)sdlJoysticks;
 - (IBAction)chooseROMFile:(id)sender;
 - (IBAction)resetROMFile:(id)sender;
 - (IBAction)resetUserDefaults:(id)sender;
-- (IBAction)massStorageTypeClicked:(id)sender;
-- (IBAction)externalSoundTypeClicked:(id)sender;
-- (IBAction)multifaceTypeClicked:(id)sender;
 - (IBAction)selectPrefPanel:(id)item;
 - (NSArray *)toolbarItemIdentifiers;
 - (NSToolbarItem *)toolbar:(NSToolbar *)bar
@@ -82,8 +64,6 @@
 - (NSArray *)toolbarAllowedItemIdentifiers:(NSToolbar *)bar;
 - (NSArray *)toolbarDefaultItemIdentifiers:(NSToolbar *)bar;
 - (NSArray *)toolbarSelectableItemIdentifiers:(NSToolbar *)bar;
-- (void)setMassStorageType;
-- (void)setExternalSoundType;
 - (void)fixPhantomTypistMode;
 
 - (unsigned int)countOfMachineRoms;
