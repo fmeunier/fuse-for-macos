@@ -54,6 +54,7 @@
 #include "ui/uidisplay.h"
 
 #define NONE 100
+#define PREFERENCES_CONTENT_WIDTH 680
 
 @interface PreferencesRootContainerView : NSView
 
@@ -558,6 +559,7 @@ cocoa_video_machine_is_timex_disabled( void )
 
   [preferencesRootContainerView selectPaneWithIdentifier:sender];
   content_size = [preferencesRootContainerView preferredPaneSize];
+  content_size.width = PREFERENCES_CONTENT_WIDTH;
 
   current_frame = [window frame];
   new_frame = [window frameRectForContentRect:NSMakeRect( 0, 0,
