@@ -138,6 +138,11 @@ static TapeBrowserController *singleton = nil;
   initialising = [value boolValue];
 }
 
+- (void)setDocumentEditedValue:(NSNumber*)value
+{
+  [[self window] setDocumentEdited:[value boolValue]];
+}
+
 @synthesize tapeController;
 @synthesize infoController;
 @end
@@ -381,15 +386,15 @@ ui_tape_browser_update( ui_tape_browser_update_type change,
   }
 
   if( tape_modified ) {
-    [[tapeBrowserController window]
-      performSelectorOnMainThread:@selector(setDocumentEdited:)
-                       withObject:@YES
-                    waitUntilDone:NO];
+    [tapeBrowserController
+          performSelectorOnMainThread:@selector(setDocumentEditedValue:)
+          withObject:@YES
+          waitUntilDone:NO];
   } else {
-    [[tapeBrowserController window]
-      performSelectorOnMainThread:@selector(setDocumentEdited:)
-                       withObject:@NO
-                    waitUntilDone:NO];
+    [tapeBrowserController
+          performSelectorOnMainThread:@selector(setDocumentEditedValue:)
+          withObject:@NO
+          waitUntilDone:NO];
   }
 
   fuse_emulation_unpause();

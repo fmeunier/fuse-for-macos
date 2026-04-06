@@ -45,6 +45,7 @@
 - (void)addObjectToInfoContents:(NSDictionary*)info;
 - (void)setTapeIndex:(NSNumber*)index;
 - (void)setInitialising:(NSNumber*)value;
+- (void)setDocumentEditedValue:(NSNumber*)value;
 
 - (void)tableViewSelectionDidChange:(NSNotification *)aNotification;
 
