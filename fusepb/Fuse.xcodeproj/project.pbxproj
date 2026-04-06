@@ -35,6 +35,7 @@
 		B61700F7163EAFC600142336 /* PokeMemoryController.m in Sources */ = {isa = PBXBuildFile; fileRef = B61700F6163EAFC600142336 /* PokeMemoryController.m */; };
 		B61700FA163EAFC600142336 /* GeneralPreferencesContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61700FB163EAFC600142336 /* GeneralPreferencesContainerView.swift */; };
 		B61700F9163EAFC600142336 /* InputsPreferencesContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61700F8163EAFC600142336 /* InputsPreferencesContainerView.swift */; };
+		B7A1C4163A77EE0000C0DE01 /* JoystickConfigurationContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7A1C4153A77EE0000C0DE01 /* JoystickConfigurationContainerView.swift */; };
 		B7A1C4143A77D20000C0DE01 /* JoystickConfigurationModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7A1C4133A77D20000C0DE01 /* JoystickConfigurationModels.swift */; };
 		B61700FC163EAFC600142336 /* PreferencesPaneLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61700FD163EAFC600142336 /* PreferencesPaneLayout.swift */; };
 		B7A1C4113A76C40000C0DE01 /* PreferencesRootContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7A1C4123A76C40000C0DE01 /* PreferencesRootContainerView.swift */; };
@@ -465,6 +466,7 @@
 		B61700F6163EAFC600142336 /* PokeMemoryController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PokeMemoryController.m; path = controllers/PokeMemoryController.m; sourceTree = "<group>"; };
 		B61700FB163EAFC600142336 /* GeneralPreferencesContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GeneralPreferencesContainerView.swift; path = controllers/GeneralPreferencesContainerView.swift; sourceTree = SOURCE_ROOT; };
 		B61700F8163EAFC600142336 /* InputsPreferencesContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InputsPreferencesContainerView.swift; path = controllers/InputsPreferencesContainerView.swift; sourceTree = SOURCE_ROOT; };
+		B7A1C4153A77EE0000C0DE01 /* JoystickConfigurationContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = JoystickConfigurationContainerView.swift; path = controllers/JoystickConfigurationContainerView.swift; sourceTree = SOURCE_ROOT; };
 		B7A1C4133A77D20000C0DE01 /* JoystickConfigurationModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = JoystickConfigurationModels.swift; path = controllers/JoystickConfigurationModels.swift; sourceTree = SOURCE_ROOT; };
 		B61700FD163EAFC600142336 /* PreferencesPaneLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PreferencesPaneLayout.swift; path = controllers/PreferencesPaneLayout.swift; sourceTree = SOURCE_ROOT; };
 		B7A1C4123A76C40000C0DE01 /* PreferencesRootContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PreferencesRootContainerView.swift; path = controllers/PreferencesRootContainerView.swift; sourceTree = SOURCE_ROOT; };
@@ -1111,6 +1113,7 @@
 				B61700F6163EAFC600142336 /* PokeMemoryController.m */,
 				B61700FB163EAFC600142336 /* GeneralPreferencesContainerView.swift */,
 				B61700F8163EAFC600142336 /* InputsPreferencesContainerView.swift */,
+				B7A1C4153A77EE0000C0DE01 /* JoystickConfigurationContainerView.swift */,
 				B7A1C4133A77D20000C0DE01 /* JoystickConfigurationModels.swift */,
 				B6170103163EAFC600142336 /* MachinePreferencesContainerView.swift */,
 				B6170101163EAFC600142336 /* PeripheralsPreferencesContainerView.swift */,
@@ -2480,6 +2483,7 @@
 				B61F468B09121DF100C8096C /* PreferencesController.m in Sources */,
 				B61700FA163EAFC600142336 /* GeneralPreferencesContainerView.swift in Sources */,
 				B61700F9163EAFC600142336 /* InputsPreferencesContainerView.swift in Sources */,
+				B7A1C4163A77EE0000C0DE01 /* JoystickConfigurationContainerView.swift in Sources */,
 				B7A1C4143A77D20000C0DE01 /* JoystickConfigurationModels.swift in Sources */,
 				B61700FC163EAFC600142336 /* PreferencesPaneLayout.swift in Sources */,
 				B7A1C4113A76C40000C0DE01 /* PreferencesRootContainerView.swift in Sources */,

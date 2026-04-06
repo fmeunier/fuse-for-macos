@@ -70,6 +70,19 @@ struct JoystickConfigurationState: Equatable {
     fireButtons[index] = value
   }
 
+  func defaultsValues() -> [String: NSNumber] {
+    var values: [String: NSNumber] = [
+      target.xAxisDefaultsKey: NSNumber(value: xAxis),
+      target.yAxisDefaultsKey: NSNumber(value: yAxis)
+    ]
+
+    for button in joystickConfigurationButtons {
+      values[target.fireDefaultsKey(for: button)] = NSNumber(value: fireButtonValue(for: button))
+    }
+
+    return values
+  }
+
   private static func normalizedFireButtons(_ values: [Int]) -> [Int] {
     if values.count == buttonCount {
       return values

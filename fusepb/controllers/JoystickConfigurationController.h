@@ -25,26 +25,10 @@
 
 #import <AppKit/AppKit.h>
 
+@class JoystickConfigurationContainerView;
 
 @interface JoystickConfigurationController : NSWindowController {
-  IBOutlet NSPopUpButton *joyFire1;
-  IBOutlet NSPopUpButton *joyFire2;
-  IBOutlet NSPopUpButton *joyFire3;
-  IBOutlet NSPopUpButton *joyFire4;
-  IBOutlet NSPopUpButton *joyFire5;
-  IBOutlet NSPopUpButton *joyFire6;
-  IBOutlet NSPopUpButton *joyFire7;
-  IBOutlet NSPopUpButton *joyFire8;
-  IBOutlet NSPopUpButton *joyFire9;
-  IBOutlet NSPopUpButton *joyFire10;
-  IBOutlet NSPopUpButton *joyFire11;
-  IBOutlet NSPopUpButton *joyFire12;
-  IBOutlet NSPopUpButton *joyFire13;
-  IBOutlet NSPopUpButton *joyFire14;
-  IBOutlet NSPopUpButton *joyFire15;
-  IBOutlet NSPopUpButton *joyXAxis;
-  IBOutlet NSPopUpButton *joyYAxis;
-
+  JoystickConfigurationContainerView *containerView;
   int joyNum;
 }
 - (IBAction)apply:(id)sender;
