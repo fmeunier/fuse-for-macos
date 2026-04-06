@@ -208,7 +208,6 @@
 		B65353150B8FF3D20083F942 /* SDL_joystick.c in Sources */ = {isa = PBXBuildFile; fileRef = B65353140B8FF3D20083F942 /* SDL_joystick.c */; };
 		B653532B0B902CB20083F942 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B653532A0B902CB20083F942 /* IOKit.framework */; };
 		B665EE031052A29F00FCFED8 /* Debugger.xib in Resources */ = {isa = PBXBuildFile; fileRef = B665EE021052A29F00FCFED8 /* Debugger.xib */; };
-		B665EE081052A34700FCFED8 /* JoystickConfiguration.xib in Resources */ = {isa = PBXBuildFile; fileRef = B665EE071052A34700FCFED8 /* JoystickConfiguration.xib */; };
 		B665EE0B1052A39000FCFED8 /* Keyboard.xib in Resources */ = {isa = PBXBuildFile; fileRef = B665EE0A1052A39000FCFED8 /* Keyboard.xib */; };
 		B665EE101052A3BD00FCFED8 /* LoadBinary.xib in Resources */ = {isa = PBXBuildFile; fileRef = B665EE0F1052A3BD00FCFED8 /* LoadBinary.xib */; };
 		B665EE131052A3DC00FCFED8 /* MemoryBrowser.xib in Resources */ = {isa = PBXBuildFile; fileRef = B665EE121052A3DC00FCFED8 /* MemoryBrowser.xib */; };
@@ -557,7 +556,6 @@
 		B66051080606ABDC00247454 /* input.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = input.c; path = input.c; sourceTree = "<group>"; };
 		B66051090606ABDC00247454 /* input.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = input.h; path = input.h; sourceTree = "<group>"; };
 		B665EE021052A29F00FCFED8 /* Debugger.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = Debugger.xib; sourceTree = "<group>"; };
-		B665EE071052A34700FCFED8 /* JoystickConfiguration.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = JoystickConfiguration.xib; sourceTree = "<group>"; };
 		B665EE0A1052A39000FCFED8 /* Keyboard.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = Keyboard.xib; sourceTree = "<group>"; };
 		B665EE0F1052A3BD00FCFED8 /* LoadBinary.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LoadBinary.xib; sourceTree = "<group>"; };
 		B665EE121052A3DC00FCFED8 /* MemoryBrowser.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MemoryBrowser.xib; sourceTree = "<group>"; };
@@ -1208,7 +1206,6 @@
 			isa = PBXGroup;
 			children = (
 				B665EE021052A29F00FCFED8 /* Debugger.xib */,
-				B665EE071052A34700FCFED8 /* JoystickConfiguration.xib */,
 				B665EE0A1052A39000FCFED8 /* Keyboard.xib */,
 				B665EE0F1052A3BD00FCFED8 /* LoadBinary.xib */,
 				B665EE121052A3DC00FCFED8 /* MemoryBrowser.xib */,
@@ -1956,7 +1953,6 @@
 				B6CADD750C48E1A3004BA954 /* plus3disk_red.png in Resources */,
 				B6D670501DD6D2440014914E /* FuseHelp.help in Resources */,
 				B665EE031052A29F00FCFED8 /* Debugger.xib in Resources */,
-				B665EE081052A34700FCFED8 /* JoystickConfiguration.xib in Resources */,
 				B665EE0B1052A39000FCFED8 /* Keyboard.xib in Resources */,
 				B665EE101052A3BD00FCFED8 /* LoadBinary.xib in Resources */,
 				B665EE131052A3DC00FCFED8 /* MemoryBrowser.xib in Resources */,
