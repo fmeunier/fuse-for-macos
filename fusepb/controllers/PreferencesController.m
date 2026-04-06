@@ -44,6 +44,7 @@
 #import "VolumeSliderToPrefTransformer.h"
 
 #include "fuse.h"
+#include "keyboard.h"
 #include "joystick.h"
 #include "options_cocoa.h"
 #include "periph.h"
@@ -79,6 +80,64 @@ static NSString *preferences_toolbar_identifiers[] = {
   @"Machine",
   @"Video",
 };
+
+typedef struct KeyComboEntry {
+  const char *key;
+  keyboard_key_name value;
+} KeyComboEntry;
+
+static const KeyComboEntry joystick_configuration_key_menu[] = {
+  { "Joystick Fire", KEYBOARD_JOYSTICK_FIRE },
+
+  { "0", KEYBOARD_0 },
+  { "1", KEYBOARD_1 },
+  { "2", KEYBOARD_2 },
+  { "3", KEYBOARD_3 },
+  { "4", KEYBOARD_4 },
+  { "5", KEYBOARD_5 },
+  { "6", KEYBOARD_6 },
+  { "7", KEYBOARD_7 },
+  { "8", KEYBOARD_8 },
+  { "9", KEYBOARD_9 },
+
+  { "A", KEYBOARD_a },
+  { "B", KEYBOARD_b },
+  { "C", KEYBOARD_c },
+  { "D", KEYBOARD_d },
+  { "E", KEYBOARD_e },
+  { "F", KEYBOARD_f },
+  { "G", KEYBOARD_g },
+  { "H", KEYBOARD_h },
+  { "I", KEYBOARD_i },
+  { "J", KEYBOARD_j },
+  { "K", KEYBOARD_k },
+  { "L", KEYBOARD_l },
+  { "M", KEYBOARD_m },
+
+  { "N", KEYBOARD_n },
+  { "O", KEYBOARD_o },
+  { "P", KEYBOARD_p },
+  { "Q", KEYBOARD_q },
+  { "R", KEYBOARD_r },
+  { "S", KEYBOARD_s },
+  { "T", KEYBOARD_t },
+  { "U", KEYBOARD_u },
+  { "V", KEYBOARD_v },
+  { "W", KEYBOARD_w },
+  { "X", KEYBOARD_x },
+  { "Y", KEYBOARD_y },
+  { "Z", KEYBOARD_z },
+
+  { "Space", KEYBOARD_space },
+  { "Enter", KEYBOARD_Enter },
+  { "Caps Shift", KEYBOARD_Caps },
+  { "Symbol Shift", KEYBOARD_Symbol },
+
+  { "Nothing", 1 },
+};
+
+static const NSUInteger joystick_configuration_key_menu_count =
+  sizeof( joystick_configuration_key_menu ) / sizeof( joystick_configuration_key_menu[0] );
 
 static NSString *preferences_toolbar_symbols[] = {
   @"gearshape",
@@ -133,6 +192,36 @@ NSArray *
 cocoa_inputs_hid_joysticks( void )
 {
   return [[HIDJoystick allJoysticks] valueForKey:@"joystickName"];
+}
+
+NSArray *
+cocoa_joystick_configuration_key_titles( void )
+{
+  NSMutableArray *titles;
+  NSUInteger i;
+
+  titles = [NSMutableArray arrayWithCapacity:joystick_configuration_key_menu_count];
+
+  for( i = 0; i < joystick_configuration_key_menu_count; i++ ) {
+    [titles addObject:@(joystick_configuration_key_menu[i].key)];
+  }
+
+  return titles;
+}
+
+NSArray *
+cocoa_joystick_configuration_key_values( void )
+{
+  NSMutableArray *values;
+  NSUInteger i;
+
+  values = [NSMutableArray arrayWithCapacity:joystick_configuration_key_menu_count];
+
+  for( i = 0; i < joystick_configuration_key_menu_count; i++ ) {
+    [values addObject:@(joystick_configuration_key_menu[i].value)];
+  }
+
+  return values;
 }
 
 NSArray *

@@ -24,72 +24,13 @@
 */
 
 #import "JoystickConfigurationController.h"
+#import "PreferencesBridges.h"
 
 #include <config.h>
 
 #include <assert.h>
 
-#include "keyboard.h"
 #include "settings.h"
-
-typedef struct KeyComboEntry {
-const char* key;
-keyboard_key_name value;
-} KeyComboEntry;
-
-static const KeyComboEntry key_menu[] = {
-
-  { "Joystick Fire", KEYBOARD_JOYSTICK_FIRE },
-
-  { "0", KEYBOARD_0 },
-  { "1", KEYBOARD_1 },
-  { "2", KEYBOARD_2 },
-  { "3", KEYBOARD_3 },
-  { "4", KEYBOARD_4 },
-  { "5", KEYBOARD_5 },
-  { "6", KEYBOARD_6 },
-  { "7", KEYBOARD_7 },
-  { "8", KEYBOARD_8 },
-  { "9", KEYBOARD_9 },
-
-  { "A", KEYBOARD_a },
-  { "B", KEYBOARD_b },
-  { "C", KEYBOARD_c },
-  { "D", KEYBOARD_d },
-  { "E", KEYBOARD_e },
-  { "F", KEYBOARD_f },
-  { "G", KEYBOARD_g },
-  { "H", KEYBOARD_h },
-  { "I", KEYBOARD_i },
-  { "J", KEYBOARD_j },
-  { "K", KEYBOARD_k },
-  { "L", KEYBOARD_l },
-  { "M", KEYBOARD_m },
-
-  { "N", KEYBOARD_n },
-  { "O", KEYBOARD_o },
-  { "P", KEYBOARD_p },
-  { "Q", KEYBOARD_q },
-  { "R", KEYBOARD_r },
-  { "S", KEYBOARD_s },
-  { "T", KEYBOARD_t },
-  { "U", KEYBOARD_u },
-  { "V", KEYBOARD_v },
-  { "W", KEYBOARD_w },
-  { "X", KEYBOARD_x },
-  { "Y", KEYBOARD_y },
-  { "Z", KEYBOARD_z },
-
-  { "Space", KEYBOARD_space },
-  { "Enter", KEYBOARD_Enter },
-  { "Caps Shift", KEYBOARD_Caps },
-  { "Symbol Shift", KEYBOARD_Symbol },
-
-  { "Nothing", 1 },
-
-};
-
-static const unsigned int key_menu_count = sizeof( key_menu ) / sizeof( key_menu[0] );
 
 @implementation JoystickConfigurationController
 
@@ -160,7 +101,10 @@ static const unsigned int key_menu_count = sizeof( key_menu ) / sizeof( key_menu
 
 - (void)showWindow:(id)sender
 {
+  NSArray *key_titles;
+  NSArray *key_values;
   size_t i;
+  NSUInteger key_count;
   int x_axis = 0, y_axis = 0;
 
   joyNum = [sender tag];
@@ -274,37 +218,47 @@ static const unsigned int key_menu_count = sizeof( key_menu ) / sizeof( key_menu
   [joyFire14 removeAllItems];
   [joyFire15 removeAllItems];
 
-  for( i = 0; i < key_menu_count; i++ ) {
-    [joyFire1 addItemWithTitle:@(key_menu[i].key)];
-    [[joyFire1 lastItem] setTag:key_menu[i].value];
-    [joyFire2 addItemWithTitle:@(key_menu[i].key)];
-    [[joyFire2 lastItem] setTag:key_menu[i].value];
-    [joyFire3 addItemWithTitle:@(key_menu[i].key)];
-    [[joyFire3 lastItem] setTag:key_menu[i].value];
-    [joyFire4 addItemWithTitle:@(key_menu[i].key)];
-    [[joyFire4 lastItem] setTag:key_menu[i].value];
-    [joyFire5 addItemWithTitle:@(key_menu[i].key)];
-    [[joyFire5 lastItem] setTag:key_menu[i].value];
-    [joyFire6 addItemWithTitle:@(key_menu[i].key)];
-    [[joyFire6 lastItem] setTag:key_menu[i].value];
-    [joyFire7 addItemWithTitle:@(key_menu[i].key)];
-    [[joyFire7 lastItem] setTag:key_menu[i].value];
-    [joyFire8 addItemWithTitle:@(key_menu[i].key)];
-    [[joyFire8 lastItem] setTag:key_menu[i].value];
-    [joyFire9 addItemWithTitle:@(key_menu[i].key)];
-    [[joyFire9 lastItem] setTag:key_menu[i].value];
-    [joyFire10 addItemWithTitle:@(key_menu[i].key)];
-    [[joyFire10 lastItem] setTag:key_menu[i].value];
-    [joyFire11 addItemWithTitle:@(key_menu[i].key)];
-    [[joyFire11 lastItem] setTag:key_menu[i].value];
-    [joyFire12 addItemWithTitle:@(key_menu[i].key)];
-    [[joyFire12 lastItem] setTag:key_menu[i].value];
-    [joyFire13 addItemWithTitle:@(key_menu[i].key)];
-    [[joyFire13 lastItem] setTag:key_menu[i].value];
-    [joyFire14 addItemWithTitle:@(key_menu[i].key)];
-    [[joyFire14 lastItem] setTag:key_menu[i].value];
-    [joyFire15 addItemWithTitle:@(key_menu[i].key)];
-    [[joyFire15 lastItem] setTag:key_menu[i].value];
+  key_titles = cocoa_joystick_configuration_key_titles();
+  key_values = cocoa_joystick_configuration_key_values();
+  key_count = MIN( [key_titles count], [key_values count] );
+
+  for( i = 0; i < key_count; i++ ) {
+    NSString *title;
+    NSInteger value;
+
+    title = [key_titles objectAtIndex:i];
+    value = [[key_values objectAtIndex:i] integerValue];
+
+    [joyFire1 addItemWithTitle:title];
+    [[joyFire1 lastItem] setTag:value];
+    [joyFire2 addItemWithTitle:title];
+    [[joyFire2 lastItem] setTag:value];
+    [joyFire3 addItemWithTitle:title];
+    [[joyFire3 lastItem] setTag:value];
+    [joyFire4 addItemWithTitle:title];
+    [[joyFire4 lastItem] setTag:value];
+    [joyFire5 addItemWithTitle:title];
+    [[joyFire5 lastItem] setTag:value];
+    [joyFire6 addItemWithTitle:title];
+    [[joyFire6 lastItem] setTag:value];
+    [joyFire7 addItemWithTitle:title];
+    [[joyFire7 lastItem] setTag:value];
+    [joyFire8 addItemWithTitle:title];
+    [[joyFire8 lastItem] setTag:value];
+    [joyFire9 addItemWithTitle:title];
+    [[joyFire9 lastItem] setTag:value];
+    [joyFire10 addItemWithTitle:title];
+    [[joyFire10 lastItem] setTag:value];
+    [joyFire11 addItemWithTitle:title];
+    [[joyFire11 lastItem] setTag:value];
+    [joyFire12 addItemWithTitle:title];
+    [[joyFire12 lastItem] setTag:value];
+    [joyFire13 addItemWithTitle:title];
+    [[joyFire13 lastItem] setTag:value];
+    [joyFire14 addItemWithTitle:title];
+    [[joyFire14 lastItem] setTag:value];
+    [joyFire15 addItemWithTitle:title];
+    [[joyFire15 lastItem] setTag:value];
   }
 
   switch(joyNum) {
