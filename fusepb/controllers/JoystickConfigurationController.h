@@ -28,6 +28,8 @@
 @class JoystickConfigurationContainerView;
 
 @interface JoystickConfigurationController : NSWindowController {
+  IBOutlet NSView *contentContainer;
+
   JoystickConfigurationContainerView *containerView;
   int joyNum;
 }

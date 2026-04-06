@@ -18,12 +18,23 @@ final class JoystickConfigurationEditorModel: NSObject, ObservableObject {
   func defaultsValues() -> NSDictionary {
     state.defaultsValues() as NSDictionary
   }
+
+  func selectedXAxisValue() -> NSNumber {
+    NSNumber(value: state.xAxis)
+  }
+
+  func selectedYAxisValue() -> NSNumber {
+    NSNumber(value: state.yAxis)
+  }
+
+  func selectedFireValues() -> [NSNumber] {
+    state.fireButtons.map { NSNumber(value: $0) }
+  }
 }
 
 @objc(JoystickConfigurationContainerView)
 @objcMembers
 final class JoystickConfigurationContainerView: NSView {
-  private weak var controller: NSObject?
   private let model = JoystickConfigurationEditorModel()
   private var hostingView: NSHostingView<AnyView>?
 
@@ -37,20 +48,31 @@ final class JoystickConfigurationContainerView: NSView {
     installHostingView()
   }
 
-  @objc(configureWithController:)
-  func configure(controller: NSObject?) {
-    self.controller = controller
-  }
-
   @objc(configureForTargetNumber:xAxis:yAxis:fireValues:)
   func configure(targetNumber: NSNumber, xAxis: NSNumber, yAxis: NSNumber, fireValues: [NSNumber]) {
     model.configure(targetNumber: targetNumber, xAxis: xAxis, yAxis: yAxis, fireValues: fireValues)
     hostingView?.layoutSubtreeIfNeeded()
+    hostingView?.displayIfNeeded()
   }
 
   @objc(defaultsValues)
   func defaultsValues() -> NSDictionary {
     model.defaultsValues()
+  }
+
+  @objc(selectedXAxisValue)
+  func selectedXAxisValue() -> NSNumber {
+    model.selectedXAxisValue()
+  }
+
+  @objc(selectedYAxisValue)
+  func selectedYAxisValue() -> NSNumber {
+    model.selectedYAxisValue()
+  }
+
+  @objc(selectedFireValues)
+  func selectedFireValues() -> [NSNumber] {
+    model.selectedFireValues()
   }
 
   private func installHostingView() {
@@ -62,16 +84,7 @@ final class JoystickConfigurationContainerView: NSView {
   }
 
   private var rootView: some View {
-    JoystickConfigurationPaneView(
-      model: model,
-      applyAction: { [weak self] in self?.sendAction("apply:") },
-      cancelAction: { [weak self] in self?.sendAction("cancel:") }
-    )
-  }
-
-  private func sendAction(_ selectorName: String) {
-    guard let controller else { return }
-    NSApp.sendAction(NSSelectorFromString(selectorName), to: controller, from: self)
+    JoystickConfigurationPaneView(model: model)
   }
 }
 
@@ -84,15 +97,8 @@ private struct JoystickConfigurationPaneView: View {
 
   @ObservedObject private var model: JoystickConfigurationEditorModel
 
-  private let applyAction: () -> Void
-  private let cancelAction: () -> Void
-
-  init(model: JoystickConfigurationEditorModel,
-       applyAction: @escaping () -> Void,
-       cancelAction: @escaping () -> Void) {
+  init(model: JoystickConfigurationEditorModel) {
     self.model = model
-    self.applyAction = applyAction
-    self.cancelAction = cancelAction
   }
 
   var body: some View {
@@ -101,7 +107,7 @@ private struct JoystickConfigurationPaneView: View {
 
       axisSection
 
-      buttonRow
+      buttonRowPlaceholder
         .frame(maxWidth: .infinity, alignment: .trailing)
     }
     .padding(.horizontal, 17)
@@ -132,31 +138,12 @@ private struct JoystickConfigurationPaneView: View {
     }
   }
 
-  private var buttonRow: some View {
-    HStack(spacing: 8) {
-      Button("Cancel", action: cancelAction)
-        .frame(width: buttonWidth)
-        .keyboardShortcut(.cancelAction)
-
-      Button("OK", action: applyAction)
-        .frame(width: buttonWidth)
-        .keyboardShortcut(.defaultAction)
-    }
-  }
-
   private func pickerRow(label: String, selection: Binding<Int>) -> some View {
     HStack {
       Text(label)
         .frame(width: labelWidth, alignment: .leading)
 
-      Picker("", selection: selection) {
-        ForEach(joystickConfigurationKeyOptions) { option in
-          Text(option.title).tag(option.value)
-        }
-      }
-      .labelsHidden()
-      .pickerStyle(.menu)
-      .frame(width: pickerWidth, alignment: .leading)
+      selectionMenu(options: joystickConfigurationKeyOptions, selection: selection)
     }
   }
 
@@ -165,15 +152,44 @@ private struct JoystickConfigurationPaneView: View {
       Text(label)
         .frame(width: labelWidth, alignment: .leading)
 
-      Picker("", selection: selection) {
-        ForEach(joystickAxisOptions) { option in
-          Text(option.title).tag(option.value)
+      selectionMenu(options: joystickAxisOptions, selection: selection)
+    }
+  }
+
+  private func selectionMenu(options: [JoystickConfigurationOption], selection: Binding<Int>) -> some View {
+    Menu {
+      ForEach(options) { option in
+        Button {
+          selection.wrappedValue = option.value
+        } label: {
+          if option.value == selection.wrappedValue {
+            Label(option.title, systemImage: "checkmark")
+          } else {
+            Text(option.title)
+          }
         }
       }
-      .labelsHidden()
-      .pickerStyle(.menu)
+    } label: {
+      Text(selectedTitle(for: selection.wrappedValue, in: options))
+        .lineLimit(1)
+        .truncationMode(.tail)
       .frame(width: pickerWidth, alignment: .leading)
     }
+    .frame(width: pickerWidth, alignment: .leading)
+  }
+
+  private var buttonRowPlaceholder: some View {
+    HStack(spacing: 8) {
+      Color.clear
+        .frame(width: buttonWidth, height: 32)
+
+      Color.clear
+        .frame(width: buttonWidth, height: 32)
+    }
+  }
+
+  private func selectedTitle(for value: Int, in options: [JoystickConfigurationOption]) -> String {
+    options.first(where: { $0.value == value })?.title ?? options.first?.title ?? ""
   }
 
   private func button(forRow row: Int, column: Int) -> JoystickConfigurationButton {

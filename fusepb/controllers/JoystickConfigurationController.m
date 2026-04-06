@@ -33,14 +33,64 @@
 
 @interface JoystickConfigurationContainerView : NSView
 
-- (void)configureWithController:(NSObject *)controller;
 - (void)configureForTargetNumber:(NSNumber *)targetNumber
                            xAxis:(NSNumber *)xAxis
                            yAxis:(NSNumber *)yAxis
                        fireValues:(NSArray *)fireValues;
 - (NSDictionary *)defaultsValues;
+- (NSNumber *)selectedXAxisValue;
+- (NSNumber *)selectedYAxisValue;
+- (NSArray *)selectedFireValues;
 
 @end
+
+static void
+update_current_joystick_settings( int joystick_number, int x_axis, int y_axis,
+                                  NSArray *fire_values )
+{
+  switch( joystick_number ) {
+  case 1:
+    settings_current.joy1_xaxis = x_axis;
+    settings_current.joy1_yaxis = y_axis;
+    settings_current.joystick_1_fire_1 = [[fire_values objectAtIndex:0] intValue];
+    settings_current.joystick_1_fire_2 = [[fire_values objectAtIndex:1] intValue];
+    settings_current.joystick_1_fire_3 = [[fire_values objectAtIndex:2] intValue];
+    settings_current.joystick_1_fire_4 = [[fire_values objectAtIndex:3] intValue];
+    settings_current.joystick_1_fire_5 = [[fire_values objectAtIndex:4] intValue];
+    settings_current.joystick_1_fire_6 = [[fire_values objectAtIndex:5] intValue];
+    settings_current.joystick_1_fire_7 = [[fire_values objectAtIndex:6] intValue];
+    settings_current.joystick_1_fire_8 = [[fire_values objectAtIndex:7] intValue];
+    settings_current.joystick_1_fire_9 = [[fire_values objectAtIndex:8] intValue];
+    settings_current.joystick_1_fire_10 = [[fire_values objectAtIndex:9] intValue];
+    settings_current.joystick_1_fire_11 = [[fire_values objectAtIndex:10] intValue];
+    settings_current.joystick_1_fire_12 = [[fire_values objectAtIndex:11] intValue];
+    settings_current.joystick_1_fire_13 = [[fire_values objectAtIndex:12] intValue];
+    settings_current.joystick_1_fire_14 = [[fire_values objectAtIndex:13] intValue];
+    settings_current.joystick_1_fire_15 = [[fire_values objectAtIndex:14] intValue];
+    break;
+  case 2:
+    settings_current.joy2_xaxis = x_axis;
+    settings_current.joy2_yaxis = y_axis;
+    settings_current.joystick_2_fire_1 = [[fire_values objectAtIndex:0] intValue];
+    settings_current.joystick_2_fire_2 = [[fire_values objectAtIndex:1] intValue];
+    settings_current.joystick_2_fire_3 = [[fire_values objectAtIndex:2] intValue];
+    settings_current.joystick_2_fire_4 = [[fire_values objectAtIndex:3] intValue];
+    settings_current.joystick_2_fire_5 = [[fire_values objectAtIndex:4] intValue];
+    settings_current.joystick_2_fire_6 = [[fire_values objectAtIndex:5] intValue];
+    settings_current.joystick_2_fire_7 = [[fire_values objectAtIndex:6] intValue];
+    settings_current.joystick_2_fire_8 = [[fire_values objectAtIndex:7] intValue];
+    settings_current.joystick_2_fire_9 = [[fire_values objectAtIndex:8] intValue];
+    settings_current.joystick_2_fire_10 = [[fire_values objectAtIndex:9] intValue];
+    settings_current.joystick_2_fire_11 = [[fire_values objectAtIndex:10] intValue];
+    settings_current.joystick_2_fire_12 = [[fire_values objectAtIndex:11] intValue];
+    settings_current.joystick_2_fire_13 = [[fire_values objectAtIndex:12] intValue];
+    settings_current.joystick_2_fire_14 = [[fire_values objectAtIndex:13] intValue];
+    settings_current.joystick_2_fire_15 = [[fire_values objectAtIndex:14] intValue];
+    break;
+  default:
+    assert( 0 );
+  }
+}
 
 static NSArray *
 joystick_fire_values_for_settings( int joystick_number )
@@ -91,35 +141,37 @@ joystick_fire_values_for_settings( int joystick_number )
   return values;
 }
 
+@interface JoystickConfigurationController () <NSWindowDelegate>
+
+- (void)installContainerView;
+
+@end
+
 @implementation JoystickConfigurationController
 
 - (id)init
 {
-  NSPanel *window;
+  self = [super initWithWindowNibName:@"JoystickConfiguration"];
 
-  window = [[[NSPanel alloc] initWithContentRect:NSMakeRect( 82, 198, 696, 312 )
-                                       styleMask:NSWindowStyleMaskTitled |
-                                                 NSWindowStyleMaskClosable
-                                         backing:NSBackingStoreBuffered
-                                           defer:NO] autorelease];
-
-  self = [super initWithWindow:window];
-  if( !self ) return nil;
-
-  [window setTitle:@"Real Joystick Setup"];
-  [window setReleasedWhenClosed:NO];
-  [window setHidesOnDeactivate:YES];
-  [window setMinSize:NSMakeSize( 696, 312 )];
-
-  containerView = [[JoystickConfigurationContainerView alloc]
-                    initWithFrame:NSMakeRect( 0, 0, 696, 312 )];
-  [containerView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-  [containerView configureWithController:self];
-  [[self window] setContentView:containerView];
-
-  [self setWindowFrameAutosaveName:@"JoystickConfigurationWindow"];
+  [self setWindowFrameAutosaveName:@"JoystickConfigurationSwiftUIWindow"];
 
   return self;
+}
+
+- (void)awakeFromNib
+{
+  NSWindow *window;
+
+  window = [self window];
+  [[self window] setDelegate:self];
+  [window setContentMinSize:NSMakeSize( 696, 312 )];
+  [window setContentSize:NSMakeSize( 696, 312 )];
+
+  containerView = [[JoystickConfigurationContainerView alloc]
+                    initWithFrame:[contentContainer bounds]];
+  [containerView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+
+  [self installContainerView];
 }
 
 - (void)dealloc
@@ -133,6 +185,7 @@ joystick_fire_values_for_settings( int joystick_number )
 {
   NSUserDefaults *currentValues;
   NSDictionary *defaultsValues;
+  NSArray *fire_values;
   NSEnumerator *key_enumerator;
   id key;
 
@@ -145,6 +198,12 @@ joystick_fire_values_for_settings( int joystick_number )
     [currentValues setObject:[defaultsValues objectForKey:key] forKey:key];
   }
 
+  fire_values = [containerView selectedFireValues];
+  update_current_joystick_settings( joyNum,
+                                    [[containerView selectedXAxisValue] intValue],
+                                    [[containerView selectedYAxisValue] intValue],
+                                    fire_values );
+
   [self cancel:self];
 }
 
@@ -152,6 +211,19 @@ joystick_fire_values_for_settings( int joystick_number )
 {
   [NSApp stopModal];
   [[self window] close];
+}
+
+- (void)installContainerView
+{
+  [containerView setFrame:[contentContainer bounds]];
+  [contentContainer addSubview:containerView];
+}
+
+- (void)windowWillClose:(NSNotification *)notification
+{
+  if( [notification object] == [self window] && [NSApp modalWindow] == [self window] ) {
+    [NSApp stopModal];
+  }
 }
 
 - (void)showWindow:(id)sender
@@ -176,11 +248,9 @@ joystick_fire_values_for_settings( int joystick_number )
   [containerView configureForTargetNumber:@(joyNum)
                                      xAxis:@(x_axis)
                                      yAxis:@(y_axis)
-                                fireValues:joystick_fire_values_for_settings( joyNum )];
+                                 fireValues:joystick_fire_values_for_settings( joyNum )];
 
-  [[self window] makeFirstResponder:nil];
   [super showWindow:sender];
-
   [NSApp runModalForWindow:[self window]];
 }
 
