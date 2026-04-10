@@ -1,6 +1,7 @@
 {
   "database": "dolt",
   "backend": "dolt",
-  "dolt_database": "beads_fuse-for-macos-arm64",
-  "project_id": "ff1c1a5d-8f7b-49c4-8040-a80db336440a"
+  "dolt_mode": "embedded",
+  "dolt_database": "fuse_for_macos_arm64",
+  "project_id": "be20f6a5-b6ee-4be0-ab56-92c88f3b53db"
 }
