@@ -27,6 +27,7 @@
 #include <QuickLook/QLGenerator.h>
 
 #import "FuseQuickLookImage.h"
+#import "FuseQuickLookThumbnail.h"
 
 /* -----------------------------------------------------------------------------
     Generate a thumbnail for file
@@ -38,6 +39,7 @@ OSStatus GenerateThumbnailForURL(void *thisInterface, QLThumbnailRequestRef thum
 {
   NSAutoreleasePool *pool;
   FuseQuickLookImage *speccyFile;
+  FuseQuickLookThumbnail *thumbnailImage;
 
   /* Don't assume that there is an autorelease pool around the calling of this
      function. */
@@ -45,12 +47,14 @@ OSStatus GenerateThumbnailForURL(void *thisInterface, QLThumbnailRequestRef thum
 
   speccyFile = [[[FuseQuickLookImage alloc]
                   initWithContentsOfURL:(NSURL*)url] autorelease];
+  thumbnailImage = [[[FuseQuickLookThumbnail alloc]
+                      initWithQuickLookImage:speccyFile] autorelease];
 
-  switch( [speccyFile imageKind] ) {
-  case FUSE_QUICKLOOK_IMAGE_SCR:
+  switch( [thumbnailImage thumbnailKind] ) {
+  case FUSE_QUICKLOOK_THUMBNAIL_BITMAP:
     {
-      NSBitmapImageRep* imageRep = [[speccyFile bitmapImageRep] retain];
-      NSSize canvasSize = [speccyFile canvasSize];
+      NSBitmapImageRep* imageRep = [[thumbnailImage bitmapImageRep] retain];
+      NSSize canvasSize = [thumbnailImage canvasSize];
               
       CGContextRef cgContext =
         QLThumbnailRequestCreateContext( thumbnail, *(CGSize *)&canvasSize,
@@ -82,10 +86,10 @@ OSStatus GenerateThumbnailForURL(void *thisInterface, QLThumbnailRequestRef thum
       [imageRep release];
     }
     break;
-  case FUSE_QUICKLOOK_IMAGE_IMAGEIO:
+  case FUSE_QUICKLOOK_THUMBNAIL_IMAGE_DATA:
     QLThumbnailRequestSetImageWithData( thumbnail,
-                                        (CFDataRef)[speccyFile imageData],
-                                        (CFDictionaryRef)[speccyFile imageOptions] );
+                                        (CFDataRef)[thumbnailImage imageData],
+                                        (CFDictionaryRef)[thumbnailImage imageOptions] );
     break;
   default:
     break;

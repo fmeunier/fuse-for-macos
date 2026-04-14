@@ -25,8 +25,22 @@
 /* Begin PBXBuildFile section */
 		B6013812164692F5005FD3AE /* Fuse.iconset in Resources */ = {isa = PBXBuildFile; fileRef = B6013811164692F5005FD3AE /* Fuse.iconset */; };
 		B604B21B0DC182BE00981CC7 /* FuseGenerator.qlgenerator in CopyFiles */ = {isa = PBXBuildFile; fileRef = B7A1C3113A75A00000C0DE01 /* FuseGenerator.qlgenerator */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		D0M000013A79000000C0DE01 /* FuseThumbnailExtension.appex in CopyFiles */ = {isa = PBXBuildFile; fileRef = D0M001043A79000000C0DE01 /* FuseThumbnailExtension.appex */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B7A1C31D3A75A10000C0DE01 /* AttributeManager.c in Sources */ = {isa = PBXBuildFile; fileRef = B7A1C31E3A75A10000C0DE01 /* AttributeManager.c */; };
 		B7A1C31F3A75A10000C0DE01 /* ColourMacros.c in Sources */ = {isa = PBXBuildFile; fileRef = B7A1C3203A75A10000C0DE01 /* ColourMacros.c */; };
+		D0M000023A79000000C0DE01 /* QuickLookThumbnailing.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0M001053A79000000C0DE01 /* QuickLookThumbnailing.framework */; };
+		D0M0000C3A79000000C0DE01 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		D0M0000D3A79000000C0DE01 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29B97325FDCFA39411CA2CEA /* Foundation.framework */; };
+		D0M0000E3A79000000C0DE01 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B61159CC3A76400000C0DE01 /* AudioToolbox.framework */; };
+		D0M000033A79000000C0DE01 /* ThumbnailProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = D0M001023A79000000C0DE01 /* ThumbnailProvider.m */; };
+		D0M000043A79000000C0DE01 /* FuseQuickLookImage.m in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00123A78000000C0DE01 /* FuseQuickLookImage.m */; };
+		D0M000053A79000000C0DE01 /* FuseQuickLookThumbnail.m in Sources */ = {isa = PBXBuildFile; fileRef = D0M001093A79000000C0DE01 /* FuseQuickLookThumbnail.m */; };
+		D0M0000B3A79000000C0DE01 /* FuseQuickLookThumbnail.m in Sources */ = {isa = PBXBuildFile; fileRef = D0M001093A79000000C0DE01 /* FuseQuickLookThumbnail.m */; };
+		D0M000063A79000000C0DE01 /* LibspectrumSCRExtractor.m in Sources */ = {isa = PBXBuildFile; fileRef = B7A1C30E3A75A00000C0DE01 /* LibspectrumSCRExtractor.m */; };
+		D0M000073A79000000C0DE01 /* JWSpectrumScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = B7A1C3143A75A00000C0DE01 /* JWSpectrumScreen.m */; };
+		D0M000083A79000000C0DE01 /* ColourMacros.c in Sources */ = {isa = PBXBuildFile; fileRef = B7A1C3203A75A10000C0DE01 /* ColourMacros.c */; };
+		D0M000093A79000000C0DE01 /* FuseQuickLookThumbnail.m in Sources */ = {isa = PBXBuildFile; fileRef = D0M001093A79000000C0DE01 /* FuseQuickLookThumbnail.m */; };
+		D0M0000A3A79000000C0DE01 /* FuseQuickLookThumbnailTests.m in Sources */ = {isa = PBXBuildFile; fileRef = D0M0010A3A79000000C0DE01 /* FuseQuickLookThumbnailTests.m */; };
 		B61159CD3A76400000C0DE01 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B61159CC3A76400000C0DE01 /* AudioToolbox.framework */; };
 		B615BFE80B4261E50082D535 /* HIDJoysticks.m in Sources */ = {isa = PBXBuildFile; fileRef = B615BFE60B4261E50082D535 /* HIDJoysticks.m */; };
 		B6168CE91F0BC0AC008C99E6 /* buffer.c in Sources */ = {isa = PBXBuildFile; fileRef = B6168CE81F0BC0AC008C99E6 /* buffer.c */; };
@@ -377,6 +391,20 @@
 			remoteGlobalIDString = B7A1C4003A75C00000C0DE01;
 			remoteInfo = FuseDependencies;
 		};
+		D0M002013A79000000C0DE01 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B7A1C4003A75C00000C0DE01;
+			remoteInfo = FuseDependencies;
+		};
+		D0M002113A79000000C0DE01 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D0M001103A79000000C0DE01;
+			remoteInfo = FuseThumbnailExtension;
+		};
 		B7A1C2003A754B0000C0DE01 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
@@ -412,6 +440,16 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D0M002213A79000000C0DE01 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				D0M000013A79000000C0DE01 /* FuseThumbnailExtension.appex in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -467,6 +505,14 @@
 		C0DE00143A78000000C0DE01 /* FuseQuickLookImageTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FuseQuickLookImageTests.m; sourceTree = "<group>"; };
 		C0DE00153A78000000C0DE01 /* FuseQuickLookTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "FuseQuickLookTests-Info.plist"; sourceTree = "<group>"; };
 		C0DE00163A78000000C0DE01 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = "<absolute>"; };
+		D0M001013A79000000C0DE01 /* ThumbnailProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThumbnailProvider.h; sourceTree = "<group>"; };
+		D0M001023A79000000C0DE01 /* ThumbnailProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThumbnailProvider.m; sourceTree = "<group>"; };
+		D0M001033A79000000C0DE01 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D0M001043A79000000C0DE01 /* FuseThumbnailExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = FuseThumbnailExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		D0M001053A79000000C0DE01 /* QuickLookThumbnailing.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickLookThumbnailing.framework; path = /System/Library/Frameworks/QuickLookThumbnailing.framework; sourceTree = "<absolute>"; };
+		D0M001083A79000000C0DE01 /* FuseQuickLookThumbnail.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FuseQuickLookThumbnail.h; sourceTree = "<group>"; };
+		D0M001093A79000000C0DE01 /* FuseQuickLookThumbnail.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FuseQuickLookThumbnail.m; sourceTree = "<group>"; };
+		D0M0010A3A79000000C0DE01 /* FuseQuickLookThumbnailTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FuseQuickLookThumbnailTests.m; sourceTree = "<group>"; };
 		B6013811164692F5005FD3AE /* Fuse.iconset */ = {isa = PBXFileReference; lastKnownFileType = folder.iconset; name = Fuse.iconset; path = ../Fuse.iconset; sourceTree = "<group>"; };
 		B6018479065A586900B0BE59 /* zxatasp.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = zxatasp.c; sourceTree = "<group>"; };
 		B601847A065A586900B0BE59 /* zxatasp.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = zxatasp.h; sourceTree = "<group>"; };
@@ -955,6 +1001,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D0M002313A79000000C0DE01 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D0M0000C3A79000000C0DE01 /* Cocoa.framework in Frameworks */,
+				D0M0000D3A79000000C0DE01 /* Foundation.framework in Frameworks */,
+				D0M000023A79000000C0DE01 /* QuickLookThumbnailing.framework in Frameworks */,
+				D0M0000E3A79000000C0DE01 /* AudioToolbox.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -995,6 +1052,7 @@
 				B6A6F0ED0B3D5F9E000B88E9 /* CoreAudio.framework */,
 				B7A1C1143A75380000C0DE01 /* CoreServices.framework */,
 				29B97325FDCFA39411CA2CEA /* Foundation.framework */,
+				D0M001053A79000000C0DE01 /* QuickLookThumbnailing.framework */,
 				B7A1C3183A75A00000C0DE01 /* QuickLook.framework */,
 				C0DE00163A78000000C0DE01 /* XCTest.framework */,
 				B653532A0B902CB20083F942 /* IOKit.framework */,
@@ -1009,6 +1067,7 @@
 			children = (
 				B61F46AA09121DF200C8096C /* Fuse.app */,
 				B7A1C3113A75A00000C0DE01 /* FuseGenerator.qlgenerator */,
+				D0M001043A79000000C0DE01 /* FuseThumbnailExtension.appex */,
 				C0DE00133A78000000C0DE01 /* FuseQuickLookTests.xctest */,
 				B7A1C1133A75380000C0DE01 /* FuseImporter.mdimporter */,
 				B6D670451DD6CB6B0014914E /* FuseHelp.help */,
@@ -1023,6 +1082,7 @@
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				B7A1C3203A75A00000C0DE01 /* FuseGenerator */,
+				D0M001073A79000000C0DE01 /* FuseThumbnailExtension */,
 				B7A1C1163A75380000C0DE01 /* FuseImporter */,
 				C0DE00213A78000000C0DE01 /* Tests */,
 				B6D670461DD6CB6B0014914E /* FuseHelp */,
@@ -1481,6 +1541,8 @@
 				B7A1C30C3A75A00000C0DE01 /* GenerateThumbnailForURL.m */,
 				C0DE00113A78000000C0DE01 /* FuseQuickLookImage.h */,
 				C0DE00123A78000000C0DE01 /* FuseQuickLookImage.m */,
+				D0M001083A79000000C0DE01 /* FuseQuickLookThumbnail.h */,
+				D0M001093A79000000C0DE01 /* FuseQuickLookThumbnail.m */,
 				B7A1C30D3A75A00000C0DE01 /* LibspectrumSCRExtractor.h */,
 				B7A1C30E3A75A00000C0DE01 /* LibspectrumSCRExtractor.m */,
 				B7A1C3213A75A00000C0DE01 /* JWSpectrumScreen */,
@@ -1506,10 +1568,21 @@
 			path = JWSpectrumScreen;
 			sourceTree = "<group>";
 		};
+		D0M001073A79000000C0DE01 /* FuseThumbnailExtension */ = {
+			isa = PBXGroup;
+			children = (
+				D0M001033A79000000C0DE01 /* Info.plist */,
+				D0M001013A79000000C0DE01 /* ThumbnailProvider.h */,
+				D0M001023A79000000C0DE01 /* ThumbnailProvider.m */,
+			);
+			path = plugins/FuseThumbnailExtension;
+			sourceTree = "<group>";
+		};
 		C0DE00213A78000000C0DE01 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
 				C0DE00143A78000000C0DE01 /* FuseQuickLookImageTests.m */,
+				D0M0010A3A79000000C0DE01 /* FuseQuickLookThumbnailTests.m */,
 				C0DE00153A78000000C0DE01 /* FuseQuickLookTests-Info.plist */,
 			);
 			path = tests;
@@ -1812,6 +1885,7 @@
 				B61F459109121DF100C8096C /* Run Script */,
 				B61F459209121DF100C8096C /* CopyFiles */,
 				B61F45A109121DF100C8096C /* CopyFiles */,
+				D0M002213A79000000C0DE01 /* Embed App Extensions */,
 				B61F45FE09121DF100C8096C /* Resources */,
 				B61F463809121DF100C8096C /* Sources */,
 				B61F469909121DF100C8096C /* Frameworks */,
@@ -1823,6 +1897,7 @@
 			dependencies = (
 				B7A1C40C3A75C00000C0DE01 /* PBXTargetDependency */,
 				B7A1C3313A75A20000C0DE01 /* PBXTargetDependency */,
+				D0M002813A79000000C0DE01 /* PBXTargetDependency */,
 				B7A1C2013A754B0000C0DE01 /* PBXTargetDependency */,
 				B6D6704F1DD6D1430014914E /* PBXTargetDependency */,
 			);
@@ -1850,6 +1925,24 @@
 			productName = FuseGenerator;
 			productReference = B7A1C3113A75A00000C0DE01 /* FuseGenerator.qlgenerator */;
 			productType = "com.apple.product-type.bundle";
+		};
+		D0M001103A79000000C0DE01 /* FuseThumbnailExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D0M002913A79000000C0DE01 /* Build configuration list for PBXNativeTarget "FuseThumbnailExtension" */;
+			buildPhases = (
+				D0M002513A79000000C0DE01 /* Resources */,
+				D0M002413A79000000C0DE01 /* Sources */,
+				D0M002313A79000000C0DE01 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D0M002713A79000000C0DE01 /* PBXTargetDependency */,
+			);
+			name = FuseThumbnailExtension;
+			productName = FuseThumbnailExtension;
+			productReference = D0M001043A79000000C0DE01 /* FuseThumbnailExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 		C0DE00413A78000000C0DE01 /* FuseQuickLookTests */ = {
 			isa = PBXNativeTarget;
@@ -1937,6 +2030,7 @@
 				B7A1C4003A75C00000C0DE01 /* FuseDependencies */,
 				B61F459009121DF100C8096C /* Fuse */,
 				B7A1C3253A75A00000C0DE01 /* FuseGenerator */,
+				D0M001103A79000000C0DE01 /* FuseThumbnailExtension */,
 				C0DE00413A78000000C0DE01 /* FuseQuickLookTests */,
 				B7A1C11F3A75380000C0DE01 /* FuseImporter */,
 				B6D670441DD6CB6B0014914E /* FuseHelp */,
@@ -1964,6 +2058,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		C0DE00333A78000000C0DE01 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D0M002513A79000000C0DE01 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2455,6 +2556,7 @@
 				B7A1C3023A75A00000C0DE01 /* GeneratePreviewForURL.m in Sources */,
 				B7A1C3033A75A00000C0DE01 /* GenerateThumbnailForURL.m in Sources */,
 				C0DE00013A78000000C0DE01 /* FuseQuickLookImage.m in Sources */,
+				D0M0000B3A79000000C0DE01 /* FuseQuickLookThumbnail.m in Sources */,
 				B7A1C3043A75A00000C0DE01 /* LibspectrumSCRExtractor.m in Sources */,
 				B7A1C31D3A75A10000C0DE01 /* AttributeManager.c in Sources */,
 				B7A1C31F3A75A10000C0DE01 /* ColourMacros.c in Sources */,
@@ -2468,9 +2570,24 @@
 			files = (
 				C0DE00033A78000000C0DE01 /* FuseQuickLookImageTests.m in Sources */,
 				C0DE00023A78000000C0DE01 /* FuseQuickLookImage.m in Sources */,
+				D0M000093A79000000C0DE01 /* FuseQuickLookThumbnail.m in Sources */,
+				D0M0000A3A79000000C0DE01 /* FuseQuickLookThumbnailTests.m in Sources */,
 				C0DE00073A78000000C0DE01 /* LibspectrumSCRExtractor.m in Sources */,
 				C0DE00093A78000000C0DE01 /* ColourMacros.c in Sources */,
 				C0DE00083A78000000C0DE01 /* JWSpectrumScreen.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D0M002413A79000000C0DE01 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D0M000033A79000000C0DE01 /* ThumbnailProvider.m in Sources */,
+				D0M000043A79000000C0DE01 /* FuseQuickLookImage.m in Sources */,
+				D0M000053A79000000C0DE01 /* FuseQuickLookThumbnail.m in Sources */,
+				D0M000063A79000000C0DE01 /* LibspectrumSCRExtractor.m in Sources */,
+				D0M000083A79000000C0DE01 /* ColourMacros.c in Sources */,
+				D0M000073A79000000C0DE01 /* JWSpectrumScreen.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2697,6 +2814,16 @@
 			isa = PBXTargetDependency;
 			target = B7A1C4003A75C00000C0DE01 /* FuseDependencies */;
 			targetProxy = C0DE00513A78000000C0DE01 /* PBXContainerItemProxy */;
+		};
+		D0M002713A79000000C0DE01 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B7A1C4003A75C00000C0DE01 /* FuseDependencies */;
+			targetProxy = D0M002013A79000000C0DE01 /* PBXContainerItemProxy */;
+		};
+		D0M002813A79000000C0DE01 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D0M001103A79000000C0DE01 /* FuseThumbnailExtension */;
+			targetProxy = D0M002113A79000000C0DE01 /* PBXContainerItemProxy */;
 		};
 		B7A1C2013A754B0000C0DE01 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -2965,6 +3092,132 @@
 				PRODUCT_NAME = FuseQuickLookTests;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = xctest;
+			};
+			name = Deployment;
+		};
+		D0M002A13A79000000C0DE01 /* Default */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B688FD9F2F54500000A08A6D /* FuseGeneratorPaths.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DERIVED_FILE_DIR)/deps/libspectrum-prefix/include",
+					"$(PROJECT_DERIVED_FILE_DIR)/deps/libgcrypt-prefix/include",
+					"$(PROJECT_DERIVED_FILE_DIR)/deps/libgpg-error-prefix/include",
+				);
+				INFOPLIST_FILE = plugins/FuseThumbnailExtension/Info.plist;
+				LIBRARY_SEARCH_PATHS = (
+					"$(PROJECT_DERIVED_FILE_DIR)/deps/libspectrum-prefix/lib",
+					"$(PROJECT_DERIVED_FILE_DIR)/deps/libgcrypt-prefix/lib",
+					"$(PROJECT_DERIVED_FILE_DIR)/deps/libgpg-error-prefix/lib",
+					"$(inherited)",
+				);
+				LLVM_LTO = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				OTHER_LDFLAGS = (
+					"-lspectrum",
+					"-lgcrypt",
+					"-lgpg-error",
+					"-lbz2",
+					"-lz",
+					"-framework",
+					AudioToolbox,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "net.sourceforge.fuse-for-macosx.Fuse.ThumbnailExtension";
+				PRODUCT_NAME = FuseThumbnailExtension;
+				SKIP_INSTALL = YES;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = appex;
+			};
+			name = Default;
+		};
+		D0M002B13A79000000C0DE01 /* Development */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B688FD9F2F54500000A08A6D /* FuseGeneratorPaths.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DERIVED_FILE_DIR)/deps/libspectrum-prefix/include",
+					"$(PROJECT_DERIVED_FILE_DIR)/deps/libgcrypt-prefix/include",
+					"$(PROJECT_DERIVED_FILE_DIR)/deps/libgpg-error-prefix/include",
+				);
+				INFOPLIST_FILE = plugins/FuseThumbnailExtension/Info.plist;
+				LIBRARY_SEARCH_PATHS = (
+					"$(PROJECT_DERIVED_FILE_DIR)/deps/libspectrum-prefix/lib",
+					"$(PROJECT_DERIVED_FILE_DIR)/deps/libgcrypt-prefix/lib",
+					"$(PROJECT_DERIVED_FILE_DIR)/deps/libgpg-error-prefix/lib",
+					"$(inherited)",
+				);
+				LLVM_LTO = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				OTHER_LDFLAGS = (
+					"-lspectrum",
+					"-lgcrypt",
+					"-lgpg-error",
+					"-lbz2",
+					"-lz",
+					"-framework",
+					AudioToolbox,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "net.sourceforge.fuse-for-macosx.Fuse.ThumbnailExtension";
+				PRODUCT_NAME = FuseThumbnailExtension;
+				SKIP_INSTALL = YES;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = appex;
+			};
+			name = Development;
+		};
+		D0M002C13A79000000C0DE01 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B688FD9F2F54500000A08A6D /* FuseGeneratorPaths.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DERIVED_FILE_DIR)/deps/libspectrum-prefix/include",
+					"$(PROJECT_DERIVED_FILE_DIR)/deps/libgcrypt-prefix/include",
+					"$(PROJECT_DERIVED_FILE_DIR)/deps/libgpg-error-prefix/include",
+				);
+				INFOPLIST_FILE = plugins/FuseThumbnailExtension/Info.plist;
+				LIBRARY_SEARCH_PATHS = (
+					"$(PROJECT_DERIVED_FILE_DIR)/deps/libspectrum-prefix/lib",
+					"$(PROJECT_DERIVED_FILE_DIR)/deps/libgcrypt-prefix/lib",
+					"$(PROJECT_DERIVED_FILE_DIR)/deps/libgpg-error-prefix/lib",
+					"$(inherited)",
+				);
+				LLVM_LTO = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				OTHER_LDFLAGS = (
+					"-lspectrum",
+					"-lgcrypt",
+					"-lgpg-error",
+					"-lbz2",
+					"-lz",
+					"-framework",
+					AudioToolbox,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "net.sourceforge.fuse-for-macosx.Fuse.ThumbnailExtension";
+				PRODUCT_NAME = FuseThumbnailExtension;
+				SKIP_INSTALL = YES;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = appex;
 			};
 			name = Deployment;
 		};
@@ -3567,6 +3820,16 @@
 				C0DE006123A78000000C0DE01 /* Development */,
 				C0DE006133A78000000C0DE01 /* Deployment */,
 				C0DE006113A78000000C0DE01 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		D0M002913A79000000C0DE01 /* Build configuration list for PBXNativeTarget "FuseThumbnailExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D0M002B13A79000000C0DE01 /* Development */,
+				D0M002C13A79000000C0DE01 /* Deployment */,
+				D0M002A13A79000000C0DE01 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
