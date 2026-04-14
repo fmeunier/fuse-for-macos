@@ -90,9 +90,6 @@ fuse:
 		FUSE_THIRD_PARTY_ROOT='$(FUSE_THIRD_PARTY_ROOT)' \
 		CODE_SIGN_IDENTITY="$(EFFECTIVE_CODE_SIGN_IDENTITY)" \
 		DEVELOPMENT_TEAM="$(EFFECTIVE_DEVELOPMENT_TEAM)"
-	@echo "Re-signing Quick Look plugin"
-	codesign --sign "$(EFFECTIVE_CODE_SIGN_IDENTITY)" --force --options runtime $(FUSE_CODESIGN_TIMESTAMP) \
-		"$(FUSE_APP)/Contents/Library/QuickLook/FuseGenerator.qlgenerator"
 	@echo "Re-signing Spotlight importer"
 	codesign --sign "$(EFFECTIVE_CODE_SIGN_IDENTITY)" --force --options runtime $(FUSE_CODESIGN_TIMESTAMP) \
 		"$(FUSE_APP)/Contents/Library/Spotlight/FuseImporter.mdimporter"

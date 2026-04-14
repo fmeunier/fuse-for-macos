@@ -32,7 +32,9 @@
   FuseQuickLookImage *quicklook_image;
   FuseQuickLookPreview *preview;
   NSString *content_type_identifier;
+  NSData *preview_data;
   NSSize content_size;
+  UTType *content_type;
 
   quicklook_image = [[[FuseQuickLookImage alloc] initWithContentsOfURL:[request fileURL]] autorelease];
   preview = [[[FuseQuickLookPreview alloc] initWithQuickLookImage:quicklook_image] autorelease];
@@ -43,18 +45,22 @@
   }
 
   content_type_identifier = [preview contentTypeIdentifier];
-  if( !content_type_identifier ) {
+  preview_data = [preview previewData];
+  if( !content_type_identifier || !preview_data ) {
     handler( nil, nil );
     return;
   }
 
   content_size = [preview contentSize];
+  content_type = [UTType typeWithIdentifier:content_type_identifier];
+  if( !content_type ) content_type = UTTypeImage;
 
   handler( [[[QLPreviewReply alloc]
-              initWithDataOfContentType:[UTType typeWithIdentifier:content_type_identifier]
+              initWithDataOfContentType:content_type
               contentSize:*(CGSize *)&content_size
-              dataCreationBlock:^NSData * _Nullable(QLPreviewReply *reply, NSError **error) {
-                return [preview previewData];
+              dataCreationBlock:^NSData * _Nullable(QLPreviewReply *reply,
+                                                    NSError **error) {
+                return preview_data;
               }] autorelease],
            nil );
 }
