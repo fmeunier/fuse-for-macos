@@ -88,4 +88,21 @@
   XCTAssertNil( [thumbnail imageData] );
 }
 
+- (void)test_tzx_with_embedded_inlay_returns_image_data_thumbnail
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSData *image_data;
+
+  thumbnail = [self thumbnailForFixture:@"tests/fixtures/keyboard-inlay.tzx"];
+  image_data = [thumbnail imageData];
+
+  XCTAssertEqual( [thumbnail thumbnailKind], FUSE_QUICKLOOK_THUMBNAIL_IMAGE_DATA );
+  XCTAssertNotNil( image_data );
+  XCTAssertTrue( [image_data length] > 4 );
+  XCTAssertEqual( ((const unsigned char *)[image_data bytes])[0], 0xff );
+  XCTAssertEqual( ((const unsigned char *)[image_data bytes])[1], 0xd8 );
+  XCTAssertNil( [thumbnail bitmapImageRep] );
+  XCTAssertNotNil( [thumbnail image] );
+}
+
 @end

@@ -85,4 +85,26 @@
   XCTAssertNil( [image bitmapImageRep] );
 }
 
+- (void)test_tzx_with_embedded_inlay_returns_imageio_image
+{
+  FuseQuickLookImage *image;
+  NSData *image_data;
+  NSDictionary *image_options;
+
+  image = [[[FuseQuickLookImage alloc]
+             initWithContentsOfURL:[self fixtureURL:@"tests/fixtures/keyboard-inlay.tzx"]] autorelease];
+  image_data = [image imageData];
+  image_options = [image imageOptions];
+
+  XCTAssertEqual( [image libspectrumClass], LIBSPECTRUM_CLASS_TAPE );
+  XCTAssertEqual( [image imageKind], FUSE_QUICKLOOK_IMAGE_IMAGEIO );
+  XCTAssertNotNil( image_data );
+  XCTAssertTrue( [image_data length] > 4 );
+  XCTAssertEqual( ((const unsigned char *)[image_data bytes])[0], 0xff );
+  XCTAssertEqual( ((const unsigned char *)[image_data bytes])[1], 0xd8 );
+  XCTAssertEqualObjects( [image_options objectForKey:(NSString*)kCGImageSourceTypeIdentifierHint],
+                         @"public.jpeg" );
+  XCTAssertNil( [image bitmapImageRep] );
+}
+
 @end
