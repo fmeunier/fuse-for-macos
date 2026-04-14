@@ -26,8 +26,7 @@
 #include <QuickLook/QuickLook.h>
 #include <QuickLook/QLGenerator.h>
 
-#import "JWSpectrumScreen/JWSpectrumScreen.h"
-#import "LibspectrumSCRExtractor.h"
+#import "FuseQuickLookImage.h"
 
 /* -----------------------------------------------------------------------------
     Generate a thumbnail for file
@@ -38,24 +37,20 @@
 OSStatus GenerateThumbnailForURL(void *thisInterface, QLThumbnailRequestRef thumbnail, CFURLRef url, CFStringRef contentTypeUTI, CFDictionaryRef options, CGSize maxSize)
 {
   NSAutoreleasePool *pool;
-  LibspectrumSCRExtractor *speccyFile;
+  FuseQuickLookImage *speccyFile;
 
   /* Don't assume that there is an autorelease pool around the calling of this
      function. */
   pool = [[NSAutoreleasePool alloc] init];
 
-  speccyFile = [[[LibspectrumSCRExtractor alloc]
+  speccyFile = [[[FuseQuickLookImage alloc]
                   initWithContentsOfURL:(NSURL*)url] autorelease];
 
-  switch( [speccyFile image_type] ) {
-  case TYPE_SCR:
+  switch( [speccyFile imageKind] ) {
+  case FUSE_QUICKLOOK_IMAGE_SCR:
     {
-      JWSpectrumScreen* screen =
-        [[[JWSpectrumScreen alloc] initFromData:[speccyFile scrData]
-                                        mltHint:[speccyFile type] == LIBSPECTRUM_ID_SCREEN_MLT]
-         autorelease];
-      NSBitmapImageRep* imageRep = [[screen imageRep] retain];
-      NSSize canvasSize = [screen canvasSize];
+      NSBitmapImageRep* imageRep = [[speccyFile bitmapImageRep] retain];
+      NSSize canvasSize = [speccyFile canvasSize];
               
       CGContextRef cgContext =
         QLThumbnailRequestCreateContext( thumbnail, *(CGSize *)&canvasSize,
@@ -87,10 +82,10 @@ OSStatus GenerateThumbnailForURL(void *thisInterface, QLThumbnailRequestRef thum
       [imageRep release];
     }
     break;
-  case TYPE_IMAGEIO:
+  case FUSE_QUICKLOOK_IMAGE_IMAGEIO:
     QLThumbnailRequestSetImageWithData( thumbnail,
-                                        (CFDataRef)[speccyFile scrData],
-                                        (CFDictionaryRef)[speccyFile scrOptions] );
+                                        (CFDataRef)[speccyFile imageData],
+                                        (CFDictionaryRef)[speccyFile imageOptions] );
     break;
   default:
     break;

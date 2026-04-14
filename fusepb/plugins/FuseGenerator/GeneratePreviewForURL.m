@@ -26,8 +26,7 @@
 #include <QuickLook/QuickLook.h>
 #include <QuickLook/QLGenerator.h>
 
-#import "JWSpectrumScreen/JWSpectrumScreen.h"
-#import "LibspectrumSCRExtractor.h"
+#import "FuseQuickLookImage.h"
 
 /* -----------------------------------------------------------------------------
    Generate a preview for file
@@ -38,31 +37,27 @@
 OSStatus GeneratePreviewForURL(void *thisInterface, QLPreviewRequestRef preview, CFURLRef url, CFStringRef contentTypeUTI, CFDictionaryRef options)
 {
   NSAutoreleasePool *pool;
-  LibspectrumSCRExtractor *speccyFile;
+  FuseQuickLookImage *speccyFile;
 
   /* Don't assume that there is an autorelease pool around the calling of
      this function. */
   pool = [[NSAutoreleasePool alloc] init];
 
-  speccyFile = [[[LibspectrumSCRExtractor alloc]
+  speccyFile = [[[FuseQuickLookImage alloc]
                   initWithContentsOfURL:(NSURL*)url] autorelease];
 
   /* No preview for tapes, these are going to have inlays etc. which are more
      like album art in mp3s than file previews IMO */
-  if( [speccyFile class] == LIBSPECTRUM_CLASS_TAPE ) {
+  if( [speccyFile libspectrumClass] == LIBSPECTRUM_CLASS_TAPE ) {
     [pool release];
     return noErr;
   }
 
-  switch( [speccyFile image_type] ) {
-  case TYPE_SCR:
+  switch( [speccyFile imageKind] ) {
+  case FUSE_QUICKLOOK_IMAGE_SCR:
     {
-      JWSpectrumScreen* screen =
-        [[[JWSpectrumScreen alloc] initFromData:[speccyFile scrData]
-                                        mltHint:[speccyFile type] == LIBSPECTRUM_ID_SCREEN_MLT]
-            autorelease];
-      NSBitmapImageRep* imageRep = [[screen imageRep] retain];
-      NSSize canvasSize = [screen canvasSize];
+      NSBitmapImageRep* imageRep = [[speccyFile bitmapImageRep] retain];
+      NSSize canvasSize = [speccyFile canvasSize];
               
       CGContextRef cgContext =
         QLPreviewRequestCreateContext( preview, *(CGSize *)&canvasSize,
@@ -94,9 +89,9 @@ OSStatus GeneratePreviewForURL(void *thisInterface, QLPreviewRequestRef preview,
       [imageRep release];
     }
     break;
-  case TYPE_IMAGEIO:
+  case FUSE_QUICKLOOK_IMAGE_IMAGEIO:
     QLPreviewRequestSetDataRepresentation( preview,
-                                           (CFDataRef)[speccyFile scrData],
+                                           (CFDataRef)[speccyFile imageData],
                                            kUTTypeImage,
                                            NULL );
     break;
