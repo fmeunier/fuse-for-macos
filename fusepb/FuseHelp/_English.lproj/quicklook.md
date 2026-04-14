@@ -25,6 +25,11 @@ for the file in the same way as snapshots above.
 
 ## Tape images (TAP and TZX)
 
-The first Spectrum screen file (SCREEN$) stored with the standard ROM loader in
-the tape is extracted and used as the thumbnail of the file in the same way as
-snapshot files above.
+Fuse uses the same extracted artwork for both Quick Look previews and
+thumbnails of tape images when suitable image data is present.
+
+If a tape contains embedded inlay artwork, that image is used. Otherwise, the
+first Spectrum screen file (SCREEN$) stored with the standard ROM loader in the
+tape is extracted and used in the same way as snapshot files above. Tapes which
+do not contain extractable image data do not produce a Quick Look preview or
+thumbnail.
