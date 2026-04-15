@@ -18,5 +18,5 @@
 
 #import <QuickLookUI/QuickLookUI.h>
 
-@interface PreviewProvider : QLPreviewProvider
+@interface PreviewProvider : QLPreviewProvider <QLPreviewingController>
 @end

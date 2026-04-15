@@ -2982,6 +2982,7 @@
 			baseConfigurationReference = B688FD9F2F54500000A08A6D /* FuseGeneratorPaths.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = FuseQuickLookExtension.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				HEADER_SEARCH_PATHS = (
@@ -3024,6 +3025,7 @@
 			baseConfigurationReference = B688FD9F2F54500000A08A6D /* FuseGeneratorPaths.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = FuseQuickLookExtension.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				HEADER_SEARCH_PATHS = (
@@ -3066,6 +3068,7 @@
 			baseConfigurationReference = B688FD9F2F54500000A08A6D /* FuseGeneratorPaths.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = FuseQuickLookExtension.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				HEADER_SEARCH_PATHS = (
@@ -3108,6 +3111,7 @@
 			baseConfigurationReference = B688FD9F2F54500000A08A6D /* FuseGeneratorPaths.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = FuseQuickLookExtension.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				HEADER_SEARCH_PATHS = (
@@ -3150,6 +3154,7 @@
 			baseConfigurationReference = B688FD9F2F54500000A08A6D /* FuseGeneratorPaths.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = FuseQuickLookExtension.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				HEADER_SEARCH_PATHS = (
@@ -3192,6 +3197,7 @@
 			baseConfigurationReference = B688FD9F2F54500000A08A6D /* FuseGeneratorPaths.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = FuseQuickLookExtension.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				HEADER_SEARCH_PATHS = (

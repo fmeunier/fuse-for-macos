@@ -32,8 +32,8 @@ typedef enum FuseQuickLookThumbnailKind {
 
 - (FuseQuickLookThumbnailKind)thumbnailKind;
 - (NSSize)canvasSize;
-- (NSImage*)image;
 - (NSBitmapImageRep*)bitmapImageRep;
+- (NSImage*)image;
 - (NSData*)imageData;
 - (NSDictionary*)imageOptions;
 
