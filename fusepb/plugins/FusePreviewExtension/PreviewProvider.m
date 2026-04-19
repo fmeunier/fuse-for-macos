@@ -18,8 +18,9 @@
 
 #import "PreviewProvider.h"
 
-#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
+#import <ImageIO/ImageIO.h>
 
+#import "FuseQuickLookDrawing.h"
 #import "FuseQuickLookImage.h"
 #import "FuseQuickLookPreview.h"
 
@@ -29,12 +30,11 @@
                    completionHandler:(void (^)(QLPreviewReply * _Nullable,
                                                NSError * _Nullable))handler
 {
+  NSBitmapImageRep *bitmap;
   FuseQuickLookImage *quicklook_image;
   FuseQuickLookPreview *preview;
-  NSString *content_type_identifier;
   NSData *preview_data;
   NSSize content_size;
-  UTType *content_type;
 
   quicklook_image = [[[FuseQuickLookImage alloc] initWithContentsOfURL:[request fileURL]] autorelease];
   preview = [[[FuseQuickLookPreview alloc] initWithQuickLookImage:quicklook_image] autorelease];
@@ -44,23 +44,63 @@
     return;
   }
 
-  content_type_identifier = [preview contentTypeIdentifier];
-  preview_data = [preview previewData];
-  if( !content_type_identifier || !preview_data ) {
+  content_size = [preview contentSize];
+  if( NSEqualSizes( content_size, NSZeroSize ) ) {
     handler( nil, nil );
     return;
   }
 
-  content_size = [preview contentSize];
-  content_type = [UTType typeWithIdentifier:content_type_identifier];
-  if( !content_type ) content_type = UTTypeImage;
+  if( [quicklook_image imageKind] == FUSE_QUICKLOOK_IMAGE_SCR ) {
+    bitmap = [quicklook_image bitmapImageRep];
+    if( !bitmap ) {
+      handler( nil, nil );
+      return;
+    }
+
+    handler( [[[QLPreviewReply alloc]
+                initWithContextSize:*(CGSize *)&content_size
+                isBitmap:YES
+                drawingBlock:^BOOL(CGContextRef context,
+                                   QLPreviewReply *reply,
+                                   NSError **error) {
+                  return fuse_quicklook_draw_image( context,
+                                                    *(CGSize *)&content_size,
+                                                    content_size,
+                                                    [bitmap CGImage] );
+                }] autorelease],
+             nil );
+    return;
+  }
+
+  preview_data = [preview previewData];
+  if( !preview_data ) {
+    handler( nil, nil );
+    return;
+  }
 
   handler( [[[QLPreviewReply alloc]
-              initWithDataOfContentType:content_type
-              contentSize:*(CGSize *)&content_size
-              dataCreationBlock:^NSData * _Nullable(QLPreviewReply *reply,
-                                                    NSError **error) {
-                return preview_data;
+              initWithContextSize:*(CGSize *)&content_size
+              isBitmap:YES
+              drawingBlock:^BOOL(CGContextRef context,
+                                 QLPreviewReply *reply,
+                                 NSError **error) {
+                CGImageSourceRef image_source;
+                CGImageRef image;
+                BOOL success;
+
+                image_source = CGImageSourceCreateWithData( (CFDataRef)preview_data, NULL );
+                if( !image_source ) return NO;
+
+                image = CGImageSourceCreateImageAtIndex( image_source, 0, NULL );
+                CFRelease( image_source );
+                if( !image ) return NO;
+
+                success = fuse_quicklook_draw_image( context,
+                                                     *(CGSize *)&content_size,
+                                                     content_size,
+                                                     image );
+                CGImageRelease( image );
+                return success;
               }] autorelease],
            nil );
 }

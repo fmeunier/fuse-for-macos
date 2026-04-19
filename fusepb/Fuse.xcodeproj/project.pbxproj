@@ -497,6 +497,8 @@
 		C0DE00133A78000000C0DE01 /* FuseQuickLookTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FuseQuickLookTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0DE00143A78000000C0DE01 /* FuseQuickLookImageTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FuseQuickLookImageTests.m; sourceTree = "<group>"; };
 		C0DE00153A78000000C0DE01 /* FuseQuickLookTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "FuseQuickLookTests-Info.plist"; sourceTree = "<group>"; };
+		C0DE00913A78000000C0DE01 /* FuseQuickLookTestsPaths.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = FuseQuickLookTestsPaths.xcconfig; sourceTree = "<group>"; };
+		C0DE00923A78000000C0DE01 /* FuseQuickLookExtensionPaths.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = FuseQuickLookExtensionPaths.xcconfig; sourceTree = "<group>"; };
 		C0DE00163A78000000C0DE01 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = "<absolute>"; };
 		0DI001013A7A00000C0DE01 /* PreviewProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreviewProvider.h; sourceTree = "<group>"; };
 		0DI001023A7A00000C0DE01 /* PreviewProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreviewProvider.m; sourceTree = "<group>"; };
@@ -1093,6 +1095,8 @@
 				B688FDA12F54500000A08A6D /* FuseDependencyPaths.xcconfig */,
 				B688FDA22F54500000A08A6D /* FuseUpstreamPaths.xcconfig */,
 				B688FD9E2F54500000A08A6D /* Signing.xcconfig */,
+				C0DE00913A78000000C0DE01 /* FuseQuickLookTestsPaths.xcconfig */,
+				C0DE00923A78000000C0DE01 /* FuseQuickLookExtensionPaths.xcconfig */,
 				B688FD9F2F54500000A08A6D /* FuseGeneratorPaths.xcconfig */,
 				B688FDA02F54500000A08A6D /* FuseImporterPaths.xcconfig */,
 			);
@@ -2874,15 +2878,11 @@
 		};
 		C0DE006113A78000000C0DE01 /* Default */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C0DE00913A78000000C0DE01 /* FuseQuickLookTestsPaths.xcconfig */;
 			buildSettings = {
 				CODE_SIGNING_ALLOWED = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(PROJECT_DERIVED_FILE_DIR)/deps/libspectrum-prefix/include",
-					"$(PROJECT_DERIVED_FILE_DIR)/deps/libgcrypt-prefix/include",
-					"$(PROJECT_DERIVED_FILE_DIR)/deps/libgpg-error-prefix/include",
-				);
 				INFOPLIST_FILE = tests/FuseQuickLookTests-Info.plist;
 				LIBRARY_SEARCH_PATHS = (
 					"$(PROJECT_DERIVED_FILE_DIR)/deps/libspectrum-prefix/lib",
@@ -2909,15 +2909,11 @@
 		};
 		C0DE006123A78000000C0DE01 /* Development */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C0DE00913A78000000C0DE01 /* FuseQuickLookTestsPaths.xcconfig */;
 			buildSettings = {
 				CODE_SIGNING_ALLOWED = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
-				HEADER_SEARCH_PATHS = (
-					"$(PROJECT_DERIVED_FILE_DIR)/deps/libspectrum-prefix/include",
-					"$(PROJECT_DERIVED_FILE_DIR)/deps/libgcrypt-prefix/include",
-					"$(PROJECT_DERIVED_FILE_DIR)/deps/libgpg-error-prefix/include",
-				);
 				INFOPLIST_FILE = tests/FuseQuickLookTests-Info.plist;
 				LIBRARY_SEARCH_PATHS = (
 					"$(PROJECT_DERIVED_FILE_DIR)/deps/libspectrum-prefix/lib",
@@ -2944,15 +2940,11 @@
 		};
 		C0DE006133A78000000C0DE01 /* Deployment */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C0DE00913A78000000C0DE01 /* FuseQuickLookTestsPaths.xcconfig */;
 			buildSettings = {
 				CODE_SIGNING_ALLOWED = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(PROJECT_DERIVED_FILE_DIR)/deps/libspectrum-prefix/include",
-					"$(PROJECT_DERIVED_FILE_DIR)/deps/libgcrypt-prefix/include",
-					"$(PROJECT_DERIVED_FILE_DIR)/deps/libgpg-error-prefix/include",
-				);
 				INFOPLIST_FILE = tests/FuseQuickLookTests-Info.plist;
 				LIBRARY_SEARCH_PATHS = (
 					"$(PROJECT_DERIVED_FILE_DIR)/deps/libspectrum-prefix/lib",
@@ -2979,17 +2971,12 @@
 		};
 		D0M002A13A79000000C0DE01 /* Default */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B688FD9F2F54500000A08A6D /* FuseGeneratorPaths.xcconfig */;
+			baseConfigurationReference = C0DE00923A78000000C0DE01 /* FuseQuickLookExtensionPaths.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CODE_SIGN_ENTITLEMENTS = FuseQuickLookExtension.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(PROJECT_DERIVED_FILE_DIR)/deps/libspectrum-prefix/include",
-					"$(PROJECT_DERIVED_FILE_DIR)/deps/libgcrypt-prefix/include",
-					"$(PROJECT_DERIVED_FILE_DIR)/deps/libgpg-error-prefix/include",
-				);
 				INFOPLIST_FILE = plugins/FuseThumbnailExtension/Info.plist;
 				LIBRARY_SEARCH_PATHS = (
 					"$(PROJECT_DERIVED_FILE_DIR)/deps/libspectrum-prefix/lib",
@@ -3022,17 +3009,12 @@
 		};
 		D0M002B13A79000000C0DE01 /* Development */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B688FD9F2F54500000A08A6D /* FuseGeneratorPaths.xcconfig */;
+			baseConfigurationReference = C0DE00923A78000000C0DE01 /* FuseQuickLookExtensionPaths.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CODE_SIGN_ENTITLEMENTS = FuseQuickLookExtension.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
-				HEADER_SEARCH_PATHS = (
-					"$(PROJECT_DERIVED_FILE_DIR)/deps/libspectrum-prefix/include",
-					"$(PROJECT_DERIVED_FILE_DIR)/deps/libgcrypt-prefix/include",
-					"$(PROJECT_DERIVED_FILE_DIR)/deps/libgpg-error-prefix/include",
-				);
 				INFOPLIST_FILE = plugins/FuseThumbnailExtension/Info.plist;
 				LIBRARY_SEARCH_PATHS = (
 					"$(PROJECT_DERIVED_FILE_DIR)/deps/libspectrum-prefix/lib",
@@ -3065,17 +3047,12 @@
 		};
 		D0M002C13A79000000C0DE01 /* Deployment */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B688FD9F2F54500000A08A6D /* FuseGeneratorPaths.xcconfig */;
+			baseConfigurationReference = C0DE00923A78000000C0DE01 /* FuseQuickLookExtensionPaths.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CODE_SIGN_ENTITLEMENTS = FuseQuickLookExtension.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(PROJECT_DERIVED_FILE_DIR)/deps/libspectrum-prefix/include",
-					"$(PROJECT_DERIVED_FILE_DIR)/deps/libgcrypt-prefix/include",
-					"$(PROJECT_DERIVED_FILE_DIR)/deps/libgpg-error-prefix/include",
-				);
 				INFOPLIST_FILE = plugins/FuseThumbnailExtension/Info.plist;
 				LIBRARY_SEARCH_PATHS = (
 					"$(PROJECT_DERIVED_FILE_DIR)/deps/libspectrum-prefix/lib",
@@ -3108,17 +3085,12 @@
 		};
 		0DI002913A7A00000C0DE01 /* Default */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B688FD9F2F54500000A08A6D /* FuseGeneratorPaths.xcconfig */;
+			baseConfigurationReference = C0DE00923A78000000C0DE01 /* FuseQuickLookExtensionPaths.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CODE_SIGN_ENTITLEMENTS = FuseQuickLookExtension.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(PROJECT_DERIVED_FILE_DIR)/deps/libspectrum-prefix/include",
-					"$(PROJECT_DERIVED_FILE_DIR)/deps/libgcrypt-prefix/include",
-					"$(PROJECT_DERIVED_FILE_DIR)/deps/libgpg-error-prefix/include",
-				);
 				INFOPLIST_FILE = plugins/FusePreviewExtension/Info.plist;
 				LIBRARY_SEARCH_PATHS = (
 					"$(PROJECT_DERIVED_FILE_DIR)/deps/libspectrum-prefix/lib",
@@ -3151,17 +3123,12 @@
 		};
 		0DI002A13A7A00000C0DE01 /* Development */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B688FD9F2F54500000A08A6D /* FuseGeneratorPaths.xcconfig */;
+			baseConfigurationReference = C0DE00923A78000000C0DE01 /* FuseQuickLookExtensionPaths.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CODE_SIGN_ENTITLEMENTS = FuseQuickLookExtension.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
-				HEADER_SEARCH_PATHS = (
-					"$(PROJECT_DERIVED_FILE_DIR)/deps/libspectrum-prefix/include",
-					"$(PROJECT_DERIVED_FILE_DIR)/deps/libgcrypt-prefix/include",
-					"$(PROJECT_DERIVED_FILE_DIR)/deps/libgpg-error-prefix/include",
-				);
 				INFOPLIST_FILE = plugins/FusePreviewExtension/Info.plist;
 				LIBRARY_SEARCH_PATHS = (
 					"$(PROJECT_DERIVED_FILE_DIR)/deps/libspectrum-prefix/lib",
@@ -3194,17 +3161,12 @@
 		};
 		0DI002B13A7A00000C0DE01 /* Deployment */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B688FD9F2F54500000A08A6D /* FuseGeneratorPaths.xcconfig */;
+			baseConfigurationReference = C0DE00923A78000000C0DE01 /* FuseQuickLookExtensionPaths.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CODE_SIGN_ENTITLEMENTS = FuseQuickLookExtension.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(PROJECT_DERIVED_FILE_DIR)/deps/libspectrum-prefix/include",
-					"$(PROJECT_DERIVED_FILE_DIR)/deps/libgcrypt-prefix/include",
-					"$(PROJECT_DERIVED_FILE_DIR)/deps/libgpg-error-prefix/include",
-				);
 				INFOPLIST_FILE = plugins/FusePreviewExtension/Info.plist;
 				LIBRARY_SEARCH_PATHS = (
 					"$(PROJECT_DERIVED_FILE_DIR)/deps/libspectrum-prefix/lib",

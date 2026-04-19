@@ -1,0 +1,4 @@
+#include? "FuseGeneratorPaths.xcconfig"
+
+HEADER_SEARCH_PATHS = $(PROJECT_DERIVED_FILE_DIR)/deps/libspectrum-prefix/include $(PROJECT_DERIVED_FILE_DIR)/deps/libgcrypt-prefix/include $(PROJECT_DERIVED_FILE_DIR)/deps/libgpg-error-prefix/include $(inherited) $(FUSE_GENERATOR_ROOT)
+GCC_C_LANGUAGE_STANDARD = gnu99

@@ -18,6 +18,8 @@
 
 #import "FuseQuickLookPreview.h"
 
+#import <ImageIO/ImageIO.h>
+
 #import "FuseQuickLookImage.h"
 
 @interface FuseQuickLookPreview () {
@@ -121,12 +123,32 @@
 
   case FUSE_QUICKLOOK_IMAGE_IMAGEIO:
     {
-      NSImage *ns_image;
+      NSData *data;
+      CGImageSourceRef image_source;
+      CFDictionaryRef properties;
+      NSNumber *pixel_width;
+      NSNumber *pixel_height;
+      NSSize size;
 
-      ns_image = [[[NSImage alloc] initWithData:[image imageData]] autorelease];
-      if( !ns_image ) return NSZeroSize;
+      data = [image imageData];
+      if( !data ) return NSZeroSize;
 
-      return [ns_image size];
+      image_source = CGImageSourceCreateWithData( (CFDataRef)data, NULL );
+      if( !image_source ) return NSZeroSize;
+
+      properties = CGImageSourceCopyPropertiesAtIndex( image_source, 0, NULL );
+      CFRelease( image_source );
+      if( !properties ) return NSZeroSize;
+
+      pixel_width = [(NSDictionary *)properties objectForKey:(NSString*)kCGImagePropertyPixelWidth];
+      pixel_height = [(NSDictionary *)properties objectForKey:(NSString*)kCGImagePropertyPixelHeight];
+      size = NSZeroSize;
+      if( pixel_width && pixel_height ) {
+        size = NSMakeSize( [pixel_width doubleValue], [pixel_height doubleValue] );
+      }
+      CFRelease( properties );
+
+      return size;
     }
 
   case FUSE_QUICKLOOK_IMAGE_NONE:
