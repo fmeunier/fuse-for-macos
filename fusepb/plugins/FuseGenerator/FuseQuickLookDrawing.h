@@ -21,17 +21,8 @@
 static inline CGSize
 fuse_quicklook_context_size( CGSize maximum_size, NSSize source_size )
 {
-  CGFloat scale;
-
   if( maximum_size.width > 0 && maximum_size.height > 0 ) {
-    if( source_size.width <= 0 || source_size.height <= 0 ) return maximum_size;
-
-    scale = MIN( maximum_size.width / source_size.width,
-                 maximum_size.height / source_size.height );
-    if( scale <= 0 ) scale = 1;
-
-    return CGSizeMake( floor( source_size.width * scale ),
-                       floor( source_size.height * scale ) );
+    return maximum_size;
   }
 
   return CGSizeMake( source_size.width, source_size.height );
@@ -63,12 +54,21 @@ static inline BOOL
 fuse_quicklook_draw_image( CGContextRef context, CGSize context_size,
                            NSSize source_size, CGImageRef image )
 {
+  CGRect context_bounds;
   CGRect draw_rect;
 
   if( !image ) return NO;
 
-  draw_rect = fuse_quicklook_draw_rect( context_size, source_size );
+  context_bounds = CGContextGetClipBoundingBox( context );
+  if( CGRectIsEmpty( context_bounds ) ) {
+    context_bounds = CGRectMake( 0, 0, context_size.width, context_size.height );
+  }
+
+  draw_rect = fuse_quicklook_draw_rect( context_bounds.size, source_size );
   if( CGRectIsEmpty( draw_rect ) ) return NO;
+
+  draw_rect.origin.x += context_bounds.origin.x;
+  draw_rect.origin.y += context_bounds.origin.y;
 
   CGContextSaveGState( context );
   CGContextSetInterpolationQuality( context, kCGInterpolationNone );

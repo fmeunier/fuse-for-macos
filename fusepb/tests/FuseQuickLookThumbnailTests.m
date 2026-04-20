@@ -70,6 +70,41 @@
   return pixel_data;
 }
 
+- (NSData*)renderedPixelDataForImage:(CGImageRef)image
+                             sourceSize:(NSSize)source_size
+                            contextSize:(CGSize)context_size
+                           backingScale:(CGFloat)backing_scale
+{
+  NSMutableData *pixel_data;
+  CGColorSpaceRef color_space;
+  CGContextRef context;
+  size_t pixel_width;
+  size_t pixel_height;
+  size_t bytes_per_row;
+
+  pixel_width = (size_t)( context_size.width * backing_scale );
+  pixel_height = (size_t)( context_size.height * backing_scale );
+  bytes_per_row = pixel_width * 4;
+  pixel_data = [NSMutableData dataWithLength:bytes_per_row * pixel_height];
+
+  color_space = CGColorSpaceCreateWithName( kCGColorSpaceSRGB );
+  context = CGBitmapContextCreate( [pixel_data mutableBytes],
+                                   pixel_width,
+                                   pixel_height,
+                                   8,
+                                   bytes_per_row,
+                                   color_space,
+                                   kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big );
+  CGColorSpaceRelease( color_space );
+
+  CGContextScaleCTM( context, backing_scale, backing_scale );
+  CGContextClearRect( context, CGRectMake( 0, 0, context_size.width, context_size.height ) );
+  fuse_quicklook_draw_image( context, context_size, source_size, image );
+  CGContextRelease( context );
+
+  return pixel_data;
+}
+
 - (NSBitmapImageRep*)renderedBitmapForImage:(CGImageRef)image
                                  sourceSize:(NSSize)source_size
                                 contextSize:(CGSize)context_size
@@ -258,7 +293,7 @@
   XCTAssertNotNil( [thumbnail image] );
 }
 
-- (void)test_thumbnail_context_size_preserves_source_aspect_ratio
+- (void)test_thumbnail_context_size_matches_requested_maximum_size
 {
   CGSize context_size;
 
@@ -266,7 +301,85 @@
                                               NSMakeSize( 256, 192 ) );
 
   XCTAssertEqual( context_size.width, 128.0 );
-  XCTAssertEqual( context_size.height, 96.0 );
+  XCTAssertEqual( context_size.height, 128.0 );
+}
+
+- (void)test_thumbnail_draw_rect_fills_matching_aspect_context
+{
+  CGRect draw_rect;
+
+  draw_rect = fuse_quicklook_draw_rect( CGSizeMake( 128, 96 ),
+                                        NSMakeSize( 256, 192 ) );
+
+  XCTAssertEqual( draw_rect.origin.x, 0.0 );
+  XCTAssertEqual( draw_rect.origin.y, 0.0 );
+  XCTAssertEqual( draw_rect.size.width, 128.0 );
+  XCTAssertEqual( draw_rect.size.height, 96.0 );
+}
+
+- (void)test_thumbnail_draw_image_fills_returned_canvas
+{
+  CGImageRef source;
+  NSData *rendered;
+
+  source = [self newOrientationFixtureImage];
+  rendered = [self renderedPixelDataForImage:source
+                                  sourceSize:NSMakeSize( 4, 4 )
+                                 contextSize:CGSizeMake( 40, 40 )];
+  CGImageRelease( source );
+
+  [self assertPixelData:rendered atWidth:40 x:0 y:39 r:0 g:0 b:255 a:255];
+  [self assertPixelData:rendered atWidth:40 x:39 y:39 r:255 g:255 b:0 a:255];
+  [self assertPixelData:rendered atWidth:40 x:0 y:0 r:255 g:0 b:0 a:255];
+  [self assertPixelData:rendered atWidth:40 x:39 y:0 r:0 g:255 b:0 a:255];
+}
+
+- (void)test_thumbnail_draw_image_fills_scaled_quicklook_canvas
+{
+  CGImageRef source;
+  NSData *rendered;
+
+  source = [self newOrientationFixtureImage];
+  rendered = [self renderedPixelDataForImage:source
+                                  sourceSize:NSMakeSize( 4, 4 )
+                                 contextSize:CGSizeMake( 40, 40 )
+                                backingScale:2.0];
+  CGImageRelease( source );
+
+  [self assertPixelData:rendered atWidth:80 x:0 y:79 r:0 g:0 b:255 a:255];
+  [self assertPixelData:rendered atWidth:80 x:79 y:79 r:255 g:255 b:0 a:255];
+  [self assertPixelData:rendered atWidth:80 x:0 y:0 r:255 g:0 b:0 a:255];
+  [self assertPixelData:rendered atWidth:80 x:79 y:0 r:0 g:255 b:0 a:255];
+}
+
+- (void)test_thumbnail_draw_image_uses_live_context_bounds
+{
+  CGImageRef source;
+  NSMutableData *pixel_data;
+  CGColorSpaceRef color_space;
+  CGContextRef context;
+  size_t bytes_per_row;
+
+  source = [self newOrientationFixtureImage];
+  bytes_per_row = 80 * 4;
+  pixel_data = [NSMutableData dataWithLength:bytes_per_row * 80];
+
+  color_space = CGColorSpaceCreateWithName( kCGColorSpaceSRGB );
+  context = CGBitmapContextCreate( [pixel_data mutableBytes], 80, 80, 8,
+                                   bytes_per_row, color_space,
+                                   kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big );
+  CGColorSpaceRelease( color_space );
+
+  CGContextClearRect( context, CGRectMake( 0, 0, 80, 80 ) );
+  XCTAssertTrue( fuse_quicklook_draw_image( context, CGSizeMake( 40, 40 ),
+                                            NSMakeSize( 4, 4 ), source ) );
+  CGContextRelease( context );
+  CGImageRelease( source );
+
+  [self assertPixelData:pixel_data atWidth:80 x:0 y:79 r:0 g:0 b:255 a:255];
+  [self assertPixelData:pixel_data atWidth:80 x:79 y:79 r:255 g:255 b:0 a:255];
+  [self assertPixelData:pixel_data atWidth:80 x:0 y:0 r:255 g:0 b:0 a:255];
+  [self assertPixelData:pixel_data atWidth:80 x:79 y:0 r:0 g:255 b:0 a:255];
 }
 
 - (void)test_thumbnail_draw_image_preserves_orientation
