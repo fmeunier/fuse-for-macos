@@ -104,6 +104,54 @@
   return [NSURL fileURLWithPath:path];
 }
 
+- (NSDictionary*)plistAtRelativePath:(NSString*)relative_path
+{
+  NSDictionary *plist;
+
+  plist = [NSDictionary dictionaryWithContentsOfURL:[self fixtureURL:relative_path]];
+  XCTAssertNotNil( plist );
+
+  return plist;
+}
+
+- (NSSet<NSString*>*)documentTypesFromImporterInfoPlist
+{
+  NSDictionary *plist;
+  NSArray *document_types;
+  NSDictionary *libspectrum_types;
+  NSArray *content_types;
+
+  plist = [self plistAtRelativePath:@"plugins/FuseImporter/Info.plist"];
+  document_types = [plist objectForKey:@"CFBundleDocumentTypes"];
+  XCTAssertEqual( [document_types count], 1u );
+
+  libspectrum_types = [document_types objectAtIndex:0];
+  content_types = [libspectrum_types objectForKey:@"LSItemContentTypes"];
+  XCTAssertNotNil( content_types );
+
+  return [NSSet setWithArray:content_types];
+}
+
+- (NSSet<NSString*>*)quickLookContentTypesAtRelativePath:(NSString*)relative_path
+{
+  NSDictionary *plist;
+  NSDictionary *extension;
+  NSDictionary *attributes;
+  NSArray *content_types;
+
+  plist = [self plistAtRelativePath:relative_path];
+  extension = [plist objectForKey:@"NSExtension"];
+  XCTAssertNotNil( extension );
+
+  attributes = [extension objectForKey:@"NSExtensionAttributes"];
+  XCTAssertNotNil( attributes );
+
+  content_types = [attributes objectForKey:@"QLSupportedContentTypes"];
+  XCTAssertNotNil( content_types );
+
+  return [NSSet setWithArray:content_types];
+}
+
 - (void)test_scr_file_produces_bitmap_image
 {
   FuseQuickLookImage *image;
@@ -191,6 +239,28 @@
    [NSValue valueWithPoint:NSMakePoint( 0.95, 0.14 )],
  ]
              tolerance:0.18];
+}
+
+- (void)test_importer_and_preview_extension_declare_matching_content_types
+{
+  NSSet<NSString*> *importer_types;
+  NSSet<NSString*> *preview_types;
+
+  importer_types = [self documentTypesFromImporterInfoPlist];
+  preview_types = [self quickLookContentTypesAtRelativePath:@"plugins/FusePreviewExtension/Info.plist"];
+
+  XCTAssertEqualObjects( preview_types, importer_types );
+}
+
+- (void)test_importer_and_thumbnail_extension_declare_matching_content_types
+{
+  NSSet<NSString*> *importer_types;
+  NSSet<NSString*> *thumbnail_types;
+
+  importer_types = [self documentTypesFromImporterInfoPlist];
+  thumbnail_types = [self quickLookContentTypesAtRelativePath:@"plugins/FuseThumbnailExtension/Info.plist"];
+
+  XCTAssertEqualObjects( thumbnail_types, importer_types );
 }
 
 @end
