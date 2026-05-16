@@ -58,3 +58,8 @@ cscope.out
 /test/wav-mono-threshold.wav
 /test/wav-stereo-mixdown.wav
 .vscode
+
+# Dolt database files (added by bd init)
+.dolt/
+*.db
+.beads/

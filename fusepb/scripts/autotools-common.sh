@@ -92,11 +92,28 @@ resolve_toolchain() {
 }
 
 ensure_generated_autotools() {
-  local source_dir
+  local source_dir bootstrap_script
 
   source_dir="$1"
+  bootstrap_script="${2:-}"
 
-  [ -f "$source_dir/configure" ] || die "Missing $source_dir/configure. Run the bootstrap script first."
+  if [ -f "$source_dir/configure" ] &&
+     [ -f "$source_dir/aclocal.m4" ] &&
+     [ -f "$source_dir/Makefile.in" ] &&
+     [ -f "$source_dir/config.h.in" ] &&
+     ! find "$source_dir" \( -name configure.ac -o -name Makefile.am -o -path '*/m4/*.m4' \) -newer "$source_dir/configure" -print -quit | grep -q .; then
+    return
+  fi
+
+  if [ -n "$bootstrap_script" ]; then
+    [ -x "$bootstrap_script" ] || die "Missing bootstrap script: $bootstrap_script"
+    "$bootstrap_script"
+  fi
+
+  [ -f "$source_dir/configure" ] || die "Missing $source_dir/configure"
+  [ -f "$source_dir/aclocal.m4" ] || die "Missing $source_dir/aclocal.m4"
+  [ -f "$source_dir/Makefile.in" ] || die "Missing $source_dir/Makefile.in"
+  [ -f "$source_dir/config.h.in" ] || die "Missing $source_dir/config.h.in"
 }
 
 ensure_parent_dir() {

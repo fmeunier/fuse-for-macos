@@ -103,7 +103,8 @@ EXTRA_DIST += \
 	test/trailing-pause-block.tzx \
 	test/turbo-zeropilot.tzx \
 	test/writeprotected.mdr \
-	test/zero-tail.pzx
+	test/zero-tail.pzx \
+	test/pzx-archive-info-tags.pzx
 
 CLEANFILES += \
 	test/.libs/test \

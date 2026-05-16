@@ -97,14 +97,25 @@ Maintainer notes
 
   fusepb/deps/libspectrum
 
+The current upstream remote used for subtree maintenance is the official GitHub
+mirror:
+
+  git@github.com:fuse-emulator/libspectrum.git
+
+If you do not already have the maintenance remote configured locally:
+
+  git remote add libspectrum-upstream git@github.com:fuse-emulator/libspectrum.git
+  git fetch libspectrum-upstream --tags
+
 To update it:
 
-  git fetch libspectrum --tags
-  git subtree pull --prefix=fusepb/deps/libspectrum libspectrum <tag-or-commit> --squash
+  git fetch libspectrum-upstream --tags
+  git subtree pull --prefix=fusepb/deps/libspectrum libspectrum-upstream <tag-or-commit> --squash
 
 If the update changes Autotools inputs inside the vendored tree (for example
-`configure.ac`, `Makefile.am`, or `m4/` files), regenerate the committed
-bootstrap files with:
+`configure.ac`, `Makefile.am`, or `m4/` files), the dependency build will
+normally regenerate the committed bootstrap files automatically. To refresh
+those files manually without doing a full build, run:
 
   ./fusepb/scripts/bootstrap-libspectrum.sh
 

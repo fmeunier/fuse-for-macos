@@ -20,12 +20,12 @@ dnl
 dnl E-mail: philip-fuse@shadowmagic.org.uk
 
 dnl Package version
-m4_define([libspectrum_version], [1.6.0])
+m4_define([libspectrum_version], [1.6.1])
 
 dnl Product full version
 m4_define([libspectrum_major_version], [1])
 m4_define([libspectrum_minor_version], [6])
-m4_define([libspectrum_micro_version], [0])
+m4_define([libspectrum_micro_version], [1])
 m4_define([libspectrum_nano_version],  [0])
 m4_define([libspectrum_full_version],
           [libspectrum_major_version.libspectrum_minor_version.libspectrum_micro_version.libspectrum_nano_version])
@@ -35,9 +35,9 @@ m4_define([libspectrum_rc_version],
 dnl Package info
 m4_define([libspectrum_copyright], ["(c) 1999-2026 Philip Kendall and others"])
 m4_define([libspectrum_url],
-          [http://fuse-emulator.sourceforge.net/libspectrum.php])
+          [https://fuse-emulator.sourceforge.net/libspectrum.php])
 m4_define([libspectrum_bugreport],
-          [http://sourceforge.net/p/fuse-emulator/bugs/])
+          [https://sourceforge.net/p/fuse-emulator/bugs/])
 
 AC_INIT([libspectrum],[libspectrum_version],[libspectrum_bugreport],
         [libspectrum],[libspectrum_url])
@@ -86,9 +86,6 @@ AC_SUBST(PERL)
 
 dnl Checks for header files.
 AC_CHECK_HEADERS(stdint.h strings.h unistd.h)
-
-dnl Checks for typedefs, structures, and compiler characteristics.
-AC_C_CONST
 
 dnl Check for host specific programs
 WINDRES_OBJ=
@@ -182,9 +179,22 @@ AS_IF([test "$myglib" = no], [
     AC_MSG_ERROR([GLib not found])
   )
 ])
+stdatomic_available=no
 AS_IF([test "$myglib" = yes], [
-  AC_CHECK_HEADERS(
-    stdatomic.h, [stdatomic_available=yes])
+  AC_MSG_CHECKING([whether stdatomic.h provides usable atomics])
+  AC_COMPILE_IFELSE([
+    AC_LANG_PROGRAM([[#include <stdatomic.h>]], [[
+      static atomic_char lock_var = 0;
+      char desired = 1;
+      char expected = 0;
+      return atomic_compare_exchange_strong( &lock_var, &expected, 1 ) ? 0 : 1;
+    ]])
+  ], [
+    stdatomic_available=yes
+    AC_DEFINE([HAVE_STDATOMIC_H], [1],
+              [Defined if stdatomic.h provides usable atomics])
+  ])
+  AC_MSG_RESULT([$stdatomic_available])
 ])
 
 AM_CONDITIONAL(USE_MYGLIB, test "$myglib" = yes)
