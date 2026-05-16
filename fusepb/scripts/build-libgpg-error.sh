@@ -48,7 +48,7 @@ CONFIGURE_ARGS=(
 )
 
 if [ ! -x "$BUILD_DIR/config.status" ] || signature_changed "$STATE_DIR" "$SIGNATURE_NAME"; then
-  rm -f "$BUILD_DIR/config.cache"
+  rm -f "$STATE_DIR/config.cache"
   (
     cd "$BUILD_DIR"
     env \
