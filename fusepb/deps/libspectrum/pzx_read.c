@@ -660,8 +660,8 @@ pzx_read_string( const libspectrum_byte **ptr, const libspectrum_byte *end,
     *(buffer + length++) = **ptr; (*ptr)++;
   }
 
-  /* Advance past the null terminator discarding any garbage */
-  *ptr = end;
+  /* Advance past the null terminator */
+  if( *ptr < end && **ptr == '\0' ) (*ptr)++;
 
   *dest = libspectrum_new( char, (length + 1) );
 
