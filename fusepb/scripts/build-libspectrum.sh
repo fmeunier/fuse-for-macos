@@ -3,6 +3,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "$0")" && pwd -P)"
+BOOTSTRAP_SCRIPT="$SCRIPT_DIR/bootstrap-libspectrum.sh"
 . "$SCRIPT_DIR/autotools-common.sh"
 
 prepend_common_paths
@@ -19,8 +20,10 @@ LIBGCRYPT_PREFIX="${LIBGCRYPT_PREFIX:-$DERIVED_FILE_DIR/deps/libgcrypt-prefix}"
 LIBGPG_ERROR_PREFIX="${LIBGPG_ERROR_PREFIX:-$DERIVED_FILE_DIR/deps/libgpg-error-prefix}"
 STAMP_FILE="${STAMP_FILE:-$PREFIX_DIR/.build-libspectrum.stamp}"
 SIGNATURE_NAME="configure.signature"
+LIBSPECTRUM_CC="$CC"
+LIBSPECTRUM_CFLAGS="$DEPENDENCY_CFLAGS -std=gnu17"
 
-ensure_generated_autotools "$SOURCE_DIR"
+ensure_generated_autotools "$SOURCE_DIR" "$BOOTSTRAP_SCRIPT"
 [ -f "$LIBGCRYPT_PREFIX/include/gcrypt.h" ] || die "Missing staged libgcrypt headers. Build libgcrypt first."
 [ -f "$LIBGCRYPT_PREFIX/lib/libgcrypt.a" ] || die "Missing staged libgcrypt library. Build libgcrypt first."
 
@@ -36,7 +39,7 @@ ensure_parent_dir "$PREFIX_DIR/lib"
 
 DEPENDENCY_CPPFLAGS="$DEPENDENCY_CPPFLAGS -I$LIBGCRYPT_PREFIX/include -I$LIBGPG_ERROR_PREFIX/include"
 DEPENDENCY_LDFLAGS="$DEPENDENCY_LDFLAGS -L$LIBGCRYPT_PREFIX/lib -L$LIBGPG_ERROR_PREFIX/lib"
-DEPENDENCY_SIGNATURE_EXTRA="PREFIX_DIR=$PREFIX_DIR LIBGCRYPT_PREFIX=$LIBGCRYPT_PREFIX LIBGPG_ERROR_PREFIX=$LIBGPG_ERROR_PREFIX CONFIGURE_ARGS=--disable-shared,--enable-static,--with-fake-glib,--without-libaudiofile"
+DEPENDENCY_SIGNATURE_EXTRA="PREFIX_DIR=$PREFIX_DIR LIBGCRYPT_PREFIX=$LIBGCRYPT_PREFIX LIBGPG_ERROR_PREFIX=$LIBGPG_ERROR_PREFIX CONFIGURE_ARGS=--disable-shared,--enable-static,--with-fake-glib,--without-libaudiofile LIBSPECTRUM_CC=$LIBSPECTRUM_CC LIBSPECTRUM_CFLAGS=$LIBSPECTRUM_CFLAGS"
 
 compute_signature "$STATE_DIR/$SIGNATURE_NAME.current" \
   "$SOURCE_DIR/configure" \
@@ -70,13 +73,13 @@ if [ ! -x "$BUILD_DIR/config.status" ] || signature_changed "$STATE_DIR" "$SIGNA
   (
     cd "$BUILD_DIR"
     env \
-      CC="$CC" \
+      CC="$LIBSPECTRUM_CC" \
       AR="$AR" \
       RANLIB="$RANLIB" \
-      CC_FOR_BUILD="$CC" \
+      CC_FOR_BUILD="$LIBSPECTRUM_CC" \
       SDKROOT="$SDKROOT" \
       CPPFLAGS="$DEPENDENCY_CPPFLAGS" \
-      CFLAGS="$DEPENDENCY_CFLAGS" \
+      CFLAGS="$LIBSPECTRUM_CFLAGS" \
       LDFLAGS="$DEPENDENCY_LDFLAGS" \
       "$SOURCE_DIR/configure" \
       "${CONFIGURE_ARGS[@]}" \
@@ -90,12 +93,12 @@ else
   )
 fi
 
-BUILD_CC_FOR_BUILD="$CC -isysroot $SDKROOT"
+BUILD_CC_FOR_BUILD="$LIBSPECTRUM_CC -isysroot $SDKROOT -std=gnu17"
 
 (
   cd "$BUILD_DIR"
-  make -j1 CC_FOR_BUILD="$BUILD_CC_FOR_BUILD" libspectrum.h snap_accessors.c tape_accessors.c tape_set.c
-  make -j1 CC_FOR_BUILD="$BUILD_CC_FOR_BUILD" libspectrum.la
+  make -j1 CC_FOR_BUILD="$BUILD_CC_FOR_BUILD" CFLAGS="$LIBSPECTRUM_CFLAGS" libspectrum.h snap_accessors.c tape_accessors.c tape_set.c
+  make -j1 CC_FOR_BUILD="$BUILD_CC_FOR_BUILD" CFLAGS="$LIBSPECTRUM_CFLAGS" libspectrum.la
 ) > "$STATE_DIR/make.log" 2>&1
 
 install -c -m 644 "$BUILD_DIR/libspectrum.h" "$PREFIX_DIR/include/libspectrum.h"

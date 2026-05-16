@@ -1,4 +1,5 @@
 $(FUSE_SCRIPTS_ROOT)/autotools-common.sh
+$(FUSE_SCRIPTS_ROOT)/bootstrap-libspectrum.sh
 $(FUSE_SCRIPTS_ROOT)/build-libspectrum.sh
 $(FUSE_DEPS_ROOT)/libspectrum/configure
 $(FUSE_DEPS_ROOT)/libspectrum/Makefile.in
