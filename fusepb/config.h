@@ -9,7 +9,7 @@
 #define FUSE_COPYRIGHT "(c) 1999-2026 Philip Kendall and others"
 
 /* Define version information for win32 executables */
-#define FUSE_RC_VERSION 1,7,0,0
+#define FUSE_RC_VERSION 1,8,0,0
 
 /* Define to 1 if you have the `dirname' function. */
 #define HAVE_DIRNAME 1
@@ -111,13 +111,13 @@
 #define PACKAGE_NAME "fuse"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "fuse 1.7.0"
+#define PACKAGE_STRING "fuse 1.8.0"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "fuse"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "1.7.0"
+#define PACKAGE_VERSION "1.8.0"
 
 /* Location of the ROM images */
 /* #undef ROMSDIR */
@@ -156,7 +156,7 @@
 /* #undef USE_WIDGET */
 
 /* Version number of package */
-#define VERSION "1.7.0"
+#define VERSION "1.8.0"
 
 /* Define to 1 if your processor stores words with the most significant byte
    first (like Motorola and SPARC, unlike Intel and VAX). */

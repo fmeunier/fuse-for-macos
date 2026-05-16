@@ -39,8 +39,8 @@ until that time is reached.
 The main power of the debugger is via the commands entered into the entry box,
 which are similar in nature (but definitely not identical to or as powerful as)
 to those in the gdb debugger. In general, the debugger is case-insensitive, and
-numbers will be interpreted as decimal, unless prefixed by either '0x' or '$'
-when they will be interpreted as hex. Each command can be abbreviated to the
+numbers will be interpreted as decimal unless prefixed by `0x`, in which case
+they will be interpreted as hexadecimal. Each command can be abbreviated to the
 portion not in curly braces.
 
 COMMAND | DESCRIPTION

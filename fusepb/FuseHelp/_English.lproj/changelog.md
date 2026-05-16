@@ -1,7 +1,25 @@
 ---
 title: What's New In Fuse?
-description: This section describes the changes for version 1.7.0 of the Fuse emulator.
+description: This section describes the changes for version 1.8.0 of the Fuse emulator.
 ---
+
+## What's new in Fuse for macOS 1.8.0
+
+### New features:
+* Add new Quick Look thumbnail and preview extensions (Fredrick Meunier).
+
+### Emulation core improvements:
+* Speed up display dirty-bit scanning (Fredrick Meunier).
+
+### Debugger improvements:
+* Remove `$`-prefixed hexadecimal input syntax from the debugger; use `0x` for hexadecimal values (fixes bug #407) (thanks, Gergely Szasz and Sergio Baldoví).
+* Fix missing bit numbers in DD/FD CB disassembly (fixes bug #515) (Cesar Hernandez).
+
+### Miscellaneous improvements:
+* Migrate the Preferences window panes to SwiftUI (Fredrick Meunier).
+* Fix tape browser main-thread window access (Fredrick Meunier).
+
+### Various other minor bugfixes.
 
 ## What's new in Fuse for macOS 1.7.0
 
