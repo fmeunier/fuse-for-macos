@@ -21,7 +21,7 @@ LIBGPG_ERROR_PREFIX="${LIBGPG_ERROR_PREFIX:-$DERIVED_FILE_DIR/deps/libgpg-error-
 STAMP_FILE="${STAMP_FILE:-$PREFIX_DIR/.build-libspectrum.stamp}"
 SIGNATURE_NAME="configure.signature"
 LIBSPECTRUM_CC="$CC"
-LIBSPECTRUM_CFLAGS="$DEPENDENCY_CFLAGS -std=gnu17"
+LIBSPECTRUM_CFLAGS="$DEPENDENCY_CFLAGS"
 
 ensure_generated_autotools "$SOURCE_DIR" "$BOOTSTRAP_SCRIPT"
 [ -f "$LIBGCRYPT_PREFIX/include/gcrypt.h" ] || die "Missing staged libgcrypt headers. Build libgcrypt first."
@@ -93,7 +93,7 @@ else
   )
 fi
 
-BUILD_CC_FOR_BUILD="$LIBSPECTRUM_CC -isysroot $SDKROOT -std=gnu17"
+BUILD_CC_FOR_BUILD="$LIBSPECTRUM_CC -isysroot $SDKROOT"
 
 (
   cd "$BUILD_DIR"
