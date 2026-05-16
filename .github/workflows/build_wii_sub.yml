@@ -149,7 +149,7 @@ jobs:
       - name: (12) Run tests
         id: run-tests
         run: |
-          echo "Bulding and running tests .."
+          echo "Building and running tests .."
           ## make check  <-- cross compiled, cannot execute under Linux
           echo "FIXME: make check not possible, cross compiled."
 
