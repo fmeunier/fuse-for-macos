@@ -93,6 +93,13 @@ fuse:
 	@echo "Re-signing Spotlight importer"
 	codesign --sign "$(EFFECTIVE_CODE_SIGN_IDENTITY)" --force --options runtime $(FUSE_CODESIGN_TIMESTAMP) \
 		"$(FUSE_APP)/Contents/Library/Spotlight/FuseImporter.mdimporter"
+	@echo "Re-signing Quick Look extensions"
+	codesign --sign "$(EFFECTIVE_CODE_SIGN_IDENTITY)" --force --options runtime $(FUSE_CODESIGN_TIMESTAMP) \
+		--entitlements "fusepb/FuseQuickLookExtension.entitlements" \
+		"$(FUSE_APP)/Contents/PlugIns/FuseThumbnailExtension.appex"
+	codesign --sign "$(EFFECTIVE_CODE_SIGN_IDENTITY)" --force --options runtime $(FUSE_CODESIGN_TIMESTAMP) \
+		--entitlements "fusepb/FuseQuickLookExtension.entitlements" \
+		"$(FUSE_APP)/Contents/PlugIns/FusePreviewExtension.appex"
 	@echo "Re-signing app bundle"
 	codesign --sign "$(EFFECTIVE_CODE_SIGN_IDENTITY)" --force --options runtime $(FUSE_CODESIGN_TIMESTAMP) \
 		--entitlements "fusepb/Fuse.entitlements" "$(FUSE_APP)"

@@ -2977,6 +2977,7 @@
 				CODE_SIGN_ENTITLEMENTS = FuseQuickLookExtension.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = plugins/FuseThumbnailExtension/Info.plist;
 				LIBRARY_SEARCH_PATHS = (
 					"$(PROJECT_DERIVED_FILE_DIR)/deps/libspectrum-prefix/lib",
@@ -3015,6 +3016,7 @@
 				CODE_SIGN_ENTITLEMENTS = FuseQuickLookExtension.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = plugins/FuseThumbnailExtension/Info.plist;
 				LIBRARY_SEARCH_PATHS = (
 					"$(PROJECT_DERIVED_FILE_DIR)/deps/libspectrum-prefix/lib",
@@ -3053,6 +3055,7 @@
 				CODE_SIGN_ENTITLEMENTS = FuseQuickLookExtension.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = plugins/FuseThumbnailExtension/Info.plist;
 				LIBRARY_SEARCH_PATHS = (
 					"$(PROJECT_DERIVED_FILE_DIR)/deps/libspectrum-prefix/lib",
@@ -3091,6 +3094,7 @@
 				CODE_SIGN_ENTITLEMENTS = FuseQuickLookExtension.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = plugins/FusePreviewExtension/Info.plist;
 				LIBRARY_SEARCH_PATHS = (
 					"$(PROJECT_DERIVED_FILE_DIR)/deps/libspectrum-prefix/lib",
@@ -3129,6 +3133,7 @@
 				CODE_SIGN_ENTITLEMENTS = FuseQuickLookExtension.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = plugins/FusePreviewExtension/Info.plist;
 				LIBRARY_SEARCH_PATHS = (
 					"$(PROJECT_DERIVED_FILE_DIR)/deps/libspectrum-prefix/lib",
@@ -3167,6 +3172,7 @@
 				CODE_SIGN_ENTITLEMENTS = FuseQuickLookExtension.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = plugins/FusePreviewExtension/Info.plist;
 				LIBRARY_SEARCH_PATHS = (
 					"$(PROJECT_DERIVED_FILE_DIR)/deps/libspectrum-prefix/lib",
