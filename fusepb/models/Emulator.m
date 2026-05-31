@@ -345,20 +345,29 @@ static Emulator *instance = nil;
   snapshot_write( filename );
 }
 
+/* Identify the screenshot file type for filename, defaulting to .scr format.
+   Returns YES and sets *type on success, or returns NO on error. */
+-(BOOL) screenshotTypeForFilename:(const char *)filename
+                             type:(libspectrum_id_t *)type
+{
+  libspectrum_class_t class;
+
+  if( libspectrum_identify_file_with_class( type, &class, filename, NULL,
+                                            0 ) )
+    return NO;
+
+  if( class != LIBSPECTRUM_CLASS_SCREENSHOT ||
+      *type == LIBSPECTRUM_ID_UNKNOWN )
+    *type = LIBSPECTRUM_ID_SCREEN_SCR;
+
+  return YES;
+}
+
 -(void) screenshotScrRead:(const char *)filename
 {
   libspectrum_id_t type;
-  libspectrum_class_t class;
-  int error;
 
-  /* Work out what sort of file we want from the filename; default to
-     .scr if we couldn't guess */
-  error = libspectrum_identify_file_with_class( &type, &class, filename, NULL,
-						0 );
-  if( error ) return;
-
-  if( class != LIBSPECTRUM_CLASS_SCREENSHOT || type == LIBSPECTRUM_ID_UNKNOWN )
-    type = LIBSPECTRUM_ID_SCREEN_SCR;
+  if( ![self screenshotTypeForFilename:filename type:&type] ) return;
 
   if( type == LIBSPECTRUM_ID_SCREEN_SCR ) {
     screenshot_scr_read( filename );
@@ -370,17 +379,8 @@ static Emulator *instance = nil;
 -(void) screenshotScrWrite:(const char *)filename
 {
   libspectrum_id_t type;
-  libspectrum_class_t class;
-  int error;
 
-  /* Work out what sort of file we want from the filename; default to
-     .scr if we couldn't guess */
-  error = libspectrum_identify_file_with_class( &type, &class, filename, NULL,
-						0 );
-  if( error ) return;
-
-  if( class != LIBSPECTRUM_CLASS_SCREENSHOT || type == LIBSPECTRUM_ID_UNKNOWN )
-    type = LIBSPECTRUM_ID_SCREEN_SCR;
+  if( ![self screenshotTypeForFilename:filename type:&type] ) return;
 
   if( type == LIBSPECTRUM_ID_SCREEN_SCR ) {
     screenshot_scr_write( filename );
