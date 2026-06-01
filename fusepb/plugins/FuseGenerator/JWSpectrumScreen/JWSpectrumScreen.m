@@ -88,15 +88,15 @@ BitmapOffsets bitmapOffsets(int x, int y, ScreenMode mode);
 		for(int y = 0; y < canvasSize.height; ++y) {
 			for(int x = 0; x < canvasSize.width; x += 8) {
 				bitmapByteData = [self bitmapByteDataAtX:x y:y];
-				
+
+				/* Pre-compute ink and paper colours once per attribute block to
+				   avoid redundant spectrumColourFromIndex calls for each pixel. */
+				int inkColour = spectrumColourFromIndex(bitmapByteData.ink);
+				int paperColour = spectrumColourFromIndex(bitmapByteData.paper);
+
 				for(int bit = 0; bit < 8; ++bit) {
 					unsigned char mask = 1 << (7 - bit);
-					int colour;
-					if(bitmapByteData.bitmapByte & mask) {
-						colour = spectrumColourFromIndex(bitmapByteData.ink);
-					} else {
-						colour = spectrumColourFromIndex(bitmapByteData.paper);
-					}
+					int colour = (bitmapByteData.bitmapByte & mask) ? inkColour : paperColour;
 					*imageBytes++ = RED(colour);
 					*imageBytes++ = GREEN(colour);
 					*imageBytes++ = BLUE(colour);
