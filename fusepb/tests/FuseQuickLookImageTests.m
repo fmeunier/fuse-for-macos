@@ -263,4 +263,45 @@
   XCTAssertEqualObjects( thumbnail_types, importer_types );
 }
 
+- (void)test_scr_file_canvas_size_is_standard_spectrum_resolution
+{
+  FuseQuickLookImage *image;
+  NSSize canvas;
+
+  image = [[[FuseQuickLookImage alloc]
+             initWithContentsOfURL:[self fixtureURL:@"../fuse/lib/keyboard.scr"]] autorelease];
+  canvas = [image canvasSize];
+
+  /* Standard Spectrum screens are 256x192 pixels */
+  XCTAssertEqual( canvas.width,  256.0 );
+  XCTAssertEqual( canvas.height, 192.0 );
+}
+
+- (void)test_snapshot_canvas_size_is_standard_spectrum_resolution
+{
+  FuseQuickLookImage *image;
+  NSSize canvas;
+
+  image = [[[FuseQuickLookImage alloc]
+             initWithContentsOfURL:[self fixtureURL:@"deps/libspectrum/test/plus3.z80"]] autorelease];
+  canvas = [image canvasSize];
+
+  XCTAssertEqual( canvas.width,  256.0 );
+  XCTAssertEqual( canvas.height, 192.0 );
+}
+
+- (void)test_non_scr_file_canvas_size_is_zero
+{
+  FuseQuickLookImage *image;
+  NSSize canvas;
+
+  /* A tape with no embedded screen has no canvas */
+  image = [[[FuseQuickLookImage alloc]
+             initWithContentsOfURL:[self fixtureURL:@"deps/libspectrum/test/turbo-zeropilot.tzx"]] autorelease];
+  canvas = [image canvasSize];
+
+  XCTAssertEqual( canvas.width,  0.0 );
+  XCTAssertEqual( canvas.height, 0.0 );
+}
+
 @end

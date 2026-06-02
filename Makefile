@@ -70,7 +70,19 @@ endif
 
 FUSE_CODESIGN_TIMESTAMP =
 
-.PHONY: fuse archive adhoc notarize notarize-submit notarize-status notarize-log notarize-wait notarize-staple notarize-reset dist list-teams clean
+.PHONY: fuse archive adhoc test notarize notarize-submit notarize-status notarize-log notarize-wait notarize-staple notarize-reset dist list-teams clean
+
+## Run the Quick Look unit test suite (FuseQuickLookTests scheme).
+## Requires a macOS host with Xcode and the fuse submodule checked out.
+test:
+	xcodebuild -project $(XCODEPROJ) -scheme FuseQuickLookTests -configuration Development \
+		-destination 'platform=macOS' \
+		SYMROOT='$(XCODE_BUILD_ROOT)' OBJROOT='$(XCODE_BUILD_ROOT)' \
+		FUSE_REPO_ROOT='$(FUSE_REPO_ROOT)' \
+		FUSE_SCRIPTS_ROOT='$(FUSE_SCRIPTS_ROOT)' \
+		FUSE_DEPS_ROOT='$(FUSE_DEPS_ROOT)' \
+		FUSE_THIRD_PARTY_ROOT='$(FUSE_THIRD_PARTY_ROOT)' \
+		test
 
 ## Build Fuse.app (Deployment configuration).
 ## This single Xcode build now also builds the shared staged dependencies plus
@@ -257,3 +269,4 @@ clean:
 	rm -f Fuse-adhoc.zip
 	rm -f $(NOTARIZE_ZIP) $(DIST_ZIP)
 	rm -rf $(DIST_STAGE)
+	$(MAKE) notarize-reset
