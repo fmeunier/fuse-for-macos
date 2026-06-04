@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-06-02T07:05:00Z",
-  "run_id": "26804093334",
+  "last_run": "2026-06-04T06:44:00Z",
+  "run_id": "26935542788",
   "backlog_cursor": {
     "issues": 0,
     "prs": 0
@@ -18,8 +18,21 @@
     {
       "branch": "repo-assist/eng-testing-makefile-2026-06-02",
       "title": "Add make test target, fix clean, add canvasSize tests",
-      "status": "patch_preview",
+      "pr_number": 7,
+      "status": "open",
       "created_at": "2026-06-02"
+    },
+    {
+      "branch": "repo-assist/task10-mdr-thumbnail-2026-06-04",
+      "title": "Implement MDR thumbnail extraction from SCREEN$ file",
+      "status": "patch_preview",
+      "created_at": "2026-06-04"
+    },
+    {
+      "branch": "repo-assist/eng-ci-macos-build-2026-06-04",
+      "title": "Add GitHub Actions CI workflow for macOS build",
+      "status": "patch_preview",
+      "created_at": "2026-06-04"
     }
   ],
   "monthly_activity_issue": 6,
@@ -27,5 +40,5 @@
     "3": "Monthly Activity May 2026 - closed on 2026-06-01",
     "2": "Patch preview issue - closed"
   },
-  "notes": "PR #4 merged (code quality). Templates PR patch preview pending human action. Testing+Makefile PR patch preview created 2026-06-02. Future: MDR thumbnail support, HIRES screen tests."
+  "notes": "PR #7 open (testing+makefile). Templates PR patch preview and MDR thumbnail PR patch preview and CI workflow PR patch preview pending human action. MDR implementation is in branch repo-assist/task10-mdr-thumbnail-2026-06-04. Future: add MDR test fixture, wire test to CI once PR #7 merged."
 }
