@@ -301,9 +301,66 @@ done:
   if( error ) { return; }
 }
 
-// FIXME: Could look for first screen file on cart?
+/* Look for a SCREEN$ CODE file on the microdrive cartridge.
+   An MDR file contains up to LIBSPECTRUM_MICRODRIVE_BLOCK_MAX sectors of
+   LIBSPECTRUM_MICRODRIVE_BLOCK_LEN bytes each. Each sector's second header
+   (at byte offset LIBSPECTRUM_MICRODRIVE_HEAD_LEN) contains:
+     recflg (1 byte)  -- bit0: 1=file-descriptor header, 0=data block
+     recnum (1 byte)  -- sector sequence number within the file (0-based)
+     reclen (2 bytes) -- number of valid data bytes in this sector (LE)
+     recnam (10 bytes)-- file name, space-padded
+   Actual sector data follows at offset LIBSPECTRUM_MICRODRIVE_HEAD_LEN*2. */
 - (void) process_mdr
 {
+  int num_blocks, i, found;
+  unsigned char screen[STANDARD_SCR_SIZE];
+
+  if( length < (size_t)LIBSPECTRUM_MICRODRIVE_BLOCK_LEN ) return;
+
+  num_blocks = (int)( length / LIBSPECTRUM_MICRODRIVE_BLOCK_LEN );
+  if( num_blocks > LIBSPECTRUM_MICRODRIVE_BLOCK_MAX )
+    num_blocks = LIBSPECTRUM_MICRODRIVE_BLOCK_MAX;
+
+  memset( screen, 0, sizeof( screen ) );
+  found = 0;
+
+  for( i = 0; i < num_blocks; i++ ) {
+    const unsigned char *blk;
+    int recflg, recnum, reclen, offset, copy_len;
+
+    blk = buffer + i * LIBSPECTRUM_MICRODRIVE_BLOCK_LEN;
+
+    recflg = blk[ LIBSPECTRUM_MICRODRIVE_HEAD_LEN ];
+    recnum = blk[ LIBSPECTRUM_MICRODRIVE_HEAD_LEN + 1 ];
+    reclen = blk[ LIBSPECTRUM_MICRODRIVE_HEAD_LEN + 2 ] |
+             ( blk[ LIBSPECTRUM_MICRODRIVE_HEAD_LEN + 3 ] << 8 );
+
+    /* Skip free/erased blocks and file-descriptor-header blocks */
+    if( reclen == 0 || ( recflg & 0x01 ) ) continue;
+
+    /* File name sits at offset HEAD_LEN+4, space-padded to 10 characters */
+    if( memcmp( blk + LIBSPECTRUM_MICRODRIVE_HEAD_LEN + 4,
+                "SCREEN$   ", 10 ) != 0 ) continue;
+
+    offset = recnum * LIBSPECTRUM_MICRODRIVE_DATA_LEN;
+    if( offset >= STANDARD_SCR_SIZE ) continue;
+
+    copy_len = reclen < LIBSPECTRUM_MICRODRIVE_DATA_LEN
+               ? reclen : LIBSPECTRUM_MICRODRIVE_DATA_LEN;
+    if( offset + copy_len > STANDARD_SCR_SIZE )
+      copy_len = STANDARD_SCR_SIZE - offset;
+
+    memcpy( screen + offset,
+            blk + LIBSPECTRUM_MICRODRIVE_HEAD_LEN * 2,
+            copy_len );
+    found++;
+  }
+
+  /* Require at least the 13 sectors that cover the full bitmap area */
+  if( found >= 13 ) {
+    scrData = [NSData dataWithBytes:screen length:STANDARD_SCR_SIZE];
+    image_type = TYPE_SCR;
+  }
 }
 
 // Populate scrData directly
