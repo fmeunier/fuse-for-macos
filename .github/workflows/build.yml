@@ -15,9 +15,9 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Install Ruby/Jekyll dependencies
+      - name: Install build dependencies
         run: |
-          brew install ruby
+          brew install ruby autoconf automake libtool
           gem install jekyll bundler
 
       - name: Build (Development, ad-hoc signed)
