@@ -8,12 +8,17 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: macos-26
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: recursive
+
+      - name: Install build dependencies
+        run: |
+          brew install ruby autoconf automake libtool
+          gem install jekyll bundler
 
       - name: Build (Development, ad-hoc signed)
         run: |
