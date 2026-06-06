@@ -293,6 +293,54 @@
   XCTAssertNotNil( [thumbnail image] );
 }
 
+- (void)test_scr_file_canvas_size_is_standard_spectrum_resolution
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSSize canvas_size;
+
+  thumbnail = [self thumbnailForFixture:@"../fuse/lib/keyboard.scr"];
+  canvas_size = [thumbnail canvasSize];
+
+  XCTAssertEqual( canvas_size.width, 256.0 );
+  XCTAssertEqual( canvas_size.height, 192.0 );
+}
+
+- (void)test_snapshot_canvas_size_is_standard_spectrum_resolution
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSSize canvas_size;
+
+  thumbnail = [self thumbnailForFixture:@"deps/libspectrum/test/plus3.z80"];
+  canvas_size = [thumbnail canvasSize];
+
+  XCTAssertEqual( canvas_size.width, 256.0 );
+  XCTAssertEqual( canvas_size.height, 192.0 );
+}
+
+- (void)test_tape_without_art_has_zero_canvas_size
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSSize canvas_size;
+
+  thumbnail = [self thumbnailForFixture:@"deps/libspectrum/test/turbo-zeropilot.tzx"];
+  canvas_size = [thumbnail canvasSize];
+
+  XCTAssertEqual( canvas_size.width, 0.0 );
+  XCTAssertEqual( canvas_size.height, 0.0 );
+}
+
+- (void)test_tzx_with_embedded_inlay_canvas_size_matches_image_dimensions
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSSize canvas_size;
+
+  thumbnail = [self thumbnailForFixture:@"tests/fixtures/keyboard-inlay.tzx"];
+  canvas_size = [thumbnail canvasSize];
+
+  XCTAssertEqual( canvas_size.width, 541.0 );
+  XCTAssertEqual( canvas_size.height, 201.0 );
+}
+
 - (void)test_thumbnail_context_size_matches_requested_maximum_size
 {
   CGSize context_size;
