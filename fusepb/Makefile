@@ -42,4 +42,4 @@ $(Z80_ROOT)/z80_ed.c: $(Z80_ROOT)/opcodes_ed.dat $(Z80_ROOT)/z80.pl
 	cd $(Z80_ROOT) && perl -I../perl z80.pl opcodes_ed.dat > z80_ed.c
 
 clean:
-	rm options.h options_cocoa.h options.m settings.h settings.m $(Z80_ROOT)/opcodes_base.c $(Z80_ROOT)/z80_cb.c $(Z80_ROOT)/z80_ddfd.c $(Z80_ROOT)/z80_ddfdcb.c $(Z80_ROOT)/z80_ed.c settings_cocoa.h
+	rm -f options.h options_cocoa.h options.m settings.h settings.m $(Z80_ROOT)/opcodes_base.c $(Z80_ROOT)/z80_cb.c $(Z80_ROOT)/z80_ddfd.c $(Z80_ROOT)/z80_ddfdcb.c $(Z80_ROOT)/z80_ed.c settings_cocoa.h
