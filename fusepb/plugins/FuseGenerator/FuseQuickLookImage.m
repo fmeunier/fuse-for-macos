@@ -18,6 +18,8 @@
 
 #import "FuseQuickLookImage.h"
 
+#import <ImageIO/ImageIO.h>
+
 #import "JWSpectrumScreen/JWSpectrumScreen.h"
 #import "LibspectrumSCRExtractor.h"
 
@@ -96,11 +98,45 @@
 - (NSSize)canvasSize
 {
   JWSpectrumScreen *current_screen;
+  NSData *data;
+  CGImageSourceRef image_source;
+  CFDictionaryRef properties;
+  NSNumber *pixel_width;
+  NSNumber *pixel_height;
+  NSSize size;
 
-  current_screen = [self screen];
-  if( !current_screen ) return NSZeroSize;
+  switch( [self imageKind] ) {
+  case FUSE_QUICKLOOK_IMAGE_SCR:
+    current_screen = [self screen];
+    if( !current_screen ) return NSZeroSize;
 
-  return [current_screen canvasSize];
+    return [current_screen canvasSize];
+
+  case FUSE_QUICKLOOK_IMAGE_IMAGEIO:
+    data = [self imageData];
+    if( !data ) return NSZeroSize;
+
+    image_source = CGImageSourceCreateWithData( (CFDataRef)data, NULL );
+    if( !image_source ) return NSZeroSize;
+
+    properties = CGImageSourceCopyPropertiesAtIndex( image_source, 0, NULL );
+    CFRelease( image_source );
+    if( !properties ) return NSZeroSize;
+
+    pixel_width = [(NSDictionary *)properties objectForKey:(NSString*)kCGImagePropertyPixelWidth];
+    pixel_height = [(NSDictionary *)properties objectForKey:(NSString*)kCGImagePropertyPixelHeight];
+    size = NSZeroSize;
+    if( pixel_width && pixel_height ) {
+      size = NSMakeSize( [pixel_width doubleValue], [pixel_height doubleValue] );
+    }
+    CFRelease( properties );
+
+    return size;
+
+  case FUSE_QUICKLOOK_IMAGE_NONE:
+  default:
+    return NSZeroSize;
+  }
 }
 
 - (JWSpectrumScreen*)screen
