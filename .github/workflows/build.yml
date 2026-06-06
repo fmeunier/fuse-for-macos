@@ -18,7 +18,7 @@ jobs:
       - name: Install Ruby/Jekyll dependencies
         run: |
           brew install ruby
-          gem install jekyll bundler jekyll-apple-help
+          gem install jekyll bundler
 
       - name: Build (Development, ad-hoc signed)
         run: |
