@@ -241,6 +241,20 @@
              tolerance:0.18];
 }
 
+- (void)test_tzx_with_embedded_inlay_canvas_size_matches_image_dimensions
+{
+  FuseQuickLookImage *image;
+  NSSize canvas;
+
+  image = [[[FuseQuickLookImage alloc]
+             initWithContentsOfURL:[self fixtureURL:@"tests/fixtures/keyboard-inlay.tzx"]] autorelease];
+  canvas = [image canvasSize];
+
+  /* Pixel dimensions of the embedded JPEG inlay, not DPI-scaled logical points */
+  XCTAssertEqual( canvas.width,  541.0 );
+  XCTAssertEqual( canvas.height, 201.0 );
+}
+
 - (void)test_importer_and_preview_extension_declare_matching_content_types
 {
   NSSet<NSString*> *importer_types;

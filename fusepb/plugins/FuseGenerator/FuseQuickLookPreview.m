@@ -117,44 +117,7 @@
 
 - (NSSize)contentSize
 {
-  switch( [image imageKind] ) {
-  case FUSE_QUICKLOOK_IMAGE_SCR:
-    return [image canvasSize];
-
-  case FUSE_QUICKLOOK_IMAGE_IMAGEIO:
-    {
-      NSData *data;
-      CGImageSourceRef image_source;
-      CFDictionaryRef properties;
-      NSNumber *pixel_width;
-      NSNumber *pixel_height;
-      NSSize size;
-
-      data = [image imageData];
-      if( !data ) return NSZeroSize;
-
-      image_source = CGImageSourceCreateWithData( (CFDataRef)data, NULL );
-      if( !image_source ) return NSZeroSize;
-
-      properties = CGImageSourceCopyPropertiesAtIndex( image_source, 0, NULL );
-      CFRelease( image_source );
-      if( !properties ) return NSZeroSize;
-
-      pixel_width = [(NSDictionary *)properties objectForKey:(NSString*)kCGImagePropertyPixelWidth];
-      pixel_height = [(NSDictionary *)properties objectForKey:(NSString*)kCGImagePropertyPixelHeight];
-      size = NSZeroSize;
-      if( pixel_width && pixel_height ) {
-        size = NSMakeSize( [pixel_width doubleValue], [pixel_height doubleValue] );
-      }
-      CFRelease( properties );
-
-      return size;
-    }
-
-  case FUSE_QUICKLOOK_IMAGE_NONE:
-  default:
-    return NSZeroSize;
-  }
+  return [image canvasSize];
 }
 
 - (void)buildBitmapPreviewIfNeeded

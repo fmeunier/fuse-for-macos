@@ -18,8 +18,6 @@
 
 #import "FuseQuickLookThumbnail.h"
 
-#import <ImageIO/ImageIO.h>
-
 #import "FuseQuickLookImage.h"
 
 @interface FuseQuickLookThumbnail () {
@@ -71,46 +69,7 @@
 
 - (NSSize)canvasSize
 {
-  NSBitmapImageRep *bitmap;
-  NSData *data;
-  CGImageSourceRef image_source;
-  CFDictionaryRef properties;
-  NSNumber *pixel_width;
-  NSNumber *pixel_height;
-  NSSize size;
-
-  switch( [self thumbnailKind] ) {
-  case FUSE_QUICKLOOK_THUMBNAIL_BITMAP:
-    bitmap = [self bitmapImageRep];
-    if( !bitmap ) return NSZeroSize;
-
-    return NSMakeSize( [bitmap pixelsWide], [bitmap pixelsHigh] );
-
-  case FUSE_QUICKLOOK_THUMBNAIL_IMAGE_DATA:
-    data = [self imageData];
-    if( !data ) return NSZeroSize;
-
-    image_source = CGImageSourceCreateWithData( (CFDataRef)data, NULL );
-    if( !image_source ) return NSZeroSize;
-
-    properties = CGImageSourceCopyPropertiesAtIndex( image_source, 0, NULL );
-    CFRelease( image_source );
-    if( !properties ) return NSZeroSize;
-
-    pixel_width = [(NSDictionary *)properties objectForKey:(NSString*)kCGImagePropertyPixelWidth];
-    pixel_height = [(NSDictionary *)properties objectForKey:(NSString*)kCGImagePropertyPixelHeight];
-    size = NSZeroSize;
-    if( pixel_width && pixel_height ) {
-      size = NSMakeSize( [pixel_width doubleValue], [pixel_height doubleValue] );
-    }
-    CFRelease( properties );
-
-    return size;
-
-  case FUSE_QUICKLOOK_THUMBNAIL_NONE:
-  default:
-    return NSZeroSize;
-  }
+  return [image canvasSize];
 }
 
 - (NSImage*)image
