@@ -53,6 +53,13 @@ FUSE_REPO_ROOT = $(CURDIR)
 FUSE_SCRIPTS_ROOT = $(FUSE_REPO_ROOT)/fusepb/scripts
 FUSE_DEPS_ROOT = $(FUSE_REPO_ROOT)/fusepb/deps
 FUSE_THIRD_PARTY_ROOT = $(FUSE_DEPS_ROOT)/third_party
+SPARKLE_FRAMEWORK = $(FUSE_APP)/Contents/Frameworks/Sparkle.framework
+SPARKLE_VERSION_DIR = $(SPARKLE_FRAMEWORK)/Versions/Current
+SPARKLE_INSTALLER_XPC = $(SPARKLE_VERSION_DIR)/XPCServices/Installer.xpc
+SPARKLE_DOWNLOADER_XPC = $(SPARKLE_VERSION_DIR)/XPCServices/Downloader.xpc
+SPARKLE_AUTOUPDATE = $(SPARKLE_VERSION_DIR)/Autoupdate
+SPARKLE_UPDATER_APP = $(SPARKLE_VERSION_DIR)/Updater.app
+SPARKLE_SOURCE_FRAMEWORK ?= $(shell find "$(HOME)/Library/Developer/Xcode/DerivedData" -path '*/SourcePackages/artifacts/sparkle/Sparkle/Sparkle.xcframework/macos-arm64_x86_64/Sparkle.framework' -print | sed -n '1p')
 NOTARIZE_ZIP = Fuse-notarize.zip
 DIST_ZIP     = Fuse.zip
 DIST_DIR     = Fuse for macOS
@@ -70,7 +77,7 @@ endif
 
 FUSE_CODESIGN_TIMESTAMP =
 
-.PHONY: fuse archive adhoc test test-only notarize notarize-submit notarize-status notarize-log notarize-wait notarize-staple notarize-reset dist list-teams clean
+.PHONY: fuse archive adhoc test test-only notarize notarize-submit notarize-status notarize-log notarize-wait notarize-staple notarize-reset embed-sparkle resign-sparkle dist list-teams clean
 
 ## Run the Quick Look unit test suite (FuseQuickLookTests scheme).
 ## Requires a macOS host with Xcode and the fuse submodule checked out.
@@ -128,10 +135,50 @@ fuse:
 	codesign --sign "$(EFFECTIVE_CODE_SIGN_IDENTITY)" --force --options runtime $(FUSE_CODESIGN_TIMESTAMP) \
 		--entitlements "fusepb/FuseQuickLookExtension.entitlements" \
 		"$(FUSE_APP)/Contents/PlugIns/FusePreviewExtension.appex"
+	$(MAKE) embed-sparkle
+	$(MAKE) resign-sparkle
 	@echo "Re-signing app bundle"
 	codesign --sign "$(EFFECTIVE_CODE_SIGN_IDENTITY)" --force --options runtime $(FUSE_CODESIGN_TIMESTAMP) \
 		--entitlements "fusepb/Fuse.entitlements" "$(FUSE_APP)"
 	@echo "Fuse build complete"
+
+embed-sparkle:
+	@if [ -d "$(SPARKLE_FRAMEWORK)" ]; then \
+		exit 0 ; \
+	fi
+	@if [ -z "$(SPARKLE_SOURCE_FRAMEWORK)" ]; then \
+		echo "ERROR: Sparkle.framework artifact not found in DerivedData." ; \
+		echo "       Run 'xcodebuild -resolvePackageDependencies -project $(XCODEPROJ) -scheme Fuse' and try again." ; \
+		false ; \
+	fi
+	@echo "Embedding Sparkle.framework"
+	mkdir -p "$(FUSE_APP)/Contents/Frameworks"
+	rm -rf "$(SPARKLE_FRAMEWORK)"
+	ditto "$(SPARKLE_SOURCE_FRAMEWORK)" "$(SPARKLE_FRAMEWORK)"
+
+resign-sparkle:
+	@if [ ! -d "$(SPARKLE_FRAMEWORK)" ]; then \
+		echo "Sparkle.framework not present; skipping Sparkle re-sign" ; \
+		exit 0 ; \
+	fi
+	@echo "Re-signing Sparkle Installer.xpc"
+	codesign --sign "$(EFFECTIVE_CODE_SIGN_IDENTITY)" --force --options runtime $(FUSE_CODESIGN_TIMESTAMP) \
+		"$(SPARKLE_INSTALLER_XPC)"
+	@if [ -d "$(SPARKLE_DOWNLOADER_XPC)" ]; then \
+		echo "Re-signing Sparkle Downloader.xpc" ; \
+		codesign --sign "$(EFFECTIVE_CODE_SIGN_IDENTITY)" --force --options runtime $(FUSE_CODESIGN_TIMESTAMP) \
+			--preserve-metadata=entitlements \
+			"$(SPARKLE_DOWNLOADER_XPC)" ; \
+	fi
+	@echo "Re-signing Sparkle Autoupdate"
+	codesign --sign "$(EFFECTIVE_CODE_SIGN_IDENTITY)" --force --options runtime $(FUSE_CODESIGN_TIMESTAMP) \
+		"$(SPARKLE_AUTOUPDATE)"
+	@echo "Re-signing Sparkle Updater.app"
+	codesign --sign "$(EFFECTIVE_CODE_SIGN_IDENTITY)" --force --options runtime $(FUSE_CODESIGN_TIMESTAMP) \
+		"$(SPARKLE_UPDATER_APP)"
+	@echo "Re-signing Sparkle.framework"
+	codesign --sign "$(EFFECTIVE_CODE_SIGN_IDENTITY)" --force --options runtime $(FUSE_CODESIGN_TIMESTAMP) \
+		"$(SPARKLE_FRAMEWORK)"
 
 ## Build an Xcode archive (.xcarchive) — useful for manual export workflows.
 archive:

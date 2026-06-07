@@ -621,6 +621,10 @@
 	<string>FUSE</string>
 	<key>CFBundleVersion</key>
 	<string>1.8.0</string>
+	<key>SUFeedURL</key>
+	<string>$(SPARKLE_FEED_URL)</string>
+	<key>SUPublicEDKey</key>
+	<string>$(SPARKLE_PUBLIC_ED_KEY)</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSInputMonitoringUsageDescription</key>

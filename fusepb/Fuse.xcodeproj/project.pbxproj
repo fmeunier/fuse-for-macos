@@ -360,6 +360,7 @@
 		B6F0481B0952B5FD006D8005 /* zxs.icns in Resources */ = {isa = PBXBuildFile; fileRef = B6F0481A0952B5FD006D8005 /* zxs.icns */; };
 		B6F5E1801EE16CA70005178D /* covox.c in Sources */ = {isa = PBXBuildFile; fileRef = B6F5E17E1EE16CA70005178D /* covox.c */; };
 		B6F66E351E473D68005B270A /* memory_pages.c in Sources */ = {isa = PBXBuildFile; fileRef = B6F66E331E473D68005B270A /* memory_pages.c */; };
+		5PK000013A7B00000C0DE01 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 5PK000043A7B00000C0DE01 /* Sparkle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -960,6 +961,7 @@
 				B6A6F1060B3D60D0000B88E9 /* OpenGL.framework in Frameworks */,
 				B653532B0B902CB20083F942 /* IOKit.framework in Frameworks */,
 				B6251C3E0C2EB24500BD5543 /* QuartzCore.framework in Frameworks */,
+				5PK000013A7B00000C0DE01 /* Sparkle in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1906,6 +1908,9 @@
 				B6D6704F1DD6D1430014914E /* PBXTargetDependency */,
 			);
 			name = Fuse;
+			packageProductDependencies = (
+				5PK000043A7B00000C0DE01 /* Sparkle */,
+			);
 			productInstallPath = "$(HOME)/Applications";
 			productName = Fuse;
 			productReference = B61F46AA09121DF200C8096C /* Fuse.app */;
@@ -2027,6 +2032,9 @@
 				ja,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* Fuse */;
+			packageReferences = (
+				5PK000033A7B00000C0DE01 /* XCRemoteSwiftPackageReference "Sparkle" */,
+			);
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -2853,6 +2861,25 @@
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		5PK000033A7B00000C0DE01 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.9.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		5PK000043A7B00000C0DE01 /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5PK000033A7B00000C0DE01 /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCBuildConfiguration section */
 		B7A1C4093A75C00000C0DE01 /* Default */ = {

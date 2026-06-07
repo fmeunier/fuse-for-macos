@@ -5,5 +5,7 @@
 
 CODE_SIGN_IDENTITY = -
 DEVELOPMENT_TEAM =
+SPARKLE_FEED_URL =
+SPARKLE_PUBLIC_ED_KEY =
 
 #include? "LocalSigning.xcconfig"
