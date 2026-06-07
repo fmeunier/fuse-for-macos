@@ -31,13 +31,16 @@
 
 #include <libspectrum.h>
 
-#define STANDARD_SCR_SIZE 6912
-#define MONO_BITMAP_SIZE  6144
-#define HICOLOUR_SCR_SIZE (2 * MONO_BITMAP_SIZE)
-#define HIRES_ATTR        HICOLOUR_SCR_SIZE
-#define HIRES_SCR_SIZE    (HICOLOUR_SCR_SIZE + 1)
-#define HIRESCOLMASK      0x38
-#define ALTDFILE_OFFSET   0x2000
+#define STANDARD_SCR_SIZE      6912
+#define MONO_BITMAP_SIZE       6144
+#define HICOLOUR_SCR_SIZE      (2 * MONO_BITMAP_SIZE)
+#define HIRES_ATTR             HICOLOUR_SCR_SIZE
+#define HIRES_SCR_SIZE         (HICOLOUR_SCR_SIZE + 1)
+#define HIRESCOLMASK           0x38
+#define ALTDFILE_OFFSET        0x2000
+#define SCREEN_ADDRESS         16384
+#define CODE_FILE_TYPE         3
+#define SCREEN_TAPE_BLOCK_SIZE ( STANDARD_SCR_SIZE + 2 )
 
 
 static int
@@ -191,8 +194,10 @@ mmap_file( const char *filename, unsigned char **buffer, size_t *length )
   }
 }
 
-// If a tape has a ROM header block for Bytes length 6192, location 16384
-// followed by a ROM data block of 6192 bytes, use that as a SCR
+// If a tape has a ROM header block for Bytes length 6912, location 16384
+// followed by a ROM data block of 6912 bytes, use that as a SCR. Custom
+// loaders may also use headerless data blocks, so we still accept a raw
+// 6912-byte screen payload plus flag and checksum without requiring a header.
 // Also have a look at turbo blocks as sometimes the timing is just a bit
 // different from the ROM values, but are otherwise identical
 // And finally look for TZX custom blocks with loading screens or tape inlays
@@ -226,9 +231,9 @@ mmap_file( const char *filename, unsigned char **buffer, size_t *length )
         continue;
       }
 
-      // SCREEN$ is 6912 bytes plus flag and checksum
+      // SCREEN$ payload is 6912 bytes plus flag and checksum
       if( libspectrum_tape_block_data_length( block ) ==
-          STANDARD_SCR_SIZE + 2 ) {
+          SCREEN_TAPE_BLOCK_SIZE ) {
         libspectrum_byte *data = libspectrum_tape_block_data( block );
 
         scrData = [NSData dataWithBytes:(const void *)(data+1)
@@ -301,10 +306,35 @@ done:
   if( error ) { return; }
 }
 
-/* Look for a SCREEN$ CODE file on the microdrive cartridge.
-   An MDR file contains up to LIBSPECTRUM_MICRODRIVE_BLOCK_MAX sectors of
-   LIBSPECTRUM_MICRODRIVE_BLOCK_LEN bytes each. Each sector's second header
-   (at byte offset LIBSPECTRUM_MICRODRIVE_HEAD_LEN) contains:
+static unsigned int
+read_le16( const unsigned char *data )
+{
+  return data[0] | ( data[1] << 8 );
+}
+
+static int
+microdrive_header_is_screen_dump( const unsigned char *data, int length )
+{
+  if( length >= 7 &&
+      data[0] == CODE_FILE_TYPE &&
+      read_le16( data + 1 ) == STANDARD_SCR_SIZE &&
+      read_le16( data + 3 ) == SCREEN_ADDRESS )
+    return 1;
+
+  if( length >= 8 &&
+      data[1] == CODE_FILE_TYPE &&
+      read_le16( data + 2 ) == STANDARD_SCR_SIZE &&
+      read_le16( data + 4 ) == SCREEN_ADDRESS )
+    return 1;
+
+  return 0;
+}
+
+/* Look for the first microdrive CODE file saved to the standard Spectrum
+   screen address. SCREEN$ is BASIC shorthand for such a file, not a literal
+   filename. MDR data is split into up to LIBSPECTRUM_MICRODRIVE_BLOCK_MAX
+   sectors of LIBSPECTRUM_MICRODRIVE_BLOCK_LEN bytes. Each sector's second
+   header (at byte offset LIBSPECTRUM_MICRODRIVE_HEAD_LEN) contains:
      recflg (1 byte)  -- bit0: 1=file-descriptor header, 0=data block
      recnum (1 byte)  -- sector sequence number within the file (0-based)
      reclen (2 bytes) -- number of valid data bytes in this sector (LE)
@@ -312,14 +342,39 @@ done:
    Actual sector data follows at offset LIBSPECTRUM_MICRODRIVE_HEAD_LEN*2. */
 - (void) process_mdr
 {
-  int num_blocks, i, found;
-  unsigned char screen[STANDARD_SCR_SIZE];
+  int num_blocks, i, found, have_screen_file;
+  unsigned char file_name[10], screen[STANDARD_SCR_SIZE];
 
   if( length < (size_t)LIBSPECTRUM_MICRODRIVE_BLOCK_LEN ) return;
 
   num_blocks = (int)( length / LIBSPECTRUM_MICRODRIVE_BLOCK_LEN );
   if( num_blocks > LIBSPECTRUM_MICRODRIVE_BLOCK_MAX )
     num_blocks = LIBSPECTRUM_MICRODRIVE_BLOCK_MAX;
+
+  have_screen_file = 0;
+
+  for( i = 0; i < num_blocks; i++ ) {
+    const unsigned char *blk, *data;
+    int recflg, reclen;
+
+    blk = buffer + i * LIBSPECTRUM_MICRODRIVE_BLOCK_LEN;
+
+    recflg = blk[ LIBSPECTRUM_MICRODRIVE_HEAD_LEN ];
+    reclen = blk[ LIBSPECTRUM_MICRODRIVE_HEAD_LEN + 2 ] |
+             ( blk[ LIBSPECTRUM_MICRODRIVE_HEAD_LEN + 3 ] << 8 );
+
+    if( reclen == 0 || !( recflg & 0x01 ) ) continue;
+
+    data = blk + LIBSPECTRUM_MICRODRIVE_HEAD_LEN * 2;
+    if( !microdrive_header_is_screen_dump( data, reclen ) ) continue;
+
+    memcpy( file_name, blk + LIBSPECTRUM_MICRODRIVE_HEAD_LEN + 4,
+            sizeof( file_name ) );
+    have_screen_file = 1;
+    break;
+  }
+
+  if( !have_screen_file ) return;
 
   memset( screen, 0, sizeof( screen ) );
   found = 0;
@@ -338,9 +393,9 @@ done:
     /* Skip free/erased blocks and file-descriptor-header blocks */
     if( reclen == 0 || ( recflg & 0x01 ) ) continue;
 
-    /* File name sits at offset HEAD_LEN+4, space-padded to 10 characters */
-    if( memcmp( blk + LIBSPECTRUM_MICRODRIVE_HEAD_LEN + 4,
-                "SCREEN$   ", 10 ) != 0 ) continue;
+    if( memcmp( blk + LIBSPECTRUM_MICRODRIVE_HEAD_LEN + 4, file_name,
+                sizeof( file_name ) ) != 0 )
+      continue;
 
     offset = recnum * LIBSPECTRUM_MICRODRIVE_DATA_LEN;
     if( offset >= STANDARD_SCR_SIZE ) continue;
