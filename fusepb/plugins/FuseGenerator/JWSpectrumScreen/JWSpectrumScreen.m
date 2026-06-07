@@ -19,6 +19,11 @@ typedef struct BitmapOffsets {
 // for a byte in the Spectrum screen file.
 BitmapOffsets bitmapOffsets(int x, int y, ScreenMode mode);
 
+// C-level helper: extract bitmap byte and attribute from a raw screen buffer.
+// Avoids ObjC message dispatch overhead in tight loops.
+static BitmapByteData bitmapByteDataAt(const char *bitmapBytes, int x, int y,
+                                       ScreenMode mode);
+
 
 @implementation JWSpectrumScreen
 
@@ -83,11 +88,15 @@ BitmapOffsets bitmapOffsets(int x, int y, ScreenMode mode);
 	
 	if(imageRep) {
 		unsigned char* imageBytes = [imageRep bitmapData];
+		/* Cache the raw pointer once to avoid repeated ObjC message dispatch
+		   in the inner loop (one call per attribute block = 6144 for a
+		   standard 256x192 screen). */
+		const char* bitmapBytes = [zxScreen bytes];
 		BitmapByteData bitmapByteData;
 		
 		for(int y = 0; y < canvasSize.height; ++y) {
 			for(int x = 0; x < canvasSize.width; x += 8) {
-				bitmapByteData = [self bitmapByteDataAtX:x y:y];
+				bitmapByteData = bitmapByteDataAt(bitmapBytes, x, y, mode);
 
 				/* Pre-compute ink and paper colours once per attribute block to
 				   avoid redundant spectrumColourFromIndex calls for each pixel. */
@@ -117,75 +126,7 @@ BitmapOffsets bitmapOffsets(int x, int y, ScreenMode mode);
 	assert(x < canvasSize.width);
 	assert(y < canvasSize.height);
 
-	const char* bitmapBytes = [zxScreen bytes];	
-	BitmapByteData data;
-	BitmapOffsets offsets = bitmapOffsets(x, y, mode);
-	data.bitmapByte = bitmapBytes[offsets.bitmapOffset];
-	
-	if(mode == ScreenModeSinclair || mode == ScreenModeTimexHiCol || mode == ScreenModeMLT) {
-
-		char attribute = bitmapBytes[offsets.attrOffset];
-		bool bright = attribute & (1 << 6);
-		int ink = attribute & 0x7;
-		int paper = (attribute & (0x7 << 3)) >> 3;
-		if(bright) {
-			if(ink) {
-				ink += 7;
-			}
-			if(paper) {
-				paper += 7;
-			}
-		}
-		data.ink = ink;
-		data.paper = paper;
-	} else if(mode == ScreenModeTimexHiRes) {
-	
-		int outValue = bitmapBytes[SCREEN_TIMEX_HI_RES_BYTES - 1];		
-                // Mask out the non-colour related bits
-		outValue &= 0x38;
-
-		switch(outValue) {
-			case TimexHiResBlackWhite:
-			data.ink = spectrumIndexFromRGB(SPEC_BLACK);
-			data.paper = spectrumIndexFromRGB(SPEC_BRIGHT_WHITE);
-			break;
-			case TimexHiResBlueYellow:
-			data.ink = spectrumIndexFromRGB(SPEC_BRIGHT_BLUE);
-			data.paper = spectrumIndexFromRGB(SPEC_BRIGHT_YELLOW);
-			break;
-			case TimexHiResRedCyan:
-			data.ink = spectrumIndexFromRGB(SPEC_BRIGHT_RED);
-			data.paper = spectrumIndexFromRGB(SPEC_BRIGHT_CYAN);
-			break;
-			case TimexHiResMagentaGreen:
-			data.ink = spectrumIndexFromRGB(SPEC_BRIGHT_MAGENTA);
-			data.paper = spectrumIndexFromRGB(SPEC_BRIGHT_GREEN);
-			break;
-			case TimexHiResGreenMagenta:
-			data.ink = spectrumIndexFromRGB(SPEC_BRIGHT_GREEN);
-			data.paper = spectrumIndexFromRGB(SPEC_BRIGHT_MAGENTA);
-			break;
-			case TimexHiResCyanRed:
-			data.ink = spectrumIndexFromRGB(SPEC_BRIGHT_CYAN);
-			data.paper = spectrumIndexFromRGB(SPEC_BRIGHT_RED);
-			break;
-			case TimexHiResYellowBlue:
-			data.ink = spectrumIndexFromRGB(SPEC_BRIGHT_YELLOW);
-			data.paper = spectrumIndexFromRGB(SPEC_BRIGHT_BLUE);
-			break;
-			case TimexHiResWhiteBlack:
-			data.ink = spectrumIndexFromRGB(SPEC_BRIGHT_WHITE);
-			data.paper = spectrumIndexFromRGB(SPEC_BLACK);
-			break;
-			default:
-                                NSLog(@"JWSpectrumScreen: unknown attribute:%d\n", outValue);
-				assert(0);
-		}
-	} else {
-		// WTF?
-		assert(0);
-	}
-	return data;
+	return bitmapByteDataAt([zxScreen bytes], x, y, mode);
 }
 
 - (BOOL)saveScrFile:(NSURL*)url
@@ -220,8 +161,6 @@ BitmapOffsets bitmapOffsets(int x, int y, ScreenMode mode);
 BitmapOffsets bitmapOffsets(int x, int y, ScreenMode mode)
 {
 	BitmapOffsets offsets = {0, 0};
-	
-	int attrX = x / 8;
 	int attrY = 0;
 	int attrRows = 0;
 	
@@ -276,4 +215,76 @@ BitmapOffsets bitmapOffsets(int x, int y, ScreenMode mode)
 	}
 	
 	return offsets;
+}
+
+static BitmapByteData
+bitmapByteDataAt( const char *bitmapBytes, int x, int y, ScreenMode mode )
+{
+  BitmapByteData data;
+  BitmapOffsets offsets = bitmapOffsets( x, y, mode );
+  data.bitmapByte = bitmapBytes[offsets.bitmapOffset];
+
+  if( mode == ScreenModeSinclair || mode == ScreenModeTimexHiCol ||
+      mode == ScreenModeMLT ) {
+
+    char attribute = bitmapBytes[offsets.attrOffset];
+    bool bright = attribute & (1 << 6);
+    int ink = attribute & 0x7;
+    int paper = (attribute & (0x7 << 3)) >> 3;
+
+    if( bright ) {
+      if( ink ) ink += 7;
+      if( paper ) paper += 7;
+    }
+    data.ink = ink;
+    data.paper = paper;
+
+  } else if( mode == ScreenModeTimexHiRes ) {
+
+    int outValue = bitmapBytes[SCREEN_TIMEX_HI_RES_BYTES - 1];
+    outValue &= 0x38;  /* mask out non-colour bits */
+
+    switch( outValue ) {
+    case TimexHiResBlackWhite:
+      data.ink   = spectrumIndexFromRGB( SPEC_BLACK );
+      data.paper = spectrumIndexFromRGB( SPEC_BRIGHT_WHITE );
+      break;
+    case TimexHiResBlueYellow:
+      data.ink   = spectrumIndexFromRGB( SPEC_BRIGHT_BLUE );
+      data.paper = spectrumIndexFromRGB( SPEC_BRIGHT_YELLOW );
+      break;
+    case TimexHiResRedCyan:
+      data.ink   = spectrumIndexFromRGB( SPEC_BRIGHT_RED );
+      data.paper = spectrumIndexFromRGB( SPEC_BRIGHT_CYAN );
+      break;
+    case TimexHiResMagentaGreen:
+      data.ink   = spectrumIndexFromRGB( SPEC_BRIGHT_MAGENTA );
+      data.paper = spectrumIndexFromRGB( SPEC_BRIGHT_GREEN );
+      break;
+    case TimexHiResGreenMagenta:
+      data.ink   = spectrumIndexFromRGB( SPEC_BRIGHT_GREEN );
+      data.paper = spectrumIndexFromRGB( SPEC_BRIGHT_MAGENTA );
+      break;
+    case TimexHiResCyanRed:
+      data.ink   = spectrumIndexFromRGB( SPEC_BRIGHT_CYAN );
+      data.paper = spectrumIndexFromRGB( SPEC_BRIGHT_RED );
+      break;
+    case TimexHiResYellowBlue:
+      data.ink   = spectrumIndexFromRGB( SPEC_BRIGHT_YELLOW );
+      data.paper = spectrumIndexFromRGB( SPEC_BRIGHT_BLUE );
+      break;
+    case TimexHiResWhiteBlack:
+      data.ink   = spectrumIndexFromRGB( SPEC_BRIGHT_WHITE );
+      data.paper = spectrumIndexFromRGB( SPEC_BLACK );
+      break;
+    default:
+      NSLog( @"JWSpectrumScreen: unknown attribute:%d\n", outValue );
+      assert( 0 );
+    }
+
+  } else {
+    assert( 0 );
+  }
+
+  return data;
 }
