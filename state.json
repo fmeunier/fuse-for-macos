@@ -1,0 +1,47 @@
+{
+  "last_run": "2026-06-07T06:41:33Z",
+  "run_id": "27085162671",
+  "backlog_cursor": {
+    "issues": 0,
+    "prs": 0
+  },
+  "comments_made": {
+    "2": "2026-06-01"
+  },
+  "prs_created": [
+    {
+      "branch": "repo-assist/eng-github-templates-2026-06-01",
+      "title": "Add GitHub issue/PR templates and CONTRIBUTING guide",
+      "status": "patch_preview",
+      "created_at": "2026-06-01"
+    },
+    {
+      "branch": "repo-assist/task10-mdr-thumbnail-2026-06-04-83c4fce3a13b5aa3",
+      "title": "Implement MDR thumbnail extraction from SCREEN$ file",
+      "pr_number": 8,
+      "status": "open",
+      "created_at": "2026-06-04"
+    },
+    {
+      "branch": "repo-assist/improve-perf-preview-2026-06-07",
+      "title": "Avoid ObjC dispatch overhead in imageRep; fix preview content type",
+      "status": "patch_preview",
+      "created_at": "2026-06-07"
+    },
+    {
+      "branch": "repo-assist/test-mdr-tap-2026-06-07",
+      "title": "Add tests for MDR and TAP file handling",
+      "status": "patch_preview",
+      "created_at": "2026-06-07"
+    }
+  ],
+  "monthly_activity_issue": 6,
+  "checked_off_by_maintainer": [
+    "pr_7",
+    "pr_10",
+    "canvassize_refactor_patch_preview",
+    "ci_workflow_patch_preview",
+    "issue_9_patch_preview"
+  ],
+  "notes": "PR #8 open (MDR thumbnail). Two patch previews from this run: perf+preview-fix and MDR+TAP tests. PRs #7 and #10 were applied to master by maintainer directly (closed without merge button). Maintainer checks off items in monthly issue once actioned. Future: add MDR test fixture with SCREEN$."
+}
