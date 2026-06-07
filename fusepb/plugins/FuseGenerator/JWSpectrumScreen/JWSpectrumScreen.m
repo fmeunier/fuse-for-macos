@@ -161,6 +161,7 @@ static BitmapByteData bitmapByteDataAt(const char *bitmapBytes, int x, int y,
 BitmapOffsets bitmapOffsets(int x, int y, ScreenMode mode)
 {
 	BitmapOffsets offsets = {0, 0};
+	int attrX = x / 8;
 	int attrY = 0;
 	int attrRows = 0;
 	
