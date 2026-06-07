@@ -86,7 +86,9 @@
     break;
 
   case FUSE_QUICKLOOK_IMAGE_SCR:
-    [self buildBitmapPreviewIfNeeded];
+    /* SCR images always encode as PNG; set directly without triggering
+       the expensive bitmap build that previewData would require. */
+    content_type_identifier = [@"public.png" copy];
     break;
 
   case FUSE_QUICKLOOK_IMAGE_NONE:
