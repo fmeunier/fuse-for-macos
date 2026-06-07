@@ -62,6 +62,8 @@ SPARKLE_UPDATER_APP = $(SPARKLE_VERSION_DIR)/Updater.app
 SPARKLE_SOURCE_FRAMEWORK ?= $(shell find "$(HOME)/Library/Developer/Xcode/DerivedData" -path '*/SourcePackages/artifacts/sparkle/Sparkle/Sparkle.xcframework/macos-arm64_x86_64/Sparkle.framework' -print | sed -n '1p')
 NOTARIZE_ZIP = Fuse-notarize.zip
 DIST_ZIP     = Fuse.zip
+FUSE_VERSION = $(shell /usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' fusepb/Info-Fuse.plist 2>/dev/null)
+SPARKLE_ZIP  = Fuse-$(FUSE_VERSION)-sparkle.zip
 DIST_DIR     = Fuse for macOS
 DIST_STAGE   = .dist-stage
 DIST_SKELETON_DIR = fusepb/release_skeleton/$(DIST_DIR)
@@ -77,7 +79,7 @@ endif
 
 FUSE_CODESIGN_TIMESTAMP =
 
-.PHONY: fuse archive adhoc test test-only notarize notarize-submit notarize-status notarize-log notarize-wait notarize-staple notarize-reset embed-sparkle resign-sparkle dist list-teams clean
+.PHONY: fuse archive adhoc test test-only notarize notarize-submit notarize-status notarize-log notarize-wait notarize-staple notarize-reset embed-sparkle resign-sparkle dist sparkle-zip list-teams clean
 
 ## Run the Quick Look unit test suite (FuseQuickLookTests scheme).
 ## Requires a macOS host with Xcode and the fuse submodule checked out.
@@ -321,6 +323,13 @@ dist: notarize
 	rm -rf $(DIST_STAGE)
 	@echo "Notarized build packaged as $(DIST_ZIP)"
 
+## Create the Sparkle updater archive from the stapled app bundle only.
+## The versioned filename matches the later appcast/archive flow.
+sparkle-zip: notarize
+	rm -f $(SPARKLE_ZIP)
+	ditto -c -k --sequesterRsrc --keepParent "$(FUSE_APP)" "$(SPARKLE_ZIP)"
+	@echo "Sparkle update archive packaged as $(SPARKLE_ZIP)"
+
 ## List available signing identities in the keychain.
 list-teams:
 	security find-identity -v -p codesigning
@@ -330,6 +339,6 @@ clean:
 	$(MAKE) -C fusepb clean
 	xcodebuild -project $(XCODEPROJ) -configuration Deployment clean
 	rm -f Fuse-adhoc.zip
-	rm -f $(NOTARIZE_ZIP) $(DIST_ZIP)
+	rm -f $(NOTARIZE_ZIP) $(DIST_ZIP) $(SPARKLE_ZIP)
 	rm -rf $(DIST_STAGE)
 	$(MAKE) notarize-reset

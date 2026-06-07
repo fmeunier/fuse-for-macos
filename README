@@ -47,6 +47,7 @@ Other useful targets:
   make notarize-status  # inspect the current notarization submission
   make notarize-log     # fetch the current notarization log into .notary-log.json
   make dist             # build, notarize, staple, and package the full release zip
+  make sparkle-zip      # build, notarize, staple, and package the Sparkle updater zip
   make list-teams       # list available Developer ID signing identities
 
 Signing and notarization
@@ -81,7 +82,14 @@ explicitly, for example:
 `make dist` runs the full release flow: build, notarize, staple, and package
 the final `Fuse.zip` release archive. That archive contains the top-level
 `Fuse for macOS/` folder with `Fuse.app`, the bundled docs/resources, and
-`Debug Symbols/Fuse.app.dSYM`. `make notarize` stops after stapling.
+`Debug Symbols/Fuse.app.dSYM`.
+
+`make sparkle-zip` uses the same stapled/notarized `Fuse.app`, but packages
+only the app bundle with `ditto` as `Fuse-<version>-sparkle.zip` for Sparkle
+update publishing. This keeps the updater artifact separate from the existing
+human-facing `Fuse.zip` distribution archive.
+
+`make notarize` stops after stapling.
 
 If Apple's notary service is slow, `make notarize` stores the submission ID in
 `.notary-submission-id`, so you can continue later with:
