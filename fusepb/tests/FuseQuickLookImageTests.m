@@ -318,4 +318,32 @@
   XCTAssertEqual( canvas.height, 0.0 );
 }
 
+- (void)test_mdr_file_produces_no_image
+{
+  FuseQuickLookImage *image;
+
+  /* Microdrive cartridge with no SCREEN$ — process_mdr stub returns nothing */
+  image = [[[FuseQuickLookImage alloc]
+             initWithContentsOfURL:[self fixtureURL:@"deps/libspectrum/test/writeprotected.mdr"]] autorelease];
+
+  XCTAssertEqual( [image libspectrumClass], LIBSPECTRUM_CLASS_MICRODRIVE );
+  XCTAssertEqual( [image imageKind], FUSE_QUICKLOOK_IMAGE_NONE );
+  XCTAssertNil( [image imageData] );
+  XCTAssertNil( [image bitmapImageRep] );
+}
+
+- (void)test_tap_file_with_no_screen_produces_no_image
+{
+  FuseQuickLookImage *image;
+
+  /* Plain TAP containing a BASIC program — no loading screen */
+  image = [[[FuseQuickLookImage alloc]
+             initWithContentsOfURL:[self fixtureURL:@"deps/libspectrum/test/standard-tap.tap"]] autorelease];
+
+  XCTAssertEqual( [image libspectrumClass], LIBSPECTRUM_CLASS_TAPE );
+  XCTAssertEqual( [image imageKind], FUSE_QUICKLOOK_IMAGE_NONE );
+  XCTAssertNil( [image imageData] );
+  XCTAssertNil( [image bitmapImageRep] );
+}
+
 @end
