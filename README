@@ -41,14 +41,18 @@ The finished app is written to:
 
 Other useful targets:
 
-  make clean            # remove Fuse build products
-  make adhoc            # ad-hoc sign and package as Fuse-adhoc.zip
-  make notarize         # build, notarize, and staple Fuse.app
-  make notarize-status  # inspect the current notarization submission
-  make notarize-log     # fetch the current notarization log into .notary-log.json
-  make dist             # build, notarize, staple, and package the full release zip
-  make sparkle-zip      # build, notarize, staple, and package the Sparkle updater zip
-  make list-teams       # list available Developer ID signing identities
+  make clean                   # remove Fuse build products
+  make adhoc                   # ad-hoc sign and package as Fuse-adhoc.zip
+  make notarize                # build, notarize, and staple Fuse.app
+  make notarize-status         # inspect the current notarization submission
+  make notarize-log            # fetch the current notarization log into .notary-log.json
+  make dist                    # build, notarize, staple, and package the full release zip
+  make sparkle-zip             # build, notarize, staple, and package the Sparkle updater zip
+  make sparkle-key-setup       # generate or import the local Sparkle EdDSA signing key
+  make sparkle-key-public      # print the existing Sparkle EdDSA public key
+  make sparkle-release-notes   # extract per-version Sparkle release notes from changelog.md
+  make sparkle-appcast-staging # generate local staging appcast metadata
+  make list-teams              # list available Developer ID signing identities
 
 Signing and notarization
 
@@ -88,6 +92,11 @@ the final `Fuse.zip` release archive. That archive contains the top-level
 only the app bundle with `ditto` as `Fuse-<version>-sparkle.zip` for Sparkle
 update publishing. This keeps the updater artifact separate from the existing
 human-facing `Fuse.zip` distribution archive.
+
+Sparkle-specific maintainer notes, including EdDSA key setup, release-notes
+extraction, and local staging appcast generation, are documented in:
+
+  docs/sparkle.md
 
 `make notarize` stops after stapling.
 

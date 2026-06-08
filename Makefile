@@ -60,10 +60,32 @@ SPARKLE_DOWNLOADER_XPC = $(SPARKLE_VERSION_DIR)/XPCServices/Downloader.xpc
 SPARKLE_AUTOUPDATE = $(SPARKLE_VERSION_DIR)/Autoupdate
 SPARKLE_UPDATER_APP = $(SPARKLE_VERSION_DIR)/Updater.app
 SPARKLE_SOURCE_FRAMEWORK ?= $(shell find "$(HOME)/Library/Developer/Xcode/DerivedData" -path '*/SourcePackages/artifacts/sparkle/Sparkle/Sparkle.xcframework/macos-arm64_x86_64/Sparkle.framework' -print | sed -n '1p')
+SPARKLE_BIN_DIR ?= $(shell find "$(HOME)/Library/Developer/Xcode/DerivedData" -path '*/SourcePackages/artifacts/sparkle/Sparkle/bin' -print | sed -n '1p')
+SPARKLE_GENERATE_APPCAST ?= $(SPARKLE_BIN_DIR)/generate_appcast
+SPARKLE_GENERATE_KEYS ?= $(SPARKLE_BIN_DIR)/generate_keys
+SPARKLE_EDDSA_ACCOUNT ?= ed25519
 NOTARIZE_ZIP = Fuse-notarize.zip
 DIST_ZIP     = Fuse.zip
 FUSE_VERSION = $(shell /usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' fusepb/Info-Fuse.plist 2>/dev/null)
+RELEASE_VERSION = $(shell /usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' fusepb/Info-Fuse.plist 2>/dev/null)
+ifeq ($(strip $(RELEASE_VERSION)),)
+RELEASE_VERSION := $(FUSE_VERSION)
+endif
+VERSION ?= $(RELEASE_VERSION)
 SPARKLE_ZIP  = Fuse-$(FUSE_VERSION)-sparkle.zip
+SPARKLE_CHANGELOG = fusepb/FuseHelp/_English.lproj/changelog.md
+SPARKLE_RELEASE_NOTES_EXTRACTOR = fusepb/scripts/extract_release_notes.py
+SPARKLE_APPCAST_PATCHER = fusepb/scripts/patch_sparkle_appcast.py
+SPARKLE_STAGING_DIR ?= .sparkle-stage
+SPARKLE_STAGING_APPCAST ?= appcast-staging.xml
+SPARKLE_STAGING_BASE_URL ?= https://fmeunier.github.io/fuse-for-macos/
+SPARKLE_DOWNLOAD_URL_PREFIX ?= $(SPARKLE_STAGING_BASE_URL)
+SPARKLE_RELEASE_NOTES_URL_PREFIX ?= $(SPARKLE_STAGING_BASE_URL)release-notes/
+SPARKLE_STAGING_RELEASE_NOTES_DIR = $(SPARKLE_STAGING_DIR)/release-notes
+SPARKLE_STAGING_RELEASE_NOTES_FILE = $(SPARKLE_STAGING_RELEASE_NOTES_DIR)/$(VERSION).md
+SPARKLE_STAGING_APPCAST_FILE = $(SPARKLE_STAGING_DIR)/$(SPARKLE_STAGING_APPCAST)
+SPARKLE_STAGING_ARCHIVE = $(SPARKLE_STAGING_DIR)/$(notdir $(SPARKLE_ZIP))
+SPARKLE_STAGING_ARCHIVE_RELEASE_NOTES = $(basename $(SPARKLE_STAGING_ARCHIVE)).md
 DIST_DIR     = Fuse for macOS
 DIST_STAGE   = .dist-stage
 DIST_SKELETON_DIR = fusepb/release_skeleton/$(DIST_DIR)
@@ -79,7 +101,7 @@ endif
 
 FUSE_CODESIGN_TIMESTAMP =
 
-.PHONY: fuse archive adhoc test test-only notarize notarize-submit notarize-status notarize-log notarize-wait notarize-staple notarize-reset embed-sparkle resign-sparkle dist sparkle-zip list-teams clean
+.PHONY: fuse archive adhoc test test-only notarize notarize-submit notarize-status notarize-log notarize-wait notarize-staple notarize-reset embed-sparkle resign-sparkle dist sparkle-zip sparkle-key-setup sparkle-key-public sparkle-key-check sparkle-release-notes sparkle-stage-archive sparkle-appcast-staging sparkle-stage-clean list-teams clean
 
 ## Run the Quick Look unit test suite (FuseQuickLookTests scheme).
 ## Requires a macOS host with Xcode and the fuse submodule checked out.
@@ -330,6 +352,79 @@ sparkle-zip: notarize
 	ditto -c -k --sequesterRsrc --keepParent "$(FUSE_APP)" "$(SPARKLE_ZIP)"
 	@echo "Sparkle update archive packaged as $(SPARKLE_ZIP)"
 
+## Generate or look up the local Sparkle EdDSA signing key in the login Keychain.
+## Run this once per Mac, then copy the printed public key into SUPublicEDKey.
+sparkle-key-setup:
+	@if [ -z "$(SPARKLE_BIN_DIR)" ] || [ ! -x "$(SPARKLE_GENERATE_KEYS)" ]; then \
+		echo "ERROR: generate_keys not found in DerivedData." ; \
+		echo "       Run 'xcodebuild -resolvePackageDependencies -project $(XCODEPROJ) -scheme Fuse' and try again." ; \
+		false ; \
+	fi
+	"$(SPARKLE_GENERATE_KEYS)" --account "$(SPARKLE_EDDSA_ACCOUNT)"
+
+## Print the existing Sparkle EdDSA public key from the login Keychain.
+sparkle-key-public:
+	@if [ -z "$(SPARKLE_BIN_DIR)" ] || [ ! -x "$(SPARKLE_GENERATE_KEYS)" ]; then \
+		echo "ERROR: generate_keys not found in DerivedData." ; \
+		echo "       Run 'xcodebuild -resolvePackageDependencies -project $(XCODEPROJ) -scheme Fuse' and try again." ; \
+		false ; \
+	fi
+	"$(SPARKLE_GENERATE_KEYS)" --account "$(SPARKLE_EDDSA_ACCOUNT)" -p
+
+## Verify that the local Sparkle EdDSA private key is present before appcast generation.
+sparkle-key-check:
+	@if [ -z "$(SPARKLE_BIN_DIR)" ] || [ ! -x "$(SPARKLE_GENERATE_KEYS)" ]; then \
+		echo "ERROR: generate_keys not found in DerivedData." ; \
+		echo "       Run 'xcodebuild -resolvePackageDependencies -project $(XCODEPROJ) -scheme Fuse' and try again." ; \
+		false ; \
+	fi
+	@if ! "$(SPARKLE_GENERATE_KEYS)" --account "$(SPARKLE_EDDSA_ACCOUNT)" -p >/dev/null 2>&1; then \
+		echo "ERROR: Sparkle EdDSA private key not found in the login Keychain for account $(SPARKLE_EDDSA_ACCOUNT)." ; \
+		echo "       Run 'make sparkle-key-setup' once on this Mac to create or import it." ; \
+		echo "       After setup, copy the printed public key into SUPublicEDKey when wiring the app." ; \
+		false ; \
+	fi
+
+## Extract version-specific Markdown release notes from the changelog.
+## VERSION defaults to CFBundleShortVersionString and falls back to CFBundleVersion.
+sparkle-release-notes:
+	mkdir -p "$(SPARKLE_STAGING_RELEASE_NOTES_DIR)"
+	python3 "$(SPARKLE_RELEASE_NOTES_EXTRACTOR)" \
+		--input "$(SPARKLE_CHANGELOG)" \
+		--version "$(VERSION)" \
+		--output "$(SPARKLE_STAGING_RELEASE_NOTES_FILE)"
+	@echo "Sparkle release notes written to $(SPARKLE_STAGING_RELEASE_NOTES_FILE)"
+
+## Copy the Sparkle ZIP into the staging metadata tree.
+sparkle-stage-archive: sparkle-zip
+	mkdir -p "$(SPARKLE_STAGING_DIR)"
+	cp "$(SPARKLE_ZIP)" "$(SPARKLE_STAGING_ARCHIVE)"
+	@echo "Sparkle staging archive copied to $(SPARKLE_STAGING_ARCHIVE)"
+
+## Generate a staging appcast and matching staged release notes tree.
+## Override SPARKLE_DOWNLOAD_URL_PREFIX if the published archive host differs from Pages.
+sparkle-appcast-staging: sparkle-stage-archive sparkle-release-notes sparkle-key-check
+	@if [ -z "$(SPARKLE_BIN_DIR)" ] || [ ! -x "$(SPARKLE_GENERATE_APPCAST)" ]; then \
+		echo "ERROR: generate_appcast not found in DerivedData." ; \
+		echo "       Run 'xcodebuild -resolvePackageDependencies -project $(XCODEPROJ) -scheme Fuse' and try again." ; \
+		false ; \
+	fi
+	rm -f "$(SPARKLE_STAGING_APPCAST_FILE)"
+	cp "$(SPARKLE_STAGING_RELEASE_NOTES_FILE)" "$(SPARKLE_STAGING_ARCHIVE_RELEASE_NOTES)"
+	"$(SPARKLE_GENERATE_APPCAST)" \
+		--download-url-prefix "$(SPARKLE_DOWNLOAD_URL_PREFIX)" \
+		--release-notes-url-prefix "$(SPARKLE_RELEASE_NOTES_URL_PREFIX)" \
+		-o "$(SPARKLE_STAGING_APPCAST_FILE)" \
+		"$(SPARKLE_STAGING_DIR)"
+	python3 "$(SPARKLE_APPCAST_PATCHER)" \
+		--appcast "$(SPARKLE_STAGING_APPCAST_FILE)" \
+		--release-notes-url-prefix "$(SPARKLE_RELEASE_NOTES_URL_PREFIX)"
+	@echo "Sparkle staging appcast written to $(SPARKLE_STAGING_APPCAST_FILE)"
+
+## Remove generated Sparkle staging metadata.
+sparkle-stage-clean:
+	rm -rf "$(SPARKLE_STAGING_DIR)"
+
 ## List available signing identities in the keychain.
 list-teams:
 	security find-identity -v -p codesigning
@@ -340,5 +435,5 @@ clean:
 	xcodebuild -project $(XCODEPROJ) -configuration Deployment clean
 	rm -f Fuse-adhoc.zip
 	rm -f $(NOTARIZE_ZIP) $(DIST_ZIP) $(SPARKLE_ZIP)
-	rm -rf $(DIST_STAGE)
+	rm -rf $(DIST_STAGE) "$(SPARKLE_STAGING_DIR)"
 	$(MAKE) notarize-reset
