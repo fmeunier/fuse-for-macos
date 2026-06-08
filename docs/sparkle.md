@@ -35,14 +35,16 @@ xcodebuild -resolvePackageDependencies -project fusepb/Fuse.xcodeproj -scheme Fu
 These targets are available in the root `Makefile`:
 
 ```sh
-make sparkle-zip             # build, notarize, staple, and package Fuse-<version>-sparkle.zip
-make sparkle-key-setup       # generate or import the local Sparkle EdDSA key via generate_keys
-make sparkle-key-public      # print the existing Sparkle EdDSA public key
-make sparkle-key-check       # fail if the local Sparkle private key is missing
-make sparkle-release-notes   # extract release-notes/<version>.md from changelog.md
-make sparkle-stage-archive   # copy the Sparkle ZIP into the local staging tree
-make sparkle-appcast-staging # generate local staging appcast metadata
-make sparkle-stage-clean     # remove generated staging metadata
+make sparkle-zip                    # build, notarize, staple, and package Fuse-<version>-sparkle.zip
+make sparkle-key-setup              # generate or import the local Sparkle EdDSA key via generate_keys
+make sparkle-key-public             # print the existing Sparkle EdDSA public key
+make sparkle-key-check              # fail if the local Sparkle private key is missing
+make sparkle-release-notes          # extract release-notes/<version>.md from changelog.md
+make sparkle-stage-archive          # copy the Sparkle ZIP into the local staging tree
+make sparkle-github-release-staging # create/update the staging GitHub prerelease and upload the Sparkle ZIP
+make sparkle-appcast-staging        # generate local staging appcast metadata
+make sparkle-appcast-staging-github # upload the Sparkle ZIP and generate the staging appcast in one step
+make sparkle-stage-clean            # remove generated staging metadata
 ```
 
 ## Sparkle signing key setup
@@ -124,9 +126,47 @@ If the published archive host differs from Pages, override the download prefix:
 make sparkle-appcast-staging SPARKLE_DOWNLOAD_URL_PREFIX='https://example.invalid/path/'
 ```
 
+## Staging GitHub Release publication
+
+Create or update the staging GitHub prerelease and upload the Sparkle ZIP with:
+
+```sh
+make sparkle-github-release-staging
+```
+
+This target currently:
+
+1. reuses the staged `Fuse-<version>-sparkle.zip`
+2. creates `sparkle-staging-<version>` as a GitHub prerelease when it does not exist yet
+3. updates the prerelease title and notes when it already exists
+4. uploads the Sparkle ZIP asset with `gh release upload --clobber`
+5. prints the GitHub Releases download URL prefix used by the staging appcast flow
+
+By default the target publishes to `fmeunier/fuse-for-macos`.
+Override any of these if needed:
+
+```sh
+make sparkle-github-release-staging \
+  SPARKLE_GITHUB_REPO=owner/repo \
+  SPARKLE_GITHUB_RELEASE_TAG=custom-staging-tag \
+  SPARKLE_GITHUB_RELEASE_TITLE='Fuse 1.8.0 staging update'
+```
+
+Generate the staging appcast for the GitHub Releases staging path in one step with:
+
+```sh
+make sparkle-appcast-staging-github
+```
+
+This runs the GitHub upload flow first and then regenerates the local staging appcast with:
+
+- downloads: `https://github.com/<owner>/<repo>/releases/download/<tag>/`
+- release notes: `https://fmeunier.github.io/fuse-for-macos/release-notes/`
+
+The generated enclosure URL matches the published GitHub Releases asset path directly, so no post-generation enclosure rewrite is needed.
+
 ## Current limitations
 
-- `make sparkle-appcast-staging` only generates local metadata; publication to GitHub Releases and GitHub Pages is documented separately.
 - the archive signing key must exist locally before `generate_appcast` can sign the Sparkle ZIP.
 - signed feeds are intentionally not enabled yet; the current plan is archive signing over HTTPS only.
-- the final GitHub Releases asset URL handling remains part of the staging publication workflow rather than this local generation step.
+- GitHub Pages publication for `appcast-staging.xml` and `release-notes/<version>.md` remains a separate manual/local step.

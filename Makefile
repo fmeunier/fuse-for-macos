@@ -81,6 +81,10 @@ SPARKLE_STAGING_APPCAST ?= appcast-staging.xml
 SPARKLE_STAGING_BASE_URL ?= https://fmeunier.github.io/fuse-for-macos/
 SPARKLE_DOWNLOAD_URL_PREFIX ?= $(SPARKLE_STAGING_BASE_URL)
 SPARKLE_RELEASE_NOTES_URL_PREFIX ?= $(SPARKLE_STAGING_BASE_URL)release-notes/
+SPARKLE_GITHUB_REPO ?= fmeunier/fuse-for-macos
+SPARKLE_GITHUB_RELEASE_TAG ?= sparkle-staging-$(VERSION)
+SPARKLE_GITHUB_RELEASE_TITLE ?= Fuse $(VERSION) staging update
+SPARKLE_GITHUB_DOWNLOAD_URL_PREFIX = https://github.com/$(SPARKLE_GITHUB_REPO)/releases/download/$(SPARKLE_GITHUB_RELEASE_TAG)/
 SPARKLE_STAGING_RELEASE_NOTES_DIR = $(SPARKLE_STAGING_DIR)/release-notes
 SPARKLE_STAGING_RELEASE_NOTES_FILE = $(SPARKLE_STAGING_RELEASE_NOTES_DIR)/$(VERSION).md
 SPARKLE_STAGING_APPCAST_FILE = $(SPARKLE_STAGING_DIR)/$(SPARKLE_STAGING_APPCAST)
@@ -101,7 +105,7 @@ endif
 
 FUSE_CODESIGN_TIMESTAMP =
 
-.PHONY: fuse archive adhoc test test-only notarize notarize-submit notarize-status notarize-log notarize-wait notarize-staple notarize-reset embed-sparkle resign-sparkle dist sparkle-zip sparkle-key-setup sparkle-key-public sparkle-key-check sparkle-release-notes sparkle-stage-archive sparkle-appcast-staging sparkle-stage-clean list-teams clean
+.PHONY: fuse archive adhoc test test-only notarize notarize-submit notarize-status notarize-log notarize-wait notarize-staple notarize-reset embed-sparkle resign-sparkle dist sparkle-zip sparkle-key-setup sparkle-key-public sparkle-key-check sparkle-release-notes sparkle-stage-archive sparkle-github-release-staging sparkle-appcast-staging sparkle-appcast-staging-github sparkle-stage-clean list-teams clean
 
 ## Run the Quick Look unit test suite (FuseQuickLookTests scheme).
 ## Requires a macOS host with Xcode and the fuse submodule checked out.
@@ -401,6 +405,36 @@ sparkle-stage-archive: sparkle-zip
 	cp "$(SPARKLE_ZIP)" "$(SPARKLE_STAGING_ARCHIVE)"
 	@echo "Sparkle staging archive copied to $(SPARKLE_STAGING_ARCHIVE)"
 
+## Create or update a staging GitHub prerelease and upload the Sparkle ZIP.
+sparkle-github-release-staging: sparkle-stage-archive sparkle-release-notes
+	@if ! command -v gh >/dev/null 2>&1; then \
+		echo "ERROR: gh is not installed." ; \
+		false ; \
+	fi
+	@if [ -z "$(SPARKLE_GITHUB_REPO)" ]; then \
+		echo "ERROR: SPARKLE_GITHUB_REPO is empty." ; \
+		echo "       Set it explicitly, for example SPARKLE_GITHUB_REPO=owner/repo." ; \
+		false ; \
+	fi
+	@gh auth status >/dev/null
+	@mkdir -p "$(SPARKLE_STAGING_DIR)"
+	@if gh release view "$(SPARKLE_GITHUB_RELEASE_TAG)" -R "$(SPARKLE_GITHUB_REPO)" >/dev/null 2>&1; then \
+		echo "Updating GitHub prerelease $(SPARKLE_GITHUB_RELEASE_TAG) in $(SPARKLE_GITHUB_REPO)" ; \
+		gh release edit "$(SPARKLE_GITHUB_RELEASE_TAG)" -R "$(SPARKLE_GITHUB_REPO)" \
+			--title "$(SPARKLE_GITHUB_RELEASE_TITLE)" \
+			--notes-file "$(SPARKLE_STAGING_RELEASE_NOTES_FILE)" \
+			--prerelease ; \
+	else \
+		echo "Creating GitHub prerelease $(SPARKLE_GITHUB_RELEASE_TAG) in $(SPARKLE_GITHUB_REPO)" ; \
+		gh release create "$(SPARKLE_GITHUB_RELEASE_TAG)" -R "$(SPARKLE_GITHUB_REPO)" \
+			--title "$(SPARKLE_GITHUB_RELEASE_TITLE)" \
+			--notes-file "$(SPARKLE_STAGING_RELEASE_NOTES_FILE)" \
+			--prerelease ; \
+	fi
+	gh release upload "$(SPARKLE_GITHUB_RELEASE_TAG)" -R "$(SPARKLE_GITHUB_REPO)" \
+		"$(SPARKLE_STAGING_ARCHIVE)" --clobber
+	@echo "GitHub release asset URL prefix: $(SPARKLE_GITHUB_DOWNLOAD_URL_PREFIX)"
+
 ## Generate a staging appcast and matching staged release notes tree.
 ## Override SPARKLE_DOWNLOAD_URL_PREFIX if the published archive host differs from Pages.
 sparkle-appcast-staging: sparkle-stage-archive sparkle-release-notes sparkle-key-check
@@ -420,6 +454,11 @@ sparkle-appcast-staging: sparkle-stage-archive sparkle-release-notes sparkle-key
 		--appcast "$(SPARKLE_STAGING_APPCAST_FILE)" \
 		--release-notes-url-prefix "$(SPARKLE_RELEASE_NOTES_URL_PREFIX)"
 	@echo "Sparkle staging appcast written to $(SPARKLE_STAGING_APPCAST_FILE)"
+
+## Upload the staged archive to GitHub Releases and then generate the staging
+## appcast directly with the final GitHub Releases enclosure URL shape.
+sparkle-appcast-staging-github: sparkle-github-release-staging
+	$(MAKE) sparkle-appcast-staging SPARKLE_DOWNLOAD_URL_PREFIX="$(SPARKLE_GITHUB_DOWNLOAD_URL_PREFIX)"
 
 ## Remove generated Sparkle staging metadata.
 sparkle-stage-clean:
