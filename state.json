@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-06-07T06:41:33Z",
-  "run_id": "27085162671",
+  "last_run": "2026-06-08T06:46:09Z",
+  "run_id": "27120612341",
   "backlog_cursor": {
     "issues": 0,
     "prs": 0
@@ -23,16 +23,16 @@
       "created_at": "2026-06-04"
     },
     {
-      "branch": "repo-assist/improve-perf-preview-2026-06-07",
-      "title": "Avoid ObjC dispatch overhead in imageRep; fix preview content type",
+      "branch": "repo-assist/fix-preview-identifier-leak-2026-06-08",
+      "title": "Fix MRC leak in buildBitmapPreviewIfNeeded; add ordering test",
       "status": "patch_preview",
-      "created_at": "2026-06-07"
+      "created_at": "2026-06-08"
     },
     {
-      "branch": "repo-assist/test-mdr-tap-2026-06-07",
-      "title": "Add tests for MDR and TAP file handling",
+      "branch": "repo-assist/eng-ci-add-tests-2026-06-08",
+      "title": "CI: add 'make test' step after build",
       "status": "patch_preview",
-      "created_at": "2026-06-07"
+      "created_at": "2026-06-08"
     }
   ],
   "monthly_activity_issue": 6,
@@ -41,7 +41,9 @@
     "pr_10",
     "canvassize_refactor_patch_preview",
     "ci_workflow_patch_preview",
-    "issue_9_patch_preview"
+    "issue_9_patch_preview",
+    "improve_perf_preview_2026_06_07",
+    "test_mdr_tap_2026_06_07"
   ],
-  "notes": "PR #8 open (MDR thumbnail). Two patch previews from this run: perf+preview-fix and MDR+TAP tests. PRs #7 and #10 were applied to master by maintainer directly (closed without merge button). Maintainer checks off items in monthly issue once actioned. Future: add MDR test fixture with SCREEN$."
+  "notes": "PR #8 open (MDR thumbnail). Two new patch previews: MRC leak fix in buildBitmapPreviewIfNeeded (+ ordering test) and CI add-tests step. Task 3 fell back to Task 2 (no bug/help-wanted issues exist). Task 4 and Task 5 executed as patch previews. Future: add MDR test fixture with SCREEN$ file once available."
 }
