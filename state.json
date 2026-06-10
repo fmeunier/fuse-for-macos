@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-06-09T06:31:00Z",
-  "run_id": "27188226644",
+  "last_run": "2026-06-10T06:41:00Z",
+  "run_id": "27258182238",
   "monthly_activity_issue": 6,
   "open_prs": [
     {
@@ -8,46 +8,30 @@
       "branch": "repo-assist/task10-mdr-thumbnail-2026-06-04-83c4fce3a13b5aa3",
       "title": "Implement MDR thumbnail extraction from SCREEN$ file",
       "status": "draft",
-      "note": "Updated 2026-06-09: added screen-dump.mdr fixture + test_mdr_with_screen_file_produces_bitmap_image; branch diverged from master by 8 commits — rebase recommended before merge"
+      "note": "3 commits ahead of master (d479a62, ee819cd, 41cbf25). No file conflicts with master. Files: LibspectrumSCRExtractor.m, FuseQuickLookPreviewTests.m, .beads/config.yaml. Use Rebase and merge button on GitHub."
     },
     {
       "number": 15,
       "branch": "repo-assist/fix-preview-identifier-leak-2026-06-08-9c1ad3351f86c553",
       "title": "Fix MRC leak in buildBitmapPreviewIfNeeded; add ordering test",
-      "status": "draft"
+      "status": "draft",
+      "note": "1 commit ahead of master. Based on current master. Ready to merge."
     },
     {
-      "number": 16,
-      "branch": "repo-assist/test-mdr-tap-preview-thumbnail-2026-06-09",
+      "number": 18,
+      "branch": "repo-assist/test-mdr-tap-preview-thumbnail-2026-06-09-b5bc8307048dbc89",
       "title": "Add MDR and TAP null-case tests to Preview and Thumbnail",
       "status": "draft",
-      "created": "2026-06-09"
-    },
-    {
-      "number": 17,
-      "branch": "repo-assist/eng-fusehelp-gemfile-2026-06-09",
-      "title": "Add Gemfile to FuseHelp; fix README jekyll dependency note",
-      "status": "draft",
-      "created": "2026-06-09"
+      "note": "1 commit ahead of master. Based on current master. Ready to merge."
     }
   ],
-  "patch_previews": [
-    {
-      "branch": "repo-assist/fix-preview-identifier-leak-2026-06-08-9c1ad3351f86c553",
-      "description": "MRC leak fix (promoted to PR #15)"
-    },
-    {
-      "branch": "repo-assist/eng-ci-add-tests-2026-06-08",
-      "description": "CI: add make test step to build.yml (workflow file; bot cannot push)"
-    }
-  ],
-  "open_issues": [5, 6, 16],
+  "open_issues": [5, 6, 16, 17, 19],
   "comments_made": {
-    "2": {
-      "date": "2026-06-01",
-      "summary": "Noted PR #4 created from patch preview; suggested closing"
+    "pr_8": {
+      "date": "2026-06-10",
+      "summary": "Noted PR #8 rebases cleanly onto master, suggested Rebase and merge, flagged stale test comment"
     }
   },
   "backlog_cursor": 0,
-  "notes": "PR #8 branch is 8 commits behind master — flagged for rebase when maintainer reviews. Issue #16 is the CI workflow gap (protected files). Future work: rebase PR #8 onto master."
+  "notes": "All 3 Repo Assist PRs are conflict-free with current master. PR #8 needs Rebase and merge (3 commits behind). PRs #15 and #18 are based on current master. Issues #5, #16, #19 are patch previews (protected files - needs manual PR creation). Issue #17 is a system warning about a failed push to PR #8 (README.md protected) - should be closed. Future: after PR #8 merges, update test_mdr_file_produces_no_image comment; consider implementing MDR metadata in LibspectrumMetadataImporter.process_mdr."
 }

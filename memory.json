@@ -1,58 +1,37 @@
 {
-  "last_run": "2026-06-06T06:18:33Z",
-  "run_id": "27054778442",
+  "last_run": "2026-06-10T06:41:00Z",
+  "run_id": "27258182238",
   "backlog_cursor": {
     "issues": 0,
     "prs": 0
   },
   "comments_made": {
-    "2": "2026-06-01"
+    "pr_8_rebase_status": "2026-06-10"
   },
   "prs_created": [
     {
-      "branch": "repo-assist/eng-github-templates-2026-06-01",
-      "title": "Add GitHub issue/PR templates and CONTRIBUTING guide",
-      "status": "patch_preview",
-      "created_at": "2026-06-01"
-    },
-    {
-      "branch": "repo-assist/eng-testing-makefile-2026-06-02-3abe0d524a669d59",
-      "title": "Add make test target, fix clean, add canvasSize tests",
-      "pr_number": 7,
+      "branch": "repo-assist/fix-preview-identifier-leak-2026-06-08-9c1ad3351f86c553",
+      "title": "Fix MRC leak in buildBitmapPreviewIfNeeded; add ordering test",
+      "pr_number": 15,
       "status": "open",
-      "created_at": "2026-06-02"
+      "created_at": "2026-06-08"
     },
     {
       "branch": "repo-assist/task10-mdr-thumbnail-2026-06-04-83c4fce3a13b5aa3",
       "title": "Implement MDR thumbnail extraction from SCREEN$ file",
       "pr_number": 8,
       "status": "open",
-      "created_at": "2026-06-04"
+      "created_at": "2026-06-04",
+      "note": "Conflict-free with master. 3 commits (LibspectrumSCRExtractor.m, FuseQuickLookPreviewTests.m). Use Rebase and merge."
     },
     {
-      "branch": "repo-assist/eng-ci-macos-build-2026-06-04",
-      "title": "Add GitHub Actions CI workflow for macOS build",
-      "status": "patch_preview",
-      "created_at": "2026-06-04"
-    },
-    {
-      "branch": "repo-assist/task10-thumbnail-canvassize-tests-2026-06-05-370d27f9ce969a22",
-      "title": "Add canvasSize tests for FuseQuickLookThumbnail",
-      "pr_number": 10,
+      "branch": "repo-assist/test-mdr-tap-preview-thumbnail-2026-06-09-b5bc8307048dbc89",
+      "title": "Add MDR and TAP null-case tests to Preview and Thumbnail",
+      "pr_number": 18,
       "status": "open",
-      "created_at": "2026-06-05"
-    },
-    {
-      "branch": "repo-assist/improve-canvas-size-2026-06-06",
-      "title": "Centralise canvasSize in FuseQuickLookImage; add IMAGEIO coverage",
-      "status": "patch_preview",
-      "created_at": "2026-06-06"
+      "created_at": "2026-06-09"
     }
   ],
   "monthly_activity_issue": 6,
-  "closed_issues": {
-    "3": "Monthly Activity May 2026 - closed on 2026-06-01",
-    "2": "Patch preview issue - closed"
-  },
-  "notes": "PR #7 open (make test + canvasSize tests for FuseQuickLookImage). PR #8 open (MDR thumbnail). PR #10 open (canvasSize tests for FuseQuickLookThumbnail). canvasSize refactoring PR is patch preview (branch repo-assist/improve-canvas-size-2026-06-06). CI workflow and templates also patch previews. No CI configured, no merge conflicts on any open PRs. Future: add MDR test fixture."
+  "notes": "PR #8 conflict-free (LibspectrumSCRExtractor.m only). PR #15 ready (MRC fix). PR #18 ready (null-case tests). Issues #5/#16/#19 are protected-file patch previews. Issue #17 is a system warning (stale - suggest close). Next run: consider implementing MDR metadata in LibspectrumMetadataImporter; after PR #8 merges update test comment."
 }
