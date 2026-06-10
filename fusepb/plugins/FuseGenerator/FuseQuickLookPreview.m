@@ -133,7 +133,13 @@
 
   preview_data = [[bitmap representationUsingType:NSBitmapImageFileTypePNG
                                        properties:[NSDictionary dictionary]] retain];
-  content_type_identifier = [@"public.png" copy];
+  /* Guard against clobbering a value already cached by -contentTypeIdentifier.
+     Without this check, calling -contentTypeIdentifier before -previewData
+     would set content_type_identifier, and this line would then overwrite it
+     without releasing the old copy — an MRC memory leak. */
+  if( !content_type_identifier ) {
+    content_type_identifier = [@"public.png" copy];
+  }
 }
 
 @end

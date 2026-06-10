@@ -199,6 +199,20 @@
   XCTAssertEqual( ((const unsigned char *)[preview_data bytes])[1], 0xd8 );
 }
 
+- (void)test_scr_content_type_is_correct_when_checked_before_preview_data
+{
+  FuseQuickLookPreview *preview;
+
+  /* Call -contentTypeIdentifier before -previewData to exercise the path where
+     -buildBitmapPreviewIfNeeded sees a content_type_identifier already cached.
+     Previously the method unconditionally overwrote the ivar, leaking the first
+     copy under MRC. */
+  preview = [self previewForFixture:@"../fuse/lib/keyboard.scr"];
+  XCTAssertEqualObjects( [preview contentTypeIdentifier], @"public.png" );
+  XCTAssertNotNil( [preview previewData] );
+  XCTAssertEqualObjects( [preview contentTypeIdentifier], @"public.png" );
+}
+
 - (void)test_imageio_preview_uses_pixel_dimensions_not_dpi_scaled_size
 {
   FuseQuickLookPreviewTestImage *image;
