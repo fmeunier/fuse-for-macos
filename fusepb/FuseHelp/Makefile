@@ -17,11 +17,15 @@ $(STAMP) : * **/*
 	for GEM_BIN in /opt/homebrew/lib/ruby/gems/*/bin /usr/local/lib/ruby/gems/*/bin ; do \
 		[ ! -d "$$GEM_BIN" ] || PATH="$$GEM_BIN:$$PATH" ; \
 	done ; export PATH ; \
-	JEKYLL=$$(command -v jekyll 2>/dev/null) ; \
-	[ -n "$$JEKYLL" ] || [ ! -x /opt/homebrew/bin/jekyll ] || JEKYLL=/opt/homebrew/bin/jekyll ; \
-	[ -n "$$JEKYLL" ] || [ ! -x /usr/local/bin/jekyll ] || JEKYLL=/usr/local/bin/jekyll ; \
-	[ -n "$$JEKYLL" ] || (echo "error: Jekyll not found - install it via Homebrew or make it available on PATH" ; false) ; \
-	"$$JEKYLL" build --destination "$(HELP)"
+	if [ -f "Gemfile" ] && command -v bundle > /dev/null 2>&1 ; then \
+		bundle exec jekyll build --destination "$(HELP)" ; \
+	else \
+		JEKYLL=$$(command -v jekyll 2>/dev/null) ; \
+		[ -n "$$JEKYLL" ] || [ ! -x /opt/homebrew/bin/jekyll ] || JEKYLL=/opt/homebrew/bin/jekyll ; \
+		[ -n "$$JEKYLL" ] || [ ! -x /usr/local/bin/jekyll ] || JEKYLL=/usr/local/bin/jekyll ; \
+		[ -n "$$JEKYLL" ] || (echo "error: Jekyll not found - install it via Homebrew or make it available on PATH" ; false) ; \
+		"$$JEKYLL" build --destination "$(HELP)" ; \
+	fi
 	for LPROJ in "$(HELP)"/*.lproj ; do \
 		LOCALE=$$(basename "$$LPROJ" .lproj) ; \
 		echo "Indexing: $$LPROJ" ; \

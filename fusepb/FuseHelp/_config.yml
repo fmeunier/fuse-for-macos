@@ -29,4 +29,4 @@ defaults:
       layout: "help-page"
       order: 0
 
-exclude: ['Makefile', 'jekyll-server.command', 'Info.plist']
+exclude: ['Makefile', 'jekyll-server.command', 'Info.plist', 'Gemfile', 'Gemfile.lock']
