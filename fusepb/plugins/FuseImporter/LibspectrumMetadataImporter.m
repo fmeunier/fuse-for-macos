@@ -729,11 +729,29 @@ process_if2r
 - (BOOL)
 process_mdr
 {
-  BOOL error = NO;
+  libspectrum_error error;
+  libspectrum_microdrive *microdrive;
 
-  /* FIXME: size, %full?, read-only vs read-write etc? */
+  microdrive = libspectrum_microdrive_alloc();
+  if( !microdrive ) return NO;
 
-  return error;
+  error = libspectrum_microdrive_mdr_read( microdrive, buffer, length );
+  if( error != LIBSPECTRUM_ERROR_NONE ) {
+    libspectrum_microdrive_free( microdrive );
+    return NO;
+  }
+
+  [attributes setObject:[NSNumber numberWithUnsignedInt:
+                           libspectrum_microdrive_cartridge_len( microdrive )]
+                 forKey:@"net_sourceforge_projects_fuse_emulator_CartridgeLength"];
+
+  [attributes setObject:( libspectrum_microdrive_write_protect( microdrive ) ?
+                           @"Yes" : @"No" )
+                 forKey:@"net_sourceforge_projects_fuse_emulator_WriteProtect"];
+
+  libspectrum_microdrive_free( microdrive );
+
+  return YES;
 }
 
 - (BOOL)
