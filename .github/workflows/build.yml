@@ -30,3 +30,6 @@ jobs:
             CODE_SIGN_IDENTITY=- \
             CODE_SIGNING_REQUIRED=NO \
             build
+
+      - name: Run Quick Look unit tests
+        run: make test
