@@ -332,6 +332,22 @@
   XCTAssertNil( [image bitmapImageRep] );
 }
 
+- (void)test_mdr_canvas_size_is_zero_without_screen
+{
+  FuseQuickLookImage *image;
+  NSSize canvas;
+
+  /* MDR with no SCREEN$ code file — canvas size should be zero.
+     Remains valid for MDR files without a SCREEN$ even after
+     process_mdr thumbnail extraction is implemented. */
+  image = [[[FuseQuickLookImage alloc]
+             initWithContentsOfURL:[self fixtureURL:@"deps/libspectrum/test/writeprotected.mdr"]] autorelease];
+  canvas = [image canvasSize];
+
+  XCTAssertEqual( canvas.width,  0.0 );
+  XCTAssertEqual( canvas.height, 0.0 );
+}
+
 - (void)test_tap_file_with_no_screen_produces_no_image
 {
   FuseQuickLookImage *image;
