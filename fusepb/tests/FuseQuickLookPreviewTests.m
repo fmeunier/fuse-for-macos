@@ -213,6 +213,30 @@
   XCTAssertEqualObjects( [preview contentTypeIdentifier], @"public.png" );
 }
 
+- (void)test_mdr_file_produces_no_preview
+{
+  FuseQuickLookPreview *preview;
+
+  /* Microdrive cartridge with no SCREEN$ — process_mdr stub returns nothing */
+  preview = [self previewForFixture:@"deps/libspectrum/test/writeprotected.mdr"];
+
+  XCTAssertEqual( [preview previewKind], FUSE_QUICKLOOK_PREVIEW_NONE );
+  XCTAssertNil( [preview contentTypeIdentifier] );
+  XCTAssertNil( [preview previewData] );
+}
+
+- (void)test_tap_file_with_no_screen_produces_no_preview
+{
+  FuseQuickLookPreview *preview;
+
+  /* Plain TAP containing a BASIC program — no loading screen */
+  preview = [self previewForFixture:@"deps/libspectrum/test/standard-tap.tap"];
+
+  XCTAssertEqual( [preview previewKind], FUSE_QUICKLOOK_PREVIEW_NONE );
+  XCTAssertNil( [preview contentTypeIdentifier] );
+  XCTAssertNil( [preview previewData] );
+}
+
 - (void)test_imageio_preview_uses_pixel_dimensions_not_dpi_scaled_size
 {
   FuseQuickLookPreviewTestImage *image;
