@@ -341,6 +341,30 @@
   XCTAssertEqual( canvas_size.height, 201.0 );
 }
 
+- (void)test_mdr_file_produces_no_thumbnail
+{
+  FuseQuickLookThumbnail *thumbnail;
+
+  /* Microdrive cartridge with no SCREEN$ — process_mdr stub returns nothing */
+  thumbnail = [self thumbnailForFixture:@"deps/libspectrum/test/writeprotected.mdr"];
+
+  XCTAssertEqual( [thumbnail thumbnailKind], FUSE_QUICKLOOK_THUMBNAIL_NONE );
+  XCTAssertNil( [thumbnail bitmapImageRep] );
+  XCTAssertNil( [thumbnail imageData] );
+}
+
+- (void)test_tap_file_with_no_screen_produces_no_thumbnail
+{
+  FuseQuickLookThumbnail *thumbnail;
+
+  /* Plain TAP containing a BASIC program — no loading screen */
+  thumbnail = [self thumbnailForFixture:@"deps/libspectrum/test/standard-tap.tap"];
+
+  XCTAssertEqual( [thumbnail thumbnailKind], FUSE_QUICKLOOK_THUMBNAIL_NONE );
+  XCTAssertNil( [thumbnail bitmapImageRep] );
+  XCTAssertNil( [thumbnail imageData] );
+}
+
 - (void)test_thumbnail_context_size_matches_requested_maximum_size
 {
   CGSize context_size;
