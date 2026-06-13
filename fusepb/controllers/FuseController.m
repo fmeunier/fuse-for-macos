@@ -41,6 +41,8 @@
 
 #import "DisplayOpenGLView.h"
 
+#import <Sparkle/Sparkle.h>
+
 #include "debugger/debugger.h"
 #include "event.h"
 #include "fuse.h"
@@ -68,6 +70,8 @@ static void cocoaui_disk_write_protect( int drive, int wrprot );
 static void cocoaui_mdr_eject( int drive );
 static void cocoaui_mdr_save( int drive, int saveas );
 int cocoaui_confirm( const char *message );
+
+static BOOL sparkle_updater_configured();
 
 static int dockEject = 0;
 static int didaktik80Snap = 0;
@@ -169,6 +173,21 @@ const char* connection_names[] = {
   "joystick 1",
   "joystick 2",
 };
+
+static BOOL
+sparkle_updater_configured()
+{
+  NSBundle *bundle = [NSBundle mainBundle];
+  NSString *feed_url = [bundle objectForInfoDictionaryKey:@"SUFeedURL"];
+  NSString *public_key = [bundle objectForInfoDictionaryKey:@"SUPublicEDKey"];
+
+  if( ![feed_url isKindOfClass:[NSString class]] ||
+      ![public_key isKindOfClass:[NSString class]] ) {
+    return NO;
+  }
+
+  return [feed_url length] > 0 && [public_key length] > 0;
+}
 
 #define QZ_s      0x01
 #define QZ_h      0x04
@@ -272,6 +291,13 @@ static NSMutableArray *recentSnapFileNames = nil;
                                                       @"MGT",  @"img", @"IMG",
                                                       nil];
     [plusdFileTypes retain];
+
+    if( sparkle_updater_configured() ) {
+      sparkleUpdaterController =
+        [[SPUStandardUpdaterController alloc] initWithStartingUpdater:NO
+                                                      updaterDelegate:nil
+                                                   userDriverDelegate:nil];
+    }
 
     opusFileTypes = [NSMutableArray arrayWithObjects:@"dsk", @"DSK", @"opd",
                                                       @"OPD",  @"opu", @"OPU",
@@ -1139,6 +1165,11 @@ save_as_exit:
   [self releaseCmdKeys:@"?" withCode:QZ_SLASH];
 }
 
+- (IBAction)checkForUpdates:(id)sender
+{
+  [sparkleUpdaterController checkForUpdates:sender];
+}
+
 - (IBAction)cocoa_break:(id)sender
 {
   if ( paused ) {
@@ -1282,6 +1313,7 @@ save_as_exit:
   [pokeFinderController release];
   [preferencesController release];
   [rollbackController release];
+  [sparkleUpdaterController release];
   [savePanelAccessoryView release];
   [super dealloc];
 }
@@ -1962,6 +1994,12 @@ save_as_exit:
 
 - (BOOL)validateMenuItem:(NSMenuItem*)menuItem
 {
+  if( [menuItem action] == @selector( checkForUpdates: ) ) {
+    if( !sparkleUpdaterController ) return NO;
+
+    return [sparkleUpdaterController.updater canCheckForUpdates] ? YES : NO;
+  }
+
   switch( [menuItem tag] ) {
   case 1:
     return recordPsg == 0 ? NO : YES;
@@ -2587,6 +2625,11 @@ save_as_exit:
   [[DisplayOpenGLView instance] unpause];
 
   return confirm;
+}
+
+- (void)applicationDidFinishLaunching:(NSNotification *)notification
+{
+  if( sparkleUpdaterController ) [sparkleUpdaterController startUpdater];
 }
 
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)theApplication

@@ -685,6 +685,13 @@
                 <menuItem title="Help" id="103">
                     <menu key="submenu" title="Help" id="106">
                         <items>
+                            <menuItem title="Check for Updates…" id="C0DE00013A7B00000C0DE01">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="checkForUpdates:" target="346" id="C0DE00023A7B00000C0DE01"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="C0DE00033A7B00000C0DE01"/>
                             <menuItem title="Fuse Help" keyEquivalent="?" id="111">
                                 <connections>
                                     <action selector="help:" target="346" id="930"/>

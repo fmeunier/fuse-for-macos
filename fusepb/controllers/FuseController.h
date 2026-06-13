@@ -35,6 +35,7 @@
 @class PokeMemoryController;
 @class RollbackController;
 @class SaveBinaryController;
+@class SPUStandardUpdaterController;
 @class TapeBrowserController;
 
 @interface FuseController : NSObject
@@ -70,6 +71,7 @@
   PokeMemoryController *pokeMemoryController;
   RollbackController *rollbackController;
   SaveBinaryController *saveBinaryController;
+  SPUStandardUpdaterController *sparkleUpdaterController;
   TapeBrowserController *tapeBrowserController;
 }
 + (FuseController *)singleton;
@@ -147,6 +149,7 @@
 - (IBAction)quit:(id)sender;
 - (IBAction)hide:(id)sender;
 - (IBAction)help:(id)sender;
+- (IBAction)checkForUpdates:(id)sender;
 
 - (IBAction)showRollbackPane:(id)sender;
 - (IBAction)showTapeBrowserPane:(id)sender;
