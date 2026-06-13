@@ -105,7 +105,7 @@ endif
 
 FUSE_CODESIGN_TIMESTAMP =
 
-.PHONY: fuse archive adhoc test test-only notarize notarize-submit notarize-status notarize-log notarize-wait notarize-staple notarize-reset embed-sparkle resign-sparkle dist sparkle-zip sparkle-key-setup sparkle-key-public sparkle-key-check sparkle-release-notes sparkle-stage-archive sparkle-github-release-staging sparkle-appcast-staging sparkle-appcast-staging-github sparkle-stage-clean list-teams clean
+.PHONY: fuse archive adhoc test test-only notarize notarize-submit notarize-status notarize-log notarize-wait notarize-staple notarize-reset embed-sparkle resign-sparkle dist sparkle-zip sparkle-key-setup sparkle-key-public sparkle-key-check sparkle-release-notes sparkle-stage-archive sparkle-github-release-staging sparkle-appcast-staging sparkle-appcast-staging-from-stage sparkle-appcast-staging-github sparkle-stage-clean list-teams clean
 
 ## Run the Quick Look unit test suite (FuseQuickLookTests scheme).
 ## Requires a macOS host with Xcode and the fuse submodule checked out.
@@ -437,10 +437,25 @@ sparkle-github-release-staging: sparkle-stage-archive sparkle-release-notes
 
 ## Generate a staging appcast and matching staged release notes tree.
 ## Override SPARKLE_DOWNLOAD_URL_PREFIX if the published archive host differs from Pages.
-sparkle-appcast-staging: sparkle-stage-archive sparkle-release-notes sparkle-key-check
+sparkle-appcast-staging: sparkle-stage-archive sparkle-release-notes
+	$(MAKE) sparkle-appcast-staging-from-stage SPARKLE_DOWNLOAD_URL_PREFIX="$(SPARKLE_DOWNLOAD_URL_PREFIX)"
+
+## Generate a staging appcast from the already-staged archive and release notes.
+## This avoids rebuilding or repackaging after a GitHub asset upload.
+sparkle-appcast-staging-from-stage: sparkle-key-check
 	@if [ -z "$(SPARKLE_BIN_DIR)" ] || [ ! -x "$(SPARKLE_GENERATE_APPCAST)" ]; then \
 		echo "ERROR: generate_appcast not found in DerivedData." ; \
 		echo "       Run 'xcodebuild -resolvePackageDependencies -project $(XCODEPROJ) -scheme Fuse' and try again." ; \
+		false ; \
+	fi
+	@if [ ! -f "$(SPARKLE_STAGING_ARCHIVE)" ]; then \
+		echo "ERROR: staged Sparkle archive missing: $(SPARKLE_STAGING_ARCHIVE)" ; \
+		echo "       Run 'make sparkle-stage-archive' or 'make sparkle-github-release-staging' first." ; \
+		false ; \
+	fi
+	@if [ ! -f "$(SPARKLE_STAGING_RELEASE_NOTES_FILE)" ]; then \
+		echo "ERROR: staged Sparkle release notes missing: $(SPARKLE_STAGING_RELEASE_NOTES_FILE)" ; \
+		echo "       Run 'make sparkle-release-notes' or 'make sparkle-github-release-staging' first." ; \
 		false ; \
 	fi
 	rm -f "$(SPARKLE_STAGING_APPCAST_FILE)"
@@ -458,7 +473,7 @@ sparkle-appcast-staging: sparkle-stage-archive sparkle-release-notes sparkle-key
 ## Upload the staged archive to GitHub Releases and then generate the staging
 ## appcast directly with the final GitHub Releases enclosure URL shape.
 sparkle-appcast-staging-github: sparkle-github-release-staging
-	$(MAKE) sparkle-appcast-staging SPARKLE_DOWNLOAD_URL_PREFIX="$(SPARKLE_GITHUB_DOWNLOAD_URL_PREFIX)"
+	$(MAKE) sparkle-appcast-staging-from-stage SPARKLE_DOWNLOAD_URL_PREFIX="$(SPARKLE_GITHUB_DOWNLOAD_URL_PREFIX)"
 
 ## Remove generated Sparkle staging metadata.
 sparkle-stage-clean:

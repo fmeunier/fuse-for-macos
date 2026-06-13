@@ -159,12 +159,14 @@ Generate the staging appcast for the GitHub Releases staging path in one step wi
 make sparkle-appcast-staging-github
 ```
 
-This runs the GitHub upload flow first and then regenerates the local staging appcast with:
+This runs the GitHub upload flow first and then regenerates the local staging appcast from the already-staged archive and release notes with:
 
 - downloads: `https://github.com/<owner>/<repo>/releases/download/<tag>/`
 - release notes: `https://fmeunier.github.io/fuse-for-macos/release-notes/`
 
-The generated enclosure URL matches the published GitHub Releases asset path directly, so no manual post-generation enclosure rewrite is needed when you use this target.
+The generated enclosure URL matches the published GitHub Releases asset path directly, so no manual post-generation enclosure rewrite is needed when you use this target. The Makefile now avoids rebuilding or repackaging between the GitHub upload step and the appcast generation step, which keeps the uploaded ZIP and the signed appcast metadata in sync.
+
+Important: if you need to republish the same version after fixing the archive, prefer a new asset name or a new release tag instead of replacing the existing GitHub asset in place. GitHub's CDN may continue serving the older ZIP for a while at the original URL, which will make Sparkle reject the update if the appcast length/signature was generated from the newer ZIP.
 
 ## Staging publication procedure
 
@@ -254,7 +256,16 @@ Confirm that:
 - the appcast enclosure URL points at `https://github.com/fmeunier/fuse-for-macos/releases/download/sparkle-staging-<version>/Fuse-<version>-sparkle.zip`
 - the release notes URL points at `https://fmeunier.github.io/fuse-for-macos/release-notes/<version>.md`
 - the appcast and release-notes URLs return HTTP 200
+- the downloaded GitHub release asset size matches the appcast enclosure `length`
 - Sparkle update testing with a staging-wired build sees the new item
+
+If Sparkle reports that the update is improperly signed, check the macOS log for a length mismatch first:
+
+```sh
+log show --last 15m --predicate 'process == "Fuse" OR subsystem == "org.sparkle-project.Sparkle"' --style compact
+```
+
+A stale GitHub/CDN asset usually shows up as "expected content length ... differs from the downloaded file length ...". In that case, upload the corrected ZIP under a new asset name, regenerate the appcast so the enclosure URL changes, and republish `appcast-staging.xml`.
 
 ## Manual patching notes
 
@@ -267,3 +278,4 @@ Confirm that:
 - the archive signing key must exist locally before `generate_appcast` can sign the Sparkle ZIP.
 - signed feeds are intentionally not enabled yet; the current plan is archive signing over HTTPS only.
 - Pages publication is still a manual git step on the `gh-pages` branch.
+- Replacing an existing GitHub release asset in place is risky for rehearsal retries because CDN caches can keep serving the older ZIP at the same URL for a while.
