@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-06-12T06:44:00Z",
-  "run_id": "27399420261",
+  "last_run": "2026-06-13T06:35:00Z",
+  "run_id": "27459191329",
   "backlog_cursor": {
     "issues": 0,
     "prs": 0
@@ -25,42 +25,50 @@
       "pr_number": 18,
       "status": "open_conflicted",
       "created_at": "2026-06-09",
-      "note": "Has merge conflict with dc1f7c1 (MRC-leak fix). Rebased version in patch preview from run 27399420261 (branch: repo-assist/test-mdr-tap-preview-thumbnail-rebased-2026-06-12). Commented 2026-06-12 about conflict."
+      "note": "Has merge conflict with dc1f7c1 (MRC-leak fix). Superseded by PR #23. Should be closed."
     },
     {
-      "branch": "repo-assist/eng-fusehelp-config-2026-06-11",
+      "branch": "repo-assist/eng-fusehelp-config-2026-06-11-3a16c5739a5880d5",
       "title": "FuseHelp: prefer bundle exec jekyll when Gemfile present",
       "pr_number": 20,
       "status": "open",
       "created_at": "2026-06-11",
-      "note": "Patch preview landed as PR #20. Conflict-free with master."
+      "note": "Conflict-free with master."
     },
     {
-      "branch": "repo-assist/test-mdr-tap-preview-thumbnail-rebased-2026-06-12",
-      "title": "Add MDR and TAP null-case tests (rebased onto master)",
-      "pr_number": null,
-      "status": "patch_preview",
+      "branch": "repo-assist/test-mdr-tap-preview-thumbnail-rebased-2026-06-12-9d2280d697f4f835",
+      "title": "Add MDR and TAP null-case tests (rebased)",
+      "pr_number": 22,
+      "status": "open_duplicate",
       "created_at": "2026-06-12",
-      "note": "Conflict-resolved rebase of PR #18. Patch preview from run 27399420261. Maintains all 3 tests: scr-content-type (dc1f7c1), mdr-no-preview, tap-no-preview."
+      "note": "DUPLICATE of PR #23 - recommend closing this one."
     },
     {
-      "branch": "repo-assist/eng-makefile-test-only-2026-06-12",
-      "title": "Add test-only Makefile target; document Quick Look tests in AGENTS.md",
-      "pr_number": null,
-      "status": "patch_preview",
+      "branch": "repo-assist/test-mdr-tap-preview-thumbnail-rebased-2026-06-12-d90d4187ca557f46",
+      "title": "Add MDR and TAP null-case tests (rebased)",
+      "pr_number": 23,
+      "status": "open",
       "created_at": "2026-06-12",
-      "note": "Adds 'make test-only TEST=Class/method' target. Updates AGENTS.md with Quick Look test docs. Patch preview from run 27399420261."
+      "note": "Conflict-resolved rebase of PR #18. Good one to keep."
     },
     {
-      "branch": "repo-assist/test-mdr-canvas-size-2026-06-12",
+      "branch": "repo-assist/test-mdr-canvas-size-2026-06-12-5691c01d15314b24",
       "title": "Add test for MDR canvas size without SCREEN$ file",
+      "pr_number": 25,
+      "status": "open",
+      "created_at": "2026-06-12",
+      "note": "Adds test_mdr_canvas_size_is_zero_without_screen to FuseQuickLookImageTests.m."
+    },
+    {
+      "branch": "repo-assist/improve-extractor-processed-flag",
+      "title": "Add processed flag to avoid redundant processFile calls; fix typo",
       "pr_number": null,
       "status": "patch_preview",
-      "created_at": "2026-06-12",
-      "note": "Adds test_mdr_canvas_size_is_zero_without_screen to FuseQuickLookImageTests.m. Uses writeprotected.mdr. Patch preview from run 27399420261."
+      "created_at": "2026-06-13",
+      "note": "Adds BOOL processed flag to LibspectrumSCRExtractor; fixes typo Cartidge->Cartridge in LibspectrumMetadataImporter.m. Patch preview from run 27459191329."
     }
   ],
   "monthly_activity_issue": 6,
   "checked_off_by_user": ["pr_15", "issue_17", "issue_16"],
-  "notes": "PR #8 conflict-free (LibspectrumSCRExtractor.m only). PR #18 has merge conflict - rebased branch prepared as patch preview. PR #20 open (FuseHelp config). Issues #5/#19 are protected-file patch previews still open. Issue #17 closed by maintainer (stale warning). process_mdr metadata (becb8bd) merged to master by maintainer. CI test step (c92888c) merged to master by maintainer. Next run: check if patch preview issues were created for run 27399420261; after PR #8 merges update test comment in FuseQuickLookImageTests.m."
+  "notes": "PR #8 open and conflict-free. PR #18 open but conflicted - superseded by PR #23. PR #20 open and conflict-free. PR #22 and #23 are duplicates (both rebased versions of #18). PR #22 should be closed. PR #25 open (MDR canvas size test). New patch preview from run 27459191329: processed flag + typo fix. Tasks 2 and 3 had no applicable human issues/bugs this run."
 }

@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-06-12T06:44:00Z",
-  "run_id": "27399420261",
+  "last_run": "2026-06-13T06:35:00Z",
+  "run_id": "27459191329",
   "monthly_activity_issue": 6,
   "open_prs": [
     {
@@ -14,23 +14,47 @@
       "number": 18,
       "branch": "repo-assist/test-mdr-tap-preview-thumbnail-2026-06-09-b5bc8307048dbc89",
       "title": "Add MDR and TAP null-case tests to Preview and Thumbnail",
-      "status": "draft",
-      "note": "HAS MERGE CONFLICT with dc1f7c1. Rebased patch preview created in run 27399420261."
+      "status": "draft_conflicted",
+      "note": "HAS MERGE CONFLICT with dc1f7c1. Superseded by PR #23. Should be closed."
     },
     {
       "number": 20,
-      "branch": "repo-assist/eng-fusehelp-config-2026-06-11",
+      "branch": "repo-assist/eng-fusehelp-config-2026-06-11-3a16c5739a5880d5",
       "title": "FuseHelp: prefer bundle exec jekyll when Gemfile present",
       "status": "draft",
       "note": "Conflict-free with master."
+    },
+    {
+      "number": 22,
+      "branch": "repo-assist/test-mdr-tap-preview-thumbnail-rebased-2026-06-12-9d2280d697f4f835",
+      "title": "Add MDR and TAP null-case tests (rebased)",
+      "status": "draft_duplicate",
+      "note": "DUPLICATE of PR #23 - should be closed."
+    },
+    {
+      "number": 23,
+      "branch": "repo-assist/test-mdr-tap-preview-thumbnail-rebased-2026-06-12-d90d4187ca557f46",
+      "title": "Add MDR and TAP null-case tests (rebased)",
+      "status": "draft",
+      "note": "Good rebased version. Keep this one."
+    },
+    {
+      "number": 25,
+      "branch": "repo-assist/test-mdr-canvas-size-2026-06-12-5691c01d15314b24",
+      "title": "Add test for MDR canvas size without SCREEN$ file",
+      "status": "draft",
+      "note": "Adds test_mdr_canvas_size_is_zero_without_screen."
     }
   ],
   "patch_previews": [
-    {"branch": "repo-assist/test-mdr-tap-preview-thumbnail-rebased-2026-06-12", "created_at": "2026-06-12", "run_id": "27399420261", "description": "Rebased PR #18 resolving conflict with dc1f7c1"},
-    {"branch": "repo-assist/eng-makefile-test-only-2026-06-12", "created_at": "2026-06-12", "run_id": "27399420261", "description": "make test-only target + AGENTS.md Quick Look docs"},
-    {"branch": "repo-assist/test-mdr-canvas-size-2026-06-12", "created_at": "2026-06-12", "run_id": "27399420261", "description": "MDR canvas size test (test_mdr_canvas_size_is_zero_without_screen)"}
+    {
+      "branch": "repo-assist/improve-extractor-processed-flag",
+      "created_at": "2026-06-13",
+      "run_id": "27459191329",
+      "description": "Add BOOL processed flag to LibspectrumSCRExtractor + fix typo Cartidge->Cartridge"
+    }
   ],
-  "open_issues": [5, 6, 19],
+  "open_issues": [5, 6, 19, 24],
   "comments_made": {
     "pr_8": {"date": "2026-06-10", "summary": "Noted PR #8 rebases cleanly onto master, suggested Rebase and merge"},
     "issue_17": {"date": "2026-06-11", "summary": "Noted stale warning, suggested closing"},
@@ -39,5 +63,5 @@
   "checked_off_by_user": ["pr_15", "issue_17", "issue_16"],
   "merged_to_master": ["pr_15", "process_mdr_metadata_becb8bd", "ci_test_step_c92888c"],
   "backlog_cursor": 0,
-  "notes": "PR #8 open and conflict-free. PR #18 open but conflicted - rebased version as patch preview. PR #20 open and conflict-free. Issues #5/#19 still open (patch previews). Issue #17 closed by maintainer. Three new patch previews from run 27399420261."
+  "notes": "PR #22 and #23 are duplicates - #22 should be closed. Tasks 2 and 3 not applicable (no human issues/bugs). Task 5 done: processed flag + typo fix as patch preview."
 }
