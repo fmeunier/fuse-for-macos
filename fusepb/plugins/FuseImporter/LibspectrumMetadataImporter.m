@@ -466,7 +466,7 @@ process_snap2:(libspectrum_snap *)snap
   }
   if( libspectrum_snap_dock_active( snap ) &&
       libspectrum_snap_machine(snap) != LIBSPECTRUM_MACHINE_SE ) {
-    [peripherals addObject:@"Timex Dock Cartidge"];
+    [peripherals addObject:@"Timex Dock Cartridge"];
   }
   if( libspectrum_snap_beta_active( snap ) ) {
     [peripherals addObject:@"Beta Disk"];

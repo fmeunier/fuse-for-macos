@@ -41,6 +41,7 @@ typedef enum image_t {
 	size_t length;
 	libspectrum_id_t type;
 	libspectrum_class_t lsclass;
+	BOOL processed;
 }
 - (id) initWithContentsOfURL:(NSURL*)aURL;
 
