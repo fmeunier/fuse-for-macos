@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-06-14T06:59:00Z",
-  "run_id": "27490962811",
+  "last_run": "2026-06-15T06:59:00Z",
+  "run_id": "27529430890",
   "backlog_cursor": {
     "issues": 0,
     "prs": 0
@@ -8,7 +8,8 @@
   "comments_made": {
     "pr_8_rebase_status": "2026-06-10",
     "issue_17_suggest_close": "2026-06-11",
-    "pr_18_merge_conflict": "2026-06-12"
+    "pr_18_merge_conflict": "2026-06-12",
+    "issue_24_pr27_status": "2026-06-15"
   },
   "prs_created": [
     {
@@ -52,23 +53,31 @@
       "note": "Adds BOOL processed flag to LibspectrumSCRExtractor; fixes typo Cartidge->Cartridge in LibspectrumMetadataImporter.m."
     },
     {
-      "branch": "repo-assist/perf-static-bitmapoffsets-2026-06-14-64ff450a70f35e1e",
-      "title": "Make bitmapOffsets static to enable inlining in render loop",
-      "pr_number": null,
-      "status": "pending",
+      "branch": "repo-assist/eng-make-test-only-2026-06-14-64ff450a70f35e1e-49814e7a6ad82b69",
+      "title": "Add test-only Makefile target for running a single Quick Look test",
+      "pr_number": 27,
+      "status": "open",
       "created_at": "2026-06-14",
-      "note": "Declares bitmapOffsets static so compiler can inline it in hot render path (6144+ calls/frame). PR creation pending from run 27490962811."
+      "note": "Partially addresses issue #24 (AGENTS.md portion still needs human)."
     },
     {
-      "branch": "repo-assist/eng-make-test-only-2026-06-14-64ff450a70f35e1e",
-      "title": "Add test-only Makefile target for running a single Quick Look test",
+      "branch": "repo-assist/perf-static-bitmapoffsets-2026-06-14-64ff450a70f35e1e-11c23615ba4a0e52",
+      "title": "Make bitmapOffsets static to enable inlining in render loop",
+      "pr_number": 28,
+      "status": "open",
+      "created_at": "2026-06-14",
+      "note": "Makes bitmapOffsets static so compiler can inline it in hot render path."
+    },
+    {
+      "branch": "repo-assist/eng-brewfile-2026-06-15-becb8bd",
+      "title": "Add Brewfile listing all build dependencies",
       "pr_number": null,
       "status": "pending",
-      "created_at": "2026-06-14",
-      "note": "Adds make test-only TEST=SuiteClass/testMethod. Partially addresses issue #24. PR creation pending from run 27490962811."
+      "created_at": "2026-06-15",
+      "note": "Adds Brewfile with brew/gem deps. CI can use 'brew bundle install --no-upgrade' once merged (workflow file update requires human). PR pending from run 27529430890."
     }
   ],
   "monthly_activity_issue": 6,
   "checked_off_by_user": ["pr_15", "issue_17", "issue_16", "pr_18", "pr_22"],
-  "notes": "PR #18 and #22 closed by maintainer (confirmed via monthly activity issue checkboxes). PR #8, #20, #23, #25, #26 open and conflict-free as of 2026-06-14. Two new PRs pending from run 27490962811: bitmapOffsets static (perf) and test-only Makefile target (engineering). Issue #24 patch preview still open - AGENTS.md portion still needs human to apply."
+  "notes": "PR #8, #20, #23, #25, #26, #27, #28 open. Brewfile PR pending from run 27529430890. Issue #24 commented on (PR #27 implements Makefile portion; AGENTS.md still needs human). Issue #24 open - AGENTS.md portion still needs human to apply. After PR #8 merges: update test comment and add positive MDR thumbnail test."
 }
