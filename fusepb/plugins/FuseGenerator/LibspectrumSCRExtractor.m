@@ -92,47 +92,50 @@ mmap_file( const char *filename, unsigned char **buffer, size_t *length )
   scrOptions = nil;
 
   image_type = TYPE_NONE;
+  processed = NO;
 
   return self;
 }
 
 - (libspectrum_id_t) type
 {
-  if(!scrData) { [self processFile]; }
+  if(!processed) { [self processFile]; }
 
   return type;
 }
 
 - (libspectrum_class_t) class
 {
-  if(!scrData) { [self processFile]; }
+  if(!processed) { [self processFile]; }
   
   return lsclass;
 }
 
 - (NSData*) scrData
 {
-  if(!scrData) { [self processFile]; }
+  if(!processed) { [self processFile]; }
   
   return scrData;
 }
 
 - (NSDictionary*) scrOptions
 {
-  if(!scrData) { [self processFile]; }
+  if(!processed) { [self processFile]; }
   
   return scrOptions;
 }
 
 - (image_t) image_type
 {
-  if(!scrData) { [self processFile]; }
+  if(!processed) { [self processFile]; }
   
   return image_type;
 }
 
 - (void) processFile
 {
+  processed = YES;
+
   if( mmap_file( [filename UTF8String], &buffer, &length ) ) return;
 
   if( libspectrum_identify_file_with_class( &type, &lsclass,
