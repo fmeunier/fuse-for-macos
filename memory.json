@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-06-15T06:59:00Z",
-  "run_id": "27529430890",
+  "last_run": "2026-06-18T06:46:00Z",
+  "run_id": "27741813663",
   "backlog_cursor": {
     "issues": 0,
     "prs": 0
@@ -9,7 +9,8 @@
     "pr_8_rebase_status": "2026-06-10",
     "issue_17_suggest_close": "2026-06-11",
     "pr_18_merge_conflict": "2026-06-12",
-    "issue_24_pr27_status": "2026-06-15"
+    "issue_24_pr27_status": "2026-06-15",
+    "issue_19_readme_fix_separated": "2026-06-18"
   },
   "prs_created": [
     {
@@ -18,7 +19,7 @@
       "pr_number": 8,
       "status": "open",
       "created_at": "2026-06-04",
-      "note": "Conflict-free with master. 3 commits. Use Rebase and merge."
+      "note": "Conflict-free with master (mergeable_state: clean). Use Rebase and merge."
     },
     {
       "branch": "repo-assist/eng-fusehelp-config-2026-06-11-3a16c5739a5880d5",
@@ -27,22 +28,6 @@
       "status": "open",
       "created_at": "2026-06-11",
       "note": "Conflict-free with master."
-    },
-    {
-      "branch": "repo-assist/test-mdr-tap-preview-thumbnail-rebased-2026-06-12-d90d4187ca557f46",
-      "title": "Add MDR and TAP null-case tests (rebased)",
-      "pr_number": 23,
-      "status": "open",
-      "created_at": "2026-06-12",
-      "note": "Conflict-resolved rebase of PR #18. Conflict-free with master."
-    },
-    {
-      "branch": "repo-assist/test-mdr-canvas-size-2026-06-12-5691c01d15314b24",
-      "title": "Add test for MDR canvas size without SCREEN$ file",
-      "pr_number": 25,
-      "status": "open",
-      "created_at": "2026-06-12",
-      "note": "Adds test_mdr_canvas_size_is_zero_without_screen to FuseQuickLookImageTests.m."
     },
     {
       "branch": "repo-assist/improve-extractor-processed-flag-e2ce49ba871daaac",
@@ -69,15 +54,23 @@
       "note": "Makes bitmapOffsets static so compiler can inline it in hot render path."
     },
     {
-      "branch": "repo-assist/eng-brewfile-2026-06-15-becb8bd",
+      "branch": "repo-assist/eng-brewfile-2026-06-15-becb8bd-ecf3bc87f92eb8ff",
       "title": "Add Brewfile listing all build dependencies",
+      "pr_number": 29,
+      "status": "open",
+      "created_at": "2026-06-15",
+      "note": "Adds Brewfile with brew/gem deps. CI can use 'brew bundle install --no-upgrade' once merged (workflow file update requires human)."
+    },
+    {
+      "branch": "repo-assist/fix-readme-jekyll-apple-help-2026-06-18",
+      "title": "README: remove incorrect jekyll-apple-help dependency mention",
       "pr_number": null,
       "status": "pending",
-      "created_at": "2026-06-15",
-      "note": "Adds Brewfile with brew/gem deps. CI can use 'brew bundle install --no-upgrade' once merged (workflow file update requires human). PR pending from run 27529430890."
+      "created_at": "2026-06-18",
+      "note": "Fixes prose description in README: removes jekyll-apple-help, corrects to 'ruby, jekyll, and bundler'. Related to issue #19. PR pending from run 27741813663."
     }
   ],
   "monthly_activity_issue": 6,
-  "checked_off_by_user": ["pr_15", "issue_17", "issue_16", "pr_18", "pr_22"],
-  "notes": "PR #8, #20, #23, #25, #26, #27, #28 open. Brewfile PR pending from run 27529430890. Issue #24 commented on (PR #27 implements Makefile portion; AGENTS.md still needs human). Issue #24 open - AGENTS.md portion still needs human to apply. After PR #8 merges: update test comment and add positive MDR thumbnail test."
+  "checked_off_by_user": ["pr_15", "issue_17", "issue_16", "pr_18", "pr_22", "pr_23", "pr_25"],
+  "notes": "PR #8, #20, #26, #27, #28, #29 open. README fix PR pending from run 27741813663 (branch: repo-assist/fix-readme-jekyll-apple-help-2026-06-18). Issue #24 open - AGENTS.md portion still needs human. After PR #8 merges: update test_mdr_file_produces_no_image comment and add positive MDR thumbnail test to FuseQuickLookThumbnailTests.m. PR #23 and #25 closed by maintainer (content applied to master manually). Master is now at eea6144."
 }
