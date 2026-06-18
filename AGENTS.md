@@ -56,6 +56,21 @@ xcodebuild -project fusepb/Fuse.xcodeproj -scheme Fuse -configuration Developmen
 ### Xcode tests
 `Fuse.xcscheme` currently has no XCTest bundles. `xcodebuild test` is not the main automated test path.
 
+### Quick Look plugin unit tests
+From the repo root:
+```sh
+make test
+```
+This runs the `FuseQuickLookTests` Xcode scheme. Requires a macOS host with Xcode and the `fuse` submodule checked out.
+Tests live in `fusepb/tests/` and cover `FuseQuickLookImage`, `FuseQuickLookPreview`, and `FuseQuickLookThumbnail`.
+
+### Running a single Quick Look test
+Use `make test-only` with a `TEST=ClassName/method_name` argument:
+```sh
+make test-only TEST=FuseQuickLookImageTests/test_scr_file_produces_bitmap_image
+```
+Substitute the target class and method name separated by `/`.
+
 ### Z80 core test
 From `fuse/`:
 ```sh
@@ -70,7 +85,7 @@ After building the binary, run:
 ```
 Unit-test source lives in `fuse/unittests/unittests.c` and is compiled into the app.
 
-### Running a single test
+### Running a single core/Z80 test
 There is no built-in single-test filter.
 To run one unit test:
 1. Edit `fuse/unittests/unittests.c`.

@@ -70,7 +70,7 @@ endif
 
 FUSE_CODESIGN_TIMESTAMP =
 
-.PHONY: fuse archive adhoc test notarize notarize-submit notarize-status notarize-log notarize-wait notarize-staple notarize-reset dist list-teams clean
+.PHONY: fuse archive adhoc test test-only notarize notarize-submit notarize-status notarize-log notarize-wait notarize-staple notarize-reset dist list-teams clean
 
 ## Run the Quick Look unit test suite (FuseQuickLookTests scheme).
 ## Requires a macOS host with Xcode and the fuse submodule checked out.
@@ -82,6 +82,22 @@ test:
 		FUSE_SCRIPTS_ROOT='$(FUSE_SCRIPTS_ROOT)' \
 		FUSE_DEPS_ROOT='$(FUSE_DEPS_ROOT)' \
 		FUSE_THIRD_PARTY_ROOT='$(FUSE_THIRD_PARTY_ROOT)' \
+		test
+
+## Run a single Quick Look unit test by class and method name.
+## Usage: make test-only TEST=ClassName/test_method_name
+## Example:
+##   make test-only TEST=FuseQuickLookImageTests/test_scr_file_produces_bitmap_image
+test-only:
+	@[ -n "$(TEST)" ] || { echo "error: TEST not specified.  Example: make test-only TEST=FuseQuickLookImageTests/test_scr_file_produces_bitmap_image"; exit 1; }
+	xcodebuild -project $(XCODEPROJ) -scheme FuseQuickLookTests -configuration Development \
+		-destination 'platform=macOS' \
+		SYMROOT='$(XCODE_BUILD_ROOT)' OBJROOT='$(XCODE_BUILD_ROOT)' \
+		FUSE_REPO_ROOT='$(FUSE_REPO_ROOT)' \
+		FUSE_SCRIPTS_ROOT='$(FUSE_SCRIPTS_ROOT)' \
+		FUSE_DEPS_ROOT='$(FUSE_DEPS_ROOT)' \
+		FUSE_THIRD_PARTY_ROOT='$(FUSE_THIRD_PARTY_ROOT)' \
+		-only-testing:"FuseQuickLookTests/$(TEST)" \
 		test
 
 ## Build Fuse.app (Deployment configuration).
