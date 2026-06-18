@@ -15,9 +15,11 @@ typedef struct BitmapOffsets {
 	int attrOffset;
 } BitmapOffsets;
 
-// Internal method to get the offsets for the bitmap and attribute
-// for a byte in the Spectrum screen file.
-BitmapOffsets bitmapOffsets(int x, int y, ScreenMode mode);
+/* Internal helper: compute the byte offsets for a pixel's bitmap and
+   attribute data in the Spectrum screen layout.  Declared static so the
+   compiler can inline it into bitmapByteDataAt, eliminating the per-
+   attribute-block function-call overhead in the tight rendering loop. */
+static BitmapOffsets bitmapOffsets(int x, int y, ScreenMode mode);
 
 // C-level helper: extract bitmap byte and attribute from a raw screen buffer.
 // Avoids ObjC message dispatch overhead in tight loops.
@@ -158,7 +160,7 @@ static BitmapByteData bitmapByteDataAt(const char *bitmapBytes, int x, int y,
 
 
 
-BitmapOffsets bitmapOffsets(int x, int y, ScreenMode mode)
+static BitmapOffsets bitmapOffsets(int x, int y, ScreenMode mode)
 {
 	BitmapOffsets offsets = {0, 0};
 	int attrX = x / 8;
