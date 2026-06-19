@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-06-18T06:46:00Z",
-  "run_id": "27741813663",
+  "last_run": "2026-06-19T06:52:00Z",
+  "run_id": "27810357693",
   "backlog_cursor": {
     "issues": 0,
     "prs": 0
@@ -10,7 +10,8 @@
     "issue_17_suggest_close": "2026-06-11",
     "pr_18_merge_conflict": "2026-06-12",
     "issue_24_pr27_status": "2026-06-15",
-    "issue_19_readme_fix_separated": "2026-06-18"
+    "issue_19_readme_fix_separated": "2026-06-18",
+    "issue_5_templates_inline": "2026-06-19"
   },
   "prs_created": [
     {
@@ -19,7 +20,7 @@
       "pr_number": 8,
       "status": "open",
       "created_at": "2026-06-04",
-      "note": "Conflict-free with master (mergeable_state: clean). Use Rebase and merge."
+      "note": "Conflict-free with master. Use Rebase and merge."
     },
     {
       "branch": "repo-assist/eng-fusehelp-config-2026-06-11-3a16c5739a5880d5",
@@ -30,47 +31,23 @@
       "note": "Conflict-free with master."
     },
     {
-      "branch": "repo-assist/improve-extractor-processed-flag-e2ce49ba871daaac",
-      "title": "Add processed flag to avoid redundant processFile calls; fix typo",
-      "pr_number": 26,
-      "status": "open",
-      "created_at": "2026-06-13",
-      "note": "Adds BOOL processed flag to LibspectrumSCRExtractor; fixes typo Cartidge->Cartridge in LibspectrumMetadataImporter.m."
-    },
-    {
-      "branch": "repo-assist/eng-make-test-only-2026-06-14-64ff450a70f35e1e-49814e7a6ad82b69",
-      "title": "Add test-only Makefile target for running a single Quick Look test",
-      "pr_number": 27,
-      "status": "open",
-      "created_at": "2026-06-14",
-      "note": "Partially addresses issue #24 (AGENTS.md portion still needs human)."
-    },
-    {
-      "branch": "repo-assist/perf-static-bitmapoffsets-2026-06-14-64ff450a70f35e1e-11c23615ba4a0e52",
-      "title": "Make bitmapOffsets static to enable inlining in render loop",
-      "pr_number": 28,
-      "status": "open",
-      "created_at": "2026-06-14",
-      "note": "Makes bitmapOffsets static so compiler can inline it in hot render path."
-    },
-    {
-      "branch": "repo-assist/eng-brewfile-2026-06-15-becb8bd-ecf3bc87f92eb8ff",
-      "title": "Add Brewfile listing all build dependencies",
-      "pr_number": 29,
-      "status": "open",
-      "created_at": "2026-06-15",
-      "note": "Adds Brewfile with brew/gem deps. CI can use 'brew bundle install --no-upgrade' once merged (workflow file update requires human)."
-    },
-    {
-      "branch": "repo-assist/fix-readme-jekyll-apple-help-2026-06-18",
-      "title": "README: remove incorrect jekyll-apple-help dependency mention",
+      "branch": "repo-assist/test-szx-snapshot-2026-06-19",
+      "title": "Add SZX snapshot tests to Image, Preview and Thumbnail suites",
       "pr_number": null,
       "status": "pending",
-      "created_at": "2026-06-18",
-      "note": "Fixes prose description in README: removes jekyll-apple-help, corrects to 'ruby, jekyll, and bundler'. Related to issue #19. PR pending from run 27741813663."
+      "created_at": "2026-06-19",
+      "note": "Task 9: Adds test_szx_snapshot_produces_bitmap_image, test_szx_snapshot_produces_png_preview, test_szx_snapshot_produces_bitmap_thumbnail using deps/libspectrum/test/random.szx."
+    },
+    {
+      "branch": "repo-assist/eng-analyze-target-2026-06-19",
+      "title": "Add make analyze target to run Xcode static analyser",
+      "pr_number": null,
+      "status": "pending",
+      "created_at": "2026-06-19",
+      "note": "Task 4: Adds 'make analyze' to Makefile. Mirrors 'make test' and 'make fuse'. Implements the AGENTS.md documented analyzer invocation."
     }
   ],
   "monthly_activity_issue": 6,
-  "checked_off_by_user": ["pr_15", "issue_17", "issue_16", "pr_18", "pr_22", "pr_23", "pr_25"],
-  "notes": "PR #8, #20, #26, #27, #28, #29 open. README fix PR pending from run 27741813663 (branch: repo-assist/fix-readme-jekyll-apple-help-2026-06-18). Issue #24 open - AGENTS.md portion still needs human. After PR #8 merges: update test_mdr_file_produces_no_image comment and add positive MDR thumbnail test to FuseQuickLookThumbnailTests.m. PR #23 and #25 closed by maintainer (content applied to master manually). Master is now at eea6144."
+  "checked_off_by_user": ["pr_15", "issue_17", "issue_16", "pr_18", "pr_22", "pr_23", "pr_25", "pr_26", "pr_27", "pr_28", "pr_29"],
+  "notes": "PR #8, #20 open. Two new PRs pending from run 27810357693 (SZX tests + analyze target). README fix (67244a3) merged to master. Brewfile (PR #29) was merged then reverted - do NOT propose Brewfile again. Issue #5 (GitHub templates) commented with inline content on 2026-06-19. Issue #24 closed. After PR #8 merges: update test_mdr_file_produces_no_image comment and add positive MDR thumbnail test."
 }
