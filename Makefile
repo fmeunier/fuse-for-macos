@@ -115,7 +115,7 @@ endif
 
 FUSE_CODESIGN_TIMESTAMP =
 
-.PHONY: fuse archive adhoc test test-only notarize notarize-submit notarize-status notarize-log notarize-wait notarize-staple notarize-reset embed-sparkle resign-sparkle dist sparkle-zip sparkle-key-setup sparkle-key-public sparkle-key-check sparkle-release-notes sparkle-stage-archive sparkle-github-release sparkle-github-release-staging sparkle-appcast sparkle-appcast-from-stage sparkle-appcast-github sparkle-appcast-staging sparkle-appcast-staging-from-stage sparkle-appcast-staging-github sparkle-stage-clean list-teams clean
+.PHONY: fuse archive adhoc test test-only analyze notarize notarize-submit notarize-status notarize-log notarize-wait notarize-staple notarize-reset embed-sparkle resign-sparkle dist sparkle-zip sparkle-key-setup sparkle-key-public sparkle-key-check sparkle-release-notes sparkle-stage-archive sparkle-github-release sparkle-github-release-staging sparkle-appcast sparkle-appcast-from-stage sparkle-appcast-github sparkle-appcast-staging sparkle-appcast-staging-from-stage sparkle-appcast-staging-github sparkle-stage-clean list-teams clean
 
 ## Run the Quick Look unit test suite (FuseQuickLookTests scheme).
 ## Requires a macOS host with Xcode and the fuse submodule checked out.
@@ -144,6 +144,18 @@ test-only:
 		FUSE_THIRD_PARTY_ROOT='$(FUSE_THIRD_PARTY_ROOT)' \
 		-only-testing:"FuseQuickLookTests/$(TEST)" \
 		test
+
+## Run the Xcode static analyser on the Fuse scheme.
+## Requires a macOS host with Xcode and the fuse submodule checked out.
+analyze:
+	xcodebuild -project $(XCODEPROJ) -scheme Fuse -configuration Development \
+		-destination 'platform=macOS' \
+		SYMROOT='$(XCODE_BUILD_ROOT)' OBJROOT='$(XCODE_BUILD_ROOT)' \
+		FUSE_REPO_ROOT='$(FUSE_REPO_ROOT)' \
+		FUSE_SCRIPTS_ROOT='$(FUSE_SCRIPTS_ROOT)' \
+		FUSE_DEPS_ROOT='$(FUSE_DEPS_ROOT)' \
+		FUSE_THIRD_PARTY_ROOT='$(FUSE_THIRD_PARTY_ROOT)' \
+		analyze
 
 ## Build Fuse.app (Deployment configuration).
 ## This single Xcode build now also builds the shared staged dependencies plus
