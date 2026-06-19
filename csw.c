@@ -1,5 +1,5 @@
 /* csw.c: Routines for handling CSW raw audio files
-   Copyright (c) 2002-2015 Darren Salt, Fredrick Meunier
+   Copyright (c) 2002-2026 Darren Salt, Fredrick Meunier
    Based on tap.c, copyright (c) 2001 Philip Kendall
 
    This program is free software; you can redistribute it and/or modify
@@ -50,11 +50,7 @@ libspectrum_csw_read( libspectrum_tape *tape,
     return LIBSPECTRUM_ERROR_SIGNATURE;
   }
 
-  /* Claim memory for the block */
-  block = libspectrum_new( libspectrum_tape_block, 1 );
-
-  /* Set the block type */
-  block->type = LIBSPECTRUM_TAPE_BLOCK_RLE_PULSE;
+  block = libspectrum_tape_block_alloc( LIBSPECTRUM_TAPE_BLOCK_RLE_PULSE );
   csw_block = &block->types.rle_pulse;
 
   buffer += signature_length;
@@ -90,6 +86,7 @@ libspectrum_csw_read( libspectrum_tape *tape,
     break;
 
   default:
+    libspectrum_free( block );
     libspectrum_print_error( LIBSPECTRUM_ERROR_MEMORY,
 			     "libspectrum_csw_read: unknown CSW version" );
     return LIBSPECTRUM_ERROR_SIGNATURE;
@@ -99,6 +96,7 @@ libspectrum_csw_read( libspectrum_tape *tape,
     csw_block->scale = 3500000 / csw_block->scale; /* approximate CPU speed */
 
   if( csw_block->scale < 0 || csw_block->scale >= 0x80000 ) {
+    libspectrum_free( block );
     libspectrum_print_error (LIBSPECTRUM_ERROR_MEMORY,
 			     "libspectrum_csw_read: bad sample rate" );
     return LIBSPECTRUM_ERROR_UNKNOWN;
@@ -115,8 +113,12 @@ libspectrum_csw_read( libspectrum_tape *tape,
     csw_block->length = 0;
     error = libspectrum_zlib_inflate( buffer, length, &csw_block->data,
                                       &csw_block->length );
-    if( error != LIBSPECTRUM_ERROR_NONE ) return error;
+    if( error != LIBSPECTRUM_ERROR_NONE ) {
+      libspectrum_free( block );
+      return error;
+    }
 #else
+    libspectrum_free( block );
     libspectrum_print_error( LIBSPECTRUM_ERROR_UNKNOWN,
                              "zlib not available to decompress gzipped file" );
     return LIBSPECTRUM_ERROR_UNKNOWN;
@@ -294,7 +296,6 @@ libspectrum_csw_write( libspectrum_buffer *new_buffer, libspectrum_tape *tape )
 {
   libspectrum_error error = LIBSPECTRUM_ERROR_NONE;
   libspectrum_dword sample_rate;
-  size_t i;
 
   libspectrum_buffer* body_buffer = libspectrum_buffer_alloc();
   size_t body_uncompressed_length = 0;
@@ -333,8 +334,9 @@ libspectrum_csw_write( libspectrum_buffer *new_buffer, libspectrum_tape *tape )
 
   /* encoding application description */
   /* No creator for now */
-  for( i = 0; i < 16; i++ ) {
-    libspectrum_buffer_write_byte( new_buffer, 0 );
+  {
+    static const libspectrum_byte zeros[16] = { 0 };
+    libspectrum_buffer_write( new_buffer, zeros, sizeof( zeros ) );
   }
 
   /* header extension data is zero so on to the data */

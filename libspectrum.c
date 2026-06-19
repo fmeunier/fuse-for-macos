@@ -1,5 +1,5 @@
 /* libspectrum.c: Some general routines
-   Copyright (c) 2001-2023 Philip Kendall, Darren Salt, Fredrick Meunier
+   Copyright (c) 2001-2026 Philip Kendall, Darren Salt, Fredrick Meunier
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -504,8 +504,7 @@ libspectrum_identify_file_raw( libspectrum_id_t *type, const char *filename,
     const char *signature; size_t offset, length; int sig_score;
   };
 
-  struct type *ptr,
-    types[] = {
+  static const struct type types[] = {
       
       { LIBSPECTRUM_ID_RECORDING_RZX, "rzx", 3, "RZX!",		    0, 4, 4 },
 
@@ -576,6 +575,7 @@ libspectrum_identify_file_raw( libspectrum_id_t *type, const char *filename,
 
     };
 
+  const struct type *ptr;
   const char *extension = NULL;
   int score, best_score, best_guess, duplicate_best;
 

@@ -1,5 +1,5 @@
 /* tape_block.c: one tape block
-   Copyright (c) 2003-2016 Philip Kendall
+   Copyright (c) 2003-2026 Philip Kendall
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -181,7 +181,10 @@ libspectrum_tape_block_free( libspectrum_tape_block *block )
     libspectrum_free( block->types.data_block.bit1_pulses );
     break;
 
-  case LIBSPECTRUM_TAPE_BLOCK_CONCAT: /* This should never occur */
+  case LIBSPECTRUM_TAPE_BLOCK_CONCAT:
+    /* No allocated fields — just fall through to free the block struct */
+    break;
+
   default:
     libspectrum_print_error( LIBSPECTRUM_ERROR_LOGIC,
 			     "%s: unknown block type %d", __func__,
@@ -214,6 +217,9 @@ libspectrum_tape_block_init( libspectrum_tape_block *block,
                              libspectrum_tape_block_state *state )
 {
   if( !block ) return LIBSPECTRUM_ERROR_NONE;
+
+  /* New blocks start with the pulse level set to low by default */
+  state->force_low_level = 1;
 
   switch( libspectrum_tape_block_type( block ) ) {
 
@@ -696,7 +702,7 @@ generalised_data_block_length(
   /* Assume no special flags by default */
   int flags = 0;
   /* Has this edge ended the block? */
-  int end_of_block = 0;
+  end_of_block_t end_of_block = END_OF_BLOCK_NONE;
   libspectrum_error error = generalised_data_init( generalised_data, &state );
 
   if( error ) return -1;

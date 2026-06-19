@@ -1,5 +1,5 @@
 /* szx.c: Routines for .szx snapshots
-   Copyright (c) 1998-2023 Philip Kendall, Fredrick Meunier, Stuart Brady
+   Copyright (c) 1998-2026 Philip Kendall, Fredrick Meunier, Stuart Brady
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -556,6 +556,7 @@ read_b128_chunk( libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
 				 __FILE__,
 				 (unsigned long)expected_length,
 				 (unsigned long)uncompressed_length );
+	libspectrum_free( rom_data );
 	return LIBSPECTRUM_ERROR_UNKNOWN;
       }
 
@@ -760,6 +761,7 @@ read_opus_chunk( libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
 			       __FILE__, 
                                (unsigned long)expected_length,
                                (unsigned long)uncompressed_length );
+      libspectrum_free( ram_data );
       return LIBSPECTRUM_ERROR_UNKNOWN;
     }
 
@@ -770,7 +772,7 @@ read_opus_chunk( libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
 
       error = libspectrum_zlib_inflate( *buffer, disc_rom_length, &rom_data,
                                         &uncompressed_length );
-      if( error ) return error;
+      if( error ) { libspectrum_free( ram_data ); return error; }
 
       expected_length = 0x2000;
 
@@ -782,6 +784,8 @@ read_opus_chunk( libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
                                  __FILE__, 
                                  (unsigned long)expected_length,
                                  (unsigned long)uncompressed_length );
+        libspectrum_free( ram_data );
+        libspectrum_free( rom_data );
         return LIBSPECTRUM_ERROR_UNKNOWN;
       }
 
@@ -951,6 +955,7 @@ read_plsd_chunk( libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
 			       __FILE__, 
                                (unsigned long)expected_length,
                                (unsigned long)uncompressed_length );
+      libspectrum_free( ram_data );
       return LIBSPECTRUM_ERROR_UNKNOWN;
     }
 
@@ -961,7 +966,10 @@ read_plsd_chunk( libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
 
       error = libspectrum_zlib_inflate( *buffer, disc_rom_length, &rom_data,
                                         &uncompressed_length );
-      if( error ) return error;
+      if( error ) {
+        libspectrum_free( ram_data );
+        return error;
+      }
 
       if( uncompressed_length != expected_length ) {
         libspectrum_print_error( LIBSPECTRUM_ERROR_UNKNOWN,
@@ -971,6 +979,8 @@ read_plsd_chunk( libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
                                  __FILE__, 
                                  (unsigned long)expected_length,
                                  (unsigned long)uncompressed_length );
+        libspectrum_free( ram_data );
+        libspectrum_free( rom_data );
         return LIBSPECTRUM_ERROR_UNKNOWN;
       }
 
@@ -1596,6 +1606,7 @@ read_if1_chunk( libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
                                  __FILE__, 
                                  (unsigned long)expected_length,
                                  (unsigned long)uncompressed_length );
+        libspectrum_free( rom_data );
         return LIBSPECTRUM_ERROR_UNKNOWN;
       }
 
@@ -1727,6 +1738,7 @@ read_rom_chunk( libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
                                __FILE__, 
                                (unsigned long)expected_length,
                                (unsigned long)uncompressed_length );
+      libspectrum_free( rom_data );
       return LIBSPECTRUM_ERROR_UNKNOWN;
     }
 
@@ -1970,6 +1982,7 @@ read_divxxx_chunk( libspectrum_snap *snap, const libspectrum_byte **buffer,
                                __FILE__,
                                (unsigned long)expected_length,
                                (unsigned long)uncompressed_length );
+      libspectrum_free( eprom_data );
       return LIBSPECTRUM_ERROR_UNKNOWN;
     }
 
@@ -2388,6 +2401,7 @@ read_mfce_chunk( libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
                                __FILE__,
                                (unsigned long)expected_ram_length,
                                (unsigned long)uncompressed_length );
+      libspectrum_free( ram_data );
       return LIBSPECTRUM_ERROR_UNKNOWN;
     }
 
@@ -3555,7 +3569,6 @@ write_if1_chunk( libspectrum_buffer *buffer, libspectrum_buffer *data,
   libspectrum_word uncompressed_rom_length = 0;
   libspectrum_word flags = 0;
   int use_compression;
-  int i;
   libspectrum_byte drive_count = 8;
 
   if( libspectrum_snap_interface1_custom_rom( snap ) ) {
@@ -3599,10 +3612,13 @@ write_if1_chunk( libspectrum_buffer *buffer, libspectrum_buffer *data,
   libspectrum_buffer_write_byte( data, drive_count );
 
   /* Skip 'reserved' data */
-  for( i = 0; i < 3; i++ ) libspectrum_buffer_write_byte( data, 0 );
+  {
+    static const libspectrum_byte zeros[32] = { 0 };
+    libspectrum_buffer_write( data, zeros, 3 );
 
-  /* Skip 'reserved' data */
-  for( i = 0; i < 8; i++ ) libspectrum_buffer_write_dword( data, 0 );
+    /* Skip 'reserved' data */
+    libspectrum_buffer_write( data, zeros, sizeof( zeros ) );
+  }
 
   libspectrum_buffer_write_word( data, uncompressed_rom_length );
 

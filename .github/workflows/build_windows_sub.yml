@@ -95,7 +95,7 @@ jobs:
           key: cygwin-packages-libspectrum-1
 
       - name: (4) Install Cygwin (32 bit) with libs
-        uses: cygwin/cygwin-install-action@master
+        uses: cygwin/cygwin-install-action@v6
         with:
           platform: x86
           packages: |

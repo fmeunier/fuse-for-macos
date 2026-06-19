@@ -394,16 +394,13 @@ static void
 write_header( libspectrum_buffer *buffer, libspectrum_snap *snap,
               libspectrum_word sp )
 {
-  short padding;
-  short b;
+  size_t padding;
 
   /* Header has 128B, but only last 24 bytes are used. Content before is irrelevant.
-     Less by 10 chars - signature to flag snaphost created by fuse */
+     Less by 10 chars - signature to flag snapshot created by fuse */
   libspectrum_buffer_write( buffer, LIBSPECTRUM_DSNAP_SIGNATURE, strlen(LIBSPECTRUM_DSNAP_SIGNATURE) );
   padding = LIBSPECTRUM_DSNAP_HEADER_LENGTH - 24 - strlen(LIBSPECTRUM_DSNAP_SIGNATURE);
-  for( b=0; b < padding; b++ ) {
-    libspectrum_buffer_write_byte( buffer, 0 );
-  }
+  libspectrum_buffer_set( buffer, 0, padding );
 
   /* The last one (when pushing into stack from the end of header) is I register,
      interrupt vector + if to use IM1 or IM2 + DI/EI
