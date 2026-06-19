@@ -77,9 +77,12 @@ jobs:
           ref: ${{ env.LIBSPECTRUM_BRANCH }}
           path: ${{ env.LIBSPECTRUM_PATH }}
 
-      - name: (3) Restore lib packages
-        run: |
-          echo "Not needed here"
+      - name: (3) Restore Homebrew download cache
+        id: brew-cache-load
+        uses: actions/cache/restore@v5
+        with:
+          path: ~/Library/Caches/Homebrew/downloads
+          key: brew-downloads-libspectrum-1
 
       - name: (4) Install dependencies
         run: |
@@ -100,9 +103,13 @@ jobs:
           echo "PKG_CONFIG_PATH=$(brew --prefix)/lib/pkgconfig:$(brew --prefix bzip2)/lib/pkgconfig:$(brew --prefix libgcrypt)/lib/pkgconfig:$(brew --prefix glib)/lib/pkgconfig" >> "$GITHUB_ENV"
 
 
-      - name: (5) Save lib packages
-        run: |
-          echo "Not needed here"
+      - name: (5) Save Homebrew download cache
+        id: brew-cache-save
+        if: steps.brew-cache-load.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v5
+        with:
+          path: ~/Library/Caches/Homebrew/downloads
+          key: brew-downloads-libspectrum-1
 
       - name: (6) Autogen.sh
         run: |

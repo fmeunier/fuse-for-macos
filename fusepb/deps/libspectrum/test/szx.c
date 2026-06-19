@@ -1,5 +1,5 @@
 /* szx.c: SZX test routines
-   Copyright (c) 2017,2023 Philip Kendall
+   Copyright (c) 2017,2023,2026 Philip Kendall
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@
 #include <unistd.h>
 
 #include "internals.h"
+#include "common.h"
 #include "test.h"
 
 typedef struct szx_chunk_t {
@@ -228,7 +229,7 @@ test_31_expected[] = {
 };
 
 test_return_t
-test_31( void )
+write_szx_z80r_chunk( void )
 {
   return szx_write_block_test( "Z80R", LIBSPECTRUM_MACHINE_48, z80r_setter,
       test_31_expected, ARRAY_SIZE(test_31_expected), ARRAY_SIZE(test_31_expected) );
@@ -249,7 +250,7 @@ test_32_expected[] = {
 };
 
 test_return_t
-test_32( void )
+write_szx_spcr_chunk( void )
 {
   return szx_write_block_test( "SPCR", LIBSPECTRUM_MACHINE_PLUS3, spcr_setter,
       test_32_expected, ARRAY_SIZE(test_32_expected), ARRAY_SIZE(test_32_expected) );
@@ -274,7 +275,7 @@ test_33_expected[] = {
 };
 
 test_return_t
-test_33( void )
+write_szx_joy_chunk( void )
 {
   return szx_write_block_test( "JOY\0", LIBSPECTRUM_MACHINE_48, joy_setter,
       test_33_expected, ARRAY_SIZE(test_33_expected), ARRAY_SIZE(test_33_expected) );
@@ -297,7 +298,7 @@ test_34_expected[] = {
 };
 
 test_return_t
-test_34( void )
+write_szx_keyb_chunk( void )
 {
   return szx_write_block_test( "KEYB", LIBSPECTRUM_MACHINE_48, keyb_setter,
       test_34_expected, ARRAY_SIZE(test_34_expected), ARRAY_SIZE(test_34_expected) );
@@ -315,7 +316,7 @@ test_35_expected[] = {
 };
 
 test_return_t
-test_35( void )
+write_szx_zxpr_chunk( void )
 {
   return szx_write_block_test( "ZXPR", LIBSPECTRUM_MACHINE_48, zxpr_setter,
       test_35_expected, ARRAY_SIZE(test_35_expected), ARRAY_SIZE(test_35_expected) );
@@ -350,7 +351,7 @@ test_36_expected[] = {
 };
 
 test_return_t
-test_36( void )
+write_szx_ay_chunk( void )
 {
   return szx_write_block_test( "AY\0\0", LIBSPECTRUM_MACHINE_48, ay_setter,
       test_36_expected, ARRAY_SIZE(test_36_expected), ARRAY_SIZE(test_36_expected) );
@@ -369,7 +370,7 @@ test_37_expected[] = {
 };
 
 test_return_t
-test_37( void )
+write_szx_scld_chunk( void )
 {
   return szx_write_block_test( "SCLD", LIBSPECTRUM_MACHINE_TC2048, scld_setter,
       test_37_expected, ARRAY_SIZE(test_37_expected), ARRAY_SIZE(test_37_expected) );
@@ -398,7 +399,7 @@ test_38_expected[] = {
 };
 
 test_return_t
-test_38( void )
+write_szx_zxat_chunk( void )
 {
   return szx_write_block_test( "ZXAT", LIBSPECTRUM_MACHINE_48, zxat_setter,
       test_38_expected, ARRAY_SIZE(test_38_expected), ARRAY_SIZE(test_38_expected) );
@@ -422,7 +423,7 @@ test_39_expected[] = {
 };
 
 test_return_t
-test_39( void )
+write_szx_zxcf_chunk( void )
 {
   return szx_write_block_test( "ZXCF", LIBSPECTRUM_MACHINE_48, zxcf_setter,
       test_39_expected, ARRAY_SIZE(test_39_expected), ARRAY_SIZE(test_39_expected) );
@@ -442,7 +443,7 @@ test_40_expected[] = {
 };
 
 test_return_t
-test_40( void )
+write_szx_amxm_chunk( void )
 {
   return szx_write_block_test( "AMXM", LIBSPECTRUM_MACHINE_48, amxm_setter,
       test_40_expected, ARRAY_SIZE(test_40_expected), ARRAY_SIZE(test_40_expected) );
@@ -458,7 +459,7 @@ static libspectrum_byte
 empty_chunk_expected[] = { /* Empty */ };
 
 test_return_t
-test_41( void )
+write_szx_side_chunk( void )
 {
   return szx_write_block_test( "SIDE", LIBSPECTRUM_MACHINE_48, side_setter,
       empty_chunk_expected, ARRAY_SIZE(empty_chunk_expected), ARRAY_SIZE(empty_chunk_expected) );
@@ -477,7 +478,7 @@ test_42_expected[] = {
 };
 
 test_return_t
-test_42( void )
+write_szx_drum_chunk( void )
 {
   return szx_write_block_test( "DRUM", LIBSPECTRUM_MACHINE_48, drum_setter,
       test_42_expected, ARRAY_SIZE(test_42_expected), ARRAY_SIZE(test_42_expected) );
@@ -497,7 +498,7 @@ test_43_expected[] = {
 };
 
 test_return_t
-test_43( void )
+write_szx_covx_chunk( void )
 {
   return szx_write_block_test( "COVX", LIBSPECTRUM_MACHINE_48, covx_setter,
       test_43_expected, ARRAY_SIZE(test_43_expected), ARRAY_SIZE(test_43_expected) );
@@ -510,7 +511,7 @@ zmmc_setter( libspectrum_snap *snap )
 }
 
 test_return_t
-test_57( void )
+write_szx_zmmc_chunk( void )
 {
   return szx_write_block_test( "ZMMC", LIBSPECTRUM_MACHINE_48, zmmc_setter,
       empty_chunk_expected, ARRAY_SIZE(empty_chunk_expected), ARRAY_SIZE(empty_chunk_expected) );
@@ -545,7 +546,7 @@ empty_ram_page_uncompressed_expected[] = {
 #endif
 
 test_return_t
-test_59( void )
+write_szx_ramp_chunk( void )
 {
   return szx_write_block_test( "RAMP", LIBSPECTRUM_MACHINE_48, ramp_setter,
     #ifdef HAVE_ZLIB_H
@@ -573,7 +574,7 @@ atrp_setter( libspectrum_snap *snap )
 }
 
 test_return_t
-test_61( void )
+write_szx_atrp_chunk( void )
 {
   return szx_write_block_test( "ATRP", LIBSPECTRUM_MACHINE_48, atrp_setter,
     #ifdef HAVE_ZLIB_H
@@ -601,7 +602,7 @@ cfrp_setter( libspectrum_snap *snap )
 }
 
 test_return_t
-test_62( void )
+write_szx_cfrp_chunk( void )
 {
   return szx_write_block_test( "CFRP", LIBSPECTRUM_MACHINE_48, cfrp_setter,
     #ifdef HAVE_ZLIB_H
@@ -624,7 +625,7 @@ empty_ram_page_start[] = {
 };
 
 test_return_t
-test_65( void )
+write_uncompressed_szx_ramp_chunk( void )
 {
   return szx_write_uncompressed_block_test( "RAMP", LIBSPECTRUM_MACHINE_48,
       ramp_setter, empty_ram_page_start, ARRAY_SIZE(empty_ram_page_start),
@@ -632,7 +633,7 @@ test_65( void )
 }
 
 test_return_t
-test_66( void )
+write_uncompressed_szx_atrp_chunk( void )
 {
   return szx_write_uncompressed_block_test( "ATRP", LIBSPECTRUM_MACHINE_48,
       atrp_setter, empty_ram_page_start, ARRAY_SIZE(empty_ram_page_start),
@@ -640,7 +641,7 @@ test_66( void )
 }
 
 test_return_t
-test_67( void )
+write_uncompressed_szx_cfrp_chunk( void )
 {
   return szx_write_uncompressed_block_test( "CFRP", LIBSPECTRUM_MACHINE_48,
       cfrp_setter, empty_ram_page_start, ARRAY_SIZE(empty_ram_page_start),
@@ -741,7 +742,7 @@ test_44_check( libspectrum_snap *snap )
 }
 
 test_return_t
-test_44( void )
+read_szx_z80r_chunk( void )
 {
   return szx_read_block_test( "Z80R", test_44_check );
 }
@@ -759,7 +760,7 @@ test_45_check( libspectrum_snap *snap )
 }
 
 test_return_t
-test_45( void )
+read_szx_spcr_chunk( void )
 {
   return szx_read_block_test( "SPCR", test_45_check );
 }
@@ -779,7 +780,7 @@ test_46_check( libspectrum_snap *snap )
 }
 
 test_return_t
-test_46( void )
+read_szx_joy_chunk( void )
 {
   return szx_read_block_test( "JOY", test_46_check );
 }
@@ -798,7 +799,7 @@ test_47_check( libspectrum_snap *snap )
 }
 
 test_return_t
-test_47( void )
+read_szx_keyb_chunk( void )
 {
   return szx_read_block_test( "KEYB", test_47_check );
 }
@@ -810,7 +811,7 @@ test_48_check( libspectrum_snap *snap )
 }
 
 test_return_t
-test_48( void )
+read_szx_zxpr_chunk( void )
 {
   return szx_read_block_test( "ZXPR", test_48_check );
 }
@@ -833,7 +834,7 @@ test_49_check( libspectrum_snap *snap )
 }
 
 test_return_t
-test_49( void )
+read_szx_ay_chunk( void )
 {
   return szx_read_block_test( "AY", test_49_check );
 }
@@ -850,7 +851,7 @@ test_50_check( libspectrum_snap *snap )
 }
 
 test_return_t
-test_50( void )
+read_szx_scld_chunk( void )
 {
   return szx_read_block_test( "SCLD", test_50_check );
 }
@@ -874,7 +875,7 @@ test_51_check( libspectrum_snap *snap )
 }
 
 test_return_t
-test_51( void )
+read_szx_zxat_chunk( void )
 {
   return szx_read_block_test( "ZXAT", test_51_check );
 }
@@ -893,7 +894,7 @@ test_52_check( libspectrum_snap *snap )
 }
 
 test_return_t
-test_52( void )
+read_szx_zxcf_chunk( void )
 {
   return szx_read_block_test( "ZXCF", test_52_check );
 }
@@ -905,7 +906,7 @@ test_53_check( libspectrum_snap *snap )
 }
 
 test_return_t
-test_53( void )
+read_szx_amxm_chunk( void )
 {
   return szx_read_block_test( "AMXM", test_53_check );
 }
@@ -917,7 +918,7 @@ test_54_check( libspectrum_snap *snap )
 }
 
 test_return_t
-test_54( void )
+read_szx_side_chunk( void )
 {
   return szx_read_block_test( "SIDE", test_54_check );
 }
@@ -934,7 +935,7 @@ test_55_check( libspectrum_snap *snap )
 }
 
 test_return_t
-test_55( void )
+read_szx_drum_chunk( void )
 {
   return szx_read_block_test( "DRUM", test_55_check );
 }
@@ -951,7 +952,7 @@ test_56_check( libspectrum_snap *snap )
 }
 
 test_return_t
-test_56( void )
+read_szx_covx_chunk( void )
 {
   return szx_read_block_test( "COVX", test_56_check );
 }
@@ -963,7 +964,7 @@ test_58_check( libspectrum_snap *snap )
 }
 
 test_return_t
-test_58( void )
+read_szx_zmmc_chunk( void )
 {
   return szx_read_block_test( "ZMMC", test_58_check );
 }
@@ -997,7 +998,7 @@ ramp_check( libspectrum_snap *snap )
 }
 
 test_return_t
-test_60( void )
+read_szx_ramp_chunk( void )
 {
   #ifndef HAVE_ZLIB_H
     return TEST_SKIPPED; /* gzip not enabled in build */
@@ -1013,7 +1014,7 @@ atrp_check( libspectrum_snap *snap )
 }
 
 test_return_t
-test_63( void )
+read_szx_atrp_chunk( void )
 {
   #ifndef HAVE_ZLIB_H
     return TEST_SKIPPED; /* gzip not enabled in build */
@@ -1029,7 +1030,7 @@ cfrp_check( libspectrum_snap *snap )
 }
 
 test_return_t
-test_64( void )
+read_szx_cfrp_chunk( void )
 {
   #ifndef HAVE_ZLIB_H
     return TEST_SKIPPED; /* gzip not enabled in build */
@@ -1039,19 +1040,19 @@ test_64( void )
 }
 
 test_return_t
-test_68( void )
+read_uncompressed_szx_ramp_chunk( void )
 {
   return szx_read_block_from_compressed_snap_test( "RAMP", ramp_check );
 }
 
 test_return_t
-test_69( void )
+read_uncompressed_szx_atrp_chunk( void )
 {
   return szx_read_block_from_compressed_snap_test( "ATRP", atrp_check );
 }
 
 test_return_t
-test_70( void )
+read_uncompressed_szx_cfrp_chunk( void )
 {
   return szx_read_block_from_compressed_snap_test( "CFRP", cfrp_check );
 }
