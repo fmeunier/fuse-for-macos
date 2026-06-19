@@ -213,6 +213,24 @@
   XCTAssertEqualObjects( [preview contentTypeIdentifier], @"public.png" );
 }
 
+- (void)test_szx_snapshot_produces_png_preview
+{
+  FuseQuickLookPreview *preview;
+  NSData *preview_data;
+
+  preview = [self previewForFixture:@"deps/libspectrum/test/random.szx"];
+  preview_data = [preview previewData];
+
+  XCTAssertEqual( [preview previewKind], FUSE_QUICKLOOK_PREVIEW_IMAGE_DATA );
+  XCTAssertEqualObjects( [preview contentTypeIdentifier], @"public.png" );
+  XCTAssertEqual( [preview contentSize].width, 256.0 );
+  XCTAssertEqual( [preview contentSize].height, 192.0 );
+  XCTAssertNotNil( preview_data );
+  XCTAssertTrue( [preview_data length] > 8 );
+  XCTAssertEqual( ((const unsigned char *)[preview_data bytes])[0], 0x89 );
+  XCTAssertEqual( ((const unsigned char *)[preview_data bytes])[1], 0x50 );
+}
+
 - (void)test_mdr_file_produces_no_preview
 {
   FuseQuickLookPreview *preview;

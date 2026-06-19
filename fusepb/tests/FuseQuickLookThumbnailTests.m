@@ -341,6 +341,20 @@
   XCTAssertEqual( canvas_size.height, 201.0 );
 }
 
+- (void)test_szx_snapshot_produces_bitmap_thumbnail
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSBitmapImageRep *bitmap;
+
+  thumbnail = [self thumbnailForFixture:@"deps/libspectrum/test/random.szx"];
+  bitmap = [thumbnail bitmapImageRep];
+
+  XCTAssertEqual( [thumbnail thumbnailKind], FUSE_QUICKLOOK_THUMBNAIL_BITMAP );
+  XCTAssertNotNil( bitmap );
+  XCTAssertEqual( [bitmap pixelsWide], 256 );
+  XCTAssertEqual( [bitmap pixelsHigh], 192 );
+}
+
 - (void)test_mdr_file_produces_no_thumbnail
 {
   FuseQuickLookThumbnail *thumbnail;
