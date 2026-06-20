@@ -142,7 +142,6 @@ those files manually without doing a full build, run:
 After any `libspectrum` subtree update, review and resync these locally patched
 files before committing:
 
-  fusepb/config.h
   fusepb/generate.pl
   fusepb/libspectrum.h
 
