@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-06-19T06:52:00Z",
-  "run_id": "27810357693",
+  "last_run": "2026-06-20T06:40:00Z",
+  "run_id": "27863132007",
   "backlog_cursor": {
     "issues": 0,
     "prs": 0
@@ -31,23 +31,31 @@
       "note": "Conflict-free with master."
     },
     {
-      "branch": "repo-assist/test-szx-snapshot-2026-06-19",
+      "branch": "repo-assist/test-szx-snapshot-2026-06-19-1a3b9dda31daebb6",
       "title": "Add SZX snapshot tests to Image, Preview and Thumbnail suites",
-      "pr_number": null,
-      "status": "pending",
+      "pr_number": 32,
+      "status": "open",
       "created_at": "2026-06-19",
-      "note": "Task 9: Adds test_szx_snapshot_produces_bitmap_image, test_szx_snapshot_produces_png_preview, test_szx_snapshot_produces_bitmap_thumbnail using deps/libspectrum/test/random.szx."
+      "note": "Conflict-free with master."
     },
     {
-      "branch": "repo-assist/eng-analyze-target-2026-06-19",
+      "branch": "repo-assist/eng-analyze-target-2026-06-19-629b5fb14fac5a24",
       "title": "Add make analyze target to run Xcode static analyser",
+      "pr_number": 33,
+      "status": "open",
+      "created_at": "2026-06-19",
+      "note": "Conflict-free with master."
+    },
+    {
+      "branch": "repo-assist/eng-ci-concurrency-2026-06-20",
+      "title": "CI: add concurrency group to cancel superseded workflow runs",
       "pr_number": null,
       "status": "pending",
-      "created_at": "2026-06-19",
-      "note": "Task 4: Adds 'make analyze' to Makefile. Mirrors 'make test' and 'make fuse'. Implements the AGENTS.md documented analyzer invocation."
+      "created_at": "2026-06-20",
+      "note": "Task 4: Adds concurrency block to .github/workflows/build.yml. Cancels in-progress runs on same branch/ref when new run starts. Saves macOS CI minutes."
     }
   ],
   "monthly_activity_issue": 6,
   "checked_off_by_user": ["pr_15", "issue_17", "issue_16", "pr_18", "pr_22", "pr_23", "pr_25", "pr_26", "pr_27", "pr_28", "pr_29"],
-  "notes": "PR #8, #20 open. Two new PRs pending from run 27810357693 (SZX tests + analyze target). README fix (67244a3) merged to master. Brewfile (PR #29) was merged then reverted - do NOT propose Brewfile again. Issue #5 (GitHub templates) commented with inline content on 2026-06-19. Issue #24 closed. After PR #8 merges: update test_mdr_file_produces_no_image comment and add positive MDR thumbnail test."
+  "notes": "5 open Repo Assist PRs: #8, #20, #32, #33, and new CI concurrency PR (pending number). libspectrum updated to 1.6.2 in master (commit d22e41a). Brewfile was merged then reverted - do NOT propose Brewfile again. All 4 confirmed PRs (#8, #20, #32, #33) are conflict-free with master. Issue #5 (GitHub templates) commented with inline content on 2026-06-19. Issue #19 (FuseHelp Gemfile) still needs human. After PR #8 merges: update test_mdr_file_produces_no_image comment and add positive MDR thumbnail test."
 }
