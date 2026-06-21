@@ -38,11 +38,13 @@ private let videoFilterLeftColumn = [
 private let videoFilterRightColumn = [
   VideoFilterOption(id: "timextv", title: "Timex TV", availableOnTimex: true,
                     availableOnNonTimex: false),
-  VideoFilterOption(id: "paltv", title: "PAL TV", availableOnTimex: true,
-                    availableOnNonTimex: true),
   VideoFilterOption(id: "paltv2x", title: "PAL TV 2x", availableOnTimex: false,
                     availableOnNonTimex: true),
   VideoFilterOption(id: "paltv3x", title: "PAL TV 3x", availableOnTimex: false,
+                    availableOnNonTimex: true),
+  VideoFilterOption(id: "ntsctv2x", title: "NTSC TV 2x", availableOnTimex: false,
+                    availableOnNonTimex: true),
+  VideoFilterOption(id: "ntsctv3x", title: "NTSC TV 3x", availableOnTimex: false,
                     availableOnNonTimex: true),
   VideoFilterOption(id: "hq2x", title: "HQ 2x", availableOnTimex: false,
                     availableOnNonTimex: true),
@@ -63,7 +65,6 @@ private struct VideoPreferencesView: View {
   @AppStorage("machine") private var machine = "48"
   @AppStorage("bilinear") private var bilinear = false
   @AppStorage("bwtv") private var blackAndWhiteTV = false
-  @AppStorage("paltv2x") private var usePALScanlines = false
   @AppStorage("fullscreenpanorama") private var panoramicFullscreen = true
 
   var body: some View {
@@ -77,7 +78,6 @@ private struct VideoPreferencesView: View {
         VStack(alignment: .leading, spacing: 8) {
           Toggle("Bilinear", isOn: $bilinear)
           Toggle("Black and white TV", isOn: $blackAndWhiteTV)
-          Toggle("Use scanlines in PAL TV filters", isOn: $usePALScanlines)
           Toggle("Panoramic full screen", isOn: $panoramicFullscreen)
         }
 
@@ -120,6 +120,11 @@ private struct VideoPreferencesView: View {
   }
 
   private func repairSelectionIfNeeded() {
+    if graphicsFilter == "paltv" {
+      graphicsFilter = "normal"
+      return
+    }
+
     let matchingOption = videoFilterOptions.first { $0.id == graphicsFilter }
 
     guard let matchingOption else {

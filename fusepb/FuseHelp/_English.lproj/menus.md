@@ -81,3 +81,4 @@ MENU|SHORTCUT|DESCRIPTION
 *Media > IDE Slave > Insert…*||The same as the *Media > IDE Master* entries above, but for the current IDE interface's slave channel.
 *Media > IDE Slave > Commit*||The same as the *Media > IDE Master* entries above, but for the current IDE interface's slave channel.
 *Media > IDE Slave > Eject*||The same as the *Media > IDE Master* entries above, but for the current IDE interface's slave channel.
+*Help > Check for Updates…*||Check for a newer Fuse release using the built-in updater.

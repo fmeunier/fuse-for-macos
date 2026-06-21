@@ -28,7 +28,8 @@ Filter | Description
 *AdvMAME2x* |A double-sizing, non-interpolating filter which attempts to smooth diagonal lines.
 *AdvMAME3x* |Very similar to AdvMAME2x, except that it triples the size of the displayed screen.
 *TV 2x, TV 3x, Timex TV* |Three filters which attempt to emulate the effect of television scanlines. The first is a double-sizing filter for non-Timex machines, the second is a similar triple-sizing filter, while the last is a single-sizing filter for Timex machines (note that this means TV 2X and Timex TV produce the same size output).
-*PAL TV, PAL TV 2x, PAL TV 3x* |Three filters which attempt to emulate the effect of the PAL TV system which layers a lower-resolution colour image over the top of a higher-resolution black-and-white image. The filters can also optionally add scanlines like the other TV series scalers.
+*PAL TV 2x, PAL TV 3x* |Two filters which emulate a PAL television picture rather than a simple RGB-style pixel enlargement. They model composite-video behaviour such as colour blending, reduced chroma resolution and softening between neighbouring pixels while scaling the screen by 2x and 3x.
+*NTSC TV 2x, NTSC TV 3x* |Two filters which emulate an NTSC television picture rather than a simple RGB-style pixel enlargement. They model composite-video effects such as colour bleeding, fringing, artifacting and softening between neighbouring pixels while scaling the screen by 2x and 3x.
 *Dot matrix* |A double-sizing filter which emulates the effect of a dot-matrix display.
 *Timex 1.5x* |An interpolating Timex-specific filter which scales the Timex screen up to 1.5x its usual size (which is therefore 3x the size of a 'normal' Spectrum screen).
 *HQ 2x* |A double-sizing, interpolating high-quality magnification filter by Maxim Stepin. You can find more information at [Wikipedia](https://en.wikipedia.org/wiki/Hqx).

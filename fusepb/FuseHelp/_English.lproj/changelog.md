@@ -1,7 +1,26 @@
 ---
 title: What's New In Fuse?
-description: This section describes the changes for version 1.8.0 of the Fuse emulator.
+description: This section describes the changes for recent versions of the Fuse emulator.
 ---
+
+## What's new in Fuse for macOS 1.9.0
+
+### New features:
+* Add NTSC TV filters and update the PAL TV filters to the new composite-video implementation  (derived from snes\_ntsc by Shay Green) (patch #374) (matja and Fredrick Meunier).
+* Support for automatic application updating (Fredrick Meunier).
+
+### Emulation core improvements:
+* Tape traps now restore the pulse level correctly after loading a ROM block (fixes bugs #398, #401, #402 and #411) (Alberto Garcia).
+* TZX handling now preserves the embedded pause at the end of a block (fixes bugs #377 and #480) (Alberto Garcia).
+* Pressed keys are now released after restoring a snapshot (fixes bug #77) (thanks, jdaw1) (Fredrick Meunier).
+
+### Debugger improvements:
+* Add modulo (`%`) and bit-shift (`<<`, `>>`) operators to debugger expressions (Fredrick Meunier).
+
+### Miscellaneous improvements:
+*  Support Microdrive (MDR) file write-protect and sector count metadata in Spotlight (Fredrick Meunier).
+
+### Various other minor bugfixes.
 
 ## What's new in Fuse for macOS 1.8.0
 

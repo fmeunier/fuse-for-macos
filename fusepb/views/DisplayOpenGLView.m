@@ -662,8 +662,8 @@ static DisplayOpenGLView *instance = nil;
     glTexParameteri( GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
     glPixelStorei( GL_UNPACK_ROW_LENGTH, 0 );
 
-    glTexImage2D( GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGBA, screenTex[i].full_width,
-                  screenTex[i].full_height, 0, GL_BGRA, GL_UNSIGNED_SHORT_1_5_5_5_REV,
+    glTexImage2D( GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGB, screenTex[i].full_width,
+                  screenTex[i].full_height, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5,
                   screenTex[i].pixels );
   }
   screenTexInitialised = YES;
@@ -1372,8 +1372,8 @@ static DisplayOpenGLView *instance = nil;
     
     glTexSubImage2D( GL_TEXTURE_RECTANGLE_ARB, 0, 0, 0,
                      screenTex[currentScreenTex].full_width,
-                     screenTex[currentScreenTex].full_height, GL_BGRA,
-                     GL_UNSIGNED_SHORT_1_5_5_5_REV,
+                     screenTex[currentScreenTex].full_height, GL_RGB,
+                     GL_UNSIGNED_SHORT_5_6_5,
                      screenTex[currentScreenTex].pixels );
 
     [view_lock unlock];

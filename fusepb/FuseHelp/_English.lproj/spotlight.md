@@ -1,18 +1,22 @@
 ---
 title: Spotlight Importer
-description: This section describes Fuse's support of the Spotlight feature of macOS 10.4 and newer.
+description: This section describes Fuse's support of the Spotlight feature of macOS.
 order: 240
 ---
 
-On macOS 10.4 and newer, the Fuse Spotlight importer allows Spotlight to find
-ZX Spectrum emulation related files based on metadata in the files. The metadata
-supported is:
+The Fuse Spotlight importer allows Spotlight to find ZX Spectrum emulation related
+files based on metadata in the files. The metadata supported is:
 
-## TZX Tape images
+## Tape images
 
-Title, publishers, authors, year of release, languages, category,
+Fuse imports metadata from supported tape-image formats such as TZX, TAP, PZX,
+CSW and similar files.
+
+For TZX and other tape images carrying archive or hardware metadata, Spotlight can
+index title, publishers, authors, year of release, languages, category,
 original price, loader, origin, comment, audio channel count, supported machines
-and peripherals.
+and peripherals. Simpler tape formats may expose only the metadata available in
+those files.
 
 ## Snapshots (SZX, Z80, SNA, etc.)
 
@@ -23,6 +27,10 @@ Timex dock cartridges.
 ## RZX Spectrum recordings
 
 As snapshots above.
+
+## MDR Microdrive cartridge images
+
+Cartridge length (sector count) and write-protect status.
 
 ## SCR Screen dumps
 
@@ -41,3 +49,5 @@ ATTRIBUTE | DESCRIPTION
 *Machine* | Spectrum 16K, 48K (Issue 1), 48K, 128K, +2, +2A, +3, SE, Timex TC2048, Timex TC2068, Timex TS2068, Scorpion ZS 256, Pentagon 128K
 *Joystick* | Kempston, Cursor, Sinclair 1, Sinclair 2, Timex 1, Timex 2, Fuller
 *GraphicsMode* | Standard, HiColour, HiRes
+*CartridgeLength* | number of sectors on a microdrive cartridge
+*WriteProtect* | whether a microdrive cartridge is write protected
