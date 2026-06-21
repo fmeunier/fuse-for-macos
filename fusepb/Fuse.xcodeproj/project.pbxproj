@@ -209,6 +209,7 @@
 		B6251C3E0C2EB24500BD5543 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6251C3D0C2EB24500BD5543 /* QuartzCore.framework */; };
 		B62B19E10DD31DF500D42AAF /* scalers16.c in Sources */ = {isa = PBXBuildFile; fileRef = B62B19E00DD31DF500D42AAF /* scalers16.c */; };
 		D0E002003A79000000C0DE01 /* snes_ntsc.c in Sources */ = {isa = PBXBuildFile; fileRef = D0E002013A79000000C0DE01 /* snes_ntsc.c */; };
+		D0E002023A79000000C0DE01 /* scalers32.c in Sources */ = {isa = PBXBuildFile; fileRef = D0E002033A79000000C0DE01 /* scalers32.c */; };
 		B62B1A280DD6655800D42AAF /* fuse.c in Sources */ = {isa = PBXBuildFile; fileRef = B62B1A270DD6655800D42AAF /* fuse.c */; };
 		B62B1A2A0DD667EC00D42AAF /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B62B1A290DD667EC00D42AAF /* main.m */; };
 		B631B9FF10257CA400BE1EE1 /* opus.c in Sources */ = {isa = PBXBuildFile; fileRef = B631B9FD10257CA400BE1EE1 /* opus.c */; };
@@ -562,6 +563,7 @@
 		B6251C3D0C2EB24500BD5543 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
 		B62B19E00DD31DF500D42AAF /* scalers16.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = scalers16.c; path = scaler/scalers16.c; sourceTree = SOURCE_ROOT; };
 		D0E002013A79000000C0DE01 /* snes_ntsc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = snes_ntsc.c; sourceTree = "<group>"; };
+		D0E002033A79000000C0DE01 /* scalers32.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = scalers32.c; path = scaler/scalers32.c; sourceTree = SOURCE_ROOT; };
 		B62B1A270DD6655800D42AAF /* fuse.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = fuse.c; sourceTree = "<group>"; };
 		B62B1A290DD667EC00D42AAF /* main.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		B62F3BCE059F5BF300A7009A /* PokeFinderController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PokeFinderController.h; path = controllers/PokeFinderController.h; sourceTree = "<group>"; };
@@ -1755,6 +1757,7 @@
 				B60A6A3A042BEECE00D41533 /* scaler_internals.h */,
 				B63ABD8D042F175200A864FD /* scaler.c */,
 				B62B19E00DD31DF500D42AAF /* scalers16.c */,
+				D0E002033A79000000C0DE01 /* scalers32.c */,
 				D0E002013A79000000C0DE01 /* snes_ntsc.c */,
 			);
 			path = scaler;
@@ -2750,6 +2753,7 @@
 				B6DDE53C0D67963600D6F905 /* ui.c in Sources */,
 				B665FD490DD25D8900D21C79 /* upd_fdc.c in Sources */,
 				B62B19E10DD31DF500D42AAF /* scalers16.c in Sources */,
+				D0E002023A79000000C0DE01 /* scalers32.c in Sources */,
 				D0E002003A79000000C0DE01 /* snes_ntsc.c in Sources */,
 				B62B1A280DD6655800D42AAF /* fuse.c in Sources */,
 				B62B1A2A0DD667EC00D42AAF /* main.m in Sources */,
