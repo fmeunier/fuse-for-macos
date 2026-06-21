@@ -4,6 +4,7 @@
 .sparkle-stage/
 *.db
 *.zip
+***/__pycache__/
 .notary-submission-id
 .notary-log.json
 build/
