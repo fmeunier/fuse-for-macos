@@ -115,7 +115,7 @@ endif
 
 FUSE_CODESIGN_TIMESTAMP =
 
-.PHONY: fuse archive adhoc test test-only analyze notarize notarize-submit notarize-status notarize-log notarize-wait notarize-staple notarize-reset embed-sparkle resign-sparkle dist sparkle-zip sparkle-key-setup sparkle-key-public sparkle-key-check sparkle-release-notes sparkle-stage-archive sparkle-github-release sparkle-github-release-staging sparkle-appcast sparkle-appcast-from-stage sparkle-appcast-github sparkle-appcast-staging sparkle-appcast-staging-from-stage sparkle-appcast-staging-github sparkle-stage-clean list-teams clean
+.PHONY: fuse archive adhoc test test-only test-scripts analyze notarize notarize-submit notarize-status notarize-log notarize-wait notarize-staple notarize-reset embed-sparkle resign-sparkle dist sparkle-zip sparkle-key-setup sparkle-key-public sparkle-key-check sparkle-release-notes sparkle-stage-archive sparkle-github-release sparkle-github-release-staging sparkle-appcast sparkle-appcast-from-stage sparkle-appcast-github sparkle-appcast-staging sparkle-appcast-staging-from-stage sparkle-appcast-staging-github sparkle-stage-clean list-teams clean
 
 ## Run the Quick Look unit test suite (FuseQuickLookTests scheme).
 ## Requires a macOS host with Xcode and the fuse submodule checked out.
@@ -156,6 +156,11 @@ analyze:
 		FUSE_DEPS_ROOT='$(FUSE_DEPS_ROOT)' \
 		FUSE_THIRD_PARTY_ROOT='$(FUSE_THIRD_PARTY_ROOT)' \
 		analyze
+
+## Run Python unit tests for the Sparkle release helper scripts.
+## Requires Python 3 and pytest (pip install pytest).
+test-scripts:
+	python3 -m pytest fusepb/scripts/tests/ -v
 
 ## Build Fuse.app (Deployment configuration).
 ## This single Xcode build now also builds the shared staged dependencies plus
