@@ -172,6 +172,22 @@ Important: if you need to republish the same version after fixing the archive, p
 
 Use this end-to-end order for a staging publish.
 
+If you want the deterministic steps wrapped in one command, use:
+
+```sh
+scripts/release-staging-sparkle.sh
+```
+
+Useful options:
+
+```sh
+scripts/release-staging-sparkle.sh --tag sparkle-staging-1.9.0-r1
+scripts/release-staging-sparkle.sh --skip-pages-publish
+scripts/release-staging-sparkle.sh --staging-dir /tmp/fuse-sparkle-stage
+```
+
+The script runs the prerequisite checks, uses a fresh temporary staging directory by default so `generate_appcast` does not see old duplicate archives from earlier rehearsals, builds both `Fuse.zip` and the Sparkle ZIP from the same notarized `Fuse.app`, generates staging metadata, and publishes the staging appcast plus release notes to `gh-pages` unless `--skip-pages-publish` is used.
+
 ### 1. Check local prerequisites
 
 Verify the release machine is ready:
@@ -194,7 +210,14 @@ Also confirm that:
 The normal staging command is:
 
 ```sh
+make sparkle-stage-clean
 make sparkle-appcast-staging-github
+```
+
+If you want to avoid reusing `.sparkle-stage` entirely, override the staging directory for the run:
+
+```sh
+make sparkle-appcast-staging-github SPARKLE_STAGING_DIR=/tmp/fuse-sparkle-stage
 ```
 
 That performs the release steps in this order:
@@ -258,6 +281,8 @@ Confirm that:
 - the appcast and release-notes URLs return HTTP 200
 - the downloaded GitHub release asset size matches the appcast enclosure `length`
 - Sparkle update testing with a staging-wired build sees the new item
+
+GitHub Pages publication can lag briefly after the `gh-pages` push. If the first `curl` returns 404, wait a little and retry instead of assuming the publish failed immediately.
 
 If Sparkle reports that the update is improperly signed, check the macOS log for a length mismatch first:
 
