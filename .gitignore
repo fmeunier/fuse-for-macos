@@ -14,6 +14,7 @@ fusepb/options.m
 fusepb/options_cocoa.h
 fusepb/settings.h
 fusepb/settings.m
+fusepb/settings_cocoa.h
 fusepb/Fuse.xcodeproj/project.xcworkspace/
 fusepb/Fuse.xcodeproj/xcuserdata/
 
