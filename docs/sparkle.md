@@ -6,12 +6,13 @@ This repository keeps Sparkle update publishing separate from the existing human
 
 - `make dist` produces the traditional `Fuse.zip` archive for manual distribution.
 - `make sparkle-zip` produces `Fuse-<version>-sparkle.zip`, containing only `Fuse.app`.
-- staging appcast metadata is generated locally and is intended for publication to GitHub Pages.
+- Sparkle appcast metadata is generated locally and is intended for publication to GitHub Pages.
 - Sparkle archive signing uses a local EdDSA key stored in the macOS login Keychain.
 
-The current staging feed layout is:
+The feed layouts are:
 
-- appcast: `https://fmeunier.github.io/fuse-for-macos/appcast-staging.xml`
+- staging appcast: `https://fmeunier.github.io/fuse-for-macos/appcast-staging.xml`
+- production appcast: `https://fmeunier.github.io/fuse-for-macos/appcast.xml`
 - release notes: `https://fmeunier.github.io/fuse-for-macos/release-notes/<version>.md`
 
 ## Local prerequisites
@@ -40,11 +41,14 @@ make sparkle-key-setup              # generate or import the local Sparkle EdDSA
 make sparkle-key-public             # print the existing Sparkle EdDSA public key
 make sparkle-key-check              # fail if the local Sparkle private key is missing
 make sparkle-release-notes          # extract release-notes/<version>.md from changelog.md
-make sparkle-stage-archive          # copy the Sparkle ZIP into the local staging tree
-make sparkle-github-release-staging # create/update the staging GitHub prerelease and upload the Sparkle ZIP
-make sparkle-appcast-staging        # generate local staging appcast metadata
-make sparkle-appcast-staging-github # upload the Sparkle ZIP and generate the staging appcast in one step
-make sparkle-stage-clean            # remove generated staging metadata
+make sparkle-stage-archive          # copy the Sparkle ZIP into the local metadata tree
+make sparkle-github-release         # create/update a GitHub release and upload the Sparkle ZIP
+make sparkle-appcast                # generate local Sparkle appcast metadata
+make sparkle-appcast-github         # upload the Sparkle ZIP and generate the appcast in one step
+make sparkle-github-release-staging # staging alias for sparkle-github-release
+make sparkle-appcast-staging        # staging alias for sparkle-appcast
+make sparkle-appcast-staging-github # staging alias for sparkle-appcast-github
+make sparkle-stage-clean            # remove generated local metadata
 ```
 
 ## Sparkle signing key setup
@@ -124,7 +128,7 @@ The generated appcast currently defaults to these URL prefixes:
 If the published archive host differs from Pages, override the download prefix:
 
 ```sh
-make sparkle-appcast-staging SPARKLE_DOWNLOAD_URL_PREFIX='https://example.invalid/path/'
+make sparkle-appcast SPARKLE_DOWNLOAD_URL_PREFIX='https://example.invalid/path/'
 ```
 
 ## Staging GitHub Release publication
@@ -291,6 +295,66 @@ log show --last 15m --predicate 'process == "Fuse" OR subsystem == "org.sparkle-
 ```
 
 A stale GitHub/CDN asset usually shows up as "expected content length ... differs from the downloaded file length ...". In that case, upload the corrected ZIP under a new asset name, regenerate the appcast so the enclosure URL changes, and republish `appcast-staging.xml`.
+
+## Production publication procedure
+
+Use this end-to-end order for the first public rollout after staging signoff.
+
+If you want the deterministic steps wrapped in one command, use:
+
+```sh
+scripts/release-public-sparkle.sh
+```
+
+Useful options:
+
+```sh
+scripts/release-public-sparkle.sh --tag fuse-for-macos-1.9.0
+scripts/release-public-sparkle.sh --title 'Fuse for macOS 1.9.0'
+scripts/release-public-sparkle.sh --skip-pages-publish
+scripts/release-public-sparkle.sh --staging-dir /tmp/fuse-sparkle-public
+```
+
+The production helper mirrors the staging helper but publishes:
+
+- `appcast.xml`
+- a normal GitHub release instead of a prerelease
+- the same shared `release-notes/<version>.md`
+
+The default production assumptions are:
+
+- Git tag: `fuse-for-macos-<version>`
+- GitHub release title: `Fuse for macOS <version>`
+- Pages appcast path: `appcast.xml`
+- local updater feed override: `SPARKLE_FEED_URL=https://fmeunier.github.io/fuse-for-macos/appcast.xml`
+
+The production helper expects that tag to already exist before it creates the GitHub release. It passes `--verify-tag` through `gh release create`, so it will fail rather than creating a new tag implicitly.
+
+The production command path is:
+
+```sh
+make dist sparkle-appcast-github \
+  SPARKLE_APPCAST=appcast.xml \
+  SPARKLE_GITHUB_RELEASE_TAG="fuse-for-macos-$VERSION" \
+  SPARKLE_GITHUB_RELEASE_TITLE="Fuse for macOS $VERSION" \
+  SPARKLE_GITHUB_RELEASE_PRERELEASE=0 \
+  SPARKLE_GITHUB_VERIFY_TAG=1
+```
+
+After publishing, verify:
+
+```sh
+curl -fsSL https://fmeunier.github.io/fuse-for-macos/appcast.xml
+curl -fsSL "https://fmeunier.github.io/fuse-for-macos/release-notes/${VERSION}.md"
+gh release view "$VERSION" -R fmeunier/fuse-for-macos
+```
+
+Then do the conservative manual client validation against the production feed:
+
+- install an older build that points at `appcast.xml`
+- run `Help > Check for Updates…`
+- confirm discovery, notes, download, signature validation, install, relaunch, and resulting version
+- confirm launch/Gatekeeper behavior after update
 
 ## Manual patching notes
 

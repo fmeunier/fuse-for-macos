@@ -51,9 +51,12 @@ Other useful targets:
   make sparkle-key-setup            # generate or import the local Sparkle EdDSA signing key
   make sparkle-key-public           # print the existing Sparkle EdDSA public key
   make sparkle-release-notes        # extract per-version Sparkle release notes from changelog.md
+  make sparkle-github-release          # create/update a GitHub release and upload the Sparkle zip (optionally requiring a pre-existing tag)
   make sparkle-github-release-staging  # create/update the staging GitHub prerelease and upload the Sparkle zip
-  make sparkle-appcast-staging         # generate local staging appcast metadata
-  make sparkle-appcast-staging-github  # upload the Sparkle zip and generate the staging appcast in one step
+  make sparkle-appcast                 # generate local Sparkle appcast metadata
+  make sparkle-appcast-github          # upload the Sparkle zip and generate the appcast in one step
+  make sparkle-appcast-staging         # staging alias for sparkle-appcast
+  make sparkle-appcast-staging-github  # staging alias for sparkle-appcast-github
   make list-teams                   # list available Developer ID signing identities
 
 Signing and notarization
@@ -96,7 +99,7 @@ update publishing. This keeps the updater artifact separate from the existing
 human-facing `Fuse.zip` distribution archive.
 
 Sparkle-specific maintainer notes, including EdDSA key setup, release-notes
-extraction, local staging appcast generation, and staging GitHub Release
+extraction, local staging/production appcast generation, and GitHub Release
 publication, are documented in:
 
   docs/sparkle.md
