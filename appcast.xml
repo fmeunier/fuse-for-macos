@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='utf-8'?>
+<rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
+    <channel>
+        <title>Fuse</title>
+        <item>
+            <title>1.9.0</title>
+            <pubDate>Tue, 23 Jun 2026 20:10:47 +1000</pubDate>
+            <sparkle:version>1.9.0</sparkle:version>
+            <sparkle:shortVersionString>1.9.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>13.0</sparkle:minimumSystemVersion>
+            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
+            <sparkle:releaseNotesLink>https://fmeunier.github.io/fuse-for-macos/release-notes/1.9.0.md</sparkle:releaseNotesLink>
+            <enclosure url="https://github.com/fmeunier/fuse-for-macos/releases/download/fuse-for-macos-1.9.0/Fuse-1.9.0-sparkle.zip" length="4161599" type="application/octet-stream" sparkle:edSignature="/fuDHmxKBB6FUtDyjfJR4x276LuWltdMQq4NL5If5JQ2DEcyRj93B+IMhMXyRqqLtZx7mLepc/68vKa9WihnAA==" />
+        </item>
+    </channel>
+</rss>
