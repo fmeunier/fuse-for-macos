@@ -6,7 +6,7 @@ description: This section describes the changes for recent versions of the Fuse 
 ## What's new in Fuse for macOS 1.9.0
 
 ### New features:
-* Add NTSC TV filters and update the PAL TV filters to the new composite-video implementation  (derived from snes\_ntsc by Shay Green) (patch #374) (matja and Fredrick Meunier).
+* Add NTSC TV filters and update the PAL TV filters to the new composite-video implementation (derived from snes\_ntsc by Shay Green) (patch #374) (matja and Fredrick Meunier).
 * Support for automatic application updating (Fredrick Meunier).
 
 ### Emulation core improvements:
@@ -18,7 +18,7 @@ description: This section describes the changes for recent versions of the Fuse 
 * Add modulo (`%`) and bit-shift (`<<`, `>>`) operators to debugger expressions (Fredrick Meunier).
 
 ### Miscellaneous improvements:
-*  Support Microdrive (MDR) file write-protect and sector count metadata in Spotlight (Fredrick Meunier).
+* Support Microdrive (MDR) file write-protect and sector count metadata in Spotlight (Fredrick Meunier).
 
 ### Various other minor bugfixes.
 
