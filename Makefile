@@ -355,7 +355,7 @@ dist: notarize
 	rm -rf "$(DIST_STAGE_DIR)/Debug Symbols/Fuse.app.dSYM"
 	ditto --norsrc "$(FUSE_DSYM)" "$(DIST_STAGE_DIR)/Debug Symbols/Fuse.app.dSYM"
 	python3 -c 'import os, pathlib; root = pathlib.Path("$(DIST_STAGE_DIR)"); [p.unlink() for p in root.rglob("*") if p.name == ".DS_Store" or p.name.startswith("._")]'
-	cd "$(DIST_STAGE)" && COPYFILE_DISABLE=1 zip -q -r -X "$(CURDIR)/$(DIST_ZIP)" "$(DIST_DIR)"
+	ditto -c -k --sequesterRsrc --keepParent "$(DIST_STAGE_DIR)" "$(DIST_ZIP)"
 	rm -rf $(DIST_STAGE)
 	@echo "Notarized build packaged as $(DIST_ZIP)"
 

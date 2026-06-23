@@ -7,8 +7,9 @@ CODE_SIGN_IDENTITY = Developer ID Application
 DEVELOPMENT_TEAM = YOUR_TEAM_ID
 
 // Updater wiring examples:
-// staging:    SPARKLE_FEED_URL = https://fmeunier.github.io/fuse-for-macos/appcast-staging.xml
-// production: SPARKLE_FEED_URL = https://fmeunier.github.io/fuse-for-macos/appcast.xml
+// Note: use https:/$()/... in .xcconfig files because // starts a comment.
+// staging:    SPARKLE_FEED_URL = https:/$()/fmeunier.github.io/fuse-for-macos/appcast-staging.xml
+// production: SPARKLE_FEED_URL = https:/$()/fmeunier.github.io/fuse-for-macos/appcast.xml
 // SPARKLE_PUBLIC_ED_KEY = <paste your Sparkle public key here>
 SPARKLE_FEED_URL =
 SPARKLE_PUBLIC_ED_KEY =
