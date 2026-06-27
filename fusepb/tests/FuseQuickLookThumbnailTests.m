@@ -359,12 +359,27 @@
 {
   FuseQuickLookThumbnail *thumbnail;
 
-  /* Microdrive cartridge with no SCREEN$ — process_mdr stub returns nothing */
+  /* Microdrive cartridge with no SCREEN$ code file */
   thumbnail = [self thumbnailForFixture:@"deps/libspectrum/test/writeprotected.mdr"];
 
   XCTAssertEqual( [thumbnail thumbnailKind], FUSE_QUICKLOOK_THUMBNAIL_NONE );
   XCTAssertNil( [thumbnail bitmapImageRep] );
   XCTAssertNil( [thumbnail imageData] );
+}
+
+- (void)test_mdr_file_with_screen_produces_bitmap_thumbnail
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSBitmapImageRep *bitmap;
+
+  /* Microdrive cartridge containing a SCREEN$ code file */
+  thumbnail = [self thumbnailForFixture:@"tests/fixtures/test.mdr"];
+  bitmap = [thumbnail bitmapImageRep];
+
+  XCTAssertEqual( [thumbnail thumbnailKind], FUSE_QUICKLOOK_THUMBNAIL_BITMAP );
+  XCTAssertNotNil( bitmap );
+  XCTAssertEqual( [bitmap pixelsWide], 256 );
+  XCTAssertEqual( [bitmap pixelsHigh], 192 );
 }
 
 - (void)test_tap_file_with_no_screen_produces_no_thumbnail
