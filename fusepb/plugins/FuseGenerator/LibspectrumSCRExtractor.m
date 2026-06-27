@@ -273,8 +273,8 @@ mmap_file( const char *filename, unsigned char **buffer, size_t *length )
             id myValue = nil;
 
             switch( data[0] ) {
-            case 0: myValue = (NSString*)kUTTypeGIF; break;
-            case 1: myValue = (NSString*)kUTTypeJPEG; break;
+            case 0: myValue = @"com.compuserve.gif"; break;
+            case 1: myValue = @"public.jpeg"; break;
             }
 
             scrOptions =
