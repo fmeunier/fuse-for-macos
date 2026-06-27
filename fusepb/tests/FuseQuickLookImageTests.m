@@ -338,7 +338,7 @@
 {
   FuseQuickLookImage *image;
 
-  /* Microdrive cartridge with no SCREEN$ — process_mdr stub returns nothing */
+  /* Microdrive cartridge with no SCREEN$ code file */
   image = [[[FuseQuickLookImage alloc]
              initWithContentsOfURL:[self fixtureURL:@"deps/libspectrum/test/writeprotected.mdr"]] autorelease];
 
@@ -346,6 +346,37 @@
   XCTAssertEqual( [image imageKind], FUSE_QUICKLOOK_IMAGE_NONE );
   XCTAssertNil( [image imageData] );
   XCTAssertNil( [image bitmapImageRep] );
+}
+
+- (void)test_mdr_file_with_screen_produces_bitmap_image
+{
+  FuseQuickLookImage *image;
+  NSBitmapImageRep *bitmap;
+
+  /* Microdrive cartridge containing a SCREEN$ code file */
+  image = [[[FuseQuickLookImage alloc]
+             initWithContentsOfURL:[self fixtureURL:@"tests/fixtures/test.mdr"]] autorelease];
+  bitmap = [image bitmapImageRep];
+
+  XCTAssertEqual( [image libspectrumClass], LIBSPECTRUM_CLASS_MICRODRIVE );
+  XCTAssertEqual( [image imageKind], FUSE_QUICKLOOK_IMAGE_SCR );
+  XCTAssertNotNil( bitmap );
+  XCTAssertEqual( [bitmap pixelsWide], 256 );
+  XCTAssertEqual( [bitmap pixelsHigh], 192 );
+}
+
+- (void)test_mdr_file_with_screen_canvas_size_is_standard_spectrum_resolution
+{
+  FuseQuickLookImage *image;
+  NSSize canvas;
+
+  /* Microdrive cartridge containing a SCREEN$ code file */
+  image = [[[FuseQuickLookImage alloc]
+             initWithContentsOfURL:[self fixtureURL:@"tests/fixtures/test.mdr"]] autorelease];
+  canvas = [image canvasSize];
+
+  XCTAssertEqual( canvas.width,  256.0 );
+  XCTAssertEqual( canvas.height, 192.0 );
 }
 
 - (void)test_mdr_canvas_size_is_zero_without_screen
