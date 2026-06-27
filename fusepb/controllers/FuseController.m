@@ -232,6 +232,7 @@ is_beta_active( void ) {
 static FuseController *singleton = nil;
 
 static NSMutableArray *recentSnapFileNames = nil;
+static const NSTimeInterval sparkle_updater_start_delay = 0.5;
 
 + (FuseController *)singleton
 {
@@ -248,6 +249,8 @@ static NSMutableArray *recentSnapFileNames = nil;
 
     NSArray *compressedFileTypes = @[@"gz", @"GZ", @"bz2", @"BZ2", @"zip",
                                      @"ZIP"];
+
+    sparkleUpdaterStarted = NO;
 
     snapFileTypes = [NSMutableArray arrayWithObjects:@"mgtsnp", @"MGTSNP",
                       @"s", @"S", @"slt", @"SLT", @"sna", @"SNA",
@@ -1306,6 +1309,9 @@ save_as_exit:
 
 - (void)dealloc
 {
+  [NSObject cancelPreviousPerformRequestsWithTarget:self
+                                           selector:@selector(startSparkleUpdater)
+                                             object:nil];
   [tapeBrowserController release];
   [keyboardController release];
   [saveBinaryController release];
@@ -2627,9 +2633,35 @@ save_as_exit:
   return confirm;
 }
 
+- (void)startSparkleUpdater
+{
+  if( !sparkleUpdaterController || sparkleUpdaterStarted ) return;
+
+  /* Delay Sparkle until the app has finished becoming active. Starting it
+     during launch can hang while Sparkle presents its UI. */
+  sparkleUpdaterStarted = YES;
+  [sparkleUpdaterController startUpdater];
+}
+
 - (void)applicationDidFinishLaunching:(NSNotification *)notification
 {
-  if( sparkleUpdaterController ) [sparkleUpdaterController startUpdater];
+  if( sparkleUpdaterController && [NSApp isActive] ) {
+    [self performSelector:@selector(startSparkleUpdater)
+               withObject:nil
+               afterDelay:sparkle_updater_start_delay];
+  }
+}
+
+- (void)applicationDidBecomeActive:(NSNotification *)notification
+{
+  if( !sparkleUpdaterController || sparkleUpdaterStarted ) return;
+
+  [NSObject cancelPreviousPerformRequestsWithTarget:self
+                                           selector:@selector(startSparkleUpdater)
+                                             object:nil];
+  [self performSelector:@selector(startSparkleUpdater)
+             withObject:nil
+             afterDelay:sparkle_updater_start_delay];
 }
 
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)theApplication

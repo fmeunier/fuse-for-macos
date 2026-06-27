@@ -73,6 +73,7 @@
   SaveBinaryController *saveBinaryController;
   SPUStandardUpdaterController *sparkleUpdaterController;
   TapeBrowserController *tapeBrowserController;
+  BOOL sparkleUpdaterStarted;
 }
 + (FuseController *)singleton;
 
