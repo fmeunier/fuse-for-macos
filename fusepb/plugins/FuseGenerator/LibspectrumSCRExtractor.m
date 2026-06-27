@@ -335,14 +335,16 @@ microdrive_header_is_screen_dump( const unsigned char *data, int length )
    filename. MDR data is split into up to LIBSPECTRUM_MICRODRIVE_BLOCK_MAX
    sectors of LIBSPECTRUM_MICRODRIVE_BLOCK_LEN bytes. Each sector's second
    header (at byte offset LIBSPECTRUM_MICRODRIVE_HEAD_LEN) contains:
-     recflg (1 byte)  -- bit0: 1=file-descriptor header, 0=data block
-     recnum (1 byte)  -- sector sequence number within the file (0-based)
+     recflg (1 byte)  -- record flags
+     recnum (1 byte)  -- sector sequence number within the file
      reclen (2 bytes) -- number of valid data bytes in this sector (LE)
      recnam (10 bytes)-- file name, space-padded
-   Actual sector data follows at offset LIBSPECTRUM_MICRODRIVE_HEAD_LEN*2. */
+   Actual sector data follows at offset LIBSPECTRUM_MICRODRIVE_HEAD_LEN*2.
+   For real formatted cartridges, the file descriptor is stored as recnum 0,
+   and file data starts at recnum 1. */
 - (void) process_mdr
 {
-  int num_blocks, i, found, have_screen_file;
+  int num_blocks, i, found, header_block;
   unsigned char file_name[10], screen[STANDARD_SCR_SIZE];
 
   if( length < (size_t)LIBSPECTRUM_MICRODRIVE_BLOCK_LEN ) return;
@@ -351,53 +353,53 @@ microdrive_header_is_screen_dump( const unsigned char *data, int length )
   if( num_blocks > LIBSPECTRUM_MICRODRIVE_BLOCK_MAX )
     num_blocks = LIBSPECTRUM_MICRODRIVE_BLOCK_MAX;
 
-  have_screen_file = 0;
+  header_block = -1;
 
   for( i = 0; i < num_blocks; i++ ) {
     const unsigned char *blk, *data;
-    int recflg, reclen;
+    int recnum, reclen;
 
     blk = buffer + i * LIBSPECTRUM_MICRODRIVE_BLOCK_LEN;
-
-    recflg = blk[ LIBSPECTRUM_MICRODRIVE_HEAD_LEN ];
+    recnum = blk[ LIBSPECTRUM_MICRODRIVE_HEAD_LEN + 1 ];
     reclen = blk[ LIBSPECTRUM_MICRODRIVE_HEAD_LEN + 2 ] |
              ( blk[ LIBSPECTRUM_MICRODRIVE_HEAD_LEN + 3 ] << 8 );
 
-    if( reclen == 0 || !( recflg & 0x01 ) ) continue;
+    if( recnum != 0 || reclen == 0 ) continue;
 
     data = blk + LIBSPECTRUM_MICRODRIVE_HEAD_LEN * 2;
     if( !microdrive_header_is_screen_dump( data, reclen ) ) continue;
 
     memcpy( file_name, blk + LIBSPECTRUM_MICRODRIVE_HEAD_LEN + 4,
             sizeof( file_name ) );
-    have_screen_file = 1;
+    header_block = i;
     break;
   }
 
-  if( !have_screen_file ) return;
+  if( header_block < 0 ) return;
 
   memset( screen, 0, sizeof( screen ) );
   found = 0;
 
   for( i = 0; i < num_blocks; i++ ) {
     const unsigned char *blk;
-    int recflg, recnum, reclen, offset, copy_len;
+    int recnum, reclen, offset, copy_len;
+
+    if( i == header_block ) continue;
 
     blk = buffer + i * LIBSPECTRUM_MICRODRIVE_BLOCK_LEN;
-
-    recflg = blk[ LIBSPECTRUM_MICRODRIVE_HEAD_LEN ];
     recnum = blk[ LIBSPECTRUM_MICRODRIVE_HEAD_LEN + 1 ];
     reclen = blk[ LIBSPECTRUM_MICRODRIVE_HEAD_LEN + 2 ] |
              ( blk[ LIBSPECTRUM_MICRODRIVE_HEAD_LEN + 3 ] << 8 );
 
-    /* Skip free/erased blocks and file-descriptor-header blocks */
-    if( reclen == 0 || ( recflg & 0x01 ) ) continue;
+    /* Ignore empty sectors and the recnum 0 file descriptor sector; only
+       recnum 1..n hold the file payload on a real formatted cartridge. */
+    if( recnum == 0 || reclen == 0 ) continue;
 
     if( memcmp( blk + LIBSPECTRUM_MICRODRIVE_HEAD_LEN + 4, file_name,
                 sizeof( file_name ) ) != 0 )
       continue;
 
-    offset = recnum * LIBSPECTRUM_MICRODRIVE_DATA_LEN;
+    offset = ( recnum - 1 ) * LIBSPECTRUM_MICRODRIVE_DATA_LEN;
     if( offset >= STANDARD_SCR_SIZE ) continue;
 
     copy_len = reclen < LIBSPECTRUM_MICRODRIVE_DATA_LEN
@@ -411,7 +413,7 @@ microdrive_header_is_screen_dump( const unsigned char *data, int length )
     found++;
   }
 
-  /* Require at least the 13 sectors that cover the full bitmap area */
+  /* Require at least the 13 sectors that cover the full bitmap area. */
   if( found >= 13 ) {
     scrData = [NSData dataWithBytes:screen length:STANDARD_SCR_SIZE];
     image_type = TYPE_SCR;

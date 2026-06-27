@@ -109,80 +109,6 @@
   return [[[FuseQuickLookPreview alloc] initWithQuickLookImage:image] autorelease];
 }
 
-- (NSURL*)writeSyntheticMDRScreenDump
-{
-  static const NSUInteger block_len = 543;
-  static const NSUInteger header_len = 15;
-  static const NSUInteger data_len = 512;
-  static const NSUInteger screen_len = 6912;
-  NSMutableData *mdr_data;
-  NSMutableData *screen_data;
-  NSURL *directory_url;
-  NSURL *file_url;
-  const char file_name[10] = { 'L', 'O', 'A', 'D', 'E', 'R', ' ', ' ', ' ', ' ' };
-  NSUInteger i;
-  NSError *error;
-
-  mdr_data = [NSMutableData dataWithLength:block_len * 15];
-  screen_data = [NSMutableData dataWithLength:screen_len];
-
-  for( i = 0; i < screen_len; i++ ) {
-    ((unsigned char *)[screen_data mutableBytes])[ i ] = (unsigned char)( i & 0xff );
-  }
-
-  {
-    unsigned char *block = (unsigned char *)[mdr_data mutableBytes];
-    unsigned char *data = block + header_len * 2;
-
-    block[ header_len ] = 0x01;
-    block[ header_len + 2 ] = 7;
-    memcpy( block + header_len + 4, file_name, sizeof( file_name ) );
-
-    data[0] = 3;
-    data[1] = (unsigned char)( screen_len & 0xff );
-    data[2] = (unsigned char)( screen_len >> 8 );
-    data[3] = 0x00;
-    data[4] = 0x40;
-  }
-
-  for( i = 0; i < 14; i++ ) {
-    unsigned char *block;
-    unsigned char *data;
-    NSUInteger block_offset;
-    NSUInteger offset;
-    NSUInteger copy_len;
-
-    block_offset = block_len * ( i + 1 );
-    block = (unsigned char *)[mdr_data mutableBytes] + block_offset;
-    data = block + header_len * 2;
-    offset = i * data_len;
-    copy_len = screen_len - offset;
-    if( copy_len > data_len ) copy_len = data_len;
-
-    block[ header_len + 1 ] = (unsigned char)i;
-    block[ header_len + 2 ] = (unsigned char)( copy_len & 0xff );
-    block[ header_len + 3 ] = (unsigned char)( copy_len >> 8 );
-    memcpy( block + header_len + 4, file_name, sizeof( file_name ) );
-    memcpy( data, (const unsigned char *)[screen_data bytes] + offset, copy_len );
-  }
-
-  directory_url = [NSURL fileURLWithPath:[NSTemporaryDirectory()
-                           stringByAppendingPathComponent:[[NSUUID UUID] UUIDString]]
-                             isDirectory:YES];
-  error = nil;
-  XCTAssertTrue( [[NSFileManager defaultManager] createDirectoryAtURL:directory_url
-                                          withIntermediateDirectories:YES
-                                                           attributes:nil
-                                                                error:&error] );
-  XCTAssertNil( error );
-
-  file_url = [directory_url URLByAppendingPathComponent:@"screen-dump.mdr"];
-  XCTAssertTrue( [mdr_data writeToURL:file_url options:0 error:&error] );
-  XCTAssertNil( error );
-
-  return file_url;
-}
-
 - (NSData*)jpegDataWithPixelSize:(NSSize)pixel_size dpi:(CGFloat)dpi
 {
   NSBitmapImageRep *bitmap;
@@ -266,14 +192,12 @@
   XCTAssertNil( [preview previewData] );
 }
 
-- (void)test_mdr_screen_dump_code_file_produces_png_preview
+- (void)test_mdr_real_formatted_screen_dump_produces_png_preview
 {
   FuseQuickLookPreview *preview;
   NSData *preview_data;
-  NSURL *file_url;
 
-  file_url = [self writeSyntheticMDRScreenDump];
-  preview = [self previewForURL:file_url];
+  preview = [self previewForFixture:@"tests/fixtures/test.mdr"];
   preview_data = [preview previewData];
 
   XCTAssertEqual( [preview previewKind], FUSE_QUICKLOOK_PREVIEW_IMAGE_DATA );

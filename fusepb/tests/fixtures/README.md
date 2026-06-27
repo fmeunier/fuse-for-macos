@@ -25,3 +25,7 @@ sips -s format jpeg fuse/lib/keyboard.png --out /tmp/keyboard-inlay.jpg
 Expected Quick Look behavior:
 - Thumbnail extraction should prefer the embedded `Picture` custom block image.
 - The tape also includes a `Spectrum Screen` loading screen via `snap2tzx`.
+
+`test.mdr` is a manually created microdrive image containing a saved screen named
+`test`. Prefer this fixture for manual MDR Quick Look testing because it reflects
+a real formatted cartridge image.
