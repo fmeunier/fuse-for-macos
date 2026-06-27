@@ -41,6 +41,8 @@ The finished app is written to:
 
 Other useful targets:
 
+  make test                    # run the Quick Look unit test suite (FuseQuickLookTests)
+  make test-only               # run a single test; e.g. make test-only TEST=FuseQuickLookImageTests/test_scr_file_produces_bitmap_image
   make clean                   # remove Fuse build products
   make adhoc                   # ad-hoc sign and package as Fuse-adhoc.zip
   make notarize                # build, notarize, and staple Fuse.app
