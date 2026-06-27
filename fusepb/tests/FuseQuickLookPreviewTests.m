@@ -20,6 +20,8 @@
 
 #import <ImageIO/ImageIO.h>
 
+#include <string.h>
+
 #import "FuseQuickLookImage.h"
 #import "FuseQuickLookPreview.h"
 
@@ -94,6 +96,15 @@
 
   image = [[[FuseQuickLookImage alloc]
              initWithContentsOfURL:[self fixtureURL:relative_path]] autorelease];
+
+  return [[[FuseQuickLookPreview alloc] initWithQuickLookImage:image] autorelease];
+}
+
+- (FuseQuickLookPreview*)previewForURL:(NSURL*)url
+{
+  FuseQuickLookImage *image;
+
+  image = [[[FuseQuickLookImage alloc] initWithContentsOfURL:url] autorelease];
 
   return [[[FuseQuickLookPreview alloc] initWithQuickLookImage:image] autorelease];
 }
@@ -179,6 +190,24 @@
   XCTAssertEqual( [preview previewKind], FUSE_QUICKLOOK_PREVIEW_NONE );
   XCTAssertNil( [preview contentTypeIdentifier] );
   XCTAssertNil( [preview previewData] );
+}
+
+- (void)test_mdr_real_formatted_screen_dump_produces_png_preview
+{
+  FuseQuickLookPreview *preview;
+  NSData *preview_data;
+
+  preview = [self previewForFixture:@"tests/fixtures/test.mdr"];
+  preview_data = [preview previewData];
+
+  XCTAssertEqual( [preview previewKind], FUSE_QUICKLOOK_PREVIEW_IMAGE_DATA );
+  XCTAssertEqualObjects( [preview contentTypeIdentifier], @"public.png" );
+  XCTAssertEqual( [preview contentSize].width, 256.0 );
+  XCTAssertEqual( [preview contentSize].height, 192.0 );
+  XCTAssertNotNil( preview_data );
+  XCTAssertTrue( [preview_data length] > 8 );
+  XCTAssertEqual( ((const unsigned char *)[preview_data bytes])[0], 0x89 );
+  XCTAssertEqual( ((const unsigned char *)[preview_data bytes])[1], 0x50 );
 }
 
 - (void)test_tzx_with_embedded_inlay_returns_jpeg_preview
