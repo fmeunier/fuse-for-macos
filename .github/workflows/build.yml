@@ -37,3 +37,15 @@ jobs:
 
       - name: Run Quick Look unit tests
         run: make test
+
+  test-scripts:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install pytest
+        run: pip install pytest
+
+      - name: Run Python script unit tests
+        run: make test-scripts
