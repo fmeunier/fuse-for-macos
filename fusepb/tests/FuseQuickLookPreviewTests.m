@@ -284,6 +284,38 @@
   XCTAssertNil( [preview previewData] );
 }
 
+- (void)test_szx_snapshot_content_size_is_standard_spectrum_resolution
+{
+  FuseQuickLookPreview *preview;
+
+  preview = [self previewForFixture:@"deps/libspectrum/test/random.szx"];
+
+  XCTAssertEqual( [preview contentSize].width,  256.0 );
+  XCTAssertEqual( [preview contentSize].height, 192.0 );
+}
+
+- (void)test_mdr_file_with_screen_content_size_is_standard_spectrum_resolution
+{
+  FuseQuickLookPreview *preview;
+
+  /* Microdrive cartridge containing a SCREEN$ code file */
+  preview = [self previewForFixture:@"tests/fixtures/test.mdr"];
+
+  XCTAssertEqual( [preview contentSize].width,  256.0 );
+  XCTAssertEqual( [preview contentSize].height, 192.0 );
+}
+
+- (void)test_no_image_has_zero_content_size
+{
+  FuseQuickLookPreview *preview;
+
+  /* Tape with no loading screen — content size should be zero */
+  preview = [self previewForFixture:@"deps/libspectrum/test/turbo-zeropilot.tzx"];
+
+  XCTAssertEqual( [preview contentSize].width,  0.0 );
+  XCTAssertEqual( [preview contentSize].height, 0.0 );
+}
+
 - (void)test_imageio_preview_uses_pixel_dimensions_not_dpi_scaled_size
 {
   FuseQuickLookPreviewTestImage *image;
