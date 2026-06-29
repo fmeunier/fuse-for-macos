@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-06-28T06:37:55Z",
-  "run_id": "28313985524",
+  "last_run": "2026-06-29T06:45:36Z",
+  "run_id": "28353675246",
   "backlog_cursor": {
     "issues": 0,
     "prs": 0
@@ -20,7 +20,15 @@
       "pr_number": 36,
       "status": "open",
       "created_at": "2026-06-21",
-      "note": "Rebased onto master 2026-06-28, resolved Makefile conflict. Also added CI test-scripts job (ubuntu-latest, pytest). All 15 tests pass."
+      "note": "Rebased onto master 2026-06-28, resolved Makefile conflict. CI job changes blocked by protected files (issues #41, #42). Patch not yet applied."
+    },
+    {
+      "branch": "repo-assist/test-canvas-content-size-2026-06-29",
+      "title": "Add missing canvas/content-size tests for SZX and MDR-with-screen",
+      "pr_number": null,
+      "status": "pending_creation",
+      "created_at": "2026-06-29",
+      "note": "5 tests added to Thumbnail and Preview suites. PR number unknown at creation time - no protected files involved."
     }
   ],
   "monthly_activity_issue": 6,
@@ -31,5 +39,5 @@
     "issue_34", "check_comment_pr8",
     "pr_20", "pr_mdr_positive_tests"
   ],
-  "notes": "Open Repo Assist PRs: #36 (pytest scripts + CI job, rebased 2026-06-28). PR #20 (FuseHelp) was closed without merge by maintainer. MDR positive tests (from 2026-06-27 run) were applied directly to master by maintainer. PR #39 (Copilot fix for pre_activation) is open but not a Repo Assist PR. Issue #5 (templates) still needs human to apply. Do NOT propose Brewfile again. Issue #19 was acknowledged by maintainer."
+  "notes": "Open Repo Assist PRs: #36 (pytest scripts, blocked CI job patch - see issues #41/#42), and new canvas/content-size tests PR (branch: repo-assist/test-canvas-content-size-2026-06-29, number TBD). PR #39 (Copilot fix for pre_activation) open but not Repo Assist. Issue #5 (templates) still needs human to apply. Do NOT propose Brewfile again. Issue #19 was acknowledged by maintainer. MDR positive tests applied to master by maintainer."
 }
