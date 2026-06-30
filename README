@@ -3,12 +3,17 @@ Fuse for macOS Source Distribution
 This is the source distribution of the macOS version of Fuse, targeting
 Apple Silicon (arm64) Macs running macOS 13.0 or later, built with Xcode.
 
-You will also need ruby, jekyll, and bundler to build the in-app
-help content:
+You will also need ruby, autoconf, automake, libtool, jekyll, and bundler to
+build the in-app help content and the staged Unix library dependencies:
 
+$ brew install ruby autoconf automake libtool
 $ gem install jekyll bundler
 
-(homebrew is a convenient way to install ruby first.)
+A convenience target is available:
+
+$ make deps
+
+(homebrew is a convenient way to install ruby; https://brew.sh)
 
 Full build instructions:
 
@@ -41,8 +46,10 @@ The finished app is written to:
 
 Other useful targets:
 
+  make deps                    # install Homebrew and gem build dependencies (macOS only)
   make test                    # run the Quick Look unit test suite (FuseQuickLookTests)
   make test-only               # run a single test; e.g. make test-only TEST=FuseQuickLookImageTests/test_scr_file_produces_bitmap_image
+  make analyze                 # run the Xcode static analyser on the Fuse scheme
   make clean                   # remove Fuse build products
   make adhoc                   # ad-hoc sign and package as Fuse-adhoc.zip
   make notarize                # build, notarize, and staple Fuse.app
