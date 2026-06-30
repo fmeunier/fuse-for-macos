@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-06-29T06:45:36Z",
-  "run_id": "28353675246",
+  "last_run": "2026-06-30T06:47:00Z",
+  "run_id": "28425163696",
   "backlog_cursor": {
     "issues": 0,
     "prs": 0
@@ -23,12 +23,27 @@
       "note": "Rebased onto master 2026-06-28, resolved Makefile conflict. CI job changes blocked by protected files (issues #41, #42). Patch not yet applied."
     },
     {
-      "branch": "repo-assist/test-canvas-content-size-2026-06-29",
-      "title": "Add missing canvas/content-size tests for SZX and MDR-with-screen",
+      "branch": "repo-assist/test-canvas-content-size-2026-06-29-0650043ae6ffed21",
+      "title": "Add missing canvas/content-size tests for SZX and MDR-with-screen (Thumbnail and Preview suites)",
+      "pr_number": 43,
+      "status": "open",
+      "created_at": "2026-06-29"
+    },
+    {
+      "branch": "repo-assist/eng-make-deps-2026-06-30",
+      "title": "Add make deps target; document autoconf/automake/libtool prerequisites",
       "pr_number": null,
       "status": "pending_creation",
-      "created_at": "2026-06-29",
-      "note": "5 tests added to Thumbnail and Preview suites. PR number unknown at creation time - no protected files involved."
+      "created_at": "2026-06-30",
+      "note": "Task 4: Makefile deps target + README prerequisites update. PR number TBD."
+    },
+    {
+      "branch": "repo-assist/test-image-szx-canvas-2026-06-30",
+      "title": "Add test_szx_snapshot_canvas_size_is_standard_spectrum_resolution to ImageTests",
+      "pr_number": null,
+      "status": "pending_creation",
+      "created_at": "2026-06-30",
+      "note": "Task 5: SZX canvas-size test for FuseQuickLookImageTests. Completes coverage alongside PR #43. PR number TBD."
     }
   ],
   "monthly_activity_issue": 6,
@@ -39,5 +54,5 @@
     "issue_34", "check_comment_pr8",
     "pr_20", "pr_mdr_positive_tests"
   ],
-  "notes": "Open Repo Assist PRs: #36 (pytest scripts, blocked CI job patch - see issues #41/#42), and new canvas/content-size tests PR (branch: repo-assist/test-canvas-content-size-2026-06-29, number TBD). PR #39 (Copilot fix for pre_activation) open but not Repo Assist. Issue #5 (templates) still needs human to apply. Do NOT propose Brewfile again. Issue #19 was acknowledged by maintainer. MDR positive tests applied to master by maintainer."
+  "notes": "Open Repo Assist PRs: #36 (pytest scripts, blocked CI job patch - see issues #41/#42); #43 (SZX/MDR canvas/content-size tests for Thumbnail+Preview suites); new PRs pending from 2026-06-30 run: eng-make-deps (Task 4, README+Makefile) and test-image-szx-canvas (Task 5, ImageTests SZX canvas size). PR #39 (Copilot fix for pre_activation) open but not Repo Assist. Issue #5 (templates) still needs human to apply. Do NOT propose Brewfile again. Issue #19 was acknowledged by maintainer. MDR positive tests applied to master by maintainer. Do NOT add more deps/prereqs docs without checking if PR for make deps is merged first."
 }
