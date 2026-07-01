@@ -355,6 +355,18 @@
   XCTAssertEqual( [bitmap pixelsHigh], 192 );
 }
 
+- (void)test_szx_snapshot_canvas_size_is_standard_spectrum_resolution
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSSize canvas_size;
+
+  thumbnail = [self thumbnailForFixture:@"deps/libspectrum/test/random.szx"];
+  canvas_size = [thumbnail canvasSize];
+
+  XCTAssertEqual( canvas_size.width, 256.0 );
+  XCTAssertEqual( canvas_size.height, 192.0 );
+}
+
 - (void)test_mdr_file_produces_no_thumbnail
 {
   FuseQuickLookThumbnail *thumbnail;
@@ -380,6 +392,19 @@
   XCTAssertNotNil( bitmap );
   XCTAssertEqual( [bitmap pixelsWide], 256 );
   XCTAssertEqual( [bitmap pixelsHigh], 192 );
+}
+
+- (void)test_mdr_file_with_screen_canvas_size_is_standard_spectrum_resolution
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSSize canvas_size;
+
+  /* Microdrive cartridge containing a SCREEN$ code file */
+  thumbnail = [self thumbnailForFixture:@"tests/fixtures/test.mdr"];
+  canvas_size = [thumbnail canvasSize];
+
+  XCTAssertEqual( canvas_size.width, 256.0 );
+  XCTAssertEqual( canvas_size.height, 192.0 );
 }
 
 - (void)test_tap_file_with_no_screen_produces_no_thumbnail
