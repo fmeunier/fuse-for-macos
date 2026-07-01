@@ -14,6 +14,7 @@
         <attribute name="net_sourceforge_projects_fuse_emulator_GraphicsMode" multivalued="false" type="CFString"/>
         <attribute name="net_sourceforge_projects_fuse_emulator_CartridgeLength" multivalued="false" type="CFNumber"/>
         <attribute name="net_sourceforge_projects_fuse_emulator_WriteProtect" multivalued="false" type="CFString"/>
+        <attribute name="net_sourceforge_projects_fuse_emulator_FileNames" multivalued="true" type="CFString"/>
     </attributes>
 	<note>
 		Schema for additional attributes supplied by the Fuse importer.
@@ -112,14 +113,17 @@
             <allattrs>
                 net_sourceforge_projects_fuse_emulator_CartridgeLength
                 net_sourceforge_projects_fuse_emulator_WriteProtect
+                net_sourceforge_projects_fuse_emulator_FileNames
             </allattrs>
             <displayattrs>
                 net_sourceforge_projects_fuse_emulator_CartridgeLength
                 net_sourceforge_projects_fuse_emulator_WriteProtect
+                net_sourceforge_projects_fuse_emulator_FileNames
             </displayattrs>
             <previewattrs>
                 net_sourceforge_projects_fuse_emulator_CartridgeLength
                 net_sourceforge_projects_fuse_emulator_WriteProtect
+                net_sourceforge_projects_fuse_emulator_FileNames
             </previewattrs>
         </type>
     </types>
