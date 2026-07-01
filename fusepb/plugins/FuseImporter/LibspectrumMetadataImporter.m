@@ -697,7 +697,7 @@ process_generic
 }
 
 - (BOOL)
-process_auxilliary
+process_auxiliary
 {
   BOOL error = NO;
 
@@ -862,7 +862,7 @@ process_hdr
     break;
 
   case LIBSPECTRUM_CLASS_AUXILIARY:
-    retval = [self process_auxilliary];
+    retval = [self process_auxiliary];
     break;
 
   default:

@@ -47,7 +47,7 @@ xcodebuild -project fusepb/Fuse.xcodeproj -scheme Fuse -configuration Developmen
 Use this for a faster dev loop. Prefer `make fuse` for full verification.
 
 ### Lint / static analysis
-There is no dedicated linter. Use Xcode's analyzer:
+There is no dedicated linter. Use Xcode's analyzer via `make analyze`, or directly:
 ```sh
 xcodebuild -project fusepb/Fuse.xcodeproj -scheme Fuse -configuration Development -destination 'platform=macOS' analyze
 ```
