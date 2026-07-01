@@ -334,6 +334,19 @@
   XCTAssertEqual( [bitmap pixelsHigh], 192 );
 }
 
+- (void)test_szx_snapshot_canvas_size_is_standard_spectrum_resolution
+{
+  FuseQuickLookImage *image;
+  NSSize canvas;
+
+  image = [[[FuseQuickLookImage alloc]
+             initWithContentsOfURL:[self fixtureURL:@"deps/libspectrum/test/random.szx"]] autorelease];
+  canvas = [image canvasSize];
+
+  XCTAssertEqual( canvas.width,  256.0 );
+  XCTAssertEqual( canvas.height, 192.0 );
+}
+
 - (void)test_mdr_file_produces_no_image
 {
   FuseQuickLookImage *image;
