@@ -731,6 +731,12 @@ process_mdr
 {
   libspectrum_error error;
   libspectrum_microdrive *microdrive;
+  int num_blocks, i;
+  NSMutableArray *file_names;
+  const unsigned char *blk;
+  int recnum, reclen, j;
+  char name_bytes[11];
+  NSString *name;
 
   microdrive = libspectrum_microdrive_alloc();
   if( !microdrive ) return NO;
@@ -750,6 +756,43 @@ process_mdr
                  forKey:@"net_sourceforge_projects_fuse_emulator_WriteProtect"];
 
   libspectrum_microdrive_free( microdrive );
+
+  /* Extract the names of files stored on the cartridge.
+     Each sector whose recnum is 0 and reclen is non-zero is a file-descriptor
+     sector; bytes 4–13 of the second header hold the 10-byte space-padded
+     file name. */
+  if( length < (size_t)LIBSPECTRUM_MICRODRIVE_BLOCK_LEN ) return YES;
+
+  num_blocks = (int)( length / LIBSPECTRUM_MICRODRIVE_BLOCK_LEN );
+  if( num_blocks > LIBSPECTRUM_MICRODRIVE_BLOCK_MAX )
+    num_blocks = LIBSPECTRUM_MICRODRIVE_BLOCK_MAX;
+
+  file_names = [NSMutableArray array];
+
+  for( i = 0; i < num_blocks; i++ ) {
+    blk = buffer + i * LIBSPECTRUM_MICRODRIVE_BLOCK_LEN;
+    recnum = blk[ LIBSPECTRUM_MICRODRIVE_HEAD_LEN + 1 ];
+    reclen = blk[ LIBSPECTRUM_MICRODRIVE_HEAD_LEN + 2 ] |
+             ( blk[ LIBSPECTRUM_MICRODRIVE_HEAD_LEN + 3 ] << 8 );
+
+    if( recnum != 0 || reclen == 0 ) continue;
+
+    memcpy( name_bytes, blk + LIBSPECTRUM_MICRODRIVE_HEAD_LEN + 4, 10 );
+    name_bytes[10] = '\0';
+    for( j = 9; j >= 0 && name_bytes[j] == ' '; j-- )
+      name_bytes[j] = '\0';
+
+    if( name_bytes[0] == '\0' ) continue;
+
+    name = [NSString stringWithCString:name_bytes encoding:NSISOLatin1StringEncoding];
+    if( name && ![file_names containsObject:name] )
+      [file_names addObject:name];
+  }
+
+  if( [file_names count] > 0 ) {
+    [attributes setObject:file_names
+                   forKey:@"net_sourceforge_projects_fuse_emulator_FileNames"];
+  }
 
   return YES;
 }
