@@ -272,6 +272,28 @@
   XCTAssertNil( [preview previewData] );
 }
 
+- (void)test_mdr_without_screen_has_zero_content_size
+{
+  FuseQuickLookPreview *preview;
+
+  /* MDR with no SCREEN$ — content size should be zero */
+  preview = [self previewForFixture:@"deps/libspectrum/test/writeprotected.mdr"];
+
+  XCTAssertEqual( [preview contentSize].width,  0.0 );
+  XCTAssertEqual( [preview contentSize].height, 0.0 );
+}
+
+- (void)test_tap_without_screen_has_zero_content_size
+{
+  FuseQuickLookPreview *preview;
+
+  /* Plain TAP containing a BASIC program — no loading screen, content size should be zero */
+  preview = [self previewForFixture:@"deps/libspectrum/test/standard-tap.tap"];
+
+  XCTAssertEqual( [preview contentSize].width,  0.0 );
+  XCTAssertEqual( [preview contentSize].height, 0.0 );
+}
+
 - (void)test_tap_file_with_no_screen_produces_no_preview
 {
   FuseQuickLookPreview *preview;
