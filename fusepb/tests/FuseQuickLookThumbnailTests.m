@@ -379,6 +379,32 @@
   XCTAssertNil( [thumbnail imageData] );
 }
 
+- (void)test_mdr_canvas_size_is_zero_without_screen
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSSize canvas_size;
+
+  /* MDR with no SCREEN$ code file — canvas size should be zero */
+  thumbnail = [self thumbnailForFixture:@"deps/libspectrum/test/writeprotected.mdr"];
+  canvas_size = [thumbnail canvasSize];
+
+  XCTAssertEqual( canvas_size.width,  0.0 );
+  XCTAssertEqual( canvas_size.height, 0.0 );
+}
+
+- (void)test_tap_canvas_size_is_zero_without_screen
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSSize canvas_size;
+
+  /* Plain TAP containing a BASIC program — no loading screen, canvas size should be zero */
+  thumbnail = [self thumbnailForFixture:@"deps/libspectrum/test/standard-tap.tap"];
+  canvas_size = [thumbnail canvasSize];
+
+  XCTAssertEqual( canvas_size.width,  0.0 );
+  XCTAssertEqual( canvas_size.height, 0.0 );
+}
+
 - (void)test_mdr_file_with_screen_produces_bitmap_thumbnail
 {
   FuseQuickLookThumbnail *thumbnail;
