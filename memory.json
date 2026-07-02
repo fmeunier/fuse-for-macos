@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-07-01T00:00:00Z",
-  "run_id": "28498768578",
+  "last_run": "2026-07-02T06:55:00Z",
+  "run_id": "28570006664",
   "backlog_cursor": {
     "issues": 0,
     "prs": 0
@@ -26,48 +26,89 @@
       "branch": "repo-assist/test-canvas-content-size-2026-06-29-0650043ae6ffed21",
       "title": "Add missing canvas/content-size tests for SZX and MDR-with-screen (Thumbnail and Preview suites)",
       "pr_number": 43,
-      "status": "open",
+      "status": "merged",
       "created_at": "2026-06-29"
     },
     {
       "branch": "repo-assist/eng-make-deps-2026-06-30",
       "title": "Add make deps target; document autoconf/automake/libtool prerequisites",
       "pr_number": 44,
-      "status": "open",
-      "created_at": "2026-06-30"
+      "status": "closed_no_merge",
+      "created_at": "2026-06-30",
+      "note": "Maintainer closed without merging"
     },
     {
       "branch": "repo-assist/test-image-szx-canvas-2026-06-30",
       "title": "Add test_szx_snapshot_canvas_size_is_standard_spectrum_resolution to ImageTests",
       "pr_number": 45,
-      "status": "open",
+      "status": "merged",
       "created_at": "2026-06-30"
     },
     {
       "branch": "repo-assist/improve-auxilliary-typo-agents-2026-07-01",
       "title": "Fix process_auxiliary typo; document make analyze in AGENTS.md",
       "pr_number": null,
-      "status": "submitted",
+      "status": "merged",
       "created_at": "2026-07-01",
-      "note": "Task 5+4: Typo fix (process_auxilliary->process_auxiliary in .h and .m) + AGENTS.md lint section documents make analyze shortcut. PR number TBD."
+      "note": "Merged to master as 322b9e2"
     },
     {
       "branch": "repo-assist/feature-mdr-filenames-spotlight-2026-07-01",
       "title": "Spotlight: expose file names from MDR cartridges",
-      "pr_number": null,
-      "status": "submitted",
+      "pr_number": 47,
+      "status": "open",
       "created_at": "2026-07-01",
       "note": "Task 10: New multivalued FileNames Spotlight attribute on MDR type, populated by scanning raw buffer for file-descriptor sectors. schema.xml updated. PR number TBD."
+    },
+    {
+      "branch": "repo-assist/test-zero-size-mdr-tap-2026-07-02",
+      "title": "Add missing edge-case tests: zero-size MDR/TAP, empty SZX snapshot",
+      "pr_number": null,
+      "status": "submitted",
+      "created_at": "2026-07-02",
+      "note": "Task 9: 6 new tests covering zero canvas size for MDR/TAP without screen, and empty SZX positive test. PR number TBD."
+    },
+    {
+      "branch": "repo-assist/eng-make-help-2026-07-02",
+      "title": "Add make help target to list documented Makefile targets",
+      "pr_number": null,
+      "status": "submitted",
+      "created_at": "2026-07-02",
+      "note": "Task 4: Added help target with awk extraction of ## comments. PR number TBD."
+    },
+    {
+      "branch": "repo-assist/feature-tape-filenames-spotlight-2026-07-02",
+      "title": "Spotlight: extract FileNames from ROM header blocks in tape files",
+      "pr_number": null,
+      "status": "submitted",
+      "created_at": "2026-07-02",
+      "note": "Task 10: New FileNames attribute for TZX/PZX/TAP tape types. Extracts 10-char names from ROM header blocks (flag=0x00, size=19). schema.xml updated. PR number TBD."
     }
   ],
   "monthly_activity_issue": null,
   "monthly_activity_issue_note": "June issue #6 closed 2026-07-01. July 2026 issue created this run (aw_july2026); PR number TBD from safeoutputs.",
   "checked_off_by_user": [
-    "pr_15", "issue_17", "issue_16",
-    "pr_18", "pr_22", "pr_23", "pr_25", "pr_26", "pr_27", "pr_28", "pr_29",
-    "pr_8", "pr_32", "pr_33", "pr_35", "pr_37", "pr_38",
-    "issue_34", "check_comment_pr8",
-    "pr_20", "pr_mdr_positive_tests"
+    "pr_15",
+    "issue_17",
+    "issue_16",
+    "pr_18",
+    "pr_22",
+    "pr_23",
+    "pr_25",
+    "pr_26",
+    "pr_27",
+    "pr_28",
+    "pr_29",
+    "pr_8",
+    "pr_32",
+    "pr_33",
+    "pr_35",
+    "pr_37",
+    "pr_38",
+    "issue_34",
+    "check_comment_pr8",
+    "pr_20",
+    "pr_mdr_positive_tests"
   ],
-  "notes": "Open Repo Assist PRs: #36 (pytest scripts, blocked CI job patch - see issues #41/#42); #43 (SZX/MDR canvas/content-size tests); #44 (make deps + README); #45 (SZX canvas-size ImageTests); new PRs submitted 2026-07-01 (typo+AGENTS and MDR-filenames - numbers TBD). PR #39 (Copilot fix for pre_activation) open but not Repo Assist. Issue #5 (templates) still needs human to apply. Do NOT propose Brewfile again. Issue #19 was acknowledged by maintainer. MDR positive tests applied to master by maintainer. Do NOT add more deps/prereqs docs without checking if PR for make deps (#44) is merged first."
+  "notes": "PRs #36 (Python tests) and #39 (Copilot pre_activation fix) still open. PR #47 (MDR filenames) still open - may have merge conflicts. Three new PRs submitted 2026-07-02 (pending numbers). Do NOT re-add Python tests - maintainer reverted them. Do NOT re-propose make deps - maintainer closed PR #44 without merging."
 }
