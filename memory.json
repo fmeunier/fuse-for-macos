@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-07-02T06:55:00Z",
-  "run_id": "28570006664",
+  "last_run": "2026-07-03T08:22:00Z",
+  "run_id": "28648069310",
   "backlog_cursor": {
     "issues": 0,
     "prs": 0
@@ -18,75 +18,43 @@
       "branch": "repo-assist/eng-python-release-tests-2026-06-21-d56bd3da6161b41b",
       "title": "Add pytest suite for Sparkle release helper scripts; add make test-scripts; add CI test-scripts job",
       "pr_number": 36,
-      "status": "open",
+      "status": "open_stale",
       "created_at": "2026-06-21",
-      "note": "Rebased onto master 2026-06-28, resolved Makefile conflict. CI job changes blocked by protected files (issues #41, #42). Patch not yet applied."
+      "note": "STALE: maintainer reverted Python tests on 2026-07-01. Should be closed. Do NOT re-add Python tests."
     },
     {
-      "branch": "repo-assist/test-canvas-content-size-2026-06-29-0650043ae6ffed21",
-      "title": "Add missing canvas/content-size tests for SZX and MDR-with-screen (Thumbnail and Preview suites)",
-      "pr_number": 43,
-      "status": "merged",
-      "created_at": "2026-06-29"
-    },
-    {
-      "branch": "repo-assist/eng-make-deps-2026-06-30",
-      "title": "Add make deps target; document autoconf/automake/libtool prerequisites",
-      "pr_number": 44,
-      "status": "closed_no_merge",
-      "created_at": "2026-06-30",
-      "note": "Maintainer closed without merging"
-    },
-    {
-      "branch": "repo-assist/test-image-szx-canvas-2026-06-30",
-      "title": "Add test_szx_snapshot_canvas_size_is_standard_spectrum_resolution to ImageTests",
-      "pr_number": 45,
-      "status": "merged",
-      "created_at": "2026-06-30"
-    },
-    {
-      "branch": "repo-assist/improve-auxilliary-typo-agents-2026-07-01",
-      "title": "Fix process_auxiliary typo; document make analyze in AGENTS.md",
-      "pr_number": null,
-      "status": "merged",
-      "created_at": "2026-07-01",
-      "note": "Merged to master as 322b9e2"
-    },
-    {
-      "branch": "repo-assist/feature-mdr-filenames-spotlight-2026-07-01",
+      "branch": "repo-assist/feature-mdr-filenames-spotlight-2026-07-01-a9106be0241e7a35",
       "title": "Spotlight: expose file names from MDR cartridges",
       "pr_number": 47,
       "status": "open",
       "created_at": "2026-07-01",
-      "note": "Task 10: New multivalued FileNames Spotlight attribute on MDR type, populated by scanning raw buffer for file-descriptor sectors. schema.xml updated. PR number TBD."
+      "note": "Updated 2026-07-03: pushed typo-fix commit to align process_auxiliary spelling with master (322b9e2)."
     },
     {
-      "branch": "repo-assist/test-zero-size-mdr-tap-2026-07-02",
-      "title": "Add missing edge-case tests: zero-size MDR/TAP, empty SZX snapshot",
-      "pr_number": null,
-      "status": "submitted",
-      "created_at": "2026-07-02",
-      "note": "Task 9: 6 new tests covering zero canvas size for MDR/TAP without screen, and empty SZX positive test. PR number TBD."
-    },
-    {
-      "branch": "repo-assist/eng-make-help-2026-07-02",
+      "branch": "repo-assist/eng-make-help-2026-07-02-3b06cac5efd9312f",
       "title": "Add make help target to list documented Makefile targets",
-      "pr_number": null,
-      "status": "submitted",
-      "created_at": "2026-07-02",
-      "note": "Task 4: Added help target with awk extraction of ## comments. PR number TBD."
+      "pr_number": 50,
+      "status": "open",
+      "created_at": "2026-07-02"
     },
     {
-      "branch": "repo-assist/feature-tape-filenames-spotlight-2026-07-02",
+      "branch": "repo-assist/feature-tape-filenames-spotlight-2026-07-02-cebdfcfd00d759a8",
       "title": "Spotlight: extract FileNames from ROM header blocks in tape files",
+      "pr_number": 51,
+      "status": "open",
+      "created_at": "2026-07-02",
+      "note": "Note: both PR #47 and PR #51 declare the same FileNames attribute in schema.xml; second merge will add a duplicate declaration."
+    },
+    {
+      "branch": "repo-assist/improve-tape-duration-overflow-2026-07-03",
+      "title": "Fix 32-bit tstates_total overflow in tape duration calculation",
       "pr_number": null,
       "status": "submitted",
-      "created_at": "2026-07-02",
-      "note": "Task 10: New FileNames attribute for TZX/PZX/TAP tape types. Extracts 10-char names from ROM header blocks (flag=0x00, size=19). schema.xml updated. PR number TBD."
+      "created_at": "2026-07-03",
+      "note": "Task 5: Changed libspectrum_dword tstates_total to double in process_tape to prevent overflow for tapes >20 min. PR number TBD."
     }
   ],
-  "monthly_activity_issue": null,
-  "monthly_activity_issue_note": "June issue #6 closed 2026-07-01. July 2026 issue created this run (aw_july2026); PR number TBD from safeoutputs.",
+  "monthly_activity_issue": 48,
   "checked_off_by_user": [
     "pr_15",
     "issue_17",
@@ -110,5 +78,5 @@
     "pr_20",
     "pr_mdr_positive_tests"
   ],
-  "notes": "PRs #36 (Python tests) and #39 (Copilot pre_activation fix) still open. PR #47 (MDR filenames) still open - may have merge conflicts. Three new PRs submitted 2026-07-02 (pending numbers). Do NOT re-add Python tests - maintainer reverted them. Do NOT re-propose make deps - maintainer closed PR #44 without merging."
+  "notes": "PR #36 (Python tests) is stale - maintainer reverted. Should be closed. PR #39 (Copilot pre_activation fix) still open. Do NOT re-add Python tests. Do NOT re-propose make deps (PR #44 closed without merge). PRs #50 and #51 open since 2026-07-02. PR #47 updated 2026-07-03 with typo fix. New PR for tape duration overflow submitted 2026-07-03 (number TBD)."
 }
