@@ -83,6 +83,16 @@ mmap_file( const char *filename, unsigned char **buffer, size_t *length )
 
 #define DESCRIPTION_LENGTH 80
 
+/* TR-DOS disk image constants */
+#define TRDOS_ENTRY_SIZE        16  /* bytes per catalog entry */
+#define TRDOS_MAX_ENTRIES      128  /* 8 sectors x 16 entries */
+#define TRDOS_SYSTEM_OFFSET   2048  /* byte offset of system sector */
+#define TRDOS_ID_BYTE_OFFSET     6  /* offset within system sector */
+#define TRDOS_ID_MAGIC        0x10  /* TR-DOS identification byte */
+#define TRDOS_FILENAME_LEN       8  /* filename bytes per entry */
+#define TRDOS_ENTRY_DELETED   0x01  /* first byte = deleted entry */
+#define TRDOS_ENTRY_END       0x00  /* first byte = end of catalog */
+
 static void
 hardware_desc( NSMutableArray *machines, NSMutableArray *peripherals, int type,
                int id )
@@ -649,11 +659,43 @@ process_dsk
 - (BOOL)
 process_trd
 {
-  BOOL error = NO;
+  NSMutableArray *file_names;
+  NSString *name;
+  const unsigned char *entry;
+  int i;
 
-  /* FIXME: size, %full?, read-only vs read-write etc? */
+  /* TR-DOS catalog occupies the first 2048 bytes of the image file
+     (8 sectors x 256 bytes = 128 entries x 16 bytes each).
+     The system sector at offset 2048 carries identification byte
+     0x10 at position [6]; we use this to validate the image. */
 
-  return error;
+  if( length < (size_t)( TRDOS_SYSTEM_OFFSET + 256 ) ) return YES;
+
+  if( buffer[ TRDOS_SYSTEM_OFFSET + TRDOS_ID_BYTE_OFFSET ] != TRDOS_ID_MAGIC )
+    return YES;
+
+  file_names = [NSMutableArray array];
+
+  for( i = 0; i < TRDOS_MAX_ENTRIES; i++ ) {
+    entry = buffer + i * TRDOS_ENTRY_SIZE;
+
+    if( entry[0] == TRDOS_ENTRY_END ) break;
+    if( entry[0] == TRDOS_ENTRY_DELETED ) continue;
+
+    name = [[NSString alloc] initWithBytes:entry
+                                    length:TRDOS_FILENAME_LEN
+                                  encoding:NSWindowsCP1252StringEncoding];
+    if( !name ) continue;
+    name = [name stringByTrimmingCharactersInSet:
+              [NSCharacterSet whitespaceCharacterSet]];
+    if( name.length > 0 ) [file_names addObject:name];
+  }
+
+  if( file_names.count > 0 )
+    [attributes setObject:file_names
+                   forKey:@"net_sourceforge_projects_fuse_emulator_FileNames"];
+
+  return YES;
 }
 
 - (BOOL)
