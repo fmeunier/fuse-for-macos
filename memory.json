@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-07-04T08:00:00Z",
-  "run_id": "28699830966",
+  "last_run": "2026-07-05T08:11:00Z",
+  "run_id": "28734338864",
   "backlog_cursor": {
     "issues": 0,
     "prs": 0
@@ -14,14 +14,6 @@
     "issue_5_templates_inline": "2026-06-19"
   },
   "prs_created": [
-    {
-      "branch": "repo-assist/eng-python-release-tests-2026-06-21-d56bd3da6161b41b",
-      "title": "Add pytest suite for Sparkle release helper scripts; add make test-scripts; add CI test-scripts job",
-      "pr_number": 36,
-      "status": "open_stale",
-      "created_at": "2026-06-21",
-      "note": "STALE: maintainer reverted Python tests on 2026-07-01. Should be closed. Do NOT re-add Python tests."
-    },
     {
       "branch": "repo-assist/feature-mdr-filenames-spotlight-2026-07-01-a9106be0241e7a35",
       "title": "Spotlight: expose file names from MDR cartridges",
@@ -43,7 +35,7 @@
       "pr_number": 51,
       "status": "open",
       "created_at": "2026-07-02",
-      "note": "Note: PRs #47, #51, and #53 all declare FileNames in schema.xml; later merges should remove duplicate declarations."
+      "note": "Updated 2026-07-05: pushed tstates_total fix (libspectrum_dword -> double) to align with master's 57f120b. PRs #47, #51, #53 all declare FileNames in schema.xml - later merges need duplicate cleanup."
     },
     {
       "branch": "repo-assist/improve-tape-duration-overflow-2026-07-03-9b9ed36de6c8c95f",
@@ -54,12 +46,20 @@
       "note": "Closed by maintainer 2026-07-03 - fix applied directly to master as commit 57f120b. Do NOT re-submit."
     },
     {
-      "branch": "repo-assist/feature-trd-filenames-spotlight-2026-07-04",
+      "branch": "repo-assist/feature-trd-filenames-spotlight-2026-07-04-2d0102e6416c739c",
       "title": "Spotlight: extract FileNames from TR-DOS disk image catalog",
       "pr_number": 53,
       "status": "open",
       "created_at": "2026-07-04",
       "note": "Implements process_trd to parse TRD catalog. Also adds FileNames attribute to schema.xml. Note duplicate attribute declaration with #47 and #51."
+    },
+    {
+      "branch": "repo-assist/feature-dsk-metadata-spotlight-2026-07-05-57f120b",
+      "title": "Spotlight: extract disk geometry from Plus3 DSK/EDSK disk images",
+      "pr_number": 54,
+      "status": "open",
+      "created_at": "2026-07-05",
+      "note": "Implements process_dsk to extract DiskTracks, DiskSides, DiskCreator from EDSK/DSK headers. New attributes (no conflict with FileNames PRs). PR #54 expected number."
     }
   ],
   "monthly_activity_issue": 48,
@@ -84,7 +84,8 @@
     "issue_34",
     "check_comment_pr8",
     "pr_20",
-    "pr_mdr_positive_tests"
+    "pr_mdr_positive_tests",
+    "pr_36"
   ],
-  "notes": "PR #36 (Python tests) is stale - maintainer reverted. Should be closed. PR #39 (Copilot pre_activation fix) still open. Do NOT re-add Python tests. Do NOT re-propose make deps (PR #44 closed without merge). PRs #47, #50, #51, #53 open. PR #52 closed by maintainer - fix applied directly to master as 57f120b. Do NOT re-submit tape duration overflow. PRs #47, #51, #53 all declare FileNames in schema.xml - when any two merge after the first, duplicate attribute declaration needs cleanup."
+  "notes": "PR #36 (Python tests) closed by maintainer 2026-07-04. Do NOT re-add Python tests. Do NOT re-propose make deps (PR #44 closed without merge). PRs #47, #50, #51, #53, #54 open. PR #52 closed by maintainer - fix applied directly to master as 57f120b. Do NOT re-submit tape duration overflow. PRs #47, #51, #53 all declare FileNames in schema.xml - when any two merge after the first, duplicate attribute declaration needs cleanup. PR #51 updated 2026-07-05 with tstates_total alignment fix (libspectrum_dword->double). PR #54 adds DiskTracks/DiskSides/DiskCreator for DSK files - no conflict with FileNames. Consider implementing process_opd, process_d80, process_plusd next."
 }
