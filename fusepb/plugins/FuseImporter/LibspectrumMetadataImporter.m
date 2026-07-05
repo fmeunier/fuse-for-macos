@@ -83,6 +83,13 @@ mmap_file( const char *filename, unsigned char **buffer, size_t *length )
 
 #define DESCRIPTION_LENGTH 80
 
+/* EDSK and standard CPC DSK header layout (both formats share offsets 34-49) */
+#define DSK_HEADER_MIN_LEN 256
+#define DSK_CREATOR_OFFSET 34
+#define DSK_CREATOR_LEN    14
+#define DSK_TRACKS_OFFSET  48
+#define DSK_SIDES_OFFSET   49
+
 static void
 hardware_desc( NSMutableArray *machines, NSMutableArray *peripherals, int type,
                int id )
@@ -639,11 +646,44 @@ process_screenshot
 - (BOOL)
 process_dsk
 {
-  BOOL error = NO;
+  unsigned char tracks, sides;
+  char creator[ DSK_CREATOR_LEN + 1 ];
+  NSString *creator_str;
+  int i;
 
-  /* FIXME: size, %full?, read-only vs read-write etc? */
+  if( length < DSK_HEADER_MIN_LEN ) return NO;
 
-  return error;
+  /* Both EDSK ("EXTENDED CPC DSK File...") and standard DSK ("MV - CPC...")
+     store track count at byte 48 and side count at byte 49. */
+  tracks = buffer[ DSK_TRACKS_OFFSET ];
+  sides  = buffer[ DSK_SIDES_OFFSET  ];
+
+  if( !tracks || !sides ) return NO;
+
+  [attributes setObject:[NSNumber numberWithUnsignedChar:tracks]
+                 forKey:@"net_sourceforge_projects_fuse_emulator_DiskTracks"];
+
+  [attributes setObject:[NSNumber numberWithUnsignedChar:sides]
+                 forKey:@"net_sourceforge_projects_fuse_emulator_DiskSides"];
+
+  /* Creator name: 14 bytes at offset 34, space/null-padded */
+  memcpy( creator, buffer + DSK_CREATOR_OFFSET, DSK_CREATOR_LEN );
+  creator[ DSK_CREATOR_LEN ] = '\0';
+  for( i = DSK_CREATOR_LEN - 1;
+       i >= 0 && ( creator[i] == ' ' || creator[i] == '\0' );
+       i-- )
+    creator[i] = '\0';
+
+  if( creator[0] != '\0' ) {
+    creator_str = [NSString stringWithCString:creator
+                                     encoding:NSWindowsCP1252StringEncoding];
+    if( creator_str ) {
+      [attributes setObject:creator_str
+                     forKey:@"net_sourceforge_projects_fuse_emulator_DiskCreator"];
+    }
+  }
+
+  return YES;
 }
 
 - (BOOL)
