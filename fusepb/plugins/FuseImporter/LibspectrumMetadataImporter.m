@@ -176,7 +176,7 @@ process_tape
   libspectrum_tape *tape;
   libspectrum_tape_iterator iterator;
   libspectrum_tape_block *block;
-  libspectrum_dword tstates_total = 0;
+  double tstates_total = 0.0;
 
   size_t i;
 
