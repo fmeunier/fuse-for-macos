@@ -453,4 +453,46 @@
   XCTAssertNil( [image bitmapImageRep] );
 }
 
+- (void)test_tap_canvas_size_is_zero_without_screen
+{
+  FuseQuickLookImage *image;
+  NSSize canvas;
+
+  /* Plain TAP containing a BASIC program — no loading screen, canvas size should be zero */
+  image = [[[FuseQuickLookImage alloc]
+             initWithContentsOfURL:[self fixtureURL:@"deps/libspectrum/test/standard-tap.tap"]] autorelease];
+  canvas = [image canvasSize];
+
+  XCTAssertEqual( canvas.width,  0.0 );
+  XCTAssertEqual( canvas.height, 0.0 );
+}
+
+- (void)test_pzx_file_with_no_screen_produces_no_image
+{
+  FuseQuickLookImage *image;
+
+  /* PZX tape with no embedded loading screen */
+  image = [[[FuseQuickLookImage alloc]
+             initWithContentsOfURL:[self fixtureURL:@"deps/libspectrum/test/pzx-archive-info-tags.pzx"]] autorelease];
+
+  XCTAssertEqual( [image libspectrumClass], LIBSPECTRUM_CLASS_TAPE );
+  XCTAssertEqual( [image imageKind], FUSE_QUICKLOOK_IMAGE_NONE );
+  XCTAssertNil( [image imageData] );
+  XCTAssertNil( [image bitmapImageRep] );
+}
+
+- (void)test_pzx_canvas_size_is_zero
+{
+  FuseQuickLookImage *image;
+  NSSize canvas;
+
+  /* PZX tape with no loading screen — canvas size should be zero */
+  image = [[[FuseQuickLookImage alloc]
+             initWithContentsOfURL:[self fixtureURL:@"deps/libspectrum/test/pzx-archive-info-tags.pzx"]] autorelease];
+  canvas = [image canvasSize];
+
+  XCTAssertEqual( canvas.width,  0.0 );
+  XCTAssertEqual( canvas.height, 0.0 );
+}
+
 @end

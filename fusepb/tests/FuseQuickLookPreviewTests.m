@@ -306,6 +306,29 @@
   XCTAssertNil( [preview previewData] );
 }
 
+- (void)test_pzx_without_screen_has_zero_content_size
+{
+  FuseQuickLookPreview *preview;
+
+  /* PZX tape with no loading screen — content size should be zero */
+  preview = [self previewForFixture:@"deps/libspectrum/test/pzx-archive-info-tags.pzx"];
+
+  XCTAssertEqual( [preview contentSize].width,  0.0 );
+  XCTAssertEqual( [preview contentSize].height, 0.0 );
+}
+
+- (void)test_pzx_file_with_no_screen_produces_no_preview
+{
+  FuseQuickLookPreview *preview;
+
+  /* PZX tape with no embedded loading screen */
+  preview = [self previewForFixture:@"deps/libspectrum/test/pzx-archive-info-tags.pzx"];
+
+  XCTAssertEqual( [preview previewKind], FUSE_QUICKLOOK_PREVIEW_NONE );
+  XCTAssertNil( [preview contentTypeIdentifier] );
+  XCTAssertNil( [preview previewData] );
+}
+
 - (void)test_szx_snapshot_content_size_is_standard_spectrum_resolution
 {
   FuseQuickLookPreview *preview;
