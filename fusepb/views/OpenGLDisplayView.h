@@ -58,9 +58,7 @@
 
   BOOL screenTexInitialised;
 
-  ui_statusbar_state disk_state;
-  ui_statusbar_state mdr_state;
-  ui_statusbar_state tape_state;
+  DisplayOverlayState overlay_state;
   BOOL statusbar_updated;
 
   NSLock *view_lock;
@@ -81,8 +79,7 @@
 
 -(void) applyFramebuffer:(DisplayFramebuffer *)framebuffer;
 -(void) removeFramebuffer;
--(void) applyOverlayState:(ui_statusbar_state)state
-                   forItem:(ui_statusbar_item)item;
+-(void) applyOverlayState:(const DisplayOverlayState *)state;
 -(void) setBilinearFilteringEnabled:(BOOL)enabled;
 -(void) performFullscreen;
 -(void) shutdown;
@@ -101,10 +98,6 @@
             yOrigin:(int) y;
 
 -(void) setNeedsDisplayYes;
-
--(void) setDiskState:(NSNumber*)state;
--(void) setTapeState:(NSNumber*)state;
--(void) setMdrState:(NSNumber*)state;
 
 -(void) mouseMoved:(NSEvent *)theEvent;
 -(void) mouseDown:(NSEvent *)theEvent;

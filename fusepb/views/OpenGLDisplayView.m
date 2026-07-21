@@ -145,24 +145,12 @@ static OpenGLDisplayView *instance = nil;
   [self destroyTexture];
 }
 
--(void) applyOverlayState:(ui_statusbar_state)state
-                   forItem:(ui_statusbar_item)item
+-(void) applyOverlayState:(const DisplayOverlayState *)state
 {
-  NSNumber *value = [NSNumber numberWithUnsignedChar:state];
-
-  switch( item ) {
-  case UI_STATUSBAR_ITEM_DISK:
-    [self setDiskState:value];
-    break;
-  case UI_STATUSBAR_ITEM_MICRODRIVE:
-    [self setMdrState:value];
-    break;
-  case UI_STATUSBAR_ITEM_TAPE:
-    [self setTapeState:value];
-    break;
-  default:
-    break;
-  }
+  [view_lock lock];
+  overlay_state = *state;
+  statusbar_updated = YES;
+  [view_lock unlock];
 }
 
 -(void) setBilinearFilteringEnabled:(BOOL)enabled
@@ -485,34 +473,34 @@ static OpenGLDisplayView *instance = nil;
 
 -(void) iconOverlay
 {
-  switch( disk_state ) {
-  case UI_STATUSBAR_STATE_ACTIVE:
+  switch( overlay_state.disk_state ) {
+  case DISPLAY_OVERLAY_STATE_ACTIVE:
     [self blitIcon:greenDisk];
     break;
-  case UI_STATUSBAR_STATE_INACTIVE:
+  case DISPLAY_OVERLAY_STATE_INACTIVE:
     [self blitIcon:redDisk];
     break;
-  case UI_STATUSBAR_STATE_NOT_AVAILABLE:
+  case DISPLAY_OVERLAY_STATE_NOT_AVAILABLE:
     break;
   }
 
-  switch( mdr_state ) {
-  case UI_STATUSBAR_STATE_ACTIVE:
+  switch( overlay_state.microdrive_state ) {
+  case DISPLAY_OVERLAY_STATE_ACTIVE:
     [self blitIcon:greenMdr];
     break;
-  case UI_STATUSBAR_STATE_INACTIVE:
+  case DISPLAY_OVERLAY_STATE_INACTIVE:
     [self blitIcon:redMdr];
     break;
-  case UI_STATUSBAR_STATE_NOT_AVAILABLE:
+  case DISPLAY_OVERLAY_STATE_NOT_AVAILABLE:
     break;
   }
 
-  switch( tape_state ) {
-  case UI_STATUSBAR_STATE_ACTIVE:
+  switch( overlay_state.tape_state ) {
+  case DISPLAY_OVERLAY_STATE_ACTIVE:
     [self blitIcon:greenCassette];
     break;
-  case UI_STATUSBAR_STATE_INACTIVE:
-  case UI_STATUSBAR_STATE_NOT_AVAILABLE:
+  case DISPLAY_OVERLAY_STATE_INACTIVE:
+  case DISPLAY_OVERLAY_STATE_NOT_AVAILABLE:
     [self blitIcon:redCassette];
     break;
   }
@@ -768,30 +756,6 @@ static OpenGLDisplayView *instance = nil;
 -(void) keyUp:(NSEvent *)theEvent
 {
   [[EmulationSessionController instance] keyUp:theEvent];
-}
-
--(void) setDiskState:(NSNumber*)state
-{
-  disk_state = [state unsignedCharValue];
-  [view_lock lock];
-  statusbar_updated = YES;
-  [view_lock unlock];
-}
-
--(void) setTapeState:(NSNumber*)state
-{
-  tape_state = [state unsignedCharValue];
-  [view_lock lock];
-  statusbar_updated = YES;
-  [view_lock unlock];
-}
-
--(void) setMdrState:(NSNumber*)state
-{
-  mdr_state = [state unsignedCharValue];
-  [view_lock lock];
-  statusbar_updated = YES;
-  [view_lock unlock];
 }
 
 -(BOOL) acceptsFirstResponder

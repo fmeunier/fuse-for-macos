@@ -23,6 +23,7 @@
   Emulator *proxy_emulator;
   NSConnection *kit_connection;
   id <DisplayPresenting> display_presenter;
+  DisplayOverlayState overlay_state;
 }
 
 +(EmulationSessionController *) instance;

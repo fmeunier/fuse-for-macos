@@ -782,6 +782,7 @@
 		B6CE7F3C0B2830A300EB65B3 /* cocoajoystick.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = cocoajoystick.c; sourceTree = "<group>"; };
 		B6CE7F3E0B2830A300EB65B3 /* cocoaui.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = cocoaui.h; sourceTree = "<group>"; };
 		B7A1C4233A77EE0000C0DE01 /* DisplayPresenting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayPresenting.h; sourceTree = "<group>"; };
+		B7A1C4243A77EE0000C0DE01 /* DisplayOverlayState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayOverlayState.h; sourceTree = "<group>"; };
 		B6CE7FCB0B28FBD600EB65B3 /* OpenGLDisplayView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = OpenGLDisplayView.h; sourceTree = "<group>"; };
 		B6CE7FCC0B28FBD600EB65B3 /* OpenGLDisplayView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = OpenGLDisplayView.m; sourceTree = "<group>"; };
 		B6D0E1011CFD547C00202683 /* didaktik.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = didaktik.c; sourceTree = "<group>"; };
@@ -1511,6 +1512,7 @@
 				B6CADD550C47AD90004BA954 /* Texture.h */,
 				B6CADD560C47AD90004BA954 /* Texture.m */,
 				B7A1C4233A77EE0000C0DE01 /* DisplayPresenting.h */,
+				B7A1C4243A77EE0000C0DE01 /* DisplayOverlayState.h */,
 				B6CE7FCB0B28FBD600EB65B3 /* OpenGLDisplayView.h */,
 				B6CE7FCC0B28FBD600EB65B3 /* OpenGLDisplayView.m */,
 			);

@@ -16,6 +16,20 @@
 
 static EmulationSessionController *instance = nil;
 
+static DisplayOverlayItemState
+overlay_item_state( ui_statusbar_state state )
+{
+  switch( state ) {
+  case UI_STATUSBAR_STATE_ACTIVE:
+    return DISPLAY_OVERLAY_STATE_ACTIVE;
+  case UI_STATUSBAR_STATE_INACTIVE:
+    return DISPLAY_OVERLAY_STATE_INACTIVE;
+  case UI_STATUSBAR_STATE_NOT_AVAILABLE:
+  default:
+    return DISPLAY_OVERLAY_STATE_NOT_AVAILABLE;
+  }
+}
+
 +(EmulationSessionController *) instance
 {
   if( !instance ) instance = [[self alloc] init];
@@ -30,6 +44,9 @@ static EmulationSessionController *instance = nil;
   NSArray *portArray;
 
   display_presenter = presenter;
+  overlay_state.disk_state = DISPLAY_OVERLAY_STATE_NOT_AVAILABLE;
+  overlay_state.microdrive_state = DISPLAY_OVERLAY_STATE_NOT_AVAILABLE;
+  overlay_state.tape_state = DISPLAY_OVERLAY_STATE_NOT_AVAILABLE;
   if( real_emulator ) return;
 
   real_emulator = [[Emulator alloc] init];
@@ -451,22 +468,23 @@ static EmulationSessionController *instance = nil;
 
 -(void) setDiskState:(NSNumber *)state
 {
-  [display_presenter applyOverlayState:[state unsignedCharValue]
-                               forItem:UI_STATUSBAR_ITEM_DISK];
+  overlay_state.disk_state = overlay_item_state( [state unsignedCharValue] );
+  [display_presenter applyOverlayState:&overlay_state];
   [[FuseController singleton] setDiskState:state];
 }
 
 -(void) setTapeState:(NSNumber *)state
 {
-  [display_presenter applyOverlayState:[state unsignedCharValue]
-                               forItem:UI_STATUSBAR_ITEM_TAPE];
+  overlay_state.tape_state = overlay_item_state( [state unsignedCharValue] );
+  [display_presenter applyOverlayState:&overlay_state];
   [[FuseController singleton] setTapeState:state];
 }
 
 -(void) setMdrState:(NSNumber *)state
 {
-  [display_presenter applyOverlayState:[state unsignedCharValue]
-                               forItem:UI_STATUSBAR_ITEM_MICRODRIVE];
+  overlay_state.microdrive_state =
+    overlay_item_state( [state unsignedCharValue] );
+  [display_presenter applyOverlayState:&overlay_state];
   [[FuseController singleton] setMdrState:state];
 }
 

@@ -10,14 +10,14 @@
 #import <Cocoa/Cocoa.h>
 
 #include "ui/cocoa/cocoadisplay.h"
-#include "ui/ui.h"
+
+#include "DisplayOverlayState.h"
 
 @protocol DisplayPresenting <NSObject>
 
 -(void) applyFramebuffer:(DisplayFramebuffer *)framebuffer;
 -(void) removeFramebuffer;
--(void) applyOverlayState:(ui_statusbar_state)state
-                   forItem:(ui_statusbar_item)item;
+-(void) applyOverlayState:(const DisplayOverlayState *)state;
 -(void) setBilinearFilteringEnabled:(BOOL)enabled;
 -(void) performFullscreen;
 -(void) shutdown;
