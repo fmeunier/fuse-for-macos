@@ -1,4 +1,4 @@
-/* DisplayOpenGLView.m: Implementation for the DisplayOpenGLView class
+/* OpenGLDisplayView.m: Implementation for the OpenGLDisplayView class
    Copyright (c) 2006-2007 Fredrick Meunier
 
    This program is free software; you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 
 */
 
-#import "DisplayOpenGLView.h"
+#import "OpenGLDisplayView.h"
 #import "EmulationSessionController.h"
 #import "FuseController.h"
 #import "DebuggerController.h"
@@ -61,7 +61,7 @@ static CVReturn MyDisplayLinkCallback (
     void *displayLinkContext)
 {
   CVReturn error =
-        [(DisplayOpenGLView*) displayLinkContext displayFrame:inOutputTime];
+        [(OpenGLDisplayView*) displayLinkContext displayFrame:inOutputTime];
   return error;
 }
 
@@ -125,11 +125,11 @@ get_offset( int window_width, int window_height,
   return 0;
 }
 
-@implementation DisplayOpenGLView
+@implementation OpenGLDisplayView
 
-static DisplayOpenGLView *instance = nil;
+static OpenGLDisplayView *instance = nil;
 
-+(DisplayOpenGLView *) instance
++(OpenGLDisplayView *) instance
 {
   return instance;
 }

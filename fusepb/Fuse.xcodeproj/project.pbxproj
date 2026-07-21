@@ -299,7 +299,7 @@
 		B6CE3A100CD21617005ACDC8 /* wd_fdc.c in Sources */ = {isa = PBXBuildFile; fileRef = B6CE3A0E0CD21617005ACDC8 /* wd_fdc.c */; };
 		B6CE3A130CD217C2005ACDC8 /* pentagon1024.c in Sources */ = {isa = PBXBuildFile; fileRef = B6CE3A120CD217C2005ACDC8 /* pentagon1024.c */; };
 		B6CE7F420B2830A300EB65B3 /* cocoajoystick.c in Sources */ = {isa = PBXBuildFile; fileRef = B6CE7F3C0B2830A300EB65B3 /* cocoajoystick.c */; };
-		B6CE7FCE0B28FBD600EB65B3 /* DisplayOpenGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = B6CE7FCC0B28FBD600EB65B3 /* DisplayOpenGLView.m */; };
+		B6CE7FCE0B28FBD600EB65B3 /* OpenGLDisplayView.m in Sources */ = {isa = PBXBuildFile; fileRef = B6CE7FCC0B28FBD600EB65B3 /* OpenGLDisplayView.m */; };
 		B6D0E1031CFD547C00202683 /* didaktik.c in Sources */ = {isa = PBXBuildFile; fileRef = B6D0E1011CFD547C00202683 /* didaktik.c */; };
 		B6D0E1061CFD549200202683 /* usource.c in Sources */ = {isa = PBXBuildFile; fileRef = B6D0E1041CFD549200202683 /* usource.c */; };
 		B6D0E1091CFD54B800202683 /* svg.c in Sources */ = {isa = PBXBuildFile; fileRef = B6D0E1071CFD54B800202683 /* svg.c */; };
@@ -781,8 +781,8 @@
 		B6CE7F3B0B2830A300EB65B3 /* cocoadisplay.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = cocoadisplay.h; sourceTree = "<group>"; };
 		B6CE7F3C0B2830A300EB65B3 /* cocoajoystick.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = cocoajoystick.c; sourceTree = "<group>"; };
 		B6CE7F3E0B2830A300EB65B3 /* cocoaui.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = cocoaui.h; sourceTree = "<group>"; };
-		B6CE7FCB0B28FBD600EB65B3 /* DisplayOpenGLView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DisplayOpenGLView.h; sourceTree = "<group>"; };
-		B6CE7FCC0B28FBD600EB65B3 /* DisplayOpenGLView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = DisplayOpenGLView.m; sourceTree = "<group>"; };
+		B6CE7FCB0B28FBD600EB65B3 /* OpenGLDisplayView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = OpenGLDisplayView.h; sourceTree = "<group>"; };
+		B6CE7FCC0B28FBD600EB65B3 /* OpenGLDisplayView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = OpenGLDisplayView.m; sourceTree = "<group>"; };
 		B6D0E1011CFD547C00202683 /* didaktik.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = didaktik.c; sourceTree = "<group>"; };
 		B6D0E1021CFD547C00202683 /* didaktik.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = didaktik.h; sourceTree = "<group>"; };
 		B6D0E1041CFD549200202683 /* usource.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = usource.c; sourceTree = "<group>"; };
@@ -1509,8 +1509,8 @@
 			children = (
 				B6CADD550C47AD90004BA954 /* Texture.h */,
 				B6CADD560C47AD90004BA954 /* Texture.m */,
-				B6CE7FCB0B28FBD600EB65B3 /* DisplayOpenGLView.h */,
-				B6CE7FCC0B28FBD600EB65B3 /* DisplayOpenGLView.m */,
+				B6CE7FCB0B28FBD600EB65B3 /* OpenGLDisplayView.h */,
+				B6CE7FCC0B28FBD600EB65B3 /* OpenGLDisplayView.m */,
 			);
 			name = Views;
 			path = views;
@@ -2727,7 +2727,7 @@
 				B6E0CBA41D9E809000426949 /* unittests.c in Sources */,
 				B6403FD80A7E4B1A00E00B11 /* loader.c in Sources */,
 				B6CE7F420B2830A300EB65B3 /* cocoajoystick.c in Sources */,
-				B6CE7FCE0B28FBD600EB65B3 /* DisplayOpenGLView.m in Sources */,
+				B6CE7FCE0B28FBD600EB65B3 /* OpenGLDisplayView.m in Sources */,
 				B6E0252C0B38AFE500E23A0F /* keysyms.m in Sources */,
 				B6A6F0960B3C108C000B88E9 /* coreaudiosound.c in Sources */,
 				B6A6F0DA0B3D141B000B88E9 /* cocoaui.m in Sources */,

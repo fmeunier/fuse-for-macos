@@ -13,7 +13,7 @@
 
 #include "ui/ui.h"
 
-@class DisplayOpenGLView;
+@class OpenGLDisplayView;
 @class Emulator;
 
 @interface EmulationSessionController : NSObject
@@ -21,12 +21,12 @@
   Emulator *real_emulator;
   Emulator *proxy_emulator;
   NSConnection *kit_connection;
-  DisplayOpenGLView *display_view;
+  OpenGLDisplayView *display_view;
 }
 
 +(EmulationSessionController *) instance;
 
--(void) startWithDisplayView:(DisplayOpenGLView *)view;
+-(void) startWithDisplayView:(OpenGLDisplayView *)view;
 -(void) stop;
 -(void) setServer:(Emulator *)server;
 -(int) checkMediaChanged;

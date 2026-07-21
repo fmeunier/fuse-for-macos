@@ -11,7 +11,7 @@
 #import "Emulator.h"
 #import "EmulationSessionController.h"
 #import "FuseController.h"
-#import "DisplayOpenGLView.h"
+#import "OpenGLDisplayView.h"
 
 @implementation EmulationSessionController
 
@@ -24,7 +24,7 @@ static EmulationSessionController *instance = nil;
   return instance;
 }
 
--(void) startWithDisplayView:(DisplayOpenGLView *)view
+-(void) startWithDisplayView:(OpenGLDisplayView *)view
 {
   NSPort *port1;
   NSPort *port2;

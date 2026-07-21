@@ -1,4 +1,4 @@
-/* DisplayOpenGLView.h: Implementation for the DisplayOpenGLView class
+/* OpenGLDisplayView.h: Implementation for the OpenGLDisplayView class
    Copyright (c) 2006-2007 Fredrick Meunier
 
    This program is free software; you can redistribute it and/or modify
@@ -40,7 +40,7 @@
 
 @class Texture;
 
-@interface DisplayOpenGLView : NSOpenGLView
+@interface OpenGLDisplayView : NSOpenGLView
 {
   /* Two backing textures */
   Cocoa_Texture screenTex[MAX_SCREEN_BUFFERS];
@@ -72,7 +72,7 @@
   CGDirectDisplayID mainViewDisplayID;
   BOOL displayLinkRunning;
 }
-+(DisplayOpenGLView *) instance;
++(OpenGLDisplayView *) instance;
 
 -(IBAction) fullscreen:(id)sender;
 -(IBAction) zoom:(id)sender;
