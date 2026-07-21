@@ -30,7 +30,7 @@
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 
 #import "FuseController.h"
-#import "DisplayOpenGLView.h"
+#import "EmulationSessionController.h"
 #import "JoystickConfigurationController.h"
 #import "PreferencesBridges.h"
 #import "PreferencesController.h"
@@ -408,7 +408,7 @@ cocoa_video_machine_is_timex_disabled( void )
 
 - (void)showWindow:(id)sender
 {
-  [[DisplayOpenGLView instance] pause];
+  [[EmulationSessionController instance] pause];
   
   /* Values in Fuse may have been updated, put them in saved settings */
   settings_write_config( &settings_current );
@@ -492,7 +492,7 @@ cocoa_video_machine_is_timex_disabled( void )
 
   periph_posthook();
 
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] unpause];
 }
 
 - (IBAction)chooseFile:(id)sender

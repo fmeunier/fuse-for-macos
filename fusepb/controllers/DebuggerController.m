@@ -24,7 +24,7 @@
 */
 
 #import "DebuggerController.h"
-#import "DisplayOpenGLView.h"
+#import "EmulationSessionController.h"
 #import "Emulator.h"
 
 #include <config.h>
@@ -174,7 +174,7 @@ static DebuggerController *singleton = nil;
 
 - (void)debugger_activate:(id)sender
 {
-  [[DisplayOpenGLView instance] pause];
+  [[EmulationSessionController instance] pause];
 
   [singleton showWindow:nil];
 
@@ -691,7 +691,7 @@ deactivate_debugger( void )
 { 
   [NSApp stopModal];
   debugger_active = 0;
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] unpause];
   return 0;
 }
 

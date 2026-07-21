@@ -27,7 +27,7 @@
 
 #import "NumberFormatter.h"
 #import "PokeFinderController.h"
-#import "DisplayOpenGLView.h"
+#import "EmulationSessionController.h"
 
 #include "fuse.h"
 #include "debugger/debugger.h"
@@ -103,7 +103,7 @@
   
   [matchList reloadData];
 
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] unpause];
 }
 
 - (void)showWindow:(id)sender
@@ -116,7 +116,7 @@
 		     name:@"NSWindowWillCloseNotification"
 	       object:[self window]];
   
-  [[DisplayOpenGLView instance] pause];
+  [[EmulationSessionController instance] pause];
 
   [super showWindow:sender];
 

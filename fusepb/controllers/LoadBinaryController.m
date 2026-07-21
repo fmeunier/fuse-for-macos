@@ -26,10 +26,10 @@
 #include <config.h>
 
 #import "LoadBinaryController.h"
-#import "DisplayOpenGLView.h"
+#import "EmulationSessionController.h"
 #import "NumberFormatter.h"
 
-#include "memory.h"
+#include "memory_pages.h"
 #include "spectrum.h"
 #include <libspectrum.h>
 #include "ui/ui.h"
@@ -92,12 +92,12 @@ static utils_file u_file;
   [NSApp stopModal];
   [[self window] close];
   
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] unpause];
 }
 
 - (void)showWindow:(id)sender
 {
-  [[DisplayOpenGLView instance] pause];
+  [[EmulationSessionController instance] pause];
   
   [super showWindow:sender];
 

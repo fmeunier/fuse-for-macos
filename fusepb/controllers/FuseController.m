@@ -39,7 +39,7 @@
 #import "SaveBinaryController.h"
 #import "TapeBrowserController.h"
 
-#import "DisplayOpenGLView.h"
+#import "EmulationSessionController.h"
 
 #import <Sparkle/Sparkle.h>
 
@@ -424,16 +424,16 @@ static const NSTimeInterval sparkle_updater_start_delay = 0.5;
 
 - (IBAction)cart_eject:(id)sender
 {
-  [[DisplayOpenGLView instance] pause];
+  [[EmulationSessionController instance] pause];
 
   if ( libspectrum_machine_capabilities( machine_current->machine ) &
         LIBSPECTRUM_MACHINE_CAPABILITY_TIMEX_DOCK ) {
-    [[DisplayOpenGLView instance] dckEject];
+    [[EmulationSessionController instance] dckEject];
   } else {
-    [[DisplayOpenGLView instance] if2Eject];
+    [[EmulationSessionController instance] if2Eject];
   }
 
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] unpause];
 }
 
 - (IBAction)cart_open:(id)sender
@@ -443,7 +443,7 @@ static const NSTimeInterval sparkle_updater_start_delay = 0.5;
   NSArray *fileTypes;
   NSString *message;
 
-  [[DisplayOpenGLView instance] pause];
+  [[EmulationSessionController instance] pause];
 
   if ( libspectrum_machine_capabilities( machine_current->machine ) &
         LIBSPECTRUM_MACHINE_CAPABILITY_TIMEX_DOCK ) {
@@ -456,13 +456,13 @@ static const NSTimeInterval sparkle_updater_start_delay = 0.5;
 
   filename = cocoaui_openpanel_get_filename( message, fileTypes );
 
-  if( !filename ) { [[DisplayOpenGLView instance] unpause]; return; }
+  if( !filename ) { [[EmulationSessionController instance] unpause]; return; }
 
   if ( libspectrum_machine_capabilities( machine_current->machine ) &
         LIBSPECTRUM_MACHINE_CAPABILITY_TIMEX_DOCK ) {
-    error = [[DisplayOpenGLView instance] dckInsert:filename];
+    error = [[EmulationSessionController instance] dckInsert:filename];
   } else {
-    error = [[DisplayOpenGLView instance] if2Insert:filename];
+    error = [[EmulationSessionController instance] if2Insert:filename];
   }
 
   if(error) goto error;
@@ -472,7 +472,7 @@ static const NSTimeInterval sparkle_updater_start_delay = 0.5;
 error:
   free( filename );
 
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] unpause];
 }
 
 - (IBAction)dock_open:(id)sender
@@ -480,13 +480,13 @@ error:
   int error;
   char *filename = NULL;
 
-  [[DisplayOpenGLView instance] pause];
+  [[EmulationSessionController instance] pause];
 
   filename = cocoaui_openpanel_get_filename( @"Insert Timex dock cartridge", dckFileTypes );
 
-  if( !filename ) { [[DisplayOpenGLView instance] unpause]; return; }
+  if( !filename ) { [[EmulationSessionController instance] unpause]; return; }
 
-  error = [[DisplayOpenGLView instance] dckInsert:filename];
+  error = [[EmulationSessionController instance] dckInsert:filename];
   if(error) goto error;
 
   [self addRecentSnapshot:filename];
@@ -494,16 +494,16 @@ error:
 error:
   free( filename );
 
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] unpause];
 }
 
 - (IBAction)dock_eject:(id)sender
 {
-  [[DisplayOpenGLView instance] pause];
+  [[EmulationSessionController instance] pause];
 
-  [[DisplayOpenGLView instance] dckEject];
+  [[EmulationSessionController instance] dckEject];
 
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] unpause];
 }
 
 - (IBAction)if2_open:(id)sender
@@ -511,13 +511,13 @@ error:
   int error;
   char *filename = NULL;
 
-  [[DisplayOpenGLView instance] pause];
+  [[EmulationSessionController instance] pause];
 
   filename = cocoaui_openpanel_get_filename( @"Insert Interface II cartridge", romFileTypes );
 
-  if( !filename ) { [[DisplayOpenGLView instance] unpause]; return; }
+  if( !filename ) { [[EmulationSessionController instance] unpause]; return; }
 
-  error = [[DisplayOpenGLView instance] if2Insert:filename];
+  error = [[EmulationSessionController instance] if2Insert:filename];
   if(error) goto error;
 
   [self addRecentSnapshot:filename];
@@ -525,16 +525,16 @@ error:
 error:
   free( filename );
 
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] unpause];
 }
 
 - (IBAction)if2_eject:(id)sender
 {
-  [[DisplayOpenGLView instance] pause];
+  [[EmulationSessionController instance] pause];
 
-  [[DisplayOpenGLView instance] if2Eject];
+  [[EmulationSessionController instance] if2Eject];
 
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] unpause];
 }
 
 - (IBAction)ide_insert:(id)sender
@@ -543,26 +543,26 @@ error:
   char *filename = NULL;
   libspectrum_ide_unit unit;
 
-  [[DisplayOpenGLView instance] pause];
+  [[EmulationSessionController instance] pause];
 
   filename = cocoaui_openpanel_get_filename( @"Insert hard disk file", ideFileTypes );
 
-  if( !filename ) { [[DisplayOpenGLView instance] unpause]; return; }
+  if( !filename ) { [[EmulationSessionController instance] unpause]; return; }
 
   unit = [sender tag] == 41 ? LIBSPECTRUM_IDE_MASTER : LIBSPECTRUM_IDE_SLAVE;
 
   if( settings_current.divide_enabled ) {
-    error = [[DisplayOpenGLView instance] divideInsert:filename inUnit:unit];
+    error = [[EmulationSessionController instance] divideInsert:filename inUnit:unit];
   } else if( settings_current.simpleide_active ) {
-    error = [[DisplayOpenGLView instance] simpleideInsert:filename inUnit:unit];
+    error = [[EmulationSessionController instance] simpleideInsert:filename inUnit:unit];
   } else if( settings_current.zxatasp_active ) {
-    error = [[DisplayOpenGLView instance] zxataspInsert:filename inUnit:unit];
+    error = [[EmulationSessionController instance] zxataspInsert:filename inUnit:unit];
   } else if( settings_current.zxcf_active ) {
-    error = [[DisplayOpenGLView instance] zxcfInsert:filename];
+    error = [[EmulationSessionController instance] zxcfInsert:filename];
   } else if( settings_current.divmmc_enabled ) {
-    error = [[DisplayOpenGLView instance] divmmcInsert:filename];
+    error = [[EmulationSessionController instance] divmmcInsert:filename];
   } else if( settings_current.zxmmc_enabled ) {
-    error = [[DisplayOpenGLView instance] zxmmcInsert:filename];
+    error = [[EmulationSessionController instance] zxmmcInsert:filename];
   }
 
   if(error) goto error;
@@ -572,28 +572,28 @@ error:
 error:
   free( filename );
 
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] unpause];
 }
 
 - (IBAction)ide_commit:(id)sender
 {
   libspectrum_ide_unit unit;
 
-  [[DisplayOpenGLView instance] pause];
+  [[EmulationSessionController instance] pause];
 
   unit = [sender tag] == 51 ? LIBSPECTRUM_IDE_MASTER : LIBSPECTRUM_IDE_SLAVE;
 
   if( settings_current.divide_enabled ) {
-    [[DisplayOpenGLView instance] divideCommit:unit];
+    [[EmulationSessionController instance] divideCommit:unit];
   } else if( settings_current.simpleide_active ) {
-    [[DisplayOpenGLView instance] simpleideCommit:unit];
+    [[EmulationSessionController instance] simpleideCommit:unit];
   } else if( settings_current.zxatasp_active ) {
-    [[DisplayOpenGLView instance] zxataspCommit:unit];
+    [[EmulationSessionController instance] zxataspCommit:unit];
   } else if( settings_current.zxcf_active ) {
-    [[DisplayOpenGLView instance] zxcfCommit];
+    [[EmulationSessionController instance] zxcfCommit];
   }
 
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] unpause];
 }
 
 - (IBAction)ide_eject:(id)sender
@@ -603,38 +603,38 @@ error:
   unit = [sender tag] == 61 ? LIBSPECTRUM_IDE_MASTER : LIBSPECTRUM_IDE_SLAVE;
 
   if( settings_current.divide_enabled ) {
-    [[DisplayOpenGLView instance] divideEject:unit];
+    [[EmulationSessionController instance] divideEject:unit];
   } else if( settings_current.simpleide_active ) {
-    [[DisplayOpenGLView instance] simpleideEject:unit];
+    [[EmulationSessionController instance] simpleideEject:unit];
   } else if( settings_current.zxatasp_active ) {
-    [[DisplayOpenGLView instance] zxataspEject:unit];
+    [[EmulationSessionController instance] zxataspEject:unit];
   } else if( settings_current.zxcf_active ) {
-    [[DisplayOpenGLView instance] zxcfEject];
+    [[EmulationSessionController instance] zxcfEject];
   }
 }
 
 - (IBAction)mdr_insert_new:(id)sender
 {
-  [[DisplayOpenGLView instance] if1MdrNew:get_microdrive_no( [sender tag] )];
+  [[EmulationSessionController instance] if1MdrNew:get_microdrive_no( [sender tag] )];
 }
 
 - (IBAction)mdr_insert:(id)sender
 {
   char *filename = NULL;
 
-  [[DisplayOpenGLView instance] pause];
+  [[EmulationSessionController instance] pause];
 
   filename = cocoaui_openpanel_get_filename( @"Insert microdrive disk file", mdrFileTypes );
-  if( !filename ) { [[DisplayOpenGLView instance] unpause]; return; }
+  if( !filename ) { [[EmulationSessionController instance] unpause]; return; }
 
-  [[DisplayOpenGLView instance] if1MdrInsert:filename
+  [[EmulationSessionController instance] if1MdrInsert:filename
                                      inDrive:get_microdrive_no( [sender tag] )];
 
   [self addRecentSnapshot:filename];
 
   free( filename );
 
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] unpause];
 }
 
 - (IBAction)mdr_eject:(id)sender
@@ -656,7 +656,7 @@ error:
 {
   int no = get_microdrive_no( [sender tag] );
 
-  [[DisplayOpenGLView instance] if1MdrWriteProtect:[sender state] == NSOffState
+  [[EmulationSessionController instance] if1MdrWriteProtect:[sender state] == NSOffState
                                 inDrive:no];
 }
 
@@ -665,11 +665,11 @@ error:
   char *filename = NULL;
 
   if( !settings_current.full_screen ) {
-    [[DisplayOpenGLView instance] pause];
+    [[EmulationSessionController instance] pause];
 
     filename = cocoaui_openpanel_get_filename( @"Open Spectrum File", allFileTypes );
 
-    if( !filename ) { [[DisplayOpenGLView instance] unpause]; return; }
+    if( !filename ) { [[EmulationSessionController instance] unpause]; return; }
 
     [self addRecentSnapshot:filename];
 
@@ -677,27 +677,27 @@ error:
 
     free(filename);
 
-    [[DisplayOpenGLView instance] unpause];
+    [[EmulationSessionController instance] unpause];
   }
   [self releaseCmdKeys:@"o" withCode:QZ_o];
 }
 
 - (IBAction)reset:(id)sender
 {
-  [[DisplayOpenGLView instance] pause];
+  [[EmulationSessionController instance] pause];
 
-  [[DisplayOpenGLView instance] reset];
+  [[EmulationSessionController instance] reset];
 
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] unpause];
 }
 
 - (IBAction)nmi:(id)sender
 {
-  [[DisplayOpenGLView instance] pause];
+  [[EmulationSessionController instance] pause];
 
-  [[DisplayOpenGLView instance] nmi];
+  [[EmulationSessionController instance] nmi];
 
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] unpause];
 }
 
 - (IBAction)rzx_play:(id)sender
@@ -706,11 +706,11 @@ error:
 
   if( rzx_playback || rzx_recording ) return;
 
-  [[DisplayOpenGLView instance] pause];
+  [[EmulationSessionController instance] pause];
 
   recording = cocoaui_openpanel_get_filename( @"Start Replay", rzxFileTypes );
 
-  if( !recording ) { [[DisplayOpenGLView instance] unpause]; return; }
+  if( !recording ) { [[EmulationSessionController instance] unpause]; return; }
 
   [self openFile:recording];
 
@@ -718,18 +718,18 @@ error:
 
   display_refresh_all();
 
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] unpause];
 }
 
 - (IBAction)rzx_insert_snap:(id)sender
 {
-  [[DisplayOpenGLView instance] rzxInsertSnap];
+  [[EmulationSessionController instance] rzxInsertSnap];
   [self releaseCmdKeys:@"b" withCode:QZ_b];
 }
 
 - (IBAction)rzx_rollback:(id)sender
 {
-  [[DisplayOpenGLView instance] rzxRollback];
+  [[EmulationSessionController instance] rzxRollback];
   [self releaseCmdKeys:@"z" withCode:QZ_z];
 }
 
@@ -739,18 +739,18 @@ error:
 
   if( rzx_playback || rzx_recording ) return;
 
-  [[DisplayOpenGLView instance] pause];
+  [[EmulationSessionController instance] pause];
 
   recording = cocoaui_savepanel_get_filename( @"Start Recording", @[@"rzx"] );
-  if( !recording ) { [[DisplayOpenGLView instance] unpause]; return; }
+  if( !recording ) { [[EmulationSessionController instance] unpause]; return; }
 
-  [[DisplayOpenGLView instance] rzxStartRecording:recording embedSnapshot:1];
+  [[EmulationSessionController instance] rzxStartRecording:recording embedSnapshot:1];
 
   free( recording );
 
   ui_menu_activate( UI_MENU_ITEM_RECORDING, 1 );
 
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] unpause];
 }
 
 - (IBAction)rzx_start_snap:(id)sender
@@ -759,19 +759,19 @@ error:
 
   if( rzx_playback || rzx_recording ) return;
 
-  [[DisplayOpenGLView instance] pause];
+  [[EmulationSessionController instance] pause];
 
   snap = cocoaui_openpanel_get_filename( @"Load Snapshot", snapFileTypes );
-  if( !snap ) { [[DisplayOpenGLView instance] unpause]; return; }
+  if( !snap ) { [[EmulationSessionController instance] unpause]; return; }
 
   recording = cocoaui_savepanel_get_filename( @"Start Recording", @[@"rzx"] );
-  if( !recording ) { free( snap ); [[DisplayOpenGLView instance] unpause]; return; }
+  if( !recording ) { free( snap ); [[EmulationSessionController instance] unpause]; return; }
 
   if( snapshot_read( snap ) ) {
-    free( snap ); free( recording ); [[DisplayOpenGLView instance] unpause]; return;
+    free( snap ); free( recording ); [[EmulationSessionController instance] unpause]; return;
   }
 
-  [[DisplayOpenGLView instance] rzxStartRecording:recording
+  [[EmulationSessionController instance] rzxStartRecording:recording
                                 embedSnapshot:settings_current.embed_snapshot];
 
   free( recording );
@@ -780,12 +780,12 @@ error:
 
   ui_menu_activate( UI_MENU_ITEM_RECORDING, 1 );
 
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] unpause];
 }
 
 - (IBAction)rzx_stop:(id)sender
 {
-  [[DisplayOpenGLView instance] rzxStop];
+  [[EmulationSessionController instance] rzxStop];
 
   ui_menu_activate( UI_MENU_ITEM_RECORDING, 0 );
 }
@@ -797,12 +797,12 @@ error:
   
   if( rzx_playback || rzx_recording ) return;
   
-  [[DisplayOpenGLView instance] pause];
+  [[EmulationSessionController instance] pause];
   
   rzx_filename = cocoaui_openpanel_get_filename( @"Continue Recording", rzxFileTypes );
-  if( !rzx_filename ) { [[DisplayOpenGLView instance] unpause]; return; }
+  if( !rzx_filename ) { [[EmulationSessionController instance] unpause]; return; }
   
-  error = [[DisplayOpenGLView instance] rzxContinueRecording:rzx_filename];
+  error = [[EmulationSessionController instance] rzxContinueRecording:rzx_filename];
   
   if( error != LIBSPECTRUM_ERROR_NONE ) {
     ui_error( UI_ERROR_WARNING, "RZX file cannot be continued" );
@@ -812,7 +812,7 @@ error:
   
   ui_menu_activate( UI_MENU_ITEM_RECORDING, 1 );
   
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] unpause];
 }
 
 - (IBAction)rzx_finalise:(id)sender
@@ -822,12 +822,12 @@ error:
   
   if( rzx_playback || rzx_recording ) return;
   
-  [[DisplayOpenGLView instance] pause];
+  [[EmulationSessionController instance] pause];
   
   rzx_filename = cocoaui_openpanel_get_filename( @"Finalise Recording", rzxFileTypes );
-  if( !rzx_filename ) { [[DisplayOpenGLView instance] unpause]; return; }
+  if( !rzx_filename ) { [[EmulationSessionController instance] unpause]; return; }
   
-  error = [[DisplayOpenGLView instance] rzxFinaliseRecording:rzx_filename];
+  error = [[EmulationSessionController instance] rzxFinaliseRecording:rzx_filename];
   
   if( error == LIBSPECTRUM_ERROR_NONE ) {
     ui_error( UI_ERROR_INFO, "Emulator recording file finalised" );
@@ -837,7 +837,7 @@ error:
   
   free( rzx_filename );
   
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] unpause];
 }
 
 - (IBAction)psg_start:(id)sender
@@ -846,12 +846,12 @@ error:
 
   if( psg_recording ) return;
 
-  [[DisplayOpenGLView instance] pause];
+  [[EmulationSessionController instance] pause];
 
   psgfile = cocoaui_savepanel_get_filename( @"Start AY Sound Recording", @[@"psg"] );
-  if( !psgfile ) { [[DisplayOpenGLView instance] unpause]; return; }
+  if( !psgfile ) { [[EmulationSessionController instance] unpause]; return; }
 
-  [[DisplayOpenGLView instance] psgStart:psgfile];
+  [[EmulationSessionController instance] psgStart:psgfile];
 
   free( psgfile );
 
@@ -859,13 +859,13 @@ error:
 
   ui_menu_activate( UI_MENU_ITEM_AY_LOGGING, 1 );
 
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] unpause];
 }
 
 - (IBAction)psg_stop:(id)sender
 {
   if ( !psg_recording ) return;
-  [[DisplayOpenGLView instance] psgStop];
+  [[EmulationSessionController instance] psgStop];
 
   ui_menu_activate( UI_MENU_ITEM_AY_LOGGING, 0 );
 }
@@ -875,20 +875,20 @@ error:
   char *filename = NULL;
 
   if( !settings_current.full_screen ) {
-    [[DisplayOpenGLView instance] pause];
+    [[EmulationSessionController instance] pause];
 
     filename = cocoaui_savepanel_get_filename( @"Save Snapshot As", @[@"szx", @"z80", @"sna"] );
 
     if( !filename ) goto save_as_exit;
 
-    [[DisplayOpenGLView instance] snapshotWrite:filename];
+    [[EmulationSessionController instance] snapshotWrite:filename];
 
     [self addRecentSnapshot:filename];
 
     free( filename );
 
 save_as_exit:
-    [[DisplayOpenGLView instance] unpause];
+    [[EmulationSessionController instance] unpause];
   }
   [self releaseCmdKeys:@"s" withCode:QZ_s];
 }
@@ -897,13 +897,13 @@ save_as_exit:
 {
   char *filename = NULL;
 
-  [[DisplayOpenGLView instance] pause];
+  [[EmulationSessionController instance] pause];
 
   filename = cocoaui_openpanel_get_filename( @"Open Screenshot", scrFileTypes );
 
-  if( !filename ) { [[DisplayOpenGLView instance] unpause]; return; }
+  if( !filename ) { [[EmulationSessionController instance] unpause]; return; }
 
-  [[DisplayOpenGLView instance] screenshotScrRead:filename];
+  [[EmulationSessionController instance] screenshotScrRead:filename];
 
   [self addRecentSnapshot:filename];
 
@@ -911,7 +911,7 @@ save_as_exit:
 
   display_refresh_all();
 
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] unpause];
 }
 
 - (IBAction)pause:(id)sender
@@ -922,9 +922,9 @@ save_as_exit:
     paused = 0;
     ui_statusbar_update( UI_STATUSBAR_ITEM_PAUSED,
                          UI_STATUSBAR_STATE_INACTIVE );
-    [[DisplayOpenGLView instance] unpause];
+    [[EmulationSessionController instance] unpause];
   } else {
-    [[DisplayOpenGLView instance] pause];
+    [[EmulationSessionController instance] pause];
 
     /* Stop recording any competition mode RZX file */
     if( rzx_recording && rzx_competition_mode ) {
@@ -940,131 +940,131 @@ save_as_exit:
 
 - (IBAction)profiler_start:(id)sender
 {
-  [[DisplayOpenGLView instance] profileStart];
+  [[EmulationSessionController instance] profileStart];
 }
 
 - (IBAction)profiler_stop:(id)sender
 {
   char *filename = NULL;
 
-  [[DisplayOpenGLView instance] pause];
+  [[EmulationSessionController instance] pause];
 
   filename = cocoaui_savepanel_get_filename( @"Save Profile Data As", @[@"profile"] );
-  if( !filename ) { [[DisplayOpenGLView instance] unpause]; return; }
+  if( !filename ) { [[EmulationSessionController instance] unpause]; return; }
 
-  [[DisplayOpenGLView instance] profileFinish:filename];
+  [[EmulationSessionController instance] profileFinish:filename];
 
   free( filename );
 
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] unpause];
 }
 
 - (IBAction)save_screen:(id)sender
 {
   char *filename = NULL;
 
-  [[DisplayOpenGLView instance] pause];
+  [[EmulationSessionController instance] pause];
 
   filename = cocoaui_savepanel_get_filename( @"Save Screenshot As",
                                              @[@"scr", @"mlt"] );
 
-  if( !filename ) { [[DisplayOpenGLView instance] unpause]; return; }
+  if( !filename ) { [[EmulationSessionController instance] unpause]; return; }
 
-  [[DisplayOpenGLView instance] screenshotScrWrite:filename];
+  [[EmulationSessionController instance] screenshotScrWrite:filename];
 
   [self addRecentSnapshot:filename];
 
   free( filename );
 
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] unpause];
 }
 
 - (IBAction)export_screen:(id)sender
 {
   char *filename = NULL;
 
-  [[DisplayOpenGLView instance] pause];
+  [[EmulationSessionController instance] pause];
 
   filename = cocoaui_savepanel_get_filename( @"Export Screenshot", @[@"png", @"tiff", @"bmp", @"jpg", @"gif"] );
 
-  if( !filename ) { [[DisplayOpenGLView instance] unpause]; return; }
+  if( !filename ) { [[EmulationSessionController instance] unpause]; return; }
 
-  [[DisplayOpenGLView instance] screenshotWrite:filename];
+  [[EmulationSessionController instance] screenshotWrite:filename];
 
   free( filename );
 
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] unpause];
 }
 
 - (IBAction)save_options:(id)sender
 {
-  [[DisplayOpenGLView instance] settingsSave];
+  [[EmulationSessionController instance] settingsSave];
 }
 
 - (IBAction)fullscreen:(id)sender
 {
-  [[DisplayOpenGLView instance] fullscreen];
+  [[EmulationSessionController instance] fullscreen];
 }
 
 - (IBAction)hard_reset:(id)sender
 {
-  [[DisplayOpenGLView instance] pause];
+  [[EmulationSessionController instance] pause];
 
-  [[DisplayOpenGLView instance] hard_reset];
+  [[EmulationSessionController instance] hard_reset];
 
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] unpause];
 }
 
 - (IBAction)joystick_keyboard:(id)sender
 {
-  [[DisplayOpenGLView instance] joystickToggleKeyboard];
+  [[EmulationSessionController instance] joystickToggleKeyboard];
   [self releaseCmdKeys:@"j" withCode:QZ_j];
 }
 
 - (IBAction)keyboard_recreated:(id)sender
 {
-  [[DisplayOpenGLView instance] keyboardToggleRecreatedZXSpectrum];
+  [[EmulationSessionController instance] keyboardToggleRecreatedZXSpectrum];
   [self releaseCmdKeys:@"r" withCode:QZ_r];
 }
 
 - (IBAction)keyboard_arrows_shifted:(id)sender
 {
-  [[DisplayOpenGLView instance] keyboardToggleArrowsShifted];
+  [[EmulationSessionController instance] keyboardToggleArrowsShifted];
 }
 
 - (IBAction)tape_clear:(id)sender
 {
-  [[DisplayOpenGLView instance] tapeClear];
+  [[EmulationSessionController instance] tapeClear];
 }
 
 - (IBAction)tape_open:(id)sender
 {
   char *filename = NULL;
 
-  [[DisplayOpenGLView instance] pause];
+  [[EmulationSessionController instance] pause];
 
   filename = cocoaui_openpanel_get_filename( @"Open Tape", tapeFileTypes );
 
-  if( !filename ) { [[DisplayOpenGLView instance] unpause]; return; }
+  if( !filename ) { [[EmulationSessionController instance] unpause]; return; }
 
-  [[DisplayOpenGLView instance] tapeOpen:filename];
+  [[EmulationSessionController instance] tapeOpen:filename];
 
   [self addRecentSnapshot:filename];
 
   free( filename );
 
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] unpause];
 }
 
 - (IBAction)tape_play:(id)sender
 {
-  [[DisplayOpenGLView instance] tapeTogglePlay];
+  [[EmulationSessionController instance] tapeTogglePlay];
   [self releaseCmdKeys:@"p" withCode:QZ_p];
 }
 
 - (IBAction)tape_rewind:(id)sender
 {
-  [[DisplayOpenGLView instance] tapeRewind];
+  [[EmulationSessionController instance] tapeRewind];
 }
 
 - (IBAction)tape_write:(id)sender
@@ -1074,24 +1074,24 @@ save_as_exit:
 
 - (IBAction)tape_record:(id)sender
 {
-  [[DisplayOpenGLView instance] tapeToggleRecord];
+  [[EmulationSessionController instance] tapeToggleRecord];
 }
 
 - (IBAction)movie_record:(id)sender
 {
   char *filename = NULL;
   
-  [[DisplayOpenGLView instance] pause];
+  [[EmulationSessionController instance] pause];
   
   filename = cocoaui_savepanel_get_filename( @"Record Movie File", @[@"fmf"] );
   
-  if( !filename ) { [[DisplayOpenGLView instance] unpause]; return; }
+  if( !filename ) { [[EmulationSessionController instance] unpause]; return; }
   
-  [[DisplayOpenGLView instance] movieStartRecording:filename];
+  [[EmulationSessionController instance] movieStartRecording:filename];
   
   free( filename );
   
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] unpause];
 }
 
 - (IBAction)movie_record_from_rzx:(id)sender
@@ -1100,10 +1100,10 @@ save_as_exit:
   
   if( rzx_playback || rzx_recording || movie_recording ) return;
   
-  [[DisplayOpenGLView instance] pause];
+  [[EmulationSessionController instance] pause];
   
   rzx_file = cocoaui_openpanel_get_filename( @"Load Recording", rzxFileTypes );
-  if( !rzx_file ) { [[DisplayOpenGLView instance] unpause]; return; }
+  if( !rzx_file ) { [[EmulationSessionController instance] unpause]; return; }
   
   rzx_start_playback( rzx_file, 1 );
   free( rzx_file );
@@ -1113,37 +1113,37 @@ save_as_exit:
     fmf_file = cocoaui_savepanel_get_filename( @"Record Movie File", @[@"fmf"] );
     if( !fmf_file ) {
       rzx_stop_playback( 1 );
-      [[DisplayOpenGLView instance] unpause];
+      [[EmulationSessionController instance] unpause];
       return;
     }
     
-    [[DisplayOpenGLView instance] movieStartRecording:fmf_file];
+    [[EmulationSessionController instance] movieStartRecording:fmf_file];
     
     free( fmf_file );
     ui_menu_activate( UI_MENU_ITEM_RECORDING, 1 );
   }
   
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] unpause];
 }
 
 - (IBAction)movie_pause:(id)sender
 {
-  [[DisplayOpenGLView instance] movieTogglePause];
+  [[EmulationSessionController instance] movieTogglePause];
 }
 
 - (IBAction)movie_stop:(id)sender
 {
-  [[DisplayOpenGLView instance] movieStop];
+  [[EmulationSessionController instance] movieStop];
 }
 
 - (IBAction)didaktik80_snap:(id)sender
 {
-  [[DisplayOpenGLView instance] didaktik80Snap];
+  [[EmulationSessionController instance] didaktik80Snap];
 }
 
 - (IBAction)multiface_red_button:(id)sender
 {
-  [[DisplayOpenGLView instance] multifaceRedButton];
+  [[EmulationSessionController instance] multifaceRedButton];
 }
 
 - (IBAction)quit:(id)sender
@@ -1180,7 +1180,7 @@ save_as_exit:
     paused = 0;
     [[DebuggerController singleton] debugger_activate:nil];
   } else {
-    [[DisplayOpenGLView instance] cocoaBreak];
+    [[EmulationSessionController instance] cocoaBreak];
   }
   [self setPauseState];
 }
@@ -1304,7 +1304,7 @@ save_as_exit:
 
   if( error != NSAlertAlternateReturn ) return;
 
-  [[DisplayOpenGLView instance] settingsResetDefaults];
+  [[EmulationSessionController instance] settingsResetDefaults];
 }
 
 - (void)dealloc
@@ -2165,7 +2165,7 @@ save_as_exit:
 
   if( lsclass != LIBSPECTRUM_CLASS_RECORDING ) {
     utils_close_file( &file );
-    [[DisplayOpenGLView instance] openFile:filename];
+    [[EmulationSessionController instance] openFile:filename];
     return;
   }
 
@@ -2184,7 +2184,7 @@ save_as_exit:
                                                snapFileTypes );
     if( !snapshot ) return;
 
-    [[DisplayOpenGLView instance] snapOpen:snapshot];
+    [[EmulationSessionController instance] snapOpen:snapshot];
 
     free( snapshot );
   }
@@ -2193,7 +2193,7 @@ save_as_exit:
 
   libspectrum_rzx_free( rzx );
 
-  [[DisplayOpenGLView instance] rzxStartPlayback:filename];
+  [[EmulationSessionController instance] rzxStartPlayback:filename];
 
   if( rzx_playback ) ui_menu_activate( UI_MENU_ITEM_RECORDING, 1 );
 }
@@ -2208,11 +2208,11 @@ save_as_exit:
   
   [self addRecentSnapshot:filename];
 
-  [[DisplayOpenGLView instance] pause];
+  [[EmulationSessionController instance] pause];
 
   [self openFile:filename];
 
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] unpause];
 }
 
 - (void)generateUniqueLabels:(NSString *)filename
@@ -2346,9 +2346,9 @@ save_as_exit:
 
 - (void)newDisk:(int)drive
 {
-  [[DisplayOpenGLView instance] pause];
-  [[DisplayOpenGLView instance] diskInsertNew:drive];
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] pause];
+  [[EmulationSessionController instance] diskInsertNew:drive];
+  [[EmulationSessionController instance] unpause];
 }
 
 - (void)openDisk:(int)drive
@@ -2358,7 +2358,7 @@ save_as_exit:
   NSString *message;
   ui_media_drive_info_t *drive_info = NULL;
 
-  [[DisplayOpenGLView instance] pause];
+  [[EmulationSessionController instance] pause];
  
   if( machine_current->capabilities &
                LIBSPECTRUM_MACHINE_CAPABILITY_PLUS3_DISK ) {
@@ -2375,22 +2375,22 @@ save_as_exit:
 
   drive_info = ui_media_drive_find( drive );
   if( !drive_info ) {
-    [[DisplayOpenGLView instance] unpause];
+    [[EmulationSessionController instance] unpause];
     return;
   }
   message = [NSString stringWithFormat:@"Insert %s", drive_info->name];
 
   filename = cocoaui_openpanel_get_filename( message, fileTypes );
 
-  if( !filename ) { [[DisplayOpenGLView instance] unpause]; return; }
+  if( !filename ) { [[EmulationSessionController instance] unpause]; return; }
 
   [self addRecentSnapshot:filename];
 
-  [[DisplayOpenGLView instance] diskInsert:filename inDrive:drive];
+  [[EmulationSessionController instance] diskInsert:filename inDrive:drive];
 
   free( filename );
 
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] unpause];
 }
 
 - (void)setDiskState:(NSNumber*)state
@@ -2429,7 +2429,7 @@ save_as_exit:
 
   if( !settings_current.confirm_actions ) return UI_CONFIRM_SAVE_DONTSAVE;
 
-  [[DisplayOpenGLView instance] pause];
+  [[EmulationSessionController instance] pause];
 
   if( ui_mouse_grabbed ) ui_mouse_grabbed = ui_mouse_release( 1 );
 
@@ -2448,7 +2448,7 @@ save_as_exit:
     confirm = UI_CONFIRM_SAVE_CANCEL;
   }
 
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] unpause];
 
   return confirm;
 }
@@ -2462,11 +2462,11 @@ save_as_exit:
 {
   char *filename = NULL;
 
-  [[DisplayOpenGLView instance] pause];
+  [[EmulationSessionController instance] pause];
 
   filename = cocoaui_savepanel_get_filename( @"Write Tape As", @[@"tzx", @"tap", @"csw"] );
 
-  if( !filename ) { [[DisplayOpenGLView instance] unpause]; return 1; }
+  if( !filename ) { [[EmulationSessionController instance] unpause]; return 1; }
 
   /* We will be calling this from the main thread while the emulator is
      paused */
@@ -2476,7 +2476,7 @@ save_as_exit:
 
   free( filename );
 
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] unpause];
 
   return 0;
 }
@@ -2488,7 +2488,7 @@ save_as_exit:
   int err;
   ui_media_drive_info_t *drive_info = NULL;
   
-  [[DisplayOpenGLView instance] pause];
+  [[EmulationSessionController instance] pause];
   
   if( machine_current->capabilities &
                LIBSPECTRUM_MACHINE_CAPABILITY_PLUS3_DISK ) {
@@ -2504,7 +2504,7 @@ save_as_exit:
   }
   
   drive_info = ui_media_drive_find( which );
-  if( !drive_info )  { [[DisplayOpenGLView instance] unpause]; return 1; }
+  if( !drive_info )  { [[EmulationSessionController instance] unpause]; return 1; }
 
   if( drive_info->fdd->disk.filename == NULL )
     saveas = YES;
@@ -2513,7 +2513,7 @@ save_as_exit:
     NSString *title = [NSString stringWithFormat:@"Write %s As", drive_info->name];
     filename = cocoaui_savepanel_get_filename( title, fileTypes );
     
-    if( !filename ) { [[DisplayOpenGLView instance] unpause]; return 1; }
+    if( !filename ) { [[EmulationSessionController instance] unpause]; return 1; }
   }
   
   /* We will be calling this from the Emulator thread */
@@ -2527,7 +2527,7 @@ save_as_exit:
   
   if( saveas == YES ) free( filename );
   
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] unpause];
   
   return err;
 }
@@ -2537,13 +2537,13 @@ save_as_exit:
   int err;
   char *filename = NULL;
 
-  [[DisplayOpenGLView instance] pause];
+  [[EmulationSessionController instance] pause];
 
   if( saveas == YES ) {
     NSString *title = [NSString stringWithFormat:@"Write Microdrive Cartridge %i As", which];
     filename = cocoaui_savepanel_get_filename( title, @[@"mdr"] );
 
-    if( !filename ) { [[DisplayOpenGLView instance] unpause]; return 1; }
+    if( !filename ) { [[EmulationSessionController instance] unpause]; return 1; }
   }
 
   /* We will be calling this from the main thread with emulator paused */
@@ -2553,7 +2553,7 @@ save_as_exit:
 
   if( saveas == YES ) free( filename );
 
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] unpause];
 
   return err;
 }
@@ -2607,7 +2607,7 @@ save_as_exit:
 
   if( ui_mouse_grabbed ) ui_mouse_grabbed = ui_mouse_release( 1 );
 
-  [[DisplayOpenGLView instance] pause];
+  [[EmulationSessionController instance] pause];
 
   confirm = UI_CONFIRM_JOYSTICK_NONE;
 
@@ -2628,7 +2628,7 @@ save_as_exit:
 
   [alert release];
 
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] unpause];
 
   return confirm;
 }
@@ -2678,10 +2678,10 @@ save_as_exit:
   [filename getFileSystemRepresentation:fsrep maxLength:PATH_MAX];
 
   if ( display_ui_initialised ) {
-    [[DisplayOpenGLView instance] pause];
+    [[EmulationSessionController instance] pause];
     [self addRecentSnapshot:fsrep];
     [self openFile:fsrep];
-    [[DisplayOpenGLView instance] unpause];
+    [[EmulationSessionController instance] unpause];
   } else {
     if( utils_read_file( fsrep, &file ) ) fuse_abort();
 
@@ -2830,49 +2830,49 @@ cocoaui_savepanel_get_filename( NSString *title, NSArray *fileTypes )
 static void
 cocoaui_disk_eject( int drive )
 {
-  [[DisplayOpenGLView instance] pause];
-  [[DisplayOpenGLView instance] diskEject:drive];
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] pause];
+  [[EmulationSessionController instance] diskEject:drive];
+  [[EmulationSessionController instance] unpause];
 }
 
 static void
 cocoaui_disk_save( int drive, int saveas )
 {
-  [[DisplayOpenGLView instance] pause];
-  [[DisplayOpenGLView instance] diskSave:drive saveAs:saveas];
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] pause];
+  [[EmulationSessionController instance] diskSave:drive saveAs:saveas];
+  [[EmulationSessionController instance] unpause];
 }
 
 static void
 cocoaui_disk_flip( int drive, int flip )
 {
-  [[DisplayOpenGLView instance] pause];
-  [[DisplayOpenGLView instance] diskFlip:drive side:flip];
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] pause];
+  [[EmulationSessionController instance] diskFlip:drive side:flip];
+  [[EmulationSessionController instance] unpause];
 }
 
 static void
 cocoaui_disk_write_protect( int drive, int wrprot )
 {
-  [[DisplayOpenGLView instance] pause];
-  [[DisplayOpenGLView instance] diskWriteProtect:drive protect:wrprot];
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] pause];
+  [[EmulationSessionController instance] diskWriteProtect:drive protect:wrprot];
+  [[EmulationSessionController instance] unpause];
 }
 
 static void
 cocoaui_mdr_eject( int drive )
 {
-  [[DisplayOpenGLView instance] pause];
-  [[DisplayOpenGLView instance] if1MdrCartEject:drive];
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] pause];
+  [[EmulationSessionController instance] if1MdrCartEject:drive];
+  [[EmulationSessionController instance] unpause];
 }
 
 static void 
 cocoaui_mdr_save( int drive, int saveas )
 {
-  [[DisplayOpenGLView instance] pause];
-  [[DisplayOpenGLView instance] if1MdrCartSave:drive saveAs:saveas];
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] pause];
+  [[EmulationSessionController instance] if1MdrCartSave:drive saveAs:saveas];
+  [[EmulationSessionController instance] unpause];
 }
 
 /* Runs in Emulator object context */
@@ -3353,13 +3353,13 @@ cocoaui_confirm( const char *message )
 
   if( ui_mouse_grabbed ) ui_mouse_grabbed = ui_mouse_release( 1 );
 
-  [[DisplayOpenGLView instance] pause];
+  [[EmulationSessionController instance] pause];
 
   result = NSRunAlertPanel(@"Confirm", @(message), @"OK", @"Cancel", nil);
 
   if( result == NSAlertDefaultReturn ) confirm = 1;
 
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] unpause];
 
   return confirm;
 }

@@ -25,9 +25,9 @@
 
 #import "MemoryBrowserController.h"
 
-#import "DisplayOpenGLView.h"
+#import "EmulationSessionController.h"
 
-#include "memory.h"
+#include "memory_pages.h"
 
 @implementation MemoryBrowserController
 
@@ -76,10 +76,10 @@ id notificationObserver;
                 
                   [memoryBrowser reloadData];
                 
-                  [[DisplayOpenGLView instance] unpause];
+                  [[EmulationSessionController instance] unpause];
                 }];
   
-  [[DisplayOpenGLView instance] pause];
+  [[EmulationSessionController instance] pause];
 
   tableContents = [NSMutableArray arrayWithCapacity:0xfff];
 

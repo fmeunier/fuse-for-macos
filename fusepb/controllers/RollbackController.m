@@ -27,7 +27,7 @@
 
 #import "RollbackController.h"
 
-#import "DisplayOpenGLView.h"
+#import "EmulationSessionController.h"
 
 #include "machine.h"
 #include "rzx.h"
@@ -91,12 +91,12 @@ add_point_details( gpointer data, void *user_data );
     [NSApp stopModal];
     [[self window] close];
 
-    [[DisplayOpenGLView instance] unpause];
+    [[EmulationSessionController instance] unpause];
 }
 
 - (void)showWindow:(id)sender
 {
-  [[DisplayOpenGLView instance] pause];
+  [[EmulationSessionController instance] pause];
   
   [super showWindow:sender];
 

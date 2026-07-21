@@ -25,7 +25,7 @@
 
 #import "PokeMemoryController.h"
 
-#import "DisplayOpenGLView.h"
+#import "EmulationSessionController.h"
 
 #include "pokefinder/pokemem.h"
 
@@ -67,7 +67,7 @@ id notificationObserver;
                   
                   [trainers reloadData];
                 
-                  [[DisplayOpenGLView instance] unpause];
+                  [[EmulationSessionController instance] unpause];
                 }];
   
   [self setWindowFrameAutosaveName:@"PokeMemoryWindow"];
@@ -88,7 +88,7 @@ id notificationObserver;
 
 - (void)showWindow:(id)sender
 {
-  [[DisplayOpenGLView instance] pause];
+  [[EmulationSessionController instance] pause];
 
   if( trainer_list ) {
     g_slist_foreach( trainer_list, trainer_add, self );

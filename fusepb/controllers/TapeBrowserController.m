@@ -25,7 +25,7 @@
 
 #include <config.h>
 
-#import "DisplayOpenGLView.h"
+#import "EmulationSessionController.h"
 #import "TapeBrowserController.h"
 
 #include "tape.h"
@@ -103,13 +103,13 @@ static TapeBrowserController *singleton = nil;
 
 - (void)showWindow:(id)sender
 {
-  [[DisplayOpenGLView instance] pause];
+  [[EmulationSessionController instance] pause];
   
   [super showWindow:sender];
 
-  [[DisplayOpenGLView instance] tapeWindowInitialise];
+  [[EmulationSessionController instance] tapeWindowInitialise];
 
-  [[DisplayOpenGLView instance] unpause];
+  [[EmulationSessionController instance] unpause];
 }
 
 - (void)clearContents
