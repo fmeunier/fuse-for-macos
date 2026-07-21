@@ -21,7 +21,7 @@
 
 */
 
-#import "DisplayOpenGLView.h"
+#import "EmulationSessionController.h"
 #import "Emulator.h"
 
 #include "dck.h"
@@ -88,8 +88,8 @@ static Emulator *instance = nil;
                       connectionWithReceivePort:[portArray objectAtIndex:0]
                       sendPort:[portArray objectAtIndex:1]];
   [serverConnection setRootObject:self];
-  proxy_view = (id)[serverConnection rootProxy];
-  [proxy_view setServer:self];
+  proxy_session = (EmulationSessionController *)[serverConnection rootProxy];
+  [proxy_session setServer:self];
 
   if( fuse_init( ac, av ) ) {
     fprintf( stderr, "%s: error initialising -- giving up!\n", fuse_progname );
@@ -863,37 +863,37 @@ static Emulator *instance = nil;
 
 -(ui_confirm_save_t) confirmSave:(NSString*)theMessage
 {
-  return [proxy_view confirmSave:theMessage];
+  return [proxy_session confirmSave:theMessage];
 }
 
 -(int) confirm:(NSString*)theMessage
 {
-  return [proxy_view confirm:theMessage];
+  return [proxy_session confirm:theMessage];
 }
 
 -(int) tapeWrite
 {
-  return [proxy_view tapeWrite];
+  return [proxy_session tapeWrite];
 }
 
 -(int) diskWrite:(int)which saveAs:(bool)saveas
 {
-  return [proxy_view diskWrite:which saveAs:saveas];
+  return [proxy_session diskWrite:which saveAs:saveas];
 }
 
 -(int) if1MdrWrite:(int)which saveAs:(bool)saveas
 {
-  return [proxy_view if1MdrWrite:which saveAs:saveas];
+  return [proxy_session if1MdrWrite:which saveAs:saveas];
 }
 
 -(ui_confirm_joystick_t) confirmJoystick:(libspectrum_joystick)type inputs:(int)theInputs
 {
-  return [proxy_view confirmJoystick:type inputs:theInputs];
+  return [proxy_session confirmJoystick:type inputs:theInputs];
 }
 
 -(void) debuggerActivate
 {
-  [proxy_view debuggerActivate];
+  [proxy_session debuggerActivate];
 }
 
 -(void)movieStartRecording:(const char *)filename

@@ -11,9 +11,26 @@
 
 #include <libspectrum.h>
 
+#include "ui/ui.h"
+
+@class DisplayOpenGLView;
+@class Emulator;
+
 @interface EmulationSessionController : NSObject
+{
+  Emulator *real_emulator;
+  Emulator *proxy_emulator;
+  NSConnection *kit_connection;
+  DisplayOpenGLView *display_view;
+}
 
 +(EmulationSessionController *) instance;
+
+-(void) startWithDisplayView:(DisplayOpenGLView *)view;
+-(void) stop;
+-(void) setServer:(Emulator *)server;
+-(int) checkMediaChanged;
+-(void) setEmulationHz:(float)hz;
 
 -(void) openFile:(const char *)filename;
 -(void) snapOpen:(const char *)filename;
@@ -95,5 +112,27 @@
 -(int) zxmmcInsert:(const char *)filename;
 -(int) zxmmcCommit;
 -(int) zxmmcEject;
+
+-(void) mouseMoved:(NSEvent *)event;
+-(void) mouseDown:(NSEvent *)event;
+-(void) mouseUp:(NSEvent *)event;
+-(void) rightMouseDown:(NSEvent *)event;
+-(void) rightMouseUp:(NSEvent *)event;
+-(void) otherMouseDown:(NSEvent *)event;
+-(void) otherMouseUp:(NSEvent *)event;
+-(void) flagsChanged:(NSEvent *)event;
+-(void) keyDown:(NSEvent *)event;
+-(void) keyUp:(NSEvent *)event;
+-(void) keyboardReleaseAll;
+
+-(void) setDiskState:(NSNumber *)state;
+-(void) setTapeState:(NSNumber *)state;
+-(void) setMdrState:(NSNumber *)state;
+-(ui_confirm_save_t) confirmSave:(NSString *)message;
+-(int) confirm:(NSString *)message;
+-(int) tapeWrite;
+-(int) if1MdrWrite:(int)which saveAs:(bool)saveas;
+-(ui_confirm_joystick_t) confirmJoystick:(libspectrum_joystick)type inputs:(int)inputs;
+-(void) debuggerActivate;
 
 @end

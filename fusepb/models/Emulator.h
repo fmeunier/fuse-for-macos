@@ -30,7 +30,7 @@
 #include "peripherals/disk/beta.h"
 #include "ui/ui.h"
 
-@class DisplayOpenGLView;
+@class EmulationSessionController;
 
 @interface Emulator : NSObject
 {
@@ -47,7 +47,7 @@
   BOOL shiftDown;
   BOOL commandDown;
 
-  DisplayOpenGLView *proxy_view;
+  EmulationSessionController *proxy_session;
 }
 +(Emulator *) instance;
 

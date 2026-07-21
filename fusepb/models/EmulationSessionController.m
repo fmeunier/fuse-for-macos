@@ -7,8 +7,11 @@
    (at your option) any later version.
 */
 
-#import "DisplayOpenGLView.h"
+#import "DebuggerController.h"
+#import "Emulator.h"
 #import "EmulationSessionController.h"
+#import "FuseController.h"
+#import "DisplayOpenGLView.h"
 
 @implementation EmulationSessionController
 
@@ -21,313 +24,468 @@ static EmulationSessionController *instance = nil;
   return instance;
 }
 
+-(void) startWithDisplayView:(DisplayOpenGLView *)view
+{
+  NSPort *port1;
+  NSPort *port2;
+  NSArray *portArray;
+
+  display_view = view;
+  if( real_emulator ) return;
+
+  real_emulator = [[Emulator alloc] init];
+
+  port1 = [NSPort port];
+  port2 = [NSPort port];
+
+  kit_connection = [[NSConnection alloc] initWithReceivePort:port1
+                                                     sendPort:port2];
+  [kit_connection setRootObject:self];
+  [kit_connection enableMultipleThreads];
+
+  portArray = @[port2, port1];
+  [NSThread detachNewThreadSelector:@selector(connectWithPorts:)
+                           toTarget:real_emulator withObject:portArray];
+}
+
+-(void) stop
+{
+  [proxy_emulator stop];
+  [proxy_emulator release];
+  proxy_emulator = nil;
+  [real_emulator release];
+  real_emulator = nil;
+  [kit_connection release];
+  kit_connection = nil;
+  display_view = nil;
+}
+
+-(void) setServer:(Emulator *)server
+{
+  proxy_emulator = [server retain];
+}
+
+-(int) checkMediaChanged
+{
+  return [proxy_emulator checkMediaChanged];
+}
+
+-(void) setEmulationHz:(float)hz
+{
+  [proxy_emulator setEmulationHz:hz];
+}
+
 -(void) openFile:(const char *)filename
 {
-  [[DisplayOpenGLView instance] openFile:filename];
+  [proxy_emulator openFile:filename];
 }
 -(void) snapOpen:(const char *)filename
 {
-  [[DisplayOpenGLView instance] snapOpen:filename];
+  [proxy_emulator snapOpen:filename];
 }
 -(void) tapeOpen:(const char *)filename
 {
-  [[DisplayOpenGLView instance] tapeOpen:filename];
+  [proxy_emulator tapeOpen:filename];
 }
 -(void) tapeWrite:(const char *)filename
 {
-  [[DisplayOpenGLView instance] tapeWrite:filename];
+  [proxy_emulator tapeWrite:filename];
 }
 -(void) tapeTogglePlay
 {
-  [[DisplayOpenGLView instance] tapeTogglePlay];
+  [proxy_emulator tapeTogglePlay];
 }
 -(void) tapeToggleRecord
 {
-  [[DisplayOpenGLView instance] tapeToggleRecord];
+  [proxy_emulator tapeToggleRecord];
 }
 -(void) tapeRewind
 {
-  [[DisplayOpenGLView instance] tapeRewind];
+  [proxy_emulator tapeRewind];
 }
 -(void) tapeClear
 {
-  [[DisplayOpenGLView instance] tapeClear];
+  [proxy_emulator tapeClear];
 }
 -(void) tapeWindowInitialise
 {
-  [[DisplayOpenGLView instance] tapeWindowInitialise];
+  [proxy_emulator tapeWindowInitialise];
 }
 -(void) cocoaBreak
 {
-  [[DisplayOpenGLView instance] cocoaBreak];
+  [proxy_emulator cocoaBreak];
 }
 -(void) pause
 {
-  [[DisplayOpenGLView instance] pause];
+  [proxy_emulator pause];
 }
 -(void) unpause
 {
-  [[DisplayOpenGLView instance] unpause];
+  [proxy_emulator unpause];
 }
 -(void) reset
 {
-  [[DisplayOpenGLView instance] reset];
+  [proxy_emulator reset];
 }
 -(void) hard_reset
 {
-  [[DisplayOpenGLView instance] hard_reset];
+  [proxy_emulator hard_reset];
 }
 -(void) nmi
 {
-  [[DisplayOpenGLView instance] nmi];
+  [proxy_emulator nmi];
 }
 
 -(void) diskInsertNew:(int)which
 {
-  [[DisplayOpenGLView instance] diskInsertNew:which];
+  [proxy_emulator diskInsertNew:which];
 }
 -(void) diskInsert:(const char *)filename inDrive:(int)which
 {
-  [[DisplayOpenGLView instance] diskInsert:filename inDrive:which];
+  [proxy_emulator diskInsert:filename inDrive:which];
 }
 -(void) diskEject:(int)drive
 {
-  [[DisplayOpenGLView instance] diskEject:drive];
+  [proxy_emulator diskEject:drive];
 }
 -(void) diskSave:(int)drive saveAs:(bool)saveas
 {
-  [[DisplayOpenGLView instance] diskSave:drive saveAs:saveas];
+  [proxy_emulator diskSave:drive saveAs:saveas];
 }
 -(void) diskFlip:(int)drive side:(int)flip
 {
-  [[DisplayOpenGLView instance] diskFlip:drive side:flip];
+  [proxy_emulator diskFlip:drive side:flip];
 }
 -(void) diskWriteProtect:(int)which protect:(int)write
 {
-  [[DisplayOpenGLView instance] diskWriteProtect:which protect:write];
+  [proxy_emulator diskWriteProtect:which protect:write];
 }
 
 -(void) snapshotWrite:(const char *)filename
 {
-  [[DisplayOpenGLView instance] snapshotWrite:filename];
+  [proxy_emulator snapshotWrite:filename];
 }
 -(void) screenshotScrRead:(const char *)filename
 {
-  [[DisplayOpenGLView instance] screenshotScrRead:filename];
+  [proxy_emulator screenshotScrRead:filename];
 }
 -(void) screenshotScrWrite:(const char *)filename
 {
-  [[DisplayOpenGLView instance] screenshotScrWrite:filename];
+  [proxy_emulator screenshotScrWrite:filename];
 }
 -(void) screenshotWrite:(const char *)filename
 {
-  [[DisplayOpenGLView instance] screenshotWrite:filename];
+  [proxy_emulator screenshotWrite:filename];
 }
 -(void) profileStart
 {
-  [[DisplayOpenGLView instance] profileStart];
+  [proxy_emulator profileStart];
 }
 -(void) profileFinish:(const char *)filename
 {
-  [[DisplayOpenGLView instance] profileFinish:filename];
+  [proxy_emulator profileFinish:filename];
 }
 -(void) settingsSave
 {
-  [[DisplayOpenGLView instance] settingsSave];
+  [proxy_emulator settingsSave];
 }
 -(void) settingsResetDefaults
 {
-  [[DisplayOpenGLView instance] settingsResetDefaults];
+  [proxy_emulator settingsResetDefaults];
 }
 -(void) fullscreen
 {
-  [[DisplayOpenGLView instance] fullscreen];
+  [proxy_emulator fullscreen];
 }
 -(void) joystickToggleKeyboard
 {
-  [[DisplayOpenGLView instance] joystickToggleKeyboard];
+  [proxy_emulator joystickToggleKeyboard];
 }
 -(void) keyboardToggleRecreatedZXSpectrum
 {
-  [[DisplayOpenGLView instance] keyboardToggleRecreatedZXSpectrum];
+  [proxy_emulator keyboardToggleRecreatedZXSpectrum];
 }
 -(void) keyboardToggleArrowsShifted
 {
-  [[DisplayOpenGLView instance] keyboardToggleArrowsShifted];
+  [proxy_emulator keyboardToggleArrowsShifted];
 }
 
 -(void) rzxInsertSnap
 {
-  [[DisplayOpenGLView instance] rzxInsertSnap];
+  [proxy_emulator rzxInsertSnap];
 }
 -(void) rzxRollback
 {
-  [[DisplayOpenGLView instance] rzxRollback];
+  [proxy_emulator rzxRollback];
 }
 -(void) rzxStop
 {
-  [[DisplayOpenGLView instance] rzxStop];
+  [proxy_emulator rzxStop];
 }
 -(void) if1MdrNew:(int)drive
 {
-  [[DisplayOpenGLView instance] if1MdrNew:drive];
+  [proxy_emulator if1MdrNew:drive];
 }
 -(void) if1MdrInsert:(const char *)filename inDrive:(int)drive
 {
-  [[DisplayOpenGLView instance] if1MdrInsert:filename inDrive:drive];
+  [proxy_emulator if1MdrInsert:filename inDrive:drive];
 }
 -(void) if1MdrCartEject:(int)drive
 {
-  [[DisplayOpenGLView instance] if1MdrCartEject:drive];
+  [proxy_emulator if1MdrCartEject:drive];
 }
 -(void) if1MdrCartSave:(int)drive saveAs:(bool)saveas
 {
-  [[DisplayOpenGLView instance] if1MdrCartSave:drive saveAs:saveas];
+  [proxy_emulator if1MdrCartSave:drive saveAs:saveas];
 }
 -(void) if1MdrWriteProtect:(int)w inDrive:(int)drive
 {
-  [[DisplayOpenGLView instance] if1MdrWriteProtect:w inDrive:drive];
+  [proxy_emulator if1MdrWriteProtect:w inDrive:drive];
 }
 -(void) if2Eject
 {
-  [[DisplayOpenGLView instance] if2Eject];
+  [proxy_emulator if2Eject];
 }
 -(void) dckEject
 {
-  [[DisplayOpenGLView instance] dckEject];
+  [proxy_emulator dckEject];
 }
 -(void) psgStart:(const char *)psgfile
 {
-  [[DisplayOpenGLView instance] psgStart:psgfile];
+  [proxy_emulator psgStart:psgfile];
 }
 -(void) psgStop
 {
-  [[DisplayOpenGLView instance] psgStop];
+  [proxy_emulator psgStop];
 }
 -(void) movieStartRecording:(const char *)filename
 {
-  [[DisplayOpenGLView instance] movieStartRecording:filename];
+  [proxy_emulator movieStartRecording:filename];
 }
 -(void) movieTogglePause
 {
-  [[DisplayOpenGLView instance] movieTogglePause];
+  [proxy_emulator movieTogglePause];
 }
 -(void) movieStop
 {
-  [[DisplayOpenGLView instance] movieStop];
+  [proxy_emulator movieStop];
 }
 -(void) didaktik80Snap
 {
-  [[DisplayOpenGLView instance] didaktik80Snap];
+  [proxy_emulator didaktik80Snap];
 }
 -(void) multifaceRedButton
 {
-  [[DisplayOpenGLView instance] multifaceRedButton];
+  [proxy_emulator multifaceRedButton];
 }
 
 -(int) tapeClose
 {
-  return [[DisplayOpenGLView instance] tapeClose];
+  return [proxy_emulator tapeClose];
 }
 -(int) diskWrite:(int)drive saveAs:(bool)saveas
 {
-  return [[DisplayOpenGLView instance] diskWrite:drive saveAs:saveas];
+  return [[FuseController singleton] diskWrite:drive saveAs:saveas];
 }
 -(int) rzxStartPlayback:(const char *)filename
 {
-  return [[DisplayOpenGLView instance] rzxStartPlayback:filename];
+  return [proxy_emulator rzxStartPlayback:filename];
 }
 -(int) rzxStartRecording:(const char *)filename embedSnapshot:(int)flag
 {
-  return [[DisplayOpenGLView instance] rzxStartRecording:filename embedSnapshot:flag];
+  return [proxy_emulator rzxStartRecording:filename embedSnapshot:flag];
 }
 -(int) rzxContinueRecording:(const char *)filename
 {
-  return [[DisplayOpenGLView instance] rzxContinueRecording:filename];
+  return [proxy_emulator rzxContinueRecording:filename];
 }
 -(int) rzxFinaliseRecording:(const char *)filename
 {
-  return [[DisplayOpenGLView instance] rzxFinaliseRecording:filename];
+  return [proxy_emulator rzxFinaliseRecording:filename];
 }
 -(int) if2Insert:(const char *)filename
 {
-  return [[DisplayOpenGLView instance] if2Insert:filename];
+  return [proxy_emulator if2Insert:filename];
 }
 -(int) dckInsert:(const char *)filename
 {
-  return [[DisplayOpenGLView instance] dckInsert:filename];
+  return [proxy_emulator dckInsert:filename];
 }
 -(int) simpleideInsert:(const char *)filename inUnit:(libspectrum_ide_unit)unit
 {
-  return [[DisplayOpenGLView instance] simpleideInsert:filename inUnit:unit];
+  return [proxy_emulator simpleideInsert:filename inUnit:unit];
 }
 -(int) simpleideCommit:(libspectrum_ide_unit)unit
 {
-  return [[DisplayOpenGLView instance] simpleideCommit:unit];
+  return [proxy_emulator simpleideCommit:unit];
 }
 -(int) simpleideEject:(libspectrum_ide_unit)unit
 {
-  return [[DisplayOpenGLView instance] simpleideEject:unit];
+  return [proxy_emulator simpleideEject:unit];
 }
 -(int) zxataspInsert:(const char *)filename inUnit:(libspectrum_ide_unit)unit
 {
-  return [[DisplayOpenGLView instance] zxataspInsert:filename inUnit:unit];
+  return [proxy_emulator zxataspInsert:filename inUnit:unit];
 }
 -(int) zxataspCommit:(libspectrum_ide_unit)unit
 {
-  return [[DisplayOpenGLView instance] zxataspCommit:unit];
+  return [proxy_emulator zxataspCommit:unit];
 }
 -(int) zxataspEject:(libspectrum_ide_unit)unit
 {
-  return [[DisplayOpenGLView instance] zxataspEject:unit];
+  return [proxy_emulator zxataspEject:unit];
 }
 -(int) zxcfInsert:(const char *)filename
 {
-  return [[DisplayOpenGLView instance] zxcfInsert:filename];
+  return [proxy_emulator zxcfInsert:filename];
 }
 -(int) zxcfCommit
 {
-  return [[DisplayOpenGLView instance] zxcfCommit];
+  return [proxy_emulator zxcfCommit];
 }
 -(int) zxcfEject
 {
-  return [[DisplayOpenGLView instance] zxcfEject];
+  return [proxy_emulator zxcfEject];
 }
 -(int) divideInsert:(const char *)filename inUnit:(libspectrum_ide_unit)unit
 {
-  return [[DisplayOpenGLView instance] divideInsert:filename inUnit:unit];
+  return [proxy_emulator divideInsert:filename inUnit:unit];
 }
 -(int) divideCommit:(libspectrum_ide_unit)unit
 {
-  return [[DisplayOpenGLView instance] divideCommit:unit];
+  return [proxy_emulator divideCommit:unit];
 }
 -(int) divideEject:(libspectrum_ide_unit)unit
 {
-  return [[DisplayOpenGLView instance] divideEject:unit];
+  return [proxy_emulator divideEject:unit];
 }
 -(int) divmmcInsert:(const char *)filename
 {
-  return [[DisplayOpenGLView instance] divmmcInsert:filename];
+  return [proxy_emulator divmmcInsert:filename];
 }
 -(int) divmmcCommit
 {
-  return [[DisplayOpenGLView instance] divmmcCommit];
+  return [proxy_emulator divmmcCommit];
 }
 -(int) divmmcEject
 {
-  return [[DisplayOpenGLView instance] divmmcEject];
+  return [proxy_emulator divmmcEject];
 }
 -(int) zxmmcInsert:(const char *)filename
 {
-  return [[DisplayOpenGLView instance] zxmmcInsert:filename];
+  return [proxy_emulator zxmmcInsert:filename];
 }
 -(int) zxmmcCommit
 {
-  return [[DisplayOpenGLView instance] zxmmcCommit];
+  return [proxy_emulator zxmmcCommit];
 }
 -(int) zxmmcEject
 {
-  return [[DisplayOpenGLView instance] zxmmcEject];
+  return [proxy_emulator zxmmcEject];
+}
+
+-(void) mouseMoved:(NSEvent *)event
+{
+  [proxy_emulator mouseMoved:event];
+}
+
+-(void) mouseDown:(NSEvent *)event
+{
+  [proxy_emulator mouseDown:event];
+}
+
+-(void) mouseUp:(NSEvent *)event
+{
+  [proxy_emulator mouseUp:event];
+}
+
+-(void) rightMouseDown:(NSEvent *)event
+{
+  [proxy_emulator rightMouseDown:event];
+}
+
+-(void) rightMouseUp:(NSEvent *)event
+{
+  [proxy_emulator rightMouseUp:event];
+}
+
+-(void) otherMouseDown:(NSEvent *)event
+{
+  [proxy_emulator otherMouseDown:event];
+}
+
+-(void) otherMouseUp:(NSEvent *)event
+{
+  [proxy_emulator otherMouseUp:event];
+}
+
+-(void) flagsChanged:(NSEvent *)event
+{
+  [proxy_emulator flagsChanged:event];
+}
+
+-(void) keyDown:(NSEvent *)event
+{
+  [proxy_emulator keyDown:event];
+}
+
+-(void) keyUp:(NSEvent *)event
+{
+  [proxy_emulator keyUp:event];
+}
+
+-(void) keyboardReleaseAll
+{
+  [proxy_emulator keyboardReleaseAll];
+}
+
+-(void) setDiskState:(NSNumber *)state
+{
+  [display_view setDiskState:state];
+  [[FuseController singleton] setDiskState:state];
+}
+
+-(void) setTapeState:(NSNumber *)state
+{
+  [display_view setTapeState:state];
+  [[FuseController singleton] setTapeState:state];
+}
+
+-(void) setMdrState:(NSNumber *)state
+{
+  [display_view setMdrState:state];
+  [[FuseController singleton] setMdrState:state];
+}
+
+-(ui_confirm_save_t) confirmSave:(NSString *)message
+{
+  return [[FuseController singleton] confirmSave:message];
+}
+
+-(int) confirm:(NSString *)message
+{
+  return [[FuseController singleton] confirm:message];
+}
+
+-(int) tapeWrite
+{
+  return [[FuseController singleton] tapeWrite];
+}
+
+-(int) if1MdrWrite:(int)which saveAs:(bool)saveas
+{
+  return [[FuseController singleton] if1MdrWrite:which saveAs:saveas];
+}
+
+-(ui_confirm_joystick_t) confirmJoystick:(libspectrum_joystick)type
+                                   inputs:(int)inputs
+{
+  return [[FuseController singleton] confirmJoystick:type inputs:inputs];
+}
+
+-(void) debuggerActivate
+{
+  [[DebuggerController singleton] debugger_activate:nil];
 }
 
 @end

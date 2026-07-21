@@ -22,7 +22,7 @@
 */
 
 #import "DisplayOpenGLView.h"
-#import "Emulator.h"
+#import "EmulationSessionController.h"
 #import "FuseController.h"
 #import "DebuggerController.h"
 #import "Texture.h"
@@ -220,11 +220,6 @@ static DisplayOpenGLView *instance = nil;
   [[self window] setContentSize:size];
 }
 
--(void)setServer:(id)anObject
-{
-  proxy_emulator = [anObject retain];
-}
-
 -(id) initWithFrame:(NSRect)frameRect
 {
   /* Init pixel format attribs */
@@ -251,7 +246,6 @@ static DisplayOpenGLView *instance = nil;
 
     buffered_screen_lock = [[NSLock alloc] init];
 
-    real_emulator = [[Emulator alloc] init];
   }
 
   [pixFmt release];
@@ -290,23 +284,7 @@ static DisplayOpenGLView *instance = nil;
 
   target_ratio = 4.0f/3.0f;
 
-  NSPort *port1;
-  NSPort *port2;
-  NSArray *portArray;
-
-  port1 = [NSPort port];
-  port2 = [NSPort port];
-
-  kitConnection = [[NSConnection alloc] initWithReceivePort:port1 sendPort:port2];
-  [kitConnection setRootObject:self];
-
-  [kitConnection enableMultipleThreads];
-
-  /* Ports switched here */
-  portArray = @[port2, port1];
-
-  [NSThread detachNewThreadSelector:@selector(connectWithPorts:)
-            toTarget:real_emulator withObject:portArray]; 
+  [[EmulationSessionController instance] startWithDisplayView:self];
 
   currentScreenTex = 0;
 
@@ -359,11 +337,7 @@ static DisplayOpenGLView *instance = nil;
 - (void)windowWillClose:(NSNotification *)notification
 {
   [[self window] setDelegate:nil];
-  [proxy_emulator stop];
-  [proxy_emulator release];
-  proxy_emulator = nil;
-  [real_emulator release];
-  real_emulator = nil;
+  [[EmulationSessionController instance] stop];
 
   [redCassette release];
   redCassette = nil;
@@ -383,7 +357,7 @@ static DisplayOpenGLView *instance = nil;
 
 - (void)windowDidResignKey:(NSNotification *)notification
 {
-  [proxy_emulator keyboardReleaseAll];
+  [[EmulationSessionController instance] keyboardReleaseAll];
 }
 
 -(void) loadPicture: (NSString *) name
@@ -673,397 +647,63 @@ static DisplayOpenGLView *instance = nil;
   [view_lock unlock];
 }
 
--(void) openFile:(const char *)filename
+-(void) mouseMoved:(NSEvent *)theEvent
 {
-  [proxy_emulator openFile:filename];
+  [[EmulationSessionController instance] mouseMoved:theEvent];
 }
 
--(void) snapOpen:(const char *)filename
+-(void) mouseDown:(NSEvent *)theEvent
 {
-  [proxy_emulator snapOpen:filename];
+  [[EmulationSessionController instance] mouseDown:theEvent];
 }
 
--(void) tapeOpen:(const char *)filename
+-(void) mouseUp:(NSEvent *)theEvent
 {
-  [view_lock lock];
-  [proxy_emulator tapeOpen:filename];
-  [view_lock unlock];
+  [[EmulationSessionController instance] mouseUp:theEvent];
 }
 
--(void) tapeWrite:(const char *)filename;
+-(void) rightMouseDown:(NSEvent *)theEvent
 {
-  [proxy_emulator tapeWrite:filename];
+  [[EmulationSessionController instance] rightMouseDown:theEvent];
 }
 
--(void) tapeTogglePlay
+-(void) rightMouseUp:(NSEvent *)theEvent
 {
-  [proxy_emulator tapeTogglePlay];
+  [[EmulationSessionController instance] rightMouseUp:theEvent];
 }
 
--(void) tapeToggleRecord
+-(void) otherMouseDown:(NSEvent *)theEvent
 {
-  [proxy_emulator tapeToggleRecord];
+  [[EmulationSessionController instance] otherMouseDown:theEvent];
 }
 
--(void) tapeRewind
+-(void) otherMouseUp:(NSEvent *)theEvent
 {
-  [proxy_emulator tapeRewind];
+  [[EmulationSessionController instance] otherMouseUp:theEvent];
 }
 
--(void) tapeClear
+-(void) flagsChanged:(NSEvent *)theEvent
 {
-  [proxy_emulator tapeClear];
+  [[EmulationSessionController instance] flagsChanged:theEvent];
 }
 
--(int) tapeClose
+-(void) keyDown:(NSEvent *)theEvent
 {
-  return [proxy_emulator tapeClose];
+  if( settings_current.full_screen ) {
+    unichar c = [[theEvent charactersIgnoringModifiers] characterAtIndex:0];
+    switch (c) {
+    case 27:
+      [self fullscreen:nil];
+      return;
+      break;
+    }
+  }
+  [[EmulationSessionController instance] keyDown:theEvent];
 }
 
--(void) tapeWindowInitialise
+-(void) keyUp:(NSEvent *)theEvent
 {
-  [proxy_emulator tapeWindowInitialise];
-}
-
--(void) cocoaBreak
-{
-  [proxy_emulator cocoaBreak];
-}
-
--(void) pause
-{
-  [proxy_emulator pause];
-
-  [self displayLinkStop];
-
-  /* FIXME: Show paused status somehow */
-}
-
--(void) unpause
-{
-  [proxy_emulator unpause];
-
-  [self displayLinkStart];
-}
-
--(void) reset
-{
-  [proxy_emulator reset];
-}
-
--(void) hard_reset
-{
-  [proxy_emulator hard_reset];
-}
-
--(void) nmi
-{
-  [proxy_emulator nmi];
-}
-
--(int) checkMediaChanged
-{
-  return [proxy_emulator checkMediaChanged];
-}
-
--(void) diskInsertNew:(int)which
-{
-  [proxy_emulator diskInsertNew:which];
-}
-
--(void) diskInsert:(const char *)filename inDrive:(int)which
-{
-  [proxy_emulator diskInsert:filename inDrive:which];
-}
-
--(void) diskEject:(int)drive
-{
-  [proxy_emulator diskEject:drive];
-}
-
--(void) diskSave:(int)drive saveAs:(bool)saveas
-{
-  [proxy_emulator diskSave:drive saveAs:saveas];
-}
-
-//-(int) diskWrite:(int)drive saveAs:(bool)saveas
-//{
-//  [proxy_emulator diskWrite:drive saveAs:saveas];
-//}
-
--(void) diskFlip:(int)which side:(int)flip
-{
-  [proxy_emulator diskFlip:which side:flip];
-}
-
--(void) diskWriteProtect:(int)which protect:(int)write
-{
-  [proxy_emulator diskWriteProtect:which protect:write];
-}
-
--(void) snapshotWrite:(const char *)filename
-{
-  [proxy_emulator snapshotWrite:filename];
-}
-
--(void) screenshotScrRead:(const char *)filename
-{
-  [proxy_emulator screenshotScrRead:filename];
-}
-
--(void) screenshotScrWrite:(const char *)filename
-{
-  [proxy_emulator screenshotScrWrite:filename];
-}
-
--(void) screenshotWrite:(const char *)filename
-{
-  [proxy_emulator screenshotWrite:filename];
-}
-
--(void) profileStart
-{
-  [proxy_emulator profileStart];
-}
-
--(void) profileFinish:(const char *)filename
-{
-  [proxy_emulator profileFinish:filename];
-}
-
--(void) settingsSave
-{
-  [proxy_emulator settingsSave];
-}
-
--(void) settingsResetDefaults
-{
-  [proxy_emulator settingsResetDefaults];
-}
-
--(void) fullscreen
-{
-  [proxy_emulator fullscreen];
-}
-
--(void) joystickToggleKeyboard
-{
-  [proxy_emulator joystickToggleKeyboard];
-}
-
--(void) keyboardToggleRecreatedZXSpectrum
-{
-  [proxy_emulator keyboardToggleRecreatedZXSpectrum];
-}
-
--(void) keyboardToggleArrowsShifted
-{
-  [proxy_emulator keyboardToggleArrowsShifted];
-}
-
--(int) rzxStartPlayback:(const char *)filename
-{
-  return [proxy_emulator rzxStartPlayback:filename];
-}
-
--(void) rzxInsertSnap
-{
-  [proxy_emulator rzxInsertSnap];
-}
-
--(void) rzxRollback
-{
-  [proxy_emulator rzxRollback];
-}
-
--(int) rzxStartRecording:(const char *)filename embedSnapshot:(int)flag
-{
-  return [proxy_emulator rzxStartRecording:filename embedSnapshot:flag];
-}
-
--(void) rzxStop
-{
-  [proxy_emulator rzxStop];
-}
-
--(int) rzxContinueRecording:(const char *)filename
-{
-  return [proxy_emulator rzxContinueRecording:filename];
-}
-
--(int) rzxFinaliseRecording:(const char *)filename
-{
-  return [proxy_emulator rzxFinaliseRecording:filename];
-}
-
--(void)movieStartRecording:(const char *)filename
-{
-  [proxy_emulator movieStartRecording:filename];
-}
-
--(void)movieTogglePause
-{
-  [proxy_emulator movieTogglePause];
-}
-
--(void)movieStop
-{
-  [proxy_emulator movieStop];
-}
-
--(void) didaktik80Snap
-{
-  [proxy_emulator didaktik80Snap];
-}
-
--(void) multifaceRedButton
-{
-  [proxy_emulator multifaceRedButton];
-}
-
--(void) if1MdrNew:(int)drive
-{
-  [proxy_emulator if1MdrNew:drive];
-}
-
--(void) if1MdrInsert:(const char *)filename inDrive:(int)drive
-{
-  [proxy_emulator if1MdrInsert:filename inDrive:drive];
-}
-
--(void) if1MdrCartEject:(int)drive
-{
-  [proxy_emulator if1MdrCartEject:drive];
-}
-
--(void) if1MdrCartSave:(int)drive saveAs:(bool)saveas
-{
-  [proxy_emulator if1MdrCartSave:drive saveAs:saveas];
-}
-
--(void) if1MdrWriteProtect:(int)w inDrive:(int)drive
-{
-  [proxy_emulator if1MdrWriteProtect:w inDrive:drive];
-}
-
--(int) if2Insert:(const char *)filename
-{
-  return [proxy_emulator if2Insert:filename];
-}
-
--(void) if2Eject
-{
-  [proxy_emulator if2Eject];
-}
-
--(int) dckInsert:(const char *)filename
-{
-  return [proxy_emulator dckInsert:filename];
-}
-
--(void) dckEject
-{
-  [proxy_emulator dckEject];
-}
-
--(void) psgStart:(const char *)psgfile
-{
-  [proxy_emulator psgStart:psgfile];
-}
-
--(void) psgStop
-{
-  [proxy_emulator psgStop];
-}
-
--(int) simpleideInsert:(const char *)filename inUnit:(libspectrum_ide_unit)unit
-{
-  return [proxy_emulator simpleideInsert:filename inUnit:unit];
-}
-
--(int) simpleideCommit:(libspectrum_ide_unit)unit
-{
-  return [proxy_emulator simpleideCommit:unit];
-}
-
--(int) simpleideEject:(libspectrum_ide_unit)unit
-{
-  return [proxy_emulator simpleideEject:unit];
-}
-
--(int) zxataspInsert:(const char *)filename inUnit:(libspectrum_ide_unit)unit
-{
-  return [proxy_emulator zxataspInsert:filename inUnit:unit];
-}
-
--(int) zxataspCommit:(libspectrum_ide_unit)unit
-{
-  return [proxy_emulator zxataspCommit:unit];
-}
-
--(int) zxataspEject:(libspectrum_ide_unit)unit
-{
-  return [proxy_emulator zxataspEject:unit];
-}
-
--(int) zxcfInsert:(const char *)filename
-{
-  return [proxy_emulator zxcfInsert:filename];
-}
-
--(int) zxcfCommit
-{
-  return [proxy_emulator zxcfCommit];
-}
-
--(int) zxcfEject
-{
-  return [proxy_emulator zxcfEject];
-}
-
--(int) divideInsert:(const char *)filename inUnit:(libspectrum_ide_unit)unit
-{
-  return [proxy_emulator divideInsert:filename inUnit:unit];
-}
-
--(int) divideCommit:(libspectrum_ide_unit)unit
-{
-  return [proxy_emulator divideCommit:unit];
-}
-
--(int) divideEject:(libspectrum_ide_unit)unit
-{
-  return [proxy_emulator divideEject:unit];
-}
-
--(int) divmmcInsert:(const char *)filename
-{
-  return [proxy_emulator divmmcInsert:filename];
-}
-
--(int) divmmcCommit
-{
-  return [proxy_emulator divmmcCommit];
-}
-
--(int) divmmcEject
-{
-  return [proxy_emulator divmmcEject];
-}
-
--(int) zxmmcInsert:(const char *)filename
-{
-  return [proxy_emulator zxmmcInsert:filename];
-}
-
--(int) zxmmcCommit
-{
-  return [proxy_emulator zxmmcCommit];
-}
-
--(int) zxmmcEject
-{
-  return [proxy_emulator zxmmcEject];
+  [[EmulationSessionController instance] keyUp:theEvent];
 }
 
 -(void) setDiskState:(NSNumber*)state
@@ -1072,7 +712,6 @@ static DisplayOpenGLView *instance = nil;
   [view_lock lock];
   statusbar_updated = YES;
   [view_lock unlock];
-  [[FuseController singleton] setDiskState:state];
 }
 
 -(void) setTapeState:(NSNumber*)state
@@ -1081,7 +720,6 @@ static DisplayOpenGLView *instance = nil;
   [view_lock lock];
   statusbar_updated = YES;
   [view_lock unlock];
-  [[FuseController singleton] setTapeState:state];
 }
 
 -(void) setMdrState:(NSNumber*)state
@@ -1090,102 +728,6 @@ static DisplayOpenGLView *instance = nil;
   [view_lock lock];
   statusbar_updated = YES;
   [view_lock unlock];
-  [[FuseController singleton] setMdrState:state];
-}
-
--(ui_confirm_save_t) confirmSave:(NSString*)theMessage
-{
-  return [[FuseController singleton] confirmSave:theMessage];
-}
-
--(int) confirm:(NSString*)theMessage
-{
-  return [[FuseController singleton] confirm:theMessage];
-}
-
--(int) tapeWrite
-{
-  return [[FuseController singleton] tapeWrite];
-}
-
--(int) diskWrite:(int)which saveAs:(bool)saveas
-{
-  return [[FuseController singleton] diskWrite:which saveAs:saveas];
-}
-
--(int) if1MdrWrite:(int)which saveAs:(bool)saveas
-{
-  return [[FuseController singleton] if1MdrWrite:which saveAs:saveas];
-}
-
--(ui_confirm_joystick_t) confirmJoystick:(libspectrum_joystick)type inputs:(int)theInputs
-{
-  return [[FuseController singleton] confirmJoystick:type inputs:theInputs];
-}
-
--(void) debuggerActivate
-{
-  [[DebuggerController singleton] debugger_activate:nil];
-}
-
--(void) mouseMoved:(NSEvent *)theEvent
-{
-  [proxy_emulator mouseMoved:theEvent];
-}
-
--(void) mouseDown:(NSEvent *)theEvent
-{
-  [proxy_emulator mouseDown:theEvent];
-}
-
--(void) mouseUp:(NSEvent *)theEvent
-{
-  [proxy_emulator mouseUp:theEvent];
-}
-
--(void) rightMouseDown:(NSEvent *)theEvent
-{
-  [proxy_emulator rightMouseDown:theEvent];
-}
-
--(void) rightMouseUp:(NSEvent *)theEvent
-{
-  [proxy_emulator rightMouseUp:theEvent];
-}
-
--(void) otherMouseDown:(NSEvent *)theEvent
-{
-  [proxy_emulator otherMouseDown:theEvent];
-}
-
--(void) otherMouseUp:(NSEvent *)theEvent
-{
-  [proxy_emulator otherMouseUp:theEvent];
-}
-
--(void) flagsChanged:(NSEvent *)theEvent
-{
-  [proxy_emulator flagsChanged:theEvent];
-}
-
--(void) keyDown:(NSEvent *)theEvent
-{
-  if( settings_current.full_screen ) {
-    unichar c = [[theEvent charactersIgnoringModifiers] characterAtIndex:0];
-    switch (c) {
-    /* [Esc] exits fullScreen mode */
-    case 27:
-      [self fullscreen:nil];
-      return;
-      break;
-    }
-  }
-  [proxy_emulator keyDown:theEvent];
-}
-
--(void) keyUp:(NSEvent *)theEvent
-{
-  [proxy_emulator keyUp:theEvent];
 }
 
 -(BOOL) acceptsFirstResponder
@@ -1308,7 +850,7 @@ static DisplayOpenGLView *instance = nil;
 -(BOOL) windowShouldClose:(id)window
 {
   if( cocoaui_confirm( "Exit Fuse?" ) ) {
-    int error = [self checkMediaChanged];
+    int error = [[EmulationSessionController instance] checkMediaChanged];
     if( error ) return NO;
 
     [self displayLinkStop];
