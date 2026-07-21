@@ -19,6 +19,7 @@
 -(void) removeFramebuffer;
 -(void) applyOverlayState:(const DisplayOverlayState *)state;
 -(void) setBilinearFilteringEnabled:(BOOL)enabled;
+/* The renderer retains ownership of fullscreen window and timing details. */
 -(void) performFullscreen;
 -(void) shutdown;
 

@@ -222,7 +222,7 @@ overlay_item_state( ui_statusbar_state state )
 }
 -(void) fullscreen
 {
-  [proxy_emulator fullscreen];
+  [display_presenter performFullscreen];
 }
 -(void) joystickToggleKeyboard
 {

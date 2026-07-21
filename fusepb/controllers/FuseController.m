@@ -1338,15 +1338,16 @@ save_as_exit:
 {
     NSEvent *event1, *event2;
     NSPoint point = { 0, 0 };
+    NSInteger windowNumber = [[NSApp keyWindow] windowNumber];
 
     event1 = [NSEvent keyEventWithType:NSKeyUp location:point modifierFlags:0
-                timestamp:0 windowNumber:0 context:nil characters:character
+                timestamp:0 windowNumber:windowNumber context:nil characters:character
                 charactersIgnoringModifiers:character isARepeat:NO
                 keyCode:keyCode];
     [NSApp postEvent:event1 atStart:NO];
 
     event2 = [NSEvent keyEventWithType:NSFlagsChanged location:point
-                modifierFlags:0 timestamp:0 windowNumber:0 context:nil
+                modifierFlags:0 timestamp:0 windowNumber:windowNumber context:nil
                 characters:nil charactersIgnoringModifiers:nil isARepeat:NO
                 keyCode:0];
     [NSApp postEvent:event2 atStart:NO];

@@ -103,8 +103,6 @@
 -(void) settingsSave;
 -(void) settingsResetDefaults;
 
--(void) fullscreen;
-
 -(void) joystickToggleKeyboard;
 -(void) keyboardToggleRecreatedZXSpectrum;
 -(void) keyboardToggleArrowsShifted;

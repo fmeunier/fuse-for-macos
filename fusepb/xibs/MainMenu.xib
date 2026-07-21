@@ -676,7 +676,7 @@
                             </menuItem>
                             <menuItem title="Fullscreen" keyEquivalent="f" id="461">
                                 <connections>
-                                    <action selector="fullscreen:" target="879" id="883"/>
+                                    <action selector="fullscreen:" target="346" id="883"/>
                                 </connections>
                             </menuItem>
                         </items>

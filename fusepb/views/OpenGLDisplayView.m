@@ -27,6 +27,18 @@
 #import "DebuggerController.h"
 #import "Texture.h"
 
+@interface OpenGLFullscreenWindow : NSWindow
+@end
+
+@implementation OpenGLFullscreenWindow
+
+-(BOOL) canBecomeKeyWindow
+{
+  return YES;
+}
+
+@end
+
 #include <OpenGL/gl.h>
 #include <OpenGL/glext.h>
 #include <OpenGL/glu.h>
@@ -206,7 +218,7 @@ static OpenGLDisplayView *instance = nil;
     windowedWindow = [self window];
     windowStyle    = NSBorderlessWindowMask;
     contentRect    = [[NSScreen mainScreen] frame];
-    fullscreenWindow = [[NSWindow alloc] initWithContentRect:contentRect
+    fullscreenWindow = [[OpenGLFullscreenWindow alloc] initWithContentRect:contentRect
                                          styleMask: windowStyle
                                          backing:NSBackingStoreBuffered
                                          defer: NO];
