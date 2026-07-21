@@ -134,8 +134,9 @@ static OpenGLDisplayView *instance = nil;
   return instance;
 }
 
--(void) applyFramebuffer:(Cocoa_Texture *)framebuffer
+-(void) applyFramebuffer:(DisplayFramebuffer *)framebuffer
 {
+  [self removeFramebuffer];
   [self createTexture:framebuffer];
 }
 
@@ -273,8 +274,8 @@ static OpenGLDisplayView *instance = nil;
     break;
   case 0:
   default: /* Actual size */
-    size.width = screenTex[0].image_width;
-    size.height = screenTex[0].image_height;
+    size.width = screenTex[0].width;
+    size.height = screenTex[0].height;
     [[FuseController singleton] releaseCmdKeys:@"0" withCode:QZ_0];
   }
 
@@ -305,7 +306,7 @@ static OpenGLDisplayView *instance = nil;
     self = [super initWithFrame:frameRect pixelFormat:pixFmt];
     instance = self;
 
-    buffered_screen_lock = [[NSLock alloc] init];
+    buffered_screen.synchronization = (void *)[[NSLock alloc] init];
 
   }
 
@@ -360,9 +361,9 @@ static OpenGLDisplayView *instance = nil;
     [view_lock release];
   view_lock = nil;
 
-  if (buffered_screen_lock)
-    [buffered_screen_lock release];
-  buffered_screen_lock = nil;
+  if( buffered_screen.synchronization )
+    [(NSLock *)buffered_screen.synchronization release];
+  buffered_screen.synchronization = nil;
   
   [super dealloc];
 }
@@ -449,17 +450,17 @@ static OpenGLDisplayView *instance = nil;
 
 -(void) blitIcon:(Texture*)iconTexture
 {
-  Cocoa_Texture* texture = [iconTexture getTexture];
+  DisplayFramebuffer* texture = [iconTexture getTexture];
   GLuint textureName = [iconTexture getTextureId];
 
   /* Map pixel icon position to appropriate position on -1.0 to 1.0 canvas */
-  float target_x1 = texture->image_xoffset * 2.0f / (float)DISPLAY_ASPECT_WIDTH
+  float target_x1 = texture->x_offset * 2.0f / (float)DISPLAY_ASPECT_WIDTH
                     - 1.0f;
-  float target_x2 = ( ( texture->image_xoffset + texture->image_width ) * 2.0f
+  float target_x2 = ( ( texture->x_offset + texture->width ) * 2.0f
                       / (float)DISPLAY_ASPECT_WIDTH ) - 1.0f;
-  float target_y1 = 1.0f - texture->image_yoffset * 2.0f /
+  float target_y1 = 1.0f - texture->y_offset * 2.0f /
                     (float)DISPLAY_SCREEN_HEIGHT;
-  float target_y2 = 1.0f - ( texture->image_yoffset + texture->image_height )
+  float target_y2 = 1.0f - ( texture->y_offset + texture->height )
                     * 2.0f / (float)DISPLAY_SCREEN_HEIGHT;
 
   /* Bind and draw icon */
@@ -467,13 +468,13 @@ static OpenGLDisplayView *instance = nil;
 
   glBegin( GL_QUADS );
 
-    glTexCoord2f( (float)texture->image_width, 0.0f );
+    glTexCoord2f( (float)texture->width, 0.0f );
     glVertex2f( target_x2, target_y1 );
 
-    glTexCoord2f( (float)texture->image_width, (float)texture->image_height );
+    glTexCoord2f( (float)texture->width, (float)texture->height );
     glVertex2f( target_x2, target_y2 );
 
-    glTexCoord2f( 0.0f, (float)texture->image_height );
+    glTexCoord2f( 0.0f, (float)texture->height );
     glVertex2f( target_x1, target_y2 );
 
     glTexCoord2f( 0.0f, 0.0f );
@@ -540,8 +541,8 @@ static OpenGLDisplayView *instance = nil;
 
     border_x_offset =
       get_offset( rect.size.width, rect.size.height,
-                  screenTex[currentScreenTex].image_width,
-                  screenTex[currentScreenTex].image_height,
+                  screenTex[currentScreenTex].width,
+                  screenTex[currentScreenTex].height,
                   &width_adjustment );
     border_y_offset = width_adjustment;
   }
@@ -550,27 +551,27 @@ static OpenGLDisplayView *instance = nil;
   glBindTexture( GL_TEXTURE_RECTANGLE_ARB, screenTexId[currentScreenTex] );
   
   glBegin( GL_QUADS );
-    glTexCoord2f( (float)(screenTex[currentScreenTex].image_width +
-                          screenTex[currentScreenTex].image_xoffset + border_y_offset),
-                  (float)(screenTex[currentScreenTex].image_yoffset + border_x_offset)
+    glTexCoord2f( (float)(screenTex[currentScreenTex].width +
+                          screenTex[currentScreenTex].x_offset + border_y_offset),
+                  (float)(screenTex[currentScreenTex].y_offset + border_x_offset)
                   );
     glVertex2f( 1.0f, 1.0f );
 
-    glTexCoord2f( (float)(screenTex[currentScreenTex].image_width +
-                          screenTex[currentScreenTex].image_xoffset + border_y_offset),
-                  (float)(screenTex[currentScreenTex].image_height +
-                          screenTex[currentScreenTex].image_yoffset - border_x_offset)
+    glTexCoord2f( (float)(screenTex[currentScreenTex].width +
+                          screenTex[currentScreenTex].x_offset + border_y_offset),
+                  (float)(screenTex[currentScreenTex].height +
+                          screenTex[currentScreenTex].y_offset - border_x_offset)
                   );
     glVertex2f( 1.0f, -1.0f );
 
-    glTexCoord2f( (float)screenTex[currentScreenTex].image_xoffset - border_y_offset,
-                  (float)(screenTex[currentScreenTex].image_height +
-                          screenTex[currentScreenTex].image_yoffset - border_x_offset)
+    glTexCoord2f( (float)screenTex[currentScreenTex].x_offset - border_y_offset,
+                  (float)(screenTex[currentScreenTex].height +
+                          screenTex[currentScreenTex].y_offset - border_x_offset)
                   );
     glVertex2f( -1.0f, -1.0f );
 
-    glTexCoord2f( (float)screenTex[currentScreenTex].image_xoffset - border_y_offset,
-                  (float)(screenTex[currentScreenTex].image_yoffset + border_x_offset)
+    glTexCoord2f( (float)screenTex[currentScreenTex].x_offset - border_y_offset,
+                  (float)(screenTex[currentScreenTex].y_offset + border_x_offset)
                   );
     glVertex2f( -1.0f, 1.0f );
   glEnd();
@@ -631,23 +632,21 @@ static OpenGLDisplayView *instance = nil;
   glDeleteTextures( MAX_SCREEN_BUFFERS, screenTexId );
   for(i = 0; i < MAX_SCREEN_BUFFERS; i++)
   {
-    free( screenTex[i].pixels );
-    screenTex[i].pixels = NULL;
-    if( screenTex[i].dirty )
-      pig_dirty_close( screenTex[i].dirty );
-    screenTex[i].dirty = NULL;
+    if( screenTex[i].ownership & DISPLAY_FRAMEBUFFER_OWNS_BACKING_STORAGE ) {
+      free( screenTex[i].backing_storage );
+      screenTex[i].backing_storage = NULL;
+    }
+    if( screenTex[i].ownership & DISPLAY_FRAMEBUFFER_OWNS_DIRTY_REGIONS ) {
+      pig_dirty_close( screenTex[i].dirty_regions );
+      screenTex[i].dirty_regions = NULL;
+    }
+    screenTex[i].ownership = 0;
   }
   screenTexInitialised = NO;
   [view_lock unlock];
 }
 
--(void) createTextureWithValue:(NSValue*)newScreenValue
-{
-  Cocoa_Texture *newScreen = (Cocoa_Texture*)[newScreenValue pointerValue];
-  [self createTexture:newScreen];
-}
-
--(void) createTexture:(Cocoa_Texture*)newScreen
+-(void) createTexture:(DisplayFramebuffer*)newScreen
 {
   [view_lock lock];
   GLuint i;
@@ -659,20 +658,24 @@ static OpenGLDisplayView *instance = nil;
 
   for(i = 0; i < MAX_SCREEN_BUFFERS; i++)
   {
-    screenTex[i].full_width = newScreen->full_width;
-    screenTex[i].full_height = newScreen->full_height;
-    screenTex[i].image_width = newScreen->image_width;
-    screenTex[i].image_height = newScreen->image_height;
-    screenTex[i].image_xoffset = newScreen->image_xoffset;
-    screenTex[i].image_yoffset = newScreen->image_yoffset;
-    screenTex[i].pixels = calloc( screenTex[i].full_width * screenTex[i].full_height,
+    screenTex[i].pixel_format = newScreen->pixel_format;
+    screenTex[i].storage_width = newScreen->storage_width;
+    screenTex[i].storage_height = newScreen->storage_height;
+    screenTex[i].width = newScreen->width;
+    screenTex[i].height = newScreen->height;
+    screenTex[i].x_offset = newScreen->x_offset;
+    screenTex[i].y_offset = newScreen->y_offset;
+    screenTex[i].generation = newScreen->generation;
+    screenTex[i].synchronization = NULL;
+    screenTex[i].backing_storage = calloc( screenTex[i].storage_width * screenTex[i].storage_height,
                                   sizeof(uint16_t) );
-    if( !screenTex[i].pixels ) {
-      NSLog( @"%s: couldn't create screenTex[%ud].pixels\n", fuse_progname,
+    if( !screenTex[i].backing_storage ) {
+      NSLog( @"%s: couldn't create screenTex[%ud].backing_storage\n", fuse_progname,
              (unsigned int)i );
       return;
     }
-    screenTex[i].pitch = screenTex[i].full_width * sizeof(uint16_t);
+    screenTex[i].stride = screenTex[i].storage_width * sizeof(uint16_t);
+    screenTex[i].ownership = DISPLAY_FRAMEBUFFER_OWNS_BACKING_STORAGE;
 
     glDisable( GL_TEXTURE_2D );
     glEnable( GL_TEXTURE_RECTANGLE_ARB );
@@ -683,8 +686,8 @@ static OpenGLDisplayView *instance = nil;
     // issues with some ATI drivers (and perhaps GMA too), so I'm disabling for now
     // maybe revisit come 10.7
     glTextureRangeAPPLE( GL_TEXTURE_RECTANGLE_ARB,
-                         screenTex[i].full_width * screenTex[i].pitch,
-                         screenTex[i].pixels );
+                         screenTex[i].storage_width * screenTex[i].stride,
+                         screenTex[i].backing_storage );
 
     glTexParameteri( GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_STORAGE_HINT_APPLE,
                      GL_STORAGE_CACHED_APPLE );
@@ -697,9 +700,9 @@ static OpenGLDisplayView *instance = nil;
     glTexParameteri( GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
     glPixelStorei( GL_UNPACK_ROW_LENGTH, 0 );
 
-    glTexImage2D( GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGB, screenTex[i].full_width,
-                  screenTex[i].full_height, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5,
-                  screenTex[i].pixels );
+    glTexImage2D( GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGB, screenTex[i].storage_width,
+                  screenTex[i].storage_height, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5,
+                  screenTex[i].backing_storage );
   }
   screenTexInitialised = YES;
 
@@ -930,16 +933,17 @@ static OpenGLDisplayView *instance = nil;
   // or already holds the lock? If so give up on updating the frame rather
   // than deadlock on getting the lock - may mean that we miss some screen
   // updates if we are invoked while the buffered screen is being updated
-  if( !buffered_screen_lock || [buffered_screen_lock tryLock] == NO ) {
+  if( !buffered_screen.synchronization ||
+      [(NSLock *)buffered_screen.synchronization tryLock] == NO ) {
     return kCVReturnSuccess;
   }
 
-  if( buffered_screen.dirty->count == 0 && !statusbar_updated ) {
-    [buffered_screen_lock unlock];
+  if( buffered_screen.dirty_regions->count == 0 && !statusbar_updated ) {
+    [(NSLock *)buffered_screen.synchronization unlock];
     return kCVReturnSuccess;
   }
 
-  if( buffered_screen.dirty->count > 0 ) {
+  if( buffered_screen.dirty_regions->count > 0 ) {
 
     // Make sure we lock the view if we are going to update the textures so
     // there is no concurrent access to the OpenGL context as the displaylink
@@ -947,24 +951,24 @@ static OpenGLDisplayView *instance = nil;
     // occur, also cover the screen texture swap
     [view_lock lock];
 
-    if (screenTex[currentScreenTex].dirty)
-      pig_dirty_copy( &workdirty, screenTex[currentScreenTex].dirty );
+    if (screenTex[currentScreenTex].dirty_regions)
+      pig_dirty_copy( &workdirty, screenTex[currentScreenTex].dirty_regions );
 
     currentScreenTex = !currentScreenTex;
 
-    pig_dirty_copy( &screenTex[currentScreenTex].dirty, buffered_screen.dirty );
+    pig_dirty_copy( &screenTex[currentScreenTex].dirty_regions, buffered_screen.dirty_regions );
     
     if( workdirty )
-      pig_dirty_merge(workdirty, screenTex[currentScreenTex].dirty);
+      pig_dirty_merge(workdirty, screenTex[currentScreenTex].dirty_regions);
     else
-      pig_dirty_copy(&workdirty, screenTex[currentScreenTex].dirty);
+      pig_dirty_copy(&workdirty, screenTex[currentScreenTex].dirty_regions);
     
     /* Draw texture to screen */
     for(i = 0; i < workdirty->count; ++i)
       copy_area( &screenTex[currentScreenTex], &buffered_screen,
                  workdirty->rects + i );
     
-    buffered_screen.dirty->count = 0;
+    buffered_screen.dirty_regions->count = 0;
     
     pig_dirty_close( workdirty );
 
@@ -974,15 +978,15 @@ static OpenGLDisplayView *instance = nil;
     glBindTexture( GL_TEXTURE_RECTANGLE_ARB, screenTexId[currentScreenTex] );
     
     glTexSubImage2D( GL_TEXTURE_RECTANGLE_ARB, 0, 0, 0,
-                     screenTex[currentScreenTex].full_width,
-                     screenTex[currentScreenTex].full_height, GL_RGB,
+                     screenTex[currentScreenTex].storage_width,
+                     screenTex[currentScreenTex].storage_height, GL_RGB,
                      GL_UNSIGNED_SHORT_5_6_5,
-                     screenTex[currentScreenTex].pixels );
+                     screenTex[currentScreenTex].backing_storage );
 
     [view_lock unlock];
   }
 
-  [buffered_screen_lock unlock];
+  [(NSLock *)buffered_screen.synchronization unlock];
 
   NSAutoreleasePool *pool = [NSAutoreleasePool new];
   [self drawRect:NSZeroRect];

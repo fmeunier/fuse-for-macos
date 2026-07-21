@@ -42,24 +42,31 @@
       
     CFRelease( image_source );
 
-    texture.image_width = CGImageGetWidth( image );
-    texture.image_height = CGImageGetHeight( image );
+    texture.pixel_format = DISPLAY_FRAMEBUFFER_PIXEL_FORMAT_BGRA8888;
+    texture.width = CGImageGetWidth( image );
+    texture.height = CGImageGetHeight( image );
+    texture.storage_width = texture.width;
+    texture.storage_height = texture.height;
+    texture.stride = texture.width * 4;
+    texture.generation = 1;
+    texture.synchronization = NULL;
+    texture.ownership = DISPLAY_FRAMEBUFFER_OWNS_BACKING_STORAGE;
 
-    texture.pixels = malloc( texture.image_width * texture.image_height * 4 );
+    texture.backing_storage = malloc( texture.width * texture.height * 4 );
 
     CGColorSpaceRef color_space = CGColorSpaceCreateDeviceRGB();
 
     CGContextRef context =
-      CGBitmapContextCreate( texture.pixels,
-                             texture.image_width,
-                             texture.image_height,
+      CGBitmapContextCreate( texture.backing_storage,
+                             texture.width,
+                             texture.height,
                              8,
-                             texture.image_width * 4,
+                             texture.width * 4,
                              color_space,
                              kCGImageAlphaPremultipliedFirst );
 
     CGContextDrawImage( context,
-                        CGRectMake(0, 0, texture.image_width, texture.image_height),
+                        CGRectMake(0, 0, texture.width, texture.height),
                         image );
 
     CGColorSpaceRelease( color_space );
@@ -68,8 +75,8 @@
 
     CGContextRelease( context );
 
-    texture.image_xoffset = x;
-    texture.image_yoffset = y;
+    texture.x_offset = x;
+    texture.y_offset = y;
 
     [self uploadIconTexture];
   }
@@ -80,14 +87,15 @@
 -(void) dealloc
 {
   glDeleteTextures(1, &textureId);
-  if (texture.pixels != NULL) {
-    free( texture.pixels );
-    texture.pixels = NULL;
+  if( texture.ownership & DISPLAY_FRAMEBUFFER_OWNS_BACKING_STORAGE ) {
+    free( texture.backing_storage );
+    texture.backing_storage = NULL;
   }
+  texture.ownership = 0;
   [super dealloc];
 }
 
--(Cocoa_Texture*) getTexture
+-(DisplayFramebuffer*) getTexture
 {
   return &texture;
 }
@@ -99,7 +107,7 @@
   glGenTextures( 1, &textureId );
 
   /* Set memory alignment parameters for unpacking the bitmap. */
-  glPixelStorei( GL_UNPACK_ROW_LENGTH, texture.image_width );
+  glPixelStorei( GL_UNPACK_ROW_LENGTH, texture.width );
   glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
 
   /* Specify the texture's properties. */
@@ -111,14 +119,14 @@
 
 
   /* Upload the texture bitmap. */
-  glTexImage2D( GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGBA8, texture.image_width,
-                texture.image_height, 0, GL_BGRA_EXT,
+  glTexImage2D( GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGBA8, texture.width,
+                texture.height, 0, GL_BGRA_EXT,
 #ifdef WORDS_BIGENDIAN
                 GL_UNSIGNED_INT_8_8_8_8_REV,
 #else                           /* #ifdef WORDS_BIGENDIAN */
                 GL_UNSIGNED_INT_8_8_8_8,
 #endif                          /* #ifdef WORDS_BIGENDIAN */
-                texture.pixels );
+                texture.backing_storage );
 }
 
 @end

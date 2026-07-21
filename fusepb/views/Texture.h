@@ -31,14 +31,14 @@
 
 @interface Texture : NSObject
 {
-  Cocoa_Texture texture;
+  DisplayFramebuffer texture;
   GLuint textureId;
 }
 -(id) initWithImageFile:(NSString*)filename withXOrigin:(int)x
                      withYOrigin:(int)y;
 -(void) dealloc;
 
--(Cocoa_Texture*) getTexture;
+-(DisplayFramebuffer*) getTexture;
 @property (getter=getTextureId,readonly) GLuint textureId;
 
 -(void) uploadIconTexture;

@@ -14,7 +14,7 @@
 
 @protocol DisplayPresenting <NSObject>
 
--(void) applyFramebuffer:(Cocoa_Texture *)framebuffer;
+-(void) applyFramebuffer:(DisplayFramebuffer *)framebuffer;
 -(void) removeFramebuffer;
 -(void) applyOverlayState:(ui_statusbar_state)state
                    forItem:(ui_statusbar_item)item;

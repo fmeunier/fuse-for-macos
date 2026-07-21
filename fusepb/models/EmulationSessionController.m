@@ -47,6 +47,16 @@ static EmulationSessionController *instance = nil;
                            toTarget:real_emulator withObject:portArray];
 }
 
+-(void) applyFramebufferWithValue:(NSValue *)framebuffer_value
+{
+  [display_presenter applyFramebuffer:[framebuffer_value pointerValue]];
+}
+
+-(void) removeFramebuffer
+{
+  [display_presenter removeFramebuffer];
+}
+
 -(void) stop
 {
   [display_presenter shutdown];

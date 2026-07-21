@@ -28,6 +28,8 @@
 +(EmulationSessionController *) instance;
 
 -(void) startWithDisplayPresenter:(id <DisplayPresenting>)presenter;
+-(void) applyFramebufferWithValue:(NSValue *)framebuffer_value;
+-(void) removeFramebuffer;
 -(void) stop;
 -(void) setServer:(Emulator *)server;
 -(int) checkMediaChanged;
