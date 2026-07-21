@@ -277,6 +277,7 @@
 		B6A6F10E0B3D6360000B88E9 /* cocoaerror.m in Sources */ = {isa = PBXBuildFile; fileRef = B6A6F10D0B3D6360000B88E9 /* cocoaerror.m */; };
 		B6A6F1200B3EA737000B88E9 /* cocoascreenshot.m in Sources */ = {isa = PBXBuildFile; fileRef = B6A6F11E0B3EA737000B88E9 /* cocoascreenshot.m */; };
 		B6B076B30B59FE9A00D4F95C /* Emulator.m in Sources */ = {isa = PBXBuildFile; fileRef = B6B076B10B59FE9A00D4F95C /* Emulator.m */; };
+		B7A1C4223A77EE0000C0DE01 /* EmulationSessionController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7A1C4213A77EE0000C0DE01 /* EmulationSessionController.m */; };
 		B6B274061672AC8C00FC209B /* paths.c in Sources */ = {isa = PBXBuildFile; fileRef = B6B274051672AC8C00FC209B /* paths.c */; };
 		B6B99F8A0B5F798700EE408F /* cocoadisplay.m in Sources */ = {isa = PBXBuildFile; fileRef = B6B99F890B5F798700EE408F /* cocoadisplay.m */; };
 		B6BDE2DB125DF4A800B81C58 /* spec48_ntsc.c in Sources */ = {isa = PBXBuildFile; fileRef = B6BDE2DA125DF4A800B81C58 /* spec48_ntsc.c */; };
@@ -731,6 +732,8 @@
 		B6AF242A04156EE700F48F48 /* blank.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = blank.icns; path = resources/blank.icns; sourceTree = SOURCE_ROOT; };
 		B6B076B00B59FE9A00D4F95C /* Emulator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Emulator.h; sourceTree = "<group>"; };
 		B6B076B10B59FE9A00D4F95C /* Emulator.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = Emulator.m; sourceTree = "<group>"; };
+		B7A1C4203A77EE0000C0DE01 /* EmulationSessionController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmulationSessionController.h; sourceTree = "<group>"; };
+		B7A1C4213A77EE0000C0DE01 /* EmulationSessionController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EmulationSessionController.m; sourceTree = "<group>"; };
 		B6B274051672AC8C00FC209B /* paths.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = paths.c; sourceTree = "<group>"; };
 		B6B99F890B5F798700EE408F /* cocoadisplay.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = cocoadisplay.m; sourceTree = "<group>"; };
 		B6BA1A9404E4F88F0017354F /* uijoystick.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = uijoystick.h; path = uijoystick.h; sourceTree = "<group>"; };
@@ -1432,6 +1435,8 @@
 			children = (
 				B6B076B00B59FE9A00D4F95C /* Emulator.h */,
 				B6B076B10B59FE9A00D4F95C /* Emulator.m */,
+				B7A1C4203A77EE0000C0DE01 /* EmulationSessionController.h */,
+				B7A1C4213A77EE0000C0DE01 /* EmulationSessionController.m */,
 			);
 			name = Models;
 			path = models;
@@ -2731,6 +2736,7 @@
 				B6D0E10B1CFD54D400202683 /* uimedia.c in Sources */,
 				B615BFE80B4261E50082D535 /* HIDJoysticks.m in Sources */,
 				B6B076B30B59FE9A00D4F95C /* Emulator.m in Sources */,
+				B7A1C4223A77EE0000C0DE01 /* EmulationSessionController.m in Sources */,
 				B6D0E1031CFD547C00202683 /* didaktik.c in Sources */,
 				B6B99F8A0B5F798700EE408F /* cocoadisplay.m in Sources */,
 				B67DC2190B63835100FA31B6 /* cocoastatusbar.m in Sources */,
