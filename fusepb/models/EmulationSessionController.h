@@ -9,11 +9,12 @@
 
 #import <Cocoa/Cocoa.h>
 
+#import "DisplayPresenting.h"
+
 #include <libspectrum.h>
 
 #include "ui/ui.h"
 
-@class OpenGLDisplayView;
 @class Emulator;
 
 @interface EmulationSessionController : NSObject
@@ -21,12 +22,12 @@
   Emulator *real_emulator;
   Emulator *proxy_emulator;
   NSConnection *kit_connection;
-  OpenGLDisplayView *display_view;
+  id <DisplayPresenting> display_presenter;
 }
 
 +(EmulationSessionController *) instance;
 
--(void) startWithDisplayView:(OpenGLDisplayView *)view;
+-(void) startWithDisplayPresenter:(id <DisplayPresenting>)presenter;
 -(void) stop;
 -(void) setServer:(Emulator *)server;
 -(int) checkMediaChanged;

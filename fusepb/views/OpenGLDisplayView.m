@@ -134,6 +134,67 @@ static OpenGLDisplayView *instance = nil;
   return instance;
 }
 
+-(void) applyFramebuffer:(Cocoa_Texture *)framebuffer
+{
+  [self createTexture:framebuffer];
+}
+
+-(void) removeFramebuffer
+{
+  [self destroyTexture];
+}
+
+-(void) applyOverlayState:(ui_statusbar_state)state
+                   forItem:(ui_statusbar_item)item
+{
+  NSNumber *value = [NSNumber numberWithUnsignedChar:state];
+
+  switch( item ) {
+  case UI_STATUSBAR_ITEM_DISK:
+    [self setDiskState:value];
+    break;
+  case UI_STATUSBAR_ITEM_MICRODRIVE:
+    [self setMdrState:value];
+    break;
+  case UI_STATUSBAR_ITEM_TAPE:
+    [self setTapeState:value];
+    break;
+  default:
+    break;
+  }
+}
+
+-(void) setBilinearFilteringEnabled:(BOOL)enabled
+{
+  GLint filter = enabled ? GL_LINEAR : GL_NEAREST;
+  GLuint i;
+
+  if( !screenTexInitialised ) return;
+
+  [view_lock lock];
+  [self displayLinkStop];
+  [[self openGLContext] makeCurrentContext];
+
+  for( i = 0; i < MAX_SCREEN_BUFFERS; i++ ) {
+    glBindTexture( GL_TEXTURE_RECTANGLE_ARB, screenTexId[i] );
+    glTexParameteri( GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MIN_FILTER, filter );
+    glTexParameteri( GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MAG_FILTER, filter );
+  }
+
+  [self displayLinkStart];
+  [view_lock unlock];
+}
+
+-(void) performFullscreen
+{
+  [self fullscreen:nil];
+}
+
+-(void) shutdown
+{
+  [self displayLinkStop];
+}
+
 -(IBAction) fullscreen:(id)sender
 {
   /* don't want to get a callback to display the screen while we are
@@ -284,7 +345,7 @@ static OpenGLDisplayView *instance = nil;
 
   target_ratio = 4.0f/3.0f;
 
-  [[EmulationSessionController instance] startWithDisplayView:self];
+  [[EmulationSessionController instance] startWithDisplayPresenter:self];
 
   currentScreenTex = 0;
 

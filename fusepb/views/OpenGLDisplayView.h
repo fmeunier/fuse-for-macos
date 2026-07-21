@@ -24,6 +24,8 @@
 #import <Cocoa/Cocoa.h>
 #import <QuartzCore/QuartzCore.h>
 
+#import "DisplayPresenting.h"
+
 #include <OpenGL/gl.h>
 #include <OpenGL/glext.h>
 #include <OpenGL/glu.h>
@@ -40,7 +42,7 @@
 
 @class Texture;
 
-@interface OpenGLDisplayView : NSOpenGLView
+@interface OpenGLDisplayView : NSOpenGLView <DisplayPresenting>
 {
   /* Two backing textures */
   Cocoa_Texture screenTex[MAX_SCREEN_BUFFERS];
@@ -76,6 +78,14 @@
 
 -(IBAction) fullscreen:(id)sender;
 -(IBAction) zoom:(id)sender;
+
+-(void) applyFramebuffer:(Cocoa_Texture *)framebuffer;
+-(void) removeFramebuffer;
+-(void) applyOverlayState:(ui_statusbar_state)state
+                   forItem:(ui_statusbar_item)item;
+-(void) setBilinearFilteringEnabled:(BOOL)enabled;
+-(void) performFullscreen;
+-(void) shutdown;
 
 -(void) createTexture:(Cocoa_Texture*)newScreen;
 -(void) createTextureWithValue:(NSValue*)newScreenValue;

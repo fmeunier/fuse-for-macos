@@ -11,7 +11,6 @@
 #import "Emulator.h"
 #import "EmulationSessionController.h"
 #import "FuseController.h"
-#import "OpenGLDisplayView.h"
 
 @implementation EmulationSessionController
 
@@ -24,13 +23,13 @@ static EmulationSessionController *instance = nil;
   return instance;
 }
 
--(void) startWithDisplayView:(OpenGLDisplayView *)view
+-(void) startWithDisplayPresenter:(id <DisplayPresenting>)presenter
 {
   NSPort *port1;
   NSPort *port2;
   NSArray *portArray;
 
-  display_view = view;
+  display_presenter = presenter;
   if( real_emulator ) return;
 
   real_emulator = [[Emulator alloc] init];
@@ -50,6 +49,7 @@ static EmulationSessionController *instance = nil;
 
 -(void) stop
 {
+  [display_presenter shutdown];
   [proxy_emulator stop];
   [proxy_emulator release];
   proxy_emulator = nil;
@@ -57,7 +57,7 @@ static EmulationSessionController *instance = nil;
   real_emulator = nil;
   [kit_connection release];
   kit_connection = nil;
-  display_view = nil;
+  display_presenter = nil;
 }
 
 -(void) setServer:(Emulator *)server
@@ -441,19 +441,22 @@ static EmulationSessionController *instance = nil;
 
 -(void) setDiskState:(NSNumber *)state
 {
-  [display_view setDiskState:state];
+  [display_presenter applyOverlayState:[state unsignedCharValue]
+                               forItem:UI_STATUSBAR_ITEM_DISK];
   [[FuseController singleton] setDiskState:state];
 }
 
 -(void) setTapeState:(NSNumber *)state
 {
-  [display_view setTapeState:state];
+  [display_presenter applyOverlayState:[state unsignedCharValue]
+                               forItem:UI_STATUSBAR_ITEM_TAPE];
   [[FuseController singleton] setTapeState:state];
 }
 
 -(void) setMdrState:(NSNumber *)state
 {
-  [display_view setMdrState:state];
+  [display_presenter applyOverlayState:[state unsignedCharValue]
+                               forItem:UI_STATUSBAR_ITEM_MICRODRIVE];
   [[FuseController singleton] setMdrState:state];
 }
 
