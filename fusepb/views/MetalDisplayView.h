@@ -17,7 +17,9 @@
   id <MTLRenderPipelineState> pipeline_state;
   id <MTLSamplerState> nearest_sampler;
   id <MTLSamplerState> linear_sampler;
-  id <MTLTexture> screen_texture;
+  NSMutableArray *framebuffer_slots;
+  NSMutableArray *in_flight_command_buffers;
+  NSLock *framebuffer_slot_lock;
   id <MTLTexture> red_cassette;
   id <MTLTexture> green_cassette;
   id <MTLTexture> red_mdr;
@@ -27,6 +29,7 @@
   DisplayFramebuffer *framebuffer;
   DisplayOverlayState overlay_state;
   BOOL bilinear_filtering_enabled;
+  BOOL accepting_framebuffers;
 }
 
 @end

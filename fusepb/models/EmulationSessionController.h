@@ -30,6 +30,8 @@
 
 -(void) startWithDisplayPresenter:(id <DisplayPresenting>)presenter;
 -(void) applyFramebufferWithValue:(NSValue *)framebuffer_value;
+-(void) acquireFramebufferWithValue:(NSValue *)framebuffer_value;
+-(void) publishFramebufferWithValue:(NSValue *)framebuffer_value;
 -(void) removeFramebuffer;
 -(void) stop;
 -(void) setServer:(Emulator *)server;

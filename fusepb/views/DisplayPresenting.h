@@ -20,6 +20,8 @@
 -(void) shutdown;
 
 -(void) applyFramebuffer:(DisplayFramebuffer *)framebuffer;
+-(DisplayFramebuffer *) acquireFramebuffer;
+-(void) publishFramebuffer:(DisplayFramebuffer *)framebuffer;
 -(void) removeFramebuffer;
 -(void) applyOverlayState:(const DisplayOverlayState *)state;
 -(void) setBilinearFilteringEnabled:(BOOL)enabled;

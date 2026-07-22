@@ -69,6 +69,18 @@ overlay_item_state( ui_statusbar_state state )
   [display_presenter applyFramebuffer:[framebuffer_value pointerValue]];
 }
 
+-(void) acquireFramebufferWithValue:(NSValue *)framebuffer_value
+{
+  DisplayFramebuffer **framebuffer = [framebuffer_value pointerValue];
+
+  *framebuffer = [display_presenter acquireFramebuffer];
+}
+
+-(void) publishFramebufferWithValue:(NSValue *)framebuffer_value
+{
+  [display_presenter publishFramebuffer:[framebuffer_value pointerValue]];
+}
+
 -(void) removeFramebuffer
 {
   [display_presenter removeFramebuffer];

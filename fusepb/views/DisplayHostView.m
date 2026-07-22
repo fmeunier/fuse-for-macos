@@ -48,6 +48,16 @@
   [display_presenter applyFramebuffer:framebuffer];
 }
 
+-(DisplayFramebuffer *) acquireFramebuffer
+{
+  return [display_presenter acquireFramebuffer];
+}
+
+-(void) publishFramebuffer:(DisplayFramebuffer *)framebuffer
+{
+  [display_presenter publishFramebuffer:framebuffer];
+}
+
 -(void) removeFramebuffer
 {
   [display_presenter removeFramebuffer];

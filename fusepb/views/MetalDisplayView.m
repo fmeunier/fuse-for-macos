@@ -30,11 +30,89 @@
 #define MICRODRIVE_Y 218
 #define DISK_X 243
 #define DISK_Y 218
+#define MAX_UPDATE_RECT 300
 
 typedef struct {
   vector_float4 position;
   vector_float4 texture_coordinates;
 } DisplayVertices;
+
+typedef enum {
+  DISPLAY_FRAMEBUFFER_SLOT_WRITABLE,
+  DISPLAY_FRAMEBUFFER_SLOT_READY,
+  DISPLAY_FRAMEBUFFER_SLOT_IN_FLIGHT
+} DisplayFramebufferSlotState;
+
+@interface DisplayFramebufferSlot : NSObject
+{
+@public
+  id <MTLBuffer> buffer;
+  id <MTLTexture> texture;
+  DisplayFramebuffer framebuffer;
+  DisplayFramebufferSlotState state;
+}
+-(id) initWithDevice:(id <MTLDevice>)device
+         framebuffer:(const DisplayFramebuffer *)source;
+@end
+
+@implementation DisplayFramebufferSlot
+
+-(id) initWithDevice:(id <MTLDevice>)device
+         framebuffer:(const DisplayFramebuffer *)source
+{
+  MTLTextureDescriptor *texture_descriptor;
+  NSUInteger alignment;
+  NSUInteger natural_stride;
+  NSUInteger aligned_stride;
+
+  self = [super init];
+  if( !self ) return nil;
+
+  alignment = [device minimumLinearTextureAlignmentForPixelFormat:
+               MTLPixelFormatB5G6R5Unorm];
+  natural_stride = source->storage_width * sizeof( uint16_t );
+  aligned_stride = ( natural_stride + alignment - 1 ) / alignment * alignment;
+  buffer = [device newBufferWithLength:aligned_stride * source->storage_height
+                                options:MTLResourceStorageModeShared];
+  if( !buffer ) {
+    [self release];
+    return nil;
+  }
+
+  texture_descriptor = [MTLTextureDescriptor
+    texture2DDescriptorWithPixelFormat:MTLPixelFormatB5G6R5Unorm
+    width:source->storage_width height:source->storage_height mipmapped:NO];
+  [texture_descriptor setUsage:MTLTextureUsageShaderRead];
+  texture = [buffer newTextureWithDescriptor:texture_descriptor offset:0
+                                 bytesPerRow:aligned_stride];
+  if( !texture ) {
+    [self release];
+    return nil;
+  }
+
+  framebuffer = *source;
+  framebuffer.stride = aligned_stride;
+  framebuffer.backing_storage = [buffer contents];
+  framebuffer.dirty_regions = pig_dirty_open( MAX_UPDATE_RECT );
+  framebuffer.ownership = 0;
+  if( !framebuffer.dirty_regions ) {
+    [self release];
+    return nil;
+  }
+  state = DISPLAY_FRAMEBUFFER_SLOT_WRITABLE;
+
+  return self;
+}
+
+-(void) dealloc
+{
+  pig_dirty_close( framebuffer.dirty_regions );
+  [texture release];
+  [buffer release];
+  [super dealloc];
+}
+
+@end
 
 static int
 get_offset( int window_width, int window_height, int image_width,
@@ -141,6 +219,9 @@ get_offset( int window_width, int window_height, int image_width,
   [self setEnableSetNeedsDisplay:NO];
 
   command_queue = [[self device] newCommandQueue];
+  framebuffer_slots = [[NSMutableArray alloc] initWithCapacity:DISPLAY_FRAMEBUFFER_SLOT_COUNT];
+  in_flight_command_buffers = [[NSMutableArray alloc] init];
+  framebuffer_slot_lock = [[NSLock alloc] init];
   library = [[self device] newDefaultLibrary];
   vertex_function = [library newFunctionWithName:@"display_vertex"];
   fragment_function = [library newFunctionWithName:@"display_fragment"];
@@ -190,7 +271,10 @@ get_offset( int window_width, int window_height, int image_width,
 
 -(void) dealloc
 {
-  [screen_texture release];
+  [self removeFramebuffer];
+  [framebuffer_slot_lock release];
+  [in_flight_command_buffers release];
+  [framebuffer_slots release];
   [green_disk release];
   [red_disk release];
   [green_mdr release];
@@ -202,42 +286,7 @@ get_offset( int window_width, int window_height, int image_width,
   [pipeline_state release];
   [command_queue release];
 
-  if( buffered_screen.synchronization )
-    [(NSLock *)buffered_screen.synchronization release];
-  buffered_screen.synchronization = nil;
-
   [super dealloc];
-}
-
--(void) uploadDirtyRegions
-{
-  PIG_dirtytable *dirty_regions;
-  int i;
-
-  if( !framebuffer || !screen_texture || !buffered_screen.synchronization ) return;
-  if( ![(NSLock *)buffered_screen.synchronization tryLock] ) return;
-
-  dirty_regions = framebuffer->dirty_regions;
-  for( i = 0; dirty_regions && i < dirty_regions->count; i++ ) {
-    PIG_rect region = dirty_regions->rects[i];
-    int x = MAX( 0, region.x );
-    int y = MAX( 0, region.y );
-    int width = MIN( region.w - ( x - region.x ), framebuffer->width - x );
-    int height = MIN( region.h - ( y - region.y ), framebuffer->height - y );
-
-    if( width > 0 && height > 0 ) {
-      MTLRegion texture_region = MTLRegionMake2D( x + framebuffer->x_offset,
-                                                   y + framebuffer->y_offset,
-                                                   width, height );
-      const void *source = (const uint8_t *)framebuffer->backing_storage +
-                           ( y + framebuffer->y_offset ) * framebuffer->stride +
-                           ( x + framebuffer->x_offset ) * sizeof( uint16_t );
-      [screen_texture replaceRegion:texture_region mipmapLevel:0
-                           withBytes:source bytesPerRow:framebuffer->stride];
-    }
-  }
-  if( dirty_regions ) dirty_regions->count = 0;
-  [(NSLock *)buffered_screen.synchronization unlock];
 }
 
 -(void) drawTexture:(id <MTLTexture>)texture
@@ -301,34 +350,50 @@ get_offset( int window_width, int window_height, int image_width,
   MTLRenderPassDescriptor *render_pass_descriptor;
   id <MTLCommandBuffer> command_buffer;
   id <MTLRenderCommandEncoder> command_encoder;
+  DisplayFramebufferSlot *slot = nil;
+  DisplayFramebuffer *slot_framebuffer;
   DisplayVertices vertices;
   float x_offset = 0.0f;
   float y_offset = 0.0f;
+  NSInteger i;
 
-  [self uploadDirtyRegions];
   drawable = [view currentDrawable];
   render_pass_descriptor = [view currentRenderPassDescriptor];
   if( !drawable || !render_pass_descriptor || !command_queue ) return;
 
+  [framebuffer_slot_lock lock];
+  for( i = [framebuffer_slots count] - 1; i >= 0; i-- ) {
+    DisplayFramebufferSlot *candidate = [framebuffer_slots objectAtIndex:i];
+
+    if( candidate->state == DISPLAY_FRAMEBUFFER_SLOT_READY ) {
+      slot = candidate;
+      slot->state = DISPLAY_FRAMEBUFFER_SLOT_IN_FLIGHT;
+      break;
+    }
+  }
+  [framebuffer_slot_lock unlock];
+
   command_buffer = [command_queue commandBuffer];
   command_encoder = [command_buffer renderCommandEncoderWithDescriptor:render_pass_descriptor];
-  if( command_encoder && pipeline_state && screen_texture && framebuffer ) {
+  slot_framebuffer = slot ? &slot->framebuffer : NULL;
+  if( command_encoder && pipeline_state && slot_framebuffer ) {
     if( settings_current.full_screen ) {
       x_offset = get_offset( view.drawableSize.width, view.drawableSize.height,
-                             framebuffer->width, framebuffer->height, &y_offset );
+                             slot_framebuffer->width, slot_framebuffer->height,
+                             &y_offset );
     }
     vertices.position = (vector_float4){ -1.0f, 1.0f, 1.0f, -1.0f };
     vertices.texture_coordinates = (vector_float4){
-      ( framebuffer->x_offset - y_offset ) / framebuffer->storage_width,
-      ( framebuffer->y_offset + x_offset ) / framebuffer->storage_height,
-      ( framebuffer->x_offset + framebuffer->width + y_offset ) /
-        framebuffer->storage_width,
-      ( framebuffer->y_offset + framebuffer->height - x_offset ) /
-        framebuffer->storage_height
+      ( slot_framebuffer->x_offset - y_offset ) / slot_framebuffer->storage_width,
+      ( slot_framebuffer->y_offset + x_offset ) / slot_framebuffer->storage_height,
+      ( slot_framebuffer->x_offset + slot_framebuffer->width + y_offset ) /
+        slot_framebuffer->storage_width,
+      ( slot_framebuffer->y_offset + slot_framebuffer->height - x_offset ) /
+        slot_framebuffer->storage_height
     };
     [command_encoder setRenderPipelineState:pipeline_state];
     [command_encoder setVertexBytes:&vertices length:sizeof( vertices ) atIndex:0];
-    [command_encoder setFragmentTexture:screen_texture atIndex:0];
+    [command_encoder setFragmentTexture:slot->texture atIndex:0];
     [command_encoder setFragmentSamplerState:bilinear_filtering_enabled ? linear_sampler : nearest_sampler
                                      atIndex:0];
     [command_encoder drawPrimitives:MTLPrimitiveTypeTriangle vertexStart:0 vertexCount:6];
@@ -336,6 +401,17 @@ get_offset( int window_width, int window_height, int image_width,
     [command_encoder endEncoding];
   } else if( command_encoder ) {
     [command_encoder endEncoding];
+  }
+  if( slot ) {
+    [framebuffer_slot_lock lock];
+    [in_flight_command_buffers addObject:command_buffer];
+    [framebuffer_slot_lock unlock];
+    [command_buffer addCompletedHandler:^(id <MTLCommandBuffer> completed_buffer) {
+      [framebuffer_slot_lock lock];
+      slot->state = DISPLAY_FRAMEBUFFER_SLOT_WRITABLE;
+      [in_flight_command_buffers removeObject:completed_buffer];
+      [framebuffer_slot_lock unlock];
+    }];
   }
   [command_buffer presentDrawable:drawable];
   [command_buffer commit];
@@ -347,8 +423,6 @@ get_offset( int window_width, int window_height, int image_width,
 
 -(void) start
 {
-  if( !buffered_screen.synchronization )
-    buffered_screen.synchronization = (void *)[[NSLock alloc] init];
   [self setPaused:NO];
 }
 
@@ -359,26 +433,82 @@ get_offset( int window_width, int window_height, int image_width,
 
 -(void) applyFramebuffer:(DisplayFramebuffer *)new_framebuffer
 {
-  MTLTextureDescriptor *texture_descriptor;
+  int i;
 
   [self removeFramebuffer];
   framebuffer = new_framebuffer;
   if( !framebuffer ) return;
 
-  texture_descriptor = [MTLTextureDescriptor
-    texture2DDescriptorWithPixelFormat:MTLPixelFormatB5G6R5Unorm
-    width:framebuffer->storage_width height:framebuffer->storage_height
-    mipmapped:NO];
-  [texture_descriptor setUsage:MTLTextureUsageShaderRead];
-  screen_texture = [[self device] newTextureWithDescriptor:texture_descriptor];
+  [framebuffer_slot_lock lock];
+  for( i = 0; i < DISPLAY_FRAMEBUFFER_SLOT_COUNT; i++ ) {
+    DisplayFramebufferSlot *slot = [[DisplayFramebufferSlot alloc]
+      initWithDevice:[self device] framebuffer:framebuffer];
+
+    if( !slot ) break;
+    [framebuffer_slots addObject:slot];
+    buffered_screen_ring.slots[i] = &slot->framebuffer;
+    [slot release];
+  }
+  accepting_framebuffers = [framebuffer_slots count] == DISPLAY_FRAMEBUFFER_SLOT_COUNT;
+  [framebuffer_slot_lock unlock];
+  if( !accepting_framebuffers ) [self removeFramebuffer];
   bilinear_filtering_enabled = settings_current.bilinear_filter;
+}
+
+-(DisplayFramebuffer *) acquireFramebuffer
+{
+  DisplayFramebufferSlot *slot;
+
+  [framebuffer_slot_lock lock];
+  if( !accepting_framebuffers ) {
+    [framebuffer_slot_lock unlock];
+    return NULL;
+  }
+  for( slot in framebuffer_slots ) {
+    if( slot->state == DISPLAY_FRAMEBUFFER_SLOT_WRITABLE ) {
+      [framebuffer_slot_lock unlock];
+      return &slot->framebuffer;
+    }
+  }
+  [framebuffer_slot_lock unlock];
+
+  /* Drop this frame: all slots are currently sampled by the GPU. */
+  return NULL;
+}
+
+-(void) publishFramebuffer:(DisplayFramebuffer *)new_framebuffer
+{
+  DisplayFramebufferSlot *slot;
+
+  [framebuffer_slot_lock lock];
+  if( accepting_framebuffers ) {
+    for( slot in framebuffer_slots ) {
+      if( slot->state == DISPLAY_FRAMEBUFFER_SLOT_READY )
+        slot->state = DISPLAY_FRAMEBUFFER_SLOT_WRITABLE;
+      if( &slot->framebuffer == new_framebuffer )
+        slot->state = DISPLAY_FRAMEBUFFER_SLOT_READY;
+    }
+  }
+  [framebuffer_slot_lock unlock];
 }
 
 -(void) removeFramebuffer
 {
-  [screen_texture release];
-  screen_texture = nil;
+  NSArray *command_buffers;
+  id <MTLCommandBuffer> command_buffer;
+
+  [framebuffer_slot_lock lock];
+  accepting_framebuffers = NO;
+  command_buffers = [[in_flight_command_buffers copy] autorelease];
+  [framebuffer_slot_lock unlock];
+  for( command_buffer in command_buffers ) [command_buffer waitUntilCompleted];
+
+  [framebuffer_slot_lock lock];
+  [in_flight_command_buffers removeAllObjects];
+  [framebuffer_slots removeAllObjects];
+  memset( &buffered_screen_ring, 0, sizeof( buffered_screen_ring ) );
   framebuffer = NULL;
+  [framebuffer_slot_lock unlock];
 }
 
 -(void) applyOverlayState:(const DisplayOverlayState *)state
