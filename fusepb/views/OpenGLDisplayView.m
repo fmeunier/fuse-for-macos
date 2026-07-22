@@ -22,22 +22,8 @@
 */
 
 #import "OpenGLDisplayView.h"
-#import "EmulationSessionController.h"
 #import "FuseController.h"
-#import "DebuggerController.h"
 #import "Texture.h"
-
-@interface OpenGLFullscreenWindow : NSWindow
-@end
-
-@implementation OpenGLFullscreenWindow
-
--(BOOL) canBecomeKeyWindow
-{
-  return YES;
-}
-
-@end
 
 #include <OpenGL/gl.h>
 #include <OpenGL/glext.h>
@@ -46,10 +32,8 @@
 #include "fuse.h"
 #include "main.h"
 #include "settings.h"
-#include "ui/cocoa/cocoaui.h"
 #include "ui/cocoa/dirty.h"
 
-#define QZ_f 0x03
 #define QZ_0 0x1D
 #define QZ_1 0x12
 #define QZ_2 0x13
@@ -188,58 +172,12 @@ static OpenGLDisplayView *instance = nil;
 
 -(void) performFullscreen
 {
-  [self fullscreen:nil];
+  /* Fullscreen ownership belongs to DisplayHostView. */
 }
 
 -(void) shutdown
 {
   [self displayLinkStop];
-}
-
--(IBAction) fullscreen:(id)sender
-{
-  /* don't want to get a callback to display the screen while we are
-   * fiddling with the window to draw into!
-   */
-  [self displayLinkStop];
-
-  if( settings_current.full_screen ) {
-    /* we need to go back to non-full screen */
-    [fullscreenWindow close];
-    [windowedWindow setContentView: self];
-    [windowedWindow makeKeyAndOrderFront: self];
-    [windowedWindow makeFirstResponder: self];
-    settings_current.full_screen = 0;
-    if( ui_mouse_grabbed ) ui_mouse_grabbed = ui_mouse_release( 0 );
-  } else {
-    unsigned int windowStyle;
-    NSRect       contentRect;
-
-    windowedWindow = [self window];
-    windowStyle    = NSBorderlessWindowMask;
-    contentRect    = [[NSScreen mainScreen] frame];
-    fullscreenWindow = [[OpenGLFullscreenWindow alloc] initWithContentRect:contentRect
-                                         styleMask: windowStyle
-                                         backing:NSBackingStoreBuffered
-                                         defer: NO];
-    if( fullscreenWindow != nil ) {
-      settings_current.full_screen = 1;
-      [fullscreenWindow setTitle: @"Fuse"];
-      [fullscreenWindow setReleasedWhenClosed: YES];
-      [fullscreenWindow setContentView: self];
-      [fullscreenWindow makeKeyAndOrderFront:self ];
-      [fullscreenWindow setLevel: NSScreenSaverWindowLevel - 1];
-      [fullscreenWindow makeFirstResponder:self];
-      if( !ui_mouse_grabbed ) ui_mouse_grabbed = ui_mouse_grab( 0 );
-    }
-  }
-
-  [self displayLinkStart];
-
-  [view_lock lock];
-  statusbar_updated = YES;
-  [view_lock unlock];
-  [[FuseController singleton] releaseCmdKeys:@"f" withCode:QZ_f];
 }
 
 -(IBAction) zoom:(id)sender
@@ -346,8 +284,6 @@ static OpenGLDisplayView *instance = nil;
 
   target_ratio = 4.0f/3.0f;
 
-  [[EmulationSessionController instance] startWithDisplayPresenter:self];
-
   currentScreenTex = 0;
 
   statusbar_updated = NO;
@@ -370,9 +306,6 @@ static OpenGLDisplayView *instance = nil;
 
 -(void) awakeFromNib
 {
-  /* keep the window in the standard aspect ratio if the user resizes */
-  [[self window] setContentAspectRatio:NSMakeSize(4.0,3.0)];
-
   view_lock = [[NSLock alloc] init];
 
   CVReturn            error = kCVReturnSuccess;
@@ -394,32 +327,6 @@ static OpenGLDisplayView *instance = nil;
   }
 
   displayLinkRunning = NO;
-}
-
-- (void)windowWillClose:(NSNotification *)notification
-{
-  [[self window] setDelegate:nil];
-  [[EmulationSessionController instance] stop];
-
-  [redCassette release];
-  redCassette = nil;
-  [greenCassette release];
-  greenCassette = nil;
-  [redMdr release];
-  redMdr = nil;
-  [greenMdr release];
-  greenMdr = nil;
-  [redDisk release];
-  redDisk = nil;
-  [greenDisk release];
-  greenDisk = nil;
-
-  [self release];
-}
-
-- (void)windowDidResignKey:(NSNotification *)notification
-{
-  [[EmulationSessionController instance] keyboardReleaseAll];
 }
 
 -(void) loadPicture: (NSString *) name
@@ -711,85 +618,6 @@ static OpenGLDisplayView *instance = nil;
   [view_lock unlock];
 }
 
--(void) mouseMoved:(NSEvent *)theEvent
-{
-  [[EmulationSessionController instance] mouseMoved:theEvent];
-}
-
--(void) mouseDown:(NSEvent *)theEvent
-{
-  [[EmulationSessionController instance] mouseDown:theEvent];
-}
-
--(void) mouseUp:(NSEvent *)theEvent
-{
-  [[EmulationSessionController instance] mouseUp:theEvent];
-}
-
--(void) rightMouseDown:(NSEvent *)theEvent
-{
-  [[EmulationSessionController instance] rightMouseDown:theEvent];
-}
-
--(void) rightMouseUp:(NSEvent *)theEvent
-{
-  [[EmulationSessionController instance] rightMouseUp:theEvent];
-}
-
--(void) otherMouseDown:(NSEvent *)theEvent
-{
-  [[EmulationSessionController instance] otherMouseDown:theEvent];
-}
-
--(void) otherMouseUp:(NSEvent *)theEvent
-{
-  [[EmulationSessionController instance] otherMouseUp:theEvent];
-}
-
--(void) flagsChanged:(NSEvent *)theEvent
-{
-  [[EmulationSessionController instance] flagsChanged:theEvent];
-}
-
--(void) keyDown:(NSEvent *)theEvent
-{
-  if( settings_current.full_screen ) {
-    unichar c = [[theEvent charactersIgnoringModifiers] characterAtIndex:0];
-    switch (c) {
-    case 27:
-      [self fullscreen:nil];
-      return;
-      break;
-    }
-  }
-  [[EmulationSessionController instance] keyDown:theEvent];
-}
-
--(void) keyUp:(NSEvent *)theEvent
-{
-  [[EmulationSessionController instance] keyUp:theEvent];
-}
-
--(BOOL) acceptsFirstResponder
-{
-  return YES;
-}
-
--(BOOL) becomeFirstResponder
-{
-  return YES;
-}
-
--(BOOL) resignFirstResponder
-{
-  return YES;
-}
-
--(BOOL) isFlipped
-{
-  return YES;
-}
-
 /* Minimise code from example code posted by user arekkusu
  * (http://www.idevgames.com) at http://www.idevgames.com in thread
  * "Properly minimizing an OpenGL view"
@@ -887,19 +715,6 @@ static OpenGLDisplayView *instance = nil;
   [[self window] setOpaque:YES];
 }
 
--(BOOL) windowShouldClose:(id)window
-{
-  if( cocoaui_confirm( "Exit Fuse?" ) ) {
-    int error = [[EmulationSessionController instance] checkMediaChanged];
-    if( error ) return NO;
-
-    [self displayLinkStop];
-
-    return YES;
-  }
-  return NO;
-}
-
 -(CVReturn) displayFrame:(const CVTimeStamp *)timeStamp
 {
   int i;
@@ -971,7 +786,7 @@ static OpenGLDisplayView *instance = nil;
   return kCVReturnSuccess;
 }
 
--(void) windowChangedScreen:(NSNotification*)inNotification
+-(void) windowDidChangeScreen:(NSNotification*)inNotification
 {
   NSWindow *window = [self window];
   CGDirectDisplayID displayID = (CGDirectDisplayID)[[[[window screen]

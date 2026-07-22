@@ -63,9 +63,6 @@
 
   NSLock *view_lock;
 
-  NSWindow *fullscreenWindow;
-  NSWindow *windowedWindow;
-
   float target_ratio;
 
   CVDisplayLinkRef displayLink;
@@ -74,7 +71,6 @@
 }
 +(OpenGLDisplayView *) instance;
 
--(IBAction) fullscreen:(id)sender;
 -(IBAction) zoom:(id)sender;
 
 -(void) applyFramebuffer:(DisplayFramebuffer *)framebuffer;
@@ -99,32 +95,12 @@
 
 -(void) setNeedsDisplayYes;
 
--(void) mouseMoved:(NSEvent *)theEvent;
--(void) mouseDown:(NSEvent *)theEvent;
--(void) mouseUp:(NSEvent *)theEvent;
--(void) rightMouseDown:(NSEvent *)theEvent;
--(void) rightMouseUp:(NSEvent *)theEvent;
--(void) otherMouseDown:(NSEvent *)theEvent;
--(void) otherMouseUp:(NSEvent *)theEvent;
-
--(void) flagsChanged:(NSEvent *)theEvent;
--(void) keyDown:(NSEvent *)theEvent;
--(void) keyUp:(NSEvent *)theEvent;
-
--(BOOL) acceptsFirstResponder;
--(BOOL) becomeFirstResponder;
--(BOOL) resignFirstResponder;
-
--(BOOL) isFlipped;
-
 -(void) copyGLtoQuartz;
 -(void) windowWillMiniaturize:(NSNotification *)aNotification;
 -(void) windowDidMiniaturize:(NSNotification *)notification;
--(BOOL) windowShouldClose:(id)window;
--(void) windowDidResignKey:(NSNotification *)notification;
 
 -(CVReturn) displayFrame:(const CVTimeStamp *)timeStamp;
--(void) windowChangedScreen:(NSNotification*)inNotification;
+-(void) windowDidChangeScreen:(NSNotification*)inNotification;
 -(void) windowDidDeminiaturize:(NSNotification *)inNotification;
 
 -(void) displayLinkStop;
