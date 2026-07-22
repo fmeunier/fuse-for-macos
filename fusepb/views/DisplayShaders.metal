@@ -11,21 +11,31 @@
 
 using namespace metal;
 
+struct DisplayVertices {
+  float4 position;
+  float4 texture_coordinates;
+};
+
 struct DisplayVertex {
   float4 position [[position]];
   float2 texture_coordinate;
 };
 
 vertex DisplayVertex
- display_vertex( uint vertex_id [[vertex_id]] )
+display_vertex( uint vertex_id [[vertex_id]],
+                constant DisplayVertices& vertices [[buffer( 0 )]] )
 {
   const float2 positions[] = {
-    float2( -1.0,  1.0 ), float2( -1.0, -1.0 ),
-    float2(  1.0,  1.0 ), float2(  1.0, -1.0 ),
+    float2( vertices.position.x, vertices.position.y ),
+    float2( vertices.position.x, vertices.position.w ),
+    float2( vertices.position.z, vertices.position.y ),
+    float2( vertices.position.z, vertices.position.w ),
   };
   const float2 texture_coordinates[] = {
-    float2( 0.0, 0.0 ), float2( 0.0, 1.0 ),
-    float2( 1.0, 0.0 ), float2( 1.0, 1.0 ),
+    float2( vertices.texture_coordinates.x, vertices.texture_coordinates.y ),
+    float2( vertices.texture_coordinates.x, vertices.texture_coordinates.w ),
+    float2( vertices.texture_coordinates.z, vertices.texture_coordinates.y ),
+    float2( vertices.texture_coordinates.z, vertices.texture_coordinates.w ),
   };
   const uint indices[] = { 0, 1, 2, 2, 1, 3 };
   DisplayVertex output;
@@ -37,9 +47,9 @@ vertex DisplayVertex
 }
 
 fragment float4
- display_fragment( DisplayVertex input [[stage_in]],
-                   texture2d<float> texture [[texture( 0 )]],
-                   sampler texture_sampler [[sampler( 0 )]] )
+display_fragment( DisplayVertex input [[stage_in]],
+                  texture2d<float> texture [[texture( 0 )]],
+                  sampler texture_sampler [[sampler( 0 )]] )
 {
   return texture.sample( texture_sampler, input.texture_coordinate );
 }

@@ -14,8 +14,6 @@
 @interface DisplayHostView : NSView <DisplayPresenting, NSWindowDelegate>
 {
   id <DisplayPresenting> display_presenter;
-  NSWindow *fullscreen_window;
-  NSWindow *windowed_window;
 }
 
 -(IBAction) fullscreen:(id)sender;

@@ -17,18 +17,6 @@
 
 #define QZ_f 0x03
 
-@interface DisplayFullscreenWindow : NSWindow
-@end
-
-@implementation DisplayFullscreenWindow
-
--(BOOL) canBecomeKeyWindow
-{
-  return YES;
-}
-
-@end
-
 @implementation DisplayHostView
 
 -(Class) displayPresenterClass
@@ -118,37 +106,34 @@
 
 -(IBAction) fullscreen:(id)sender
 {
-  if( settings_current.full_screen ) {
-    [fullscreen_window close];
-    [windowed_window setContentView:self];
-    [windowed_window makeKeyAndOrderFront:self];
-    [windowed_window makeFirstResponder:self];
-    settings_current.full_screen = 0;
-    if( ui_mouse_grabbed ) ui_mouse_grabbed = ui_mouse_release( 0 );
-  } else {
-    NSRect content_rect = [[NSScreen mainScreen] frame];
-
-    windowed_window = [self window];
-    fullscreen_window = [[DisplayFullscreenWindow alloc]
-      initWithContentRect:content_rect styleMask:NSWindowStyleMaskBorderless
-      backing:NSBackingStoreBuffered defer:NO];
-    if( fullscreen_window ) {
-      settings_current.full_screen = 1;
-      [fullscreen_window setTitle:@"Fuse"];
-      [fullscreen_window setReleasedWhenClosed:YES];
-      [fullscreen_window setContentView:self];
-      [fullscreen_window makeKeyAndOrderFront:self];
-      [fullscreen_window setLevel:NSScreenSaverWindowLevel - 1];
-      [fullscreen_window makeFirstResponder:self];
-      if( !ui_mouse_grabbed ) ui_mouse_grabbed = ui_mouse_grab( 0 );
-    }
-  }
-
+  [[self window] toggleFullScreen:sender];
   [[FuseController singleton] releaseCmdKeys:@"f" withCode:QZ_f];
+}
+
+-(void) windowWillEnterFullScreen:(NSNotification *)notification
+{
+  settings_current.full_screen = 1;
+  if( !ui_mouse_grabbed ) ui_mouse_grabbed = ui_mouse_grab( 0 );
+}
+
+-(void) windowWillExitFullScreen:(NSNotification *)notification
+{
+  settings_current.full_screen = 0;
+  if( ui_mouse_grabbed ) ui_mouse_grabbed = ui_mouse_release( 0 );
+}
+
+-(BOOL) validateMenuItem:(NSMenuItem *)menu_item
+{
+  if( [menu_item action] == @selector(zoom:) )
+    return !settings_current.full_screen;
+
+  return YES;
 }
 
 -(IBAction) zoom:(id)sender
 {
+  if( settings_current.full_screen ) return;
+
   [display_presenter zoom:sender];
 }
 

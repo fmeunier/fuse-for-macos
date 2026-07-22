@@ -1,4 +1,4 @@
-/* MetalDisplayView.h: Inert Metal display presenter
+/* MetalDisplayView.h: Metal implementation of the display presenter
    Copyright (c) 2026 Fredrick Meunier
 
    This program is free software; you can redistribute it and/or modify
@@ -17,7 +17,15 @@
   id <MTLRenderPipelineState> pipeline_state;
   id <MTLSamplerState> nearest_sampler;
   id <MTLSamplerState> linear_sampler;
-  id <MTLTexture> test_pattern_texture;
+  id <MTLTexture> screen_texture;
+  id <MTLTexture> red_cassette;
+  id <MTLTexture> green_cassette;
+  id <MTLTexture> red_mdr;
+  id <MTLTexture> green_mdr;
+  id <MTLTexture> red_disk;
+  id <MTLTexture> green_disk;
+  DisplayFramebuffer *framebuffer;
+  DisplayOverlayState overlay_state;
   BOOL bilinear_filtering_enabled;
 }
 
