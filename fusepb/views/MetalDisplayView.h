@@ -17,6 +17,7 @@
   id <MTLRenderPipelineState> pipeline_state;
   id <MTLSamplerState> nearest_sampler;
   id <MTLSamplerState> linear_sampler;
+  id <MTLTexture> test_pattern_texture;
   BOOL bilinear_filtering_enabled;
 }
 
