@@ -74,10 +74,10 @@
   display_presenter = (id <DisplayPresenting>)presenter_view;
   [presenter_view setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
   [self addSubview:presenter_view];
-  [presenter_view awakeFromNib];
   [presenter_view release];
 
   [[self window] setContentAspectRatio:NSMakeSize( 4.0, 3.0 )];
+  [self start];
   [[EmulationSessionController instance] startWithDisplayPresenter:self];
 }
 
@@ -104,6 +104,11 @@
 -(void) performFullscreen
 {
   [self fullscreen:nil];
+}
+
+-(void) start
+{
+  [display_presenter start];
 }
 
 -(void) shutdown
@@ -144,8 +149,7 @@
 
 -(IBAction) zoom:(id)sender
 {
-  if( [display_presenter respondsToSelector:@selector(zoom:)] )
-    [(id)display_presenter zoom:sender];
+  [display_presenter zoom:sender];
 }
 
 -(void) mouseMoved:(NSEvent *)event
@@ -214,6 +218,7 @@
 {
   [[self window] setDelegate:nil];
   [[EmulationSessionController instance] stop];
+  [display_presenter shutdown];
 }
 
 -(void) windowDidResignKey:(NSNotification *)notification
@@ -230,26 +235,22 @@
 
 -(void) windowWillMiniaturize:(NSNotification *)notification
 {
-  if( [display_presenter respondsToSelector:@selector(windowWillMiniaturize:)] )
-    [(id)display_presenter windowWillMiniaturize:notification];
+  [display_presenter windowWillMiniaturize:notification];
 }
 
 -(void) windowDidMiniaturize:(NSNotification *)notification
 {
-  if( [display_presenter respondsToSelector:@selector(windowDidMiniaturize:)] )
-    [(id)display_presenter windowDidMiniaturize:notification];
+  [display_presenter windowDidMiniaturize:notification];
 }
 
 -(void) windowDidDeminiaturize:(NSNotification *)notification
 {
-  if( [display_presenter respondsToSelector:@selector(windowDidDeminiaturize:)] )
-    [(id)display_presenter windowDidDeminiaturize:notification];
+  [display_presenter windowDidDeminiaturize:notification];
 }
 
 -(void) windowDidChangeScreen:(NSNotification *)notification
 {
-  if( [display_presenter respondsToSelector:@selector(windowDidChangeScreen:)] )
-    [(id)display_presenter windowDidChangeScreen:notification];
+  [display_presenter windowDidChangeScreen:notification];
 }
 
 @end

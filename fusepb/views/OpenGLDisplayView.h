@@ -73,6 +73,7 @@
 
 -(IBAction) zoom:(id)sender;
 
+-(void) start;
 -(void) applyFramebuffer:(DisplayFramebuffer *)framebuffer;
 -(void) removeFramebuffer;
 -(void) applyOverlayState:(const DisplayOverlayState *)state;
@@ -85,7 +86,6 @@
 -(void) blitIcon:(Texture*)iconTexture;
 
 -(id) initWithFrame:(NSRect)frameRect;
--(void) awakeFromNib;
 
 -(void) loadPicture:(NSString *) name
            greenTex:(Texture*) greenTexture

@@ -15,12 +15,23 @@
 
 @protocol DisplayPresenting <NSObject>
 
+/* DisplayHostView starts and stops each selected presenter exactly once. */
+-(void) start;
+-(void) shutdown;
+
 -(void) applyFramebuffer:(DisplayFramebuffer *)framebuffer;
 -(void) removeFramebuffer;
 -(void) applyOverlayState:(const DisplayOverlayState *)state;
 -(void) setBilinearFilteringEnabled:(BOOL)enabled;
-/* The renderer retains ownership of fullscreen window and timing details. */
+-(void) zoom:(id)sender;
+
+/* DisplayHostView owns the window and forwards renderer-relevant changes. */
+-(void) windowWillMiniaturize:(NSNotification *)notification;
+-(void) windowDidMiniaturize:(NSNotification *)notification;
+-(void) windowDidDeminiaturize:(NSNotification *)notification;
+-(void) windowDidChangeScreen:(NSNotification *)notification;
+
+/* Fullscreen window ownership belongs to DisplayHostView. */
 -(void) performFullscreen;
--(void) shutdown;
 
 @end

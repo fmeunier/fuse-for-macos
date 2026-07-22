@@ -76,7 +76,6 @@ overlay_item_state( ui_statusbar_state state )
 
 -(void) stop
 {
-  [display_presenter shutdown];
   [proxy_emulator stop];
   [proxy_emulator release];
   proxy_emulator = nil;

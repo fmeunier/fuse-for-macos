@@ -304,7 +304,7 @@ static OpenGLDisplayView *instance = nil;
   [super dealloc];
 }
 
--(void) awakeFromNib
+-(void) start
 {
   view_lock = [[NSLock alloc] init];
 
