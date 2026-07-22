@@ -357,10 +357,6 @@ get_offset( int window_width, int window_height, int image_width,
   float y_offset = 0.0f;
   NSInteger i;
 
-  drawable = [view currentDrawable];
-  render_pass_descriptor = [view currentRenderPassDescriptor];
-  if( !drawable || !render_pass_descriptor || !command_queue ) return;
-
   [framebuffer_slot_lock lock];
   for( i = [framebuffer_slots count] - 1; i >= 0; i-- ) {
     DisplayFramebufferSlot *candidate = [framebuffer_slots objectAtIndex:i];
@@ -372,6 +368,18 @@ get_offset( int window_width, int window_height, int image_width,
     }
   }
   [framebuffer_slot_lock unlock];
+
+  /* Keep the prior drawable visible until the emulator publishes a frame. */
+  if( !slot ) return;
+
+  drawable = [view currentDrawable];
+  render_pass_descriptor = [view currentRenderPassDescriptor];
+  if( !drawable || !render_pass_descriptor || !command_queue ) {
+    [framebuffer_slot_lock lock];
+    slot->state = DISPLAY_FRAMEBUFFER_SLOT_READY;
+    [framebuffer_slot_lock unlock];
+    return;
+  }
 
   command_buffer = [command_queue commandBuffer];
   command_encoder = [command_buffer renderCommandEncoderWithDescriptor:render_pass_descriptor];
