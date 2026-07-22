@@ -171,7 +171,7 @@ If behavior is generated, edit the source `.dat` or `.pl` files and regenerate w
 
 ## macOS-Specific Rules
 - The emulator runs on a background thread in `fusepb/models/Emulator.m`.
-- AppKit and OpenGL work must stay on the main thread.
+- AppKit and Metal work must stay on the main thread.
 - Use `dispatch_async`, `dispatch_sync`, or `performSelectorOnMainThread:withObject:waitUntilDone:` as already established.
 - Box raw C pointers when passing them through Objective-C APIs.
 

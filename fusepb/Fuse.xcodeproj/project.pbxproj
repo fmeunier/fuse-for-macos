@@ -273,7 +273,6 @@
 		B6A6F0DA0B3D141B000B88E9 /* cocoaui.m in Sources */ = {isa = PBXBuildFile; fileRef = B6A6F0D90B3D141B000B88E9 /* cocoaui.m */; };
 		B6A6F0EE0B3D5F9E000B88E9 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6A6F0ED0B3D5F9E000B88E9 /* CoreAudio.framework */; };
 		B6A6F0F30B3D602F000B88E9 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6A6F0F20B3D602F000B88E9 /* AudioUnit.framework */; };
-		B6A6F1060B3D60D0000B88E9 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F520C8BC038D022E01A804BA /* OpenGL.framework */; };
 		B6A6F10E0B3D6360000B88E9 /* cocoaerror.m in Sources */ = {isa = PBXBuildFile; fileRef = B6A6F10D0B3D6360000B88E9 /* cocoaerror.m */; };
 		B6A6F1200B3EA737000B88E9 /* cocoascreenshot.m in Sources */ = {isa = PBXBuildFile; fileRef = B6A6F11E0B3EA737000B88E9 /* cocoascreenshot.m */; };
 		B6B076B30B59FE9A00D4F95C /* Emulator.m in Sources */ = {isa = PBXBuildFile; fileRef = B6B076B10B59FE9A00D4F95C /* Emulator.m */; };
@@ -290,7 +289,6 @@
 		B6CA2A230C33F84A0003CF90 /* module.c in Sources */ = {isa = PBXBuildFile; fileRef = B6CA2A210C33F8490003CF90 /* module.c */; };
 		B6CA2A260C33F8800003CF90 /* plusd.rom in Resources */ = {isa = PBXBuildFile; fileRef = B6CA2A250C33F8800003CF90 /* plusd.rom */; };
 		B6CA2A2E0C33F8C10003CF90 /* plusd.c in Sources */ = {isa = PBXBuildFile; fileRef = B6CA2A2A0C33F8C10003CF90 /* plusd.c */; };
-		B6CADD580C47AD90004BA954 /* Texture.m in Sources */ = {isa = PBXBuildFile; fileRef = B6CADD560C47AD90004BA954 /* Texture.m */; };
 		B6CADD690C48E188004BA954 /* cassette_green.png in Resources */ = {isa = PBXBuildFile; fileRef = B6CADD670C48E188004BA954 /* cassette_green.png */; };
 		B6CADD6A0C48E188004BA954 /* cassette_red.png in Resources */ = {isa = PBXBuildFile; fileRef = B6CADD680C48E188004BA954 /* cassette_red.png */; };
 		B6CADD720C48E1A3004BA954 /* microdrive_green.png in Resources */ = {isa = PBXBuildFile; fileRef = B6CADD6E0C48E1A3004BA954 /* microdrive_green.png */; };
@@ -304,7 +302,6 @@
 		B6CE3A100CD21617005ACDC8 /* wd_fdc.c in Sources */ = {isa = PBXBuildFile; fileRef = B6CE3A0E0CD21617005ACDC8 /* wd_fdc.c */; };
 		B6CE3A130CD217C2005ACDC8 /* pentagon1024.c in Sources */ = {isa = PBXBuildFile; fileRef = B6CE3A120CD217C2005ACDC8 /* pentagon1024.c */; };
 		B6CE7F420B2830A300EB65B3 /* cocoajoystick.c in Sources */ = {isa = PBXBuildFile; fileRef = B6CE7F3C0B2830A300EB65B3 /* cocoajoystick.c */; };
-		B6CE7FCE0B28FBD600EB65B3 /* OpenGLDisplayView.m in Sources */ = {isa = PBXBuildFile; fileRef = B6CE7FCC0B28FBD600EB65B3 /* OpenGLDisplayView.m */; };
 		B6D0E1031CFD547C00202683 /* didaktik.c in Sources */ = {isa = PBXBuildFile; fileRef = B6D0E1011CFD547C00202683 /* didaktik.c */; };
 		B6D0E1061CFD549200202683 /* usource.c in Sources */ = {isa = PBXBuildFile; fileRef = B6D0E1041CFD549200202683 /* usource.c */; };
 		B6D0E1091CFD54B800202683 /* svg.c in Sources */ = {isa = PBXBuildFile; fileRef = B6D0E1071CFD54B800202683 /* svg.c */; };
@@ -760,8 +757,6 @@
 		B6CA2A2B0C33F8C10003CF90 /* plusd.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = plusd.h; sourceTree = "<group>"; };
 		B6CA304C049CEC410037E9F2 /* psg.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = psg.c; path = psg.c; sourceTree = "<group>"; };
 		B6CA304D049CEC410037E9F2 /* psg.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = psg.h; path = psg.h; sourceTree = "<group>"; };
-		B6CADD550C47AD90004BA954 /* Texture.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Texture.h; sourceTree = "<group>"; };
-		B6CADD560C47AD90004BA954 /* Texture.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = Texture.m; sourceTree = "<group>"; };
 		B6CADD670C48E188004BA954 /* cassette_green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cassette_green.png; sourceTree = "<group>"; };
 		B6CADD680C48E188004BA954 /* cassette_red.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cassette_red.png; sourceTree = "<group>"; };
 		B6CADD6E0C48E1A3004BA954 /* microdrive_green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = microdrive_green.png; sourceTree = "<group>"; };
@@ -795,8 +790,6 @@
 		B7A1C42B3A78F00000C0DE01 /* DisplayShaders.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = DisplayShaders.metal; sourceTree = "<group>"; };
 		B7A1C42D3A78F00000C0DE01 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = /System/Library/Frameworks/Metal.framework; sourceTree = "<absolute>"; };
 		B7A1C42F3A78F00000C0DE01 /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = /System/Library/Frameworks/MetalKit.framework; sourceTree = "<absolute>"; };
-		B6CE7FCB0B28FBD600EB65B3 /* OpenGLDisplayView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = OpenGLDisplayView.h; sourceTree = "<group>"; };
-		B6CE7FCC0B28FBD600EB65B3 /* OpenGLDisplayView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = OpenGLDisplayView.m; sourceTree = "<group>"; };
 		B6D0E1011CFD547C00202683 /* didaktik.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = didaktik.c; sourceTree = "<group>"; };
 		B6D0E1021CFD547C00202683 /* didaktik.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = didaktik.h; sourceTree = "<group>"; };
 		B6D0E1041CFD549200202683 /* usource.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = usource.c; sourceTree = "<group>"; };
@@ -899,7 +892,6 @@
 		B6FEA44B0444C2CC0013916D /* tc2068-0.rom */ = {isa = PBXFileReference; lastKnownFileType = file; name = "tc2068-0.rom"; path = "tc2068-0.rom"; sourceTree = "<group>"; };
 		B6FEA44C0444C2CC0013916D /* tc2068-1.rom */ = {isa = PBXFileReference; lastKnownFileType = file; name = "tc2068-1.rom"; path = "tc2068-1.rom"; sourceTree = "<group>"; };
 		B6FEA44F0444C3370013916D /* tc2068.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = tc2068.c; sourceTree = "<group>"; };
-		F520C8BC038D022E01A804BA /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		F536B56503A0C275011517A0 /* utils.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = utils.c; path = utils.c; sourceTree = "<group>"; };
 		F541FB5E03B0B33401FF8235 /* scaler.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = scaler.h; path = scaler.h; sourceTree = "<group>"; };
 		F54670EB03A3F3E70143EC2C /* settings.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = settings.m; sourceTree = SOURCE_ROOT; };
@@ -979,7 +971,6 @@
 				B64E2A170A6534A3006863D9 /* Carbon.framework in Frameworks */,
 				B6A6F0EE0B3D5F9E000B88E9 /* CoreAudio.framework in Frameworks */,
 				B6A6F0F30B3D602F000B88E9 /* AudioUnit.framework in Frameworks */,
-				B6A6F1060B3D60D0000B88E9 /* OpenGL.framework in Frameworks */,
 				B7A1C42E3A78F00000C0DE01 /* Metal.framework in Frameworks */,
 				B7A1C4303A78F00000C0DE01 /* MetalKit.framework in Frameworks */,
 				B653532B0B902CB20083F942 /* IOKit.framework in Frameworks */,
@@ -1083,7 +1074,6 @@
 				C0DE00163A78000000C0DE01 /* XCTest.framework */,
 				0DI001063A7A00000C0DE01 /* UniformTypeIdentifiers.framework */,
 				B653532A0B902CB20083F942 /* IOKit.framework */,
-				F520C8BC038D022E01A804BA /* OpenGL.framework */,
 				B7A1C42D3A78F00000C0DE01 /* Metal.framework */,
 				B7A1C42F3A78F00000C0DE01 /* MetalKit.framework */,
 				B6251C3D0C2EB24500BD5543 /* QuartzCore.framework */,
@@ -1525,14 +1515,10 @@
 		B6CE7FCF0B28FBEC00EB65B3 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				B6CADD550C47AD90004BA954 /* Texture.h */,
-				B6CADD560C47AD90004BA954 /* Texture.m */,
 				B7A1C4233A77EE0000C0DE01 /* DisplayPresenting.h */,
 				B7A1C4243A77EE0000C0DE01 /* DisplayOverlayState.h */,
 				B7A1C4253A77EE0000C0DE01 /* DisplayHostView.h */,
 				B7A1C4263A77EE0000C0DE01 /* DisplayHostView.m */,
-				B6CE7FCB0B28FBD600EB65B3 /* OpenGLDisplayView.h */,
-				B6CE7FCC0B28FBD600EB65B3 /* OpenGLDisplayView.m */,
 				B7A1C4283A78F00000C0DE01 /* MetalDisplayView.h */,
 				B7A1C4293A78F00000C0DE01 /* MetalDisplayView.m */,
 				B7A1C42B3A78F00000C0DE01 /* DisplayShaders.metal */,
@@ -2752,7 +2738,6 @@
 				B6E0CBA41D9E809000426949 /* unittests.c in Sources */,
 				B6403FD80A7E4B1A00E00B11 /* loader.c in Sources */,
 				B6CE7F420B2830A300EB65B3 /* cocoajoystick.c in Sources */,
-				B6CE7FCE0B28FBD600EB65B3 /* OpenGLDisplayView.m in Sources */,
 				B7A1C42A3A78F00000C0DE01 /* MetalDisplayView.m in Sources */,
 				B7A1C42C3A78F00000C0DE01 /* DisplayShaders.metal in Sources */,
 				B6E0252C0B38AFE500E23A0F /* keysyms.m in Sources */,
@@ -2774,7 +2759,6 @@
 				B6CA27A70C2CDBC500F06FB3 /* dirty.c in Sources */,
 				B6CA2A230C33F84A0003CF90 /* module.c in Sources */,
 				B6CA2A2E0C33F8C10003CF90 /* plusd.c in Sources */,
-				B6CADD580C47AD90004BA954 /* Texture.m in Sources */,
 				B63225EC0C66BA1300BB081B /* osname.c in Sources */,
 				B6CE3A060CD2160A005ACDC8 /* beta.c in Sources */,
 				B6CE3A080CD2160A005ACDC8 /* crc.c in Sources */,

@@ -1,4 +1,4 @@
-/* DisplayHostView.h: Runtime-selectable display presenter host
+/* DisplayHostView.h: Display presenter host
    Copyright (c) 2026 Fredrick Meunier
 
    This program is free software; you can redistribute it and/or modify

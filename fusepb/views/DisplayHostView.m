@@ -1,4 +1,4 @@
-/* DisplayHostView.m: Runtime-selectable display presenter host
+/* DisplayHostView.m: Display presenter host
    Copyright (c) 2026 Fredrick Meunier
 
    This program is free software; you can redistribute it and/or modify
@@ -8,6 +8,7 @@
 */
 
 #import "DisplayHostView.h"
+#import "MetalDisplayView.h"
 #import "EmulationSessionController.h"
 #import "FuseController.h"
 
@@ -19,42 +20,15 @@
 
 @implementation DisplayHostView
 
--(Class) displayPresenterClass
-{
-  NSString *backend = [[[NSProcessInfo processInfo] environment]
-                       objectForKey:@"FUSE_DISPLAY_BACKEND"];
-
-  if( !backend || [backend isEqualToString:@"opengl"] )
-    return NSClassFromString( @"OpenGLDisplayView" );
-
-  if( [backend isEqualToString:@"metal"] ) {
-    Class metal_class = NSClassFromString( @"MetalDisplayView" );
-
-    if( metal_class ) return metal_class;
-
-    NSLog( @"FUSE_DISPLAY_BACKEND=metal is unavailable; using OpenGL" );
-    return NSClassFromString( @"OpenGLDisplayView" );
-  }
-
-  NSLog( @"Invalid FUSE_DISPLAY_BACKEND=%@; using OpenGL", backend );
-  return NSClassFromString( @"OpenGLDisplayView" );
-}
-
 -(void) awakeFromNib
 {
-  Class presenter_class = [self displayPresenterClass];
   NSView *presenter_view;
 
   [super awakeFromNib];
 
-  if( !presenter_class ) {
-    NSLog( @"OpenGL display presenter is unavailable" );
-    return;
-  }
-
-  presenter_view = [[presenter_class alloc] initWithFrame:[self bounds]];
+  presenter_view = [[MetalDisplayView alloc] initWithFrame:[self bounds]];
   if( ![presenter_view conformsToProtocol:@protocol(DisplayPresenting)] ) {
-    NSLog( @"%@ does not implement DisplayPresenting", presenter_class );
+    NSLog( @"%@ does not implement DisplayPresenting", [presenter_view class] );
     [presenter_view release];
     return;
   }
