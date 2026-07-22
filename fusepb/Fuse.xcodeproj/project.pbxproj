@@ -279,6 +279,10 @@
 		B6B076B30B59FE9A00D4F95C /* Emulator.m in Sources */ = {isa = PBXBuildFile; fileRef = B6B076B10B59FE9A00D4F95C /* Emulator.m */; };
 		B7A1C4223A77EE0000C0DE01 /* EmulationSessionController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7A1C4213A77EE0000C0DE01 /* EmulationSessionController.m */; };
 		B7A1C4273A77EE0000C0DE01 /* DisplayHostView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7A1C4263A77EE0000C0DE01 /* DisplayHostView.m */; };
+		B7A1C42A3A78F00000C0DE01 /* MetalDisplayView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7A1C4293A78F00000C0DE01 /* MetalDisplayView.m */; };
+		B7A1C42C3A78F00000C0DE01 /* DisplayShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = B7A1C42B3A78F00000C0DE01 /* DisplayShaders.metal */; };
+		B7A1C42E3A78F00000C0DE01 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7A1C42D3A78F00000C0DE01 /* Metal.framework */; };
+		B7A1C4303A78F00000C0DE01 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7A1C42F3A78F00000C0DE01 /* MetalKit.framework */; };
 		B6B274061672AC8C00FC209B /* paths.c in Sources */ = {isa = PBXBuildFile; fileRef = B6B274051672AC8C00FC209B /* paths.c */; };
 		B6B99F8A0B5F798700EE408F /* cocoadisplay.m in Sources */ = {isa = PBXBuildFile; fileRef = B6B99F890B5F798700EE408F /* cocoadisplay.m */; };
 		B6BDE2DB125DF4A800B81C58 /* spec48_ntsc.c in Sources */ = {isa = PBXBuildFile; fileRef = B6BDE2DA125DF4A800B81C58 /* spec48_ntsc.c */; };
@@ -786,6 +790,11 @@
 		B7A1C4243A77EE0000C0DE01 /* DisplayOverlayState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayOverlayState.h; sourceTree = "<group>"; };
 		B7A1C4253A77EE0000C0DE01 /* DisplayHostView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayHostView.h; sourceTree = "<group>"; };
 		B7A1C4263A77EE0000C0DE01 /* DisplayHostView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DisplayHostView.m; sourceTree = "<group>"; };
+		B7A1C4283A78F00000C0DE01 /* MetalDisplayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetalDisplayView.h; sourceTree = "<group>"; };
+		B7A1C4293A78F00000C0DE01 /* MetalDisplayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MetalDisplayView.m; sourceTree = "<group>"; };
+		B7A1C42B3A78F00000C0DE01 /* DisplayShaders.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = DisplayShaders.metal; sourceTree = "<group>"; };
+		B7A1C42D3A78F00000C0DE01 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = /System/Library/Frameworks/Metal.framework; sourceTree = "<absolute>"; };
+		B7A1C42F3A78F00000C0DE01 /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = /System/Library/Frameworks/MetalKit.framework; sourceTree = "<absolute>"; };
 		B6CE7FCB0B28FBD600EB65B3 /* OpenGLDisplayView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = OpenGLDisplayView.h; sourceTree = "<group>"; };
 		B6CE7FCC0B28FBD600EB65B3 /* OpenGLDisplayView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = OpenGLDisplayView.m; sourceTree = "<group>"; };
 		B6D0E1011CFD547C00202683 /* didaktik.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = didaktik.c; sourceTree = "<group>"; };
@@ -971,6 +980,8 @@
 				B6A6F0EE0B3D5F9E000B88E9 /* CoreAudio.framework in Frameworks */,
 				B6A6F0F30B3D602F000B88E9 /* AudioUnit.framework in Frameworks */,
 				B6A6F1060B3D60D0000B88E9 /* OpenGL.framework in Frameworks */,
+				B7A1C42E3A78F00000C0DE01 /* Metal.framework in Frameworks */,
+				B7A1C4303A78F00000C0DE01 /* MetalKit.framework in Frameworks */,
 				B653532B0B902CB20083F942 /* IOKit.framework in Frameworks */,
 				B6251C3E0C2EB24500BD5543 /* QuartzCore.framework in Frameworks */,
 				5PK000013A7B00000C0DE01 /* Sparkle in Frameworks */,
@@ -1073,6 +1084,8 @@
 				0DI001063A7A00000C0DE01 /* UniformTypeIdentifiers.framework */,
 				B653532A0B902CB20083F942 /* IOKit.framework */,
 				F520C8BC038D022E01A804BA /* OpenGL.framework */,
+				B7A1C42D3A78F00000C0DE01 /* Metal.framework */,
+				B7A1C42F3A78F00000C0DE01 /* MetalKit.framework */,
 				B6251C3D0C2EB24500BD5543 /* QuartzCore.framework */,
 			);
 			name = "Other Frameworks";
@@ -1520,6 +1533,9 @@
 				B7A1C4263A77EE0000C0DE01 /* DisplayHostView.m */,
 				B6CE7FCB0B28FBD600EB65B3 /* OpenGLDisplayView.h */,
 				B6CE7FCC0B28FBD600EB65B3 /* OpenGLDisplayView.m */,
+				B7A1C4283A78F00000C0DE01 /* MetalDisplayView.h */,
+				B7A1C4293A78F00000C0DE01 /* MetalDisplayView.m */,
+				B7A1C42B3A78F00000C0DE01 /* DisplayShaders.metal */,
 			);
 			name = Views;
 			path = views;
@@ -2737,6 +2753,8 @@
 				B6403FD80A7E4B1A00E00B11 /* loader.c in Sources */,
 				B6CE7F420B2830A300EB65B3 /* cocoajoystick.c in Sources */,
 				B6CE7FCE0B28FBD600EB65B3 /* OpenGLDisplayView.m in Sources */,
+				B7A1C42A3A78F00000C0DE01 /* MetalDisplayView.m in Sources */,
+				B7A1C42C3A78F00000C0DE01 /* DisplayShaders.metal in Sources */,
 				B6E0252C0B38AFE500E23A0F /* keysyms.m in Sources */,
 				B6A6F0960B3C108C000B88E9 /* coreaudiosound.c in Sources */,
 				B6A6F0DA0B3D141B000B88E9 /* cocoaui.m in Sources */,
