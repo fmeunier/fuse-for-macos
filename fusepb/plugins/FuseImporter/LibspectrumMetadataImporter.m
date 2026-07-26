@@ -734,8 +734,9 @@ process_mdr
   int num_blocks, i;
   NSMutableArray *file_names;
   const unsigned char *blk;
-  int recnum, reclen, j;
-  char name_bytes[11];
+  int recnum, reclen;
+  const libspectrum_byte *name_bytes;
+  char name_utf8[ 10 * 9 + 1 ];
   NSString *name;
 
   microdrive = libspectrum_microdrive_alloc();
@@ -777,14 +778,13 @@ process_mdr
 
     if( recnum != 0 || reclen == 0 ) continue;
 
-    memcpy( name_bytes, blk + LIBSPECTRUM_MICRODRIVE_HEAD_LEN + 4, 10 );
-    name_bytes[10] = '\0';
-    for( j = 9; j >= 0 && name_bytes[j] == ' '; j-- )
-      name_bytes[j] = '\0';
+    name_bytes = blk + LIBSPECTRUM_MICRODRIVE_HEAD_LEN + 4;
+    if( libspectrum_zx_string_to_utf8( name_utf8, sizeof( name_utf8 ),
+                                        name_bytes, 10 ) ) continue;
 
-    if( name_bytes[0] == '\0' ) continue;
+    if( name_utf8[0] == '\0' ) continue;
 
-    name = [NSString stringWithCString:name_bytes encoding:NSISOLatin1StringEncoding];
+    name = [NSString stringWithCString:name_utf8 encoding:NSUTF8StringEncoding];
     if( name && ![file_names containsObject:name] )
       [file_names addObject:name];
   }
