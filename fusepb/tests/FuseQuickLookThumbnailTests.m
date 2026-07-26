@@ -367,6 +367,34 @@
   XCTAssertEqual( canvas_size.height, 192.0 );
 }
 
+- (void)test_empty_szx_snapshot_produces_bitmap_thumbnail
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSBitmapImageRep *bitmap;
+
+  /* Minimal 48K SZX with an all-zero (blank) screen — still a valid snapshot */
+  thumbnail = [self thumbnailForFixture:@"deps/libspectrum/test/empty.szx"];
+  bitmap = [thumbnail bitmapImageRep];
+
+  XCTAssertEqual( [thumbnail thumbnailKind], FUSE_QUICKLOOK_THUMBNAIL_BITMAP );
+  XCTAssertNotNil( bitmap );
+  XCTAssertEqual( [bitmap pixelsWide], 256 );
+  XCTAssertEqual( [bitmap pixelsHigh], 192 );
+}
+
+- (void)test_empty_szx_snapshot_canvas_size_is_standard_spectrum_resolution
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSSize canvas_size;
+
+  /* Minimal 48K SZX with an all-zero screen — canvas size still 256x192 */
+  thumbnail = [self thumbnailForFixture:@"deps/libspectrum/test/empty.szx"];
+  canvas_size = [thumbnail canvasSize];
+
+  XCTAssertEqual( canvas_size.width, 256.0 );
+  XCTAssertEqual( canvas_size.height, 192.0 );
+}
+
 - (void)test_mdr_file_produces_no_thumbnail
 {
   FuseQuickLookThumbnail *thumbnail;
