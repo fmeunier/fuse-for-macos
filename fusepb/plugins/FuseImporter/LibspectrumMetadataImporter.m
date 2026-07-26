@@ -82,6 +82,7 @@ mmap_file( const char *filename, unsigned char **buffer, size_t *length )
 }
 
 #define DESCRIPTION_LENGTH 80
+#define ROM_HEADER_BLOCK_SIZE 19
 
 static void
 hardware_desc( NSMutableArray *machines, NSMutableArray *peripherals, int type,
@@ -193,6 +194,8 @@ process_tape
 
   block = libspectrum_tape_iterator_init( &iterator, tape );
 
+  NSMutableArray *file_names = [NSMutableArray array];
+
   while( block ) {
     char description[ DESCRIPTION_LENGTH ];
 	NSMutableArray *machines, *peripherals;
@@ -205,6 +208,21 @@ process_tape
     switch( libspectrum_tape_block_type( block ) ) {
 
     case LIBSPECTRUM_TAPE_BLOCK_ROM:
+      if( libspectrum_tape_block_data_length( block ) == ROM_HEADER_BLOCK_SIZE ) {
+        const libspectrum_byte *rom_data = libspectrum_tape_block_data( block );
+        if( rom_data[0] == 0x00 ) {
+          /* Header block: bytes 2-11 are the 10-char space-padded filename */
+          char name_utf8[ 10 * 9 + 1 ];
+          if( !libspectrum_zx_string_to_utf8( name_utf8,
+                                               sizeof( name_utf8 ),
+                                               rom_data + 2, 10 ) &&
+              name_utf8[0] != '\0' ) {
+            [file_names addObject:
+              [NSString stringWithCString:name_utf8
+                                 encoding:NSUTF8StringEncoding]];
+          }
+        }
+      }
       break;
 
     case LIBSPECTRUM_TAPE_BLOCK_TURBO:
@@ -398,6 +416,11 @@ process_tape
   }
 
   float duration = tstates_total/3500000.0;
+
+  if( [file_names count] ) {
+    [attributes setObject:file_names
+                   forKey:@"net_sourceforge_projects_fuse_emulator_FileNames"];
+  }
 
   [attributes setObject:[NSNumber numberWithFloat:duration]
                  forKey:(NSString *)kMDItemDurationSeconds];

@@ -29,6 +29,7 @@
 				net_sourceforge_projects_fuse_emulator_Origin
 				net_sourceforge_projects_fuse_emulator_Machines
 				net_sourceforge_projects_fuse_emulator_Peripherals
+				net_sourceforge_projects_fuse_emulator_FileNames
             </allattrs>
             <displayattrs>
 				net_sourceforge_projects_fuse_emulator_Category
@@ -37,6 +38,7 @@
 				net_sourceforge_projects_fuse_emulator_Origin
 				net_sourceforge_projects_fuse_emulator_Machines
 				net_sourceforge_projects_fuse_emulator_Peripherals
+				net_sourceforge_projects_fuse_emulator_FileNames
             </displayattrs> 
             <previewattrs>
 				net_sourceforge_projects_fuse_emulator_Category
@@ -45,6 +47,7 @@
 				net_sourceforge_projects_fuse_emulator_Origin
 				net_sourceforge_projects_fuse_emulator_Machines
 				net_sourceforge_projects_fuse_emulator_Peripherals
+				net_sourceforge_projects_fuse_emulator_FileNames
             </previewattrs> 
         </type>
         <type name="net.sourceforge.projects.fuse-emulator.pzx">
@@ -55,6 +58,7 @@
 				net_sourceforge_projects_fuse_emulator_Origin
 				net_sourceforge_projects_fuse_emulator_Machines
 				net_sourceforge_projects_fuse_emulator_Peripherals
+				net_sourceforge_projects_fuse_emulator_FileNames
             </allattrs>
             <displayattrs>
 				net_sourceforge_projects_fuse_emulator_Category
@@ -63,6 +67,7 @@
 				net_sourceforge_projects_fuse_emulator_Origin
 				net_sourceforge_projects_fuse_emulator_Machines
 				net_sourceforge_projects_fuse_emulator_Peripherals
+				net_sourceforge_projects_fuse_emulator_FileNames
             </displayattrs> 
             <previewattrs>
 				net_sourceforge_projects_fuse_emulator_Category
@@ -71,6 +76,7 @@
 				net_sourceforge_projects_fuse_emulator_Origin
 				net_sourceforge_projects_fuse_emulator_Machines
 				net_sourceforge_projects_fuse_emulator_Peripherals
+				net_sourceforge_projects_fuse_emulator_FileNames
             </previewattrs> 
         </type>
         <type name="net.sourceforge.projects.fuse-emulator.Snapshot">
