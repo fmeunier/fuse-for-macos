@@ -1417,3 +1417,147 @@ done:
   libspectrum_snap_free( snap );
   return r;
 }
+
+test_return_t
+snap_beta_disk_custom_rom_direction_and_fdc_byte_registers_getter_setter( void )
+{
+  /* libspectrum_snap: BetaDisk custom_rom, direction, and FDC byte registers (system, track, sector, data, status) */
+  libspectrum_snap *snap = libspectrum_snap_alloc();
+  test_return_t r = TEST_FAIL;
+
+  if( !snap ) {
+    fprintf( stderr, "%s: snap_beta_disk_custom_rom_direction_and_fdc_byte_registers_getter_setter: snap_alloc returned NULL\n", progname );
+    return TEST_INCOMPLETE;
+  }
+
+  if( libspectrum_snap_beta_custom_rom( snap ) != 0 ) {
+    fprintf( stderr, "%s: snap_beta_disk_custom_rom_direction_and_fdc_byte_registers_getter_setter: default beta_custom_rom should be 0, got %d\n",
+             progname, libspectrum_snap_beta_custom_rom( snap ) );
+    goto done;
+  }
+  libspectrum_snap_set_beta_custom_rom( snap, 1 );
+  if( libspectrum_snap_beta_custom_rom( snap ) != 1 ) {
+    fprintf( stderr, "%s: snap_beta_disk_custom_rom_direction_and_fdc_byte_registers_getter_setter: expected beta_custom_rom=1, got %d\n",
+             progname, libspectrum_snap_beta_custom_rom( snap ) );
+    goto done;
+  }
+
+  if( libspectrum_snap_beta_direction( snap ) != 0 ) {
+    fprintf( stderr, "%s: snap_beta_disk_custom_rom_direction_and_fdc_byte_registers_getter_setter: default beta_direction should be 0, got %d\n",
+             progname, libspectrum_snap_beta_direction( snap ) );
+    goto done;
+  }
+  libspectrum_snap_set_beta_direction( snap, 1 );
+  if( libspectrum_snap_beta_direction( snap ) != 1 ) {
+    fprintf( stderr, "%s: snap_beta_disk_custom_rom_direction_and_fdc_byte_registers_getter_setter: expected beta_direction=1, got %d\n",
+             progname, libspectrum_snap_beta_direction( snap ) );
+    goto done;
+  }
+
+  if( libspectrum_snap_beta_system( snap ) != 0 ) {
+    fprintf( stderr, "%s: snap_beta_disk_custom_rom_direction_and_fdc_byte_registers_getter_setter: default beta_system should be 0, got 0x%02x\n",
+             progname, libspectrum_snap_beta_system( snap ) );
+    goto done;
+  }
+  libspectrum_snap_set_beta_system( snap, 0x03 );
+  if( libspectrum_snap_beta_system( snap ) != 0x03 ) {
+    fprintf( stderr, "%s: snap_beta_disk_custom_rom_direction_and_fdc_byte_registers_getter_setter: expected beta_system=0x03, got 0x%02x\n",
+             progname, libspectrum_snap_beta_system( snap ) );
+    goto done;
+  }
+
+  if( libspectrum_snap_beta_track( snap ) != 0 ) {
+    fprintf( stderr, "%s: snap_beta_disk_custom_rom_direction_and_fdc_byte_registers_getter_setter: default beta_track should be 0, got %d\n",
+             progname, libspectrum_snap_beta_track( snap ) );
+    goto done;
+  }
+  libspectrum_snap_set_beta_track( snap, 42 );
+  if( libspectrum_snap_beta_track( snap ) != 42 ) {
+    fprintf( stderr, "%s: snap_beta_disk_custom_rom_direction_and_fdc_byte_registers_getter_setter: expected beta_track=42, got %d\n",
+             progname, libspectrum_snap_beta_track( snap ) );
+    goto done;
+  }
+
+  if( libspectrum_snap_beta_sector( snap ) != 0 ) {
+    fprintf( stderr, "%s: snap_beta_disk_custom_rom_direction_and_fdc_byte_registers_getter_setter: default beta_sector should be 0, got %d\n",
+             progname, libspectrum_snap_beta_sector( snap ) );
+    goto done;
+  }
+  libspectrum_snap_set_beta_sector( snap, 7 );
+  if( libspectrum_snap_beta_sector( snap ) != 7 ) {
+    fprintf( stderr, "%s: snap_beta_disk_custom_rom_direction_and_fdc_byte_registers_getter_setter: expected beta_sector=7, got %d\n",
+             progname, libspectrum_snap_beta_sector( snap ) );
+    goto done;
+  }
+
+  if( libspectrum_snap_beta_data( snap ) != 0 ) {
+    fprintf( stderr, "%s: snap_beta_disk_custom_rom_direction_and_fdc_byte_registers_getter_setter: default beta_data should be 0, got 0x%02x\n",
+             progname, libspectrum_snap_beta_data( snap ) );
+    goto done;
+  }
+  libspectrum_snap_set_beta_data( snap, 0xdb );
+  if( libspectrum_snap_beta_data( snap ) != 0xdb ) {
+    fprintf( stderr, "%s: snap_beta_disk_custom_rom_direction_and_fdc_byte_registers_getter_setter: expected beta_data=0xdb, got 0x%02x\n",
+             progname, libspectrum_snap_beta_data( snap ) );
+    goto done;
+  }
+
+  if( libspectrum_snap_beta_status( snap ) != 0 ) {
+    fprintf( stderr, "%s: snap_beta_disk_custom_rom_direction_and_fdc_byte_registers_getter_setter: default beta_status should be 0, got 0x%02x\n",
+             progname, libspectrum_snap_beta_status( snap ) );
+    goto done;
+  }
+  libspectrum_snap_set_beta_status( snap, 0x80 );
+  if( libspectrum_snap_beta_status( snap ) != 0x80 ) {
+    fprintf( stderr, "%s: snap_beta_disk_custom_rom_direction_and_fdc_byte_registers_getter_setter: expected beta_status=0x80, got 0x%02x\n",
+             progname, libspectrum_snap_beta_status( snap ) );
+    goto done;
+  }
+
+  r = TEST_PASS;
+
+done:
+  libspectrum_snap_free( snap );
+  return r;
+}
+
+test_return_t
+snap_beta_disk_rom_single_pointer_getter_setter( void )
+{
+  /* libspectrum_snap: BetaDisk ROM single-pointer getter/setter */
+  libspectrum_snap *snap = libspectrum_snap_alloc();
+  libspectrum_byte *rom;
+  test_return_t r = TEST_FAIL;
+
+  if( !snap ) {
+    fprintf( stderr, "%s: snap_beta_disk_rom_single_pointer_getter_setter: snap_alloc returned NULL\n", progname );
+    return TEST_INCOMPLETE;
+  }
+
+  if( libspectrum_snap_beta_rom( snap, 0 ) != NULL ) {
+    fprintf( stderr, "%s: snap_beta_disk_rom_single_pointer_getter_setter: default beta_rom[0] should be NULL\n", progname );
+    goto done;
+  }
+
+  rom = libspectrum_new( libspectrum_byte, 0x4000 );
+  rom[0]      = 0xc3;
+  rom[0x3fff] = 0xff;
+
+  libspectrum_snap_set_beta_rom( snap, 0, rom );
+  if( libspectrum_snap_beta_rom( snap, 0 ) != rom ) {
+    fprintf( stderr, "%s: snap_beta_disk_rom_single_pointer_getter_setter: beta_rom[0] pointer mismatch after set\n", progname );
+    libspectrum_free( rom );
+    goto done;
+  }
+  if( libspectrum_snap_beta_rom( snap, 0 )[0]      != 0xc3 ||
+      libspectrum_snap_beta_rom( snap, 0 )[0x3fff] != 0xff ) {
+    fprintf( stderr, "%s: snap_beta_disk_rom_single_pointer_getter_setter: beta_rom[0] data mismatch\n", progname );
+    goto done;
+  }
+
+  r = TEST_PASS;
+
+done:
+  libspectrum_snap_free( snap );
+  return r;
+}

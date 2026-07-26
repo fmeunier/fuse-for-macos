@@ -43,7 +43,7 @@ read_file( libspectrum_byte **buffer, size_t *length, const char *filename )
     fprintf( stderr, "%s: error reading from `%s': %s\n", progname, filename,
 	     strerror( errno ) );
     return errno;
-  } else if( bytes < *length ) {
+  } else if( (size_t)bytes < *length ) {
     fprintf( stderr, "%s: read only %lu of %lu bytes from `%s'\n", progname,
 	     (unsigned long)bytes, (unsigned long)*length, filename );
     return 1;

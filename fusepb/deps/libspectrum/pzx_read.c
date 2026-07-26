@@ -116,8 +116,8 @@ get_id_byte( char *info_tag ) {
 
 static libspectrum_error
 read_pzxt_block( libspectrum_tape *tape, const libspectrum_byte **buffer,
-                 const libspectrum_byte *end, size_t data_length,
-                 pzx_context *ctx )
+                 const libspectrum_byte *end GCC_UNUSED, size_t data_length,
+                 pzx_context *ctx GCC_UNUSED )
 {
   libspectrum_error error;
 
@@ -225,8 +225,8 @@ read_pzxt_block( libspectrum_tape *tape, const libspectrum_byte **buffer,
 
 static libspectrum_error
 read_data_block( libspectrum_tape *tape, const libspectrum_byte **buffer,
-                 const libspectrum_byte *end, size_t data_length,
-                 pzx_context *ctx )
+                 const libspectrum_byte *end GCC_UNUSED, size_t data_length,
+                 pzx_context *ctx GCC_UNUSED )
 {
   const libspectrum_byte *block_end = *buffer + data_length;
   libspectrum_tape_block* block;
@@ -259,14 +259,14 @@ read_data_block( libspectrum_tape *tape, const libspectrum_byte **buffer,
   count_bytes = libspectrum_bits_to_bytes( count );
   bits_in_last_byte =
     count % LIBSPECTRUM_BITS_IN_BYTE ?
-      count % LIBSPECTRUM_BITS_IN_BYTE : LIBSPECTRUM_BITS_IN_BYTE;
+      count % LIBSPECTRUM_BITS_IN_BYTE : (libspectrum_dword)LIBSPECTRUM_BITS_IN_BYTE;
   tail = libspectrum_read_word( buffer );
   p0_count = **buffer; (*buffer)++;
   p1_count = **buffer; (*buffer)++;
 
   /* need to confirm that we have enough length left for the pulse definitions
    */
-  if( data_length < 8 + 2*(p0_count + p1_count) ) {
+  if( data_length < (size_t)(8 + 2*(p0_count + p1_count)) ) {
     libspectrum_print_error(
       LIBSPECTRUM_ERROR_CORRUPT,
       "read_data_block: not enough data in buffer"
@@ -342,8 +342,8 @@ pzx_corrupt:
 
 static libspectrum_error
 read_puls_block( libspectrum_tape *tape, const libspectrum_byte **buffer,
-                 const libspectrum_byte *end, size_t data_length,
-                 pzx_context *ctx )
+                 const libspectrum_byte *end GCC_UNUSED, size_t data_length,
+                 pzx_context *ctx GCC_UNUSED )
 {
   size_t count = 0;
   size_t pulse_repeats;
@@ -405,8 +405,8 @@ read_puls_block( libspectrum_tape *tape, const libspectrum_byte **buffer,
 
 static libspectrum_error
 read_paus_block( libspectrum_tape *tape, const libspectrum_byte **buffer,
-                 const libspectrum_byte *end, size_t data_length,
-                 pzx_context *ctx )
+                 const libspectrum_byte *end GCC_UNUSED, size_t data_length,
+                 pzx_context *ctx GCC_UNUSED )
 {
   libspectrum_tape_block *block;
   libspectrum_dword pause_tstates;
@@ -437,8 +437,8 @@ read_paus_block( libspectrum_tape *tape, const libspectrum_byte **buffer,
 
 static libspectrum_error
 read_brws_block( libspectrum_tape *tape, const libspectrum_byte **buffer,
-                 const libspectrum_byte *end, size_t data_length,
-                 pzx_context *ctx )
+                 const libspectrum_byte *end GCC_UNUSED, size_t data_length,
+                 pzx_context *ctx GCC_UNUSED )
 {
   libspectrum_tape_block* block;
   char *text;
@@ -458,8 +458,8 @@ read_brws_block( libspectrum_tape *tape, const libspectrum_byte **buffer,
 
 static libspectrum_error
 read_stop_block( libspectrum_tape *tape, const libspectrum_byte **buffer,
-                 const libspectrum_byte *end, size_t data_length,
-                 pzx_context *ctx )
+                 const libspectrum_byte *end GCC_UNUSED, size_t data_length,
+                 pzx_context *ctx GCC_UNUSED )
 {
   libspectrum_tape_block *block;
   libspectrum_word flags;

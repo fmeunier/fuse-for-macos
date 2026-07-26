@@ -281,3 +281,109 @@ done:
   libspectrum_buffer_free( src );
   return r;
 }
+
+test_return_t
+buffer_write_raw_stores_arbitrary_bytes( void )
+{
+  /* libspectrum_buffer_write: raw multi-byte write stores all bytes correctly */
+  libspectrum_buffer *buf = libspectrum_buffer_alloc();
+  const libspectrum_byte input[] = { 0x01, 0x02, 0x03, 0x04, 0x05 };
+  const libspectrum_byte *data;
+  test_return_t r = TEST_FAIL;
+  size_t i;
+
+  libspectrum_buffer_write( buf, input, sizeof( input ) );
+
+  if( libspectrum_buffer_get_data_size( buf ) != sizeof( input ) ) {
+    fprintf( stderr, "%s: buffer_write_raw_stores_arbitrary_bytes: expected size %lu, got %lu\n",
+             progname, (unsigned long)sizeof( input ),
+             (unsigned long)libspectrum_buffer_get_data_size( buf ) );
+    goto done;
+  }
+
+  data = libspectrum_buffer_get_data( buf );
+  for( i = 0; i < sizeof( input ); i++ ) {
+    if( data[i] != input[i] ) {
+      fprintf( stderr, "%s: buffer_write_raw_stores_arbitrary_bytes: byte %lu: expected 0x%02x, got 0x%02x\n",
+               progname, (unsigned long)i, input[i], data[i] );
+      goto done;
+    }
+  }
+
+  r = TEST_PASS;
+
+done:
+  libspectrum_buffer_free( buf );
+  return r;
+}
+
+test_return_t
+buffer_auto_grows_beyond_initial_capacity( void )
+{
+  /* libspectrum_buffer: writing data larger than initial capacity triggers
+     growth; initial capacity is 1024 bytes, so write 2048 bytes in chunks */
+  libspectrum_buffer *buf = libspectrum_buffer_alloc();
+  libspectrum_byte chunk[256];
+  const libspectrum_byte *data;
+  test_return_t r = TEST_FAIL;
+  size_t i, total = 0;
+
+  /* Fill chunk with a recognisable pattern */
+  for( i = 0; i < sizeof( chunk ); i++ ) chunk[i] = (libspectrum_byte)( i & 0xff );
+
+  /* Write 8 chunks of 256 bytes = 2048 bytes total, exceeding the 1024-byte
+     initial allocation and forcing at least one reallocation */
+  for( i = 0; i < 8; i++ ) {
+    libspectrum_buffer_write( buf, chunk, sizeof( chunk ) );
+    total += sizeof( chunk );
+  }
+
+  if( libspectrum_buffer_get_data_size( buf ) != total ) {
+    fprintf( stderr, "%s: buffer_auto_grows_beyond_initial_capacity: expected size %lu, got %lu\n",
+             progname, (unsigned long)total,
+             (unsigned long)libspectrum_buffer_get_data_size( buf ) );
+    goto done;
+  }
+
+  /* Verify the data survived the reallocation intact */
+  data = libspectrum_buffer_get_data( buf );
+  for( i = 0; i < total; i++ ) {
+    libspectrum_byte expected = (libspectrum_byte)( i & 0xff );
+    if( data[i] != expected ) {
+      fprintf( stderr, "%s: buffer_auto_grows_beyond_initial_capacity: byte %lu: expected 0x%02x, got 0x%02x\n",
+               progname, (unsigned long)i, expected, data[i] );
+      goto done;
+    }
+  }
+
+  r = TEST_PASS;
+
+done:
+  libspectrum_buffer_free( buf );
+  return r;
+}
+
+test_return_t
+buffer_null_accessors_return_safe_values( void )
+{
+  /* libspectrum_buffer_get_data_size(NULL) returns 0;
+     libspectrum_buffer_get_data(NULL) returns NULL */
+  test_return_t r = TEST_FAIL;
+
+  if( libspectrum_buffer_get_data_size( NULL ) != 0 ) {
+    fprintf( stderr, "%s: buffer_null_accessors_return_safe_values: get_data_size(NULL) should return 0, got %lu\n",
+             progname, (unsigned long)libspectrum_buffer_get_data_size( NULL ) );
+    goto done;
+  }
+
+  if( libspectrum_buffer_get_data( NULL ) != NULL ) {
+    fprintf( stderr, "%s: buffer_null_accessors_return_safe_values: get_data(NULL) should return NULL\n",
+             progname );
+    goto done;
+  }
+
+  r = TEST_PASS;
+
+done:
+  return r;
+}
