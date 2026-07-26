@@ -115,7 +115,7 @@ endif
 
 FUSE_CODESIGN_TIMESTAMP =
 
-.PHONY: fuse archive adhoc test test-only analyze notarize notarize-submit notarize-status notarize-log notarize-wait notarize-staple notarize-reset embed-sparkle resign-sparkle dist sparkle-zip sparkle-key-setup sparkle-key-public sparkle-key-check sparkle-release-notes sparkle-stage-archive sparkle-github-release sparkle-github-release-staging sparkle-appcast sparkle-appcast-from-stage sparkle-appcast-github sparkle-appcast-staging sparkle-appcast-staging-from-stage sparkle-appcast-staging-github sparkle-stage-clean list-teams clean
+.PHONY: fuse archive adhoc test test-only analyze notarize notarize-submit notarize-status notarize-log notarize-wait notarize-staple notarize-reset embed-sparkle resign-sparkle dist sparkle-zip sparkle-key-setup sparkle-key-public sparkle-key-check sparkle-release-notes sparkle-stage-archive sparkle-github-release sparkle-github-release-staging sparkle-appcast sparkle-appcast-from-stage sparkle-appcast-github sparkle-appcast-staging sparkle-appcast-staging-from-stage sparkle-appcast-staging-github sparkle-stage-clean list-teams clean help
 
 ## Run the Quick Look unit test suite (FuseQuickLookTests scheme).
 ## Requires a macOS host with Xcode and the fuse submodule checked out.
@@ -528,3 +528,9 @@ clean:
 	rm -f $(NOTARIZE_ZIP) $(DIST_ZIP) $(SPARKLE_ZIP)
 	rm -rf $(DIST_STAGE) "$(SPARKLE_STAGING_DIR)"
 	$(MAKE) notarize-reset
+
+## List documented make targets with short descriptions.
+help:
+	@awk '/^## /{ if (!doc) doc = substr($$0, 4); next } \
+	      /^[a-zA-Z][-a-zA-Z_]*:/{ if (doc) { gsub(/:.*/, "", $$1); printf "  %-22s %s\n", $$1, doc }; doc = "" } \
+	      !/^[#]/{ doc = "" }' $(MAKEFILE_LIST)
