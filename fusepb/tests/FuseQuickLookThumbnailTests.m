@@ -445,6 +445,31 @@
   XCTAssertNil( [thumbnail imageData] );
 }
 
+- (void)test_pzx_canvas_size_is_zero_without_screen
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSSize canvas_size;
+
+  /* PZX tape with no loading screen — canvas size should be zero */
+  thumbnail = [self thumbnailForFixture:@"deps/libspectrum/test/pzx-archive-info-tags.pzx"];
+  canvas_size = [thumbnail canvasSize];
+
+  XCTAssertEqual( canvas_size.width,  0.0 );
+  XCTAssertEqual( canvas_size.height, 0.0 );
+}
+
+- (void)test_pzx_file_with_no_screen_produces_no_thumbnail
+{
+  FuseQuickLookThumbnail *thumbnail;
+
+  /* PZX tape with no embedded loading screen */
+  thumbnail = [self thumbnailForFixture:@"deps/libspectrum/test/pzx-archive-info-tags.pzx"];
+
+  XCTAssertEqual( [thumbnail thumbnailKind], FUSE_QUICKLOOK_THUMBNAIL_NONE );
+  XCTAssertNil( [thumbnail bitmapImageRep] );
+  XCTAssertNil( [thumbnail imageData] );
+}
+
 - (void)test_thumbnail_context_size_matches_requested_maximum_size
 {
   CGSize context_size;
