@@ -250,7 +250,7 @@ typedef libspectrum_error (*read_chunk_fn)( libspectrum_snap *snap,
                                             szx_context *ctx );
 
 static libspectrum_error
-write_file_header( libspectrum_buffer *buffer, int *out_flags,
+write_file_header( libspectrum_buffer *buffer, int *out_flags GCC_UNUSED,
                    libspectrum_snap *snap );
 
 static void
@@ -369,7 +369,7 @@ write_dmrp_chunk( libspectrum_buffer *buffer, libspectrum_buffer *block_data,
                   libspectrum_snap *snap, int page, int compress );
 static void
 write_zxpr_chunk( libspectrum_buffer *buffer, libspectrum_buffer *data,
-		  int *out_flags, libspectrum_snap *snap );
+		  int *out_flags GCC_UNUSED, libspectrum_snap *snap );
 static void
 write_covx_chunk( libspectrum_buffer *buffer, libspectrum_buffer *data,
                   libspectrum_snap *snap );
@@ -601,7 +601,7 @@ static libspectrum_error
 read_covx_chunk( libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
 		 const libspectrum_byte **buffer,
 		 const libspectrum_byte *end GCC_UNUSED, size_t data_length,
-		 szx_context *ctx )
+		 szx_context *ctx GCC_UNUSED )
 {
   if( data_length != 4 ) {
     libspectrum_print_error( LIBSPECTRUM_ERROR_UNKNOWN,
@@ -620,7 +620,7 @@ read_covx_chunk( libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
 }
 
 static libspectrum_error
-read_crtr_chunk( libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
+read_crtr_chunk( libspectrum_snap *snap GCC_UNUSED, libspectrum_word version GCC_UNUSED,
 		 const libspectrum_byte **buffer,
 		 const libspectrum_byte *end GCC_UNUSED, size_t data_length,
                  szx_context *ctx )
@@ -1082,7 +1082,7 @@ read_cfrp_chunk( libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
 
 static libspectrum_error
 read_side_chunk( libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
-		 const libspectrum_byte **buffer,
+		 const libspectrum_byte **buffer GCC_UNUSED,
 		 const libspectrum_byte *end GCC_UNUSED, size_t data_length,
                  szx_context *ctx GCC_UNUSED )
 {
@@ -1143,7 +1143,7 @@ add_joystick( libspectrum_snap *snap, libspectrum_joystick type, int inputs )
 }
 
 static libspectrum_error
-read_joy_chunk( libspectrum_snap *snap, libspectrum_word version,
+read_joy_chunk( libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
 		 const libspectrum_byte **buffer,
 		 const libspectrum_byte *end GCC_UNUSED, size_t data_length,
                  szx_context *ctx GCC_UNUSED )
@@ -1295,7 +1295,7 @@ read_keyb_chunk( libspectrum_snap *snap, libspectrum_word version,
 }
 
 static libspectrum_error
-read_amxm_chunk( libspectrum_snap *snap, libspectrum_word version,
+read_amxm_chunk( libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
 		 const libspectrum_byte **buffer,
 		 const libspectrum_byte *end GCC_UNUSED, size_t data_length,
                  szx_context *ctx GCC_UNUSED )
@@ -1629,7 +1629,7 @@ read_if1_chunk( libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
 
     } else {
 
-      if( data_length < 40 + expected_length ) {
+      if( data_length < (size_t)40 + expected_length ) {
         libspectrum_print_error( LIBSPECTRUM_ERROR_UNKNOWN,
                                  "%s:read_if1_chunk: length %lu too short, "
                                  "expected %lu" ,
@@ -1683,7 +1683,7 @@ szx_extract_roms( libspectrum_snap *snap, libspectrum_byte *rom_data,
   num_16k_roms = length / standard_rom_length;
   additional_rom_length = length % standard_rom_length;
 
-  for( i = 0; i < num_16k_roms; i++ )
+  for( i = 0; i < (int)num_16k_roms; i++ )
     szx_set_custom_rom( snap, i, rom_data + (i * standard_rom_length), standard_rom_length );
 
   /* Timex 2068 machines have a 16k and an 8k ROM, all other machines just have
@@ -1818,7 +1818,7 @@ read_rom_chunk( libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
 }
 
 static libspectrum_error
-read_zxpr_chunk( libspectrum_snap *snap, libspectrum_word version,
+read_zxpr_chunk( libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
 		 const libspectrum_byte **buffer,
 		 const libspectrum_byte *end GCC_UNUSED, size_t data_length,
                  szx_context *ctx GCC_UNUSED )
@@ -2444,7 +2444,7 @@ read_mfce_chunk( libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
 
 static libspectrum_error
 read_zmmc_chunk( libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
-                 const libspectrum_byte **buffer,
+                 const libspectrum_byte **buffer GCC_UNUSED,
                  const libspectrum_byte *end GCC_UNUSED, size_t data_length,
                  szx_context *ctx GCC_UNUSED )
 {
@@ -2975,7 +2975,7 @@ libspectrum_szx_write( libspectrum_buffer *buffer, int *out_flags,
 }
 
 static libspectrum_error
-write_file_header( libspectrum_buffer *buffer, int *out_flags,
+write_file_header( libspectrum_buffer *buffer, int *out_flags GCC_UNUSED,
                    libspectrum_snap *snap )
 {
   libspectrum_byte flags;
@@ -3139,7 +3139,7 @@ write_joystick( libspectrum_buffer *buffer, int *out_flags,
   int i;
   libspectrum_byte type = ZXJT_NONE;
 
-  for( i = 0; i < num_joysticks; i++ ) {
+  for( i = 0; i < (int)num_joysticks; i++ ) {
     if( libspectrum_snap_joystick_inputs( snap, i ) & connection ) {
       switch( libspectrum_snap_joystick_list( snap, i ) ) {
       case LIBSPECTRUM_JOYSTICK_CURSOR:
@@ -3190,7 +3190,7 @@ write_joy_chunk( libspectrum_buffer *buffer, libspectrum_buffer *data,
   int i;
 
   flags = 0;
-  for( i = 0; i < num_joysticks; i++ ) {
+  for( i = 0; i < (int)num_joysticks; i++ ) {
     if( libspectrum_snap_joystick_list( snap, i ) ==
         LIBSPECTRUM_JOYSTICK_KEMPSTON )
       flags |= ZXSTJOYF_ALWAYSPORT31;
@@ -3243,7 +3243,7 @@ write_keyb_chunk( libspectrum_buffer *buffer, libspectrum_buffer *data,
   
 static void
 write_zxpr_chunk( libspectrum_buffer *buffer, libspectrum_buffer *data,
-		  int *out_flags, libspectrum_snap *snap )
+		  int *out_flags GCC_UNUSED, libspectrum_snap *snap )
 {
   libspectrum_word flags;
 
@@ -3882,7 +3882,7 @@ write_if2r_chunk( libspectrum_buffer *buffer, libspectrum_buffer *block_data,
 
 static void
 write_dock_chunk( libspectrum_buffer *buffer, libspectrum_buffer *block_data,
-		  libspectrum_snap *snap, int exrom_dock,
+		  libspectrum_snap *snap GCC_UNUSED, int exrom_dock,
                   const libspectrum_byte *data, int page, int writeable,
                   int compress )
 {
@@ -3896,8 +3896,8 @@ write_dock_chunk( libspectrum_buffer *buffer, libspectrum_buffer *block_data,
 }
 
 static void
-write_side_chunk( libspectrum_buffer *buffer, libspectrum_buffer *block_data,
-		  libspectrum_snap *snap )
+write_side_chunk( libspectrum_buffer *buffer, libspectrum_buffer *block_data GCC_UNUSED,
+		  libspectrum_snap *snap GCC_UNUSED )
 {
   write_chunk( buffer, ZXSTBID_SIMPLEIDE, NULL );
 }
@@ -4032,7 +4032,7 @@ write_dmrp_chunk( libspectrum_buffer *buffer, libspectrum_buffer *block_data,
 
 static void
 write_snet_chunk( libspectrum_buffer *buffer, libspectrum_buffer *data,
-                  libspectrum_snap *snap, int compress )
+                  libspectrum_snap *snap, int compress GCC_UNUSED )
 {
   libspectrum_word flags = 0;
 
@@ -4188,7 +4188,7 @@ write_mfce_chunk( libspectrum_buffer *buffer, libspectrum_buffer *data,
 
 static libspectrum_error
 write_pltt_chunk( libspectrum_buffer *buffer, libspectrum_buffer *data,
-		  libspectrum_snap *snap, int compress )
+		  libspectrum_snap *snap, int compress GCC_UNUSED )
 {
   libspectrum_byte flags = 0;
 
@@ -4211,8 +4211,8 @@ write_pltt_chunk( libspectrum_buffer *buffer, libspectrum_buffer *data,
 }
 
 static void
-write_zmmc_chunk( libspectrum_buffer *buffer, libspectrum_buffer *data,
-                  libspectrum_snap *snap )
+write_zmmc_chunk( libspectrum_buffer *buffer, libspectrum_buffer *data GCC_UNUSED,
+                  libspectrum_snap *snap GCC_UNUSED )
 {
   write_chunk( buffer, ZXSTBID_ZXMMC, NULL );
 }

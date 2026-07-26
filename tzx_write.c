@@ -764,7 +764,7 @@ tzx_write_rle( libspectrum_tape_block *block, libspectrum_buffer *buffer,
 
 static void
 add_pulses_block( size_t pulse_count, libspectrum_dword *lengths,
-                  libspectrum_tape_block *block, libspectrum_buffer *buffer )
+                  libspectrum_tape_block *block GCC_UNUSED, libspectrum_buffer *buffer )
 {
   libspectrum_tape_block *pulses = 
               libspectrum_tape_block_alloc( LIBSPECTRUM_TAPE_BLOCK_PULSES );

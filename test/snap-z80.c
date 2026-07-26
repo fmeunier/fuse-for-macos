@@ -306,6 +306,104 @@ done:
 }
 
 test_return_t
+snap_last_instruction_ei_and_set_f_getter_setter( void )
+{
+  /* libspectrum_snap: last_instruction_ei and last_instruction_set_f getter/setter */
+  libspectrum_snap *snap = libspectrum_snap_alloc();
+  test_return_t r = TEST_FAIL;
+
+  if( !snap ) {
+    fprintf( stderr, "%s: snap_last_instruction_ei_and_set_f_getter_setter: snap_alloc returned NULL\n", progname );
+    return TEST_INCOMPLETE;
+  }
+
+  if( libspectrum_snap_last_instruction_ei( snap ) != 0 ) {
+    fprintf( stderr, "%s: snap_last_instruction_ei_and_set_f_getter_setter: default last_instruction_ei should be 0, got %d\n",
+             progname, libspectrum_snap_last_instruction_ei( snap ) );
+    goto done;
+  }
+  libspectrum_snap_set_last_instruction_ei( snap, 1 );
+  if( libspectrum_snap_last_instruction_ei( snap ) != 1 ) {
+    fprintf( stderr, "%s: snap_last_instruction_ei_and_set_f_getter_setter: expected last_instruction_ei=1, got %d\n",
+             progname, libspectrum_snap_last_instruction_ei( snap ) );
+    goto done;
+  }
+
+  if( libspectrum_snap_last_instruction_set_f( snap ) != 0 ) {
+    fprintf( stderr, "%s: snap_last_instruction_ei_and_set_f_getter_setter: default last_instruction_set_f should be 0, got %d\n",
+             progname, libspectrum_snap_last_instruction_set_f( snap ) );
+    goto done;
+  }
+  libspectrum_snap_set_last_instruction_set_f( snap, 1 );
+  if( libspectrum_snap_last_instruction_set_f( snap ) != 1 ) {
+    fprintf( stderr, "%s: snap_last_instruction_ei_and_set_f_getter_setter: expected last_instruction_set_f=1, got %d\n",
+             progname, libspectrum_snap_last_instruction_set_f( snap ) );
+    goto done;
+  }
+
+  r = TEST_PASS;
+
+done:
+  libspectrum_snap_free( snap );
+  return r;
+}
+
+test_return_t
+snap_out_plus3_memoryport_and_scld_hsr_dec_getter_setter( void )
+{
+  /* libspectrum_snap: out_plus3_memoryport, out_scld_hsr, and out_scld_dec getter/setter */
+  libspectrum_snap *snap = libspectrum_snap_alloc();
+  test_return_t r = TEST_FAIL;
+
+  if( !snap ) {
+    fprintf( stderr, "%s: snap_out_plus3_memoryport_and_scld_hsr_dec_getter_setter: snap_alloc returned NULL\n", progname );
+    return TEST_INCOMPLETE;
+  }
+
+  if( libspectrum_snap_out_plus3_memoryport( snap ) != 0x08 ) {
+    fprintf( stderr, "%s: snap_out_plus3_memoryport_and_scld_hsr_dec_getter_setter: default out_plus3_memoryport should be 0x08, got 0x%02x\n",
+             progname, libspectrum_snap_out_plus3_memoryport( snap ) );
+    goto done;
+  }
+  libspectrum_snap_set_out_plus3_memoryport( snap, 0x28 );
+  if( libspectrum_snap_out_plus3_memoryport( snap ) != 0x28 ) {
+    fprintf( stderr, "%s: snap_out_plus3_memoryport_and_scld_hsr_dec_getter_setter: expected out_plus3_memoryport=0x28, got 0x%02x\n",
+             progname, libspectrum_snap_out_plus3_memoryport( snap ) );
+    goto done;
+  }
+
+  if( libspectrum_snap_out_scld_hsr( snap ) != 0 ) {
+    fprintf( stderr, "%s: snap_out_plus3_memoryport_and_scld_hsr_dec_getter_setter: default out_scld_hsr should be 0, got 0x%02x\n",
+             progname, libspectrum_snap_out_scld_hsr( snap ) );
+    goto done;
+  }
+  libspectrum_snap_set_out_scld_hsr( snap, 0x49 );
+  if( libspectrum_snap_out_scld_hsr( snap ) != 0x49 ) {
+    fprintf( stderr, "%s: snap_out_plus3_memoryport_and_scld_hsr_dec_getter_setter: expected out_scld_hsr=0x49, got 0x%02x\n",
+             progname, libspectrum_snap_out_scld_hsr( snap ) );
+    goto done;
+  }
+
+  if( libspectrum_snap_out_scld_dec( snap ) != 0 ) {
+    fprintf( stderr, "%s: snap_out_plus3_memoryport_and_scld_hsr_dec_getter_setter: default out_scld_dec should be 0, got 0x%02x\n",
+             progname, libspectrum_snap_out_scld_dec( snap ) );
+    goto done;
+  }
+  libspectrum_snap_set_out_scld_dec( snap, 0x9d );
+  if( libspectrum_snap_out_scld_dec( snap ) != 0x9d ) {
+    fprintf( stderr, "%s: snap_out_plus3_memoryport_and_scld_hsr_dec_getter_setter: expected out_scld_dec=0x9d, got 0x%02x\n",
+             progname, libspectrum_snap_out_scld_dec( snap ) );
+    goto done;
+  }
+
+  r = TEST_PASS;
+
+done:
+  libspectrum_snap_free( snap );
+  return r;
+}
+
+test_return_t
 snap_late_timings_getter_setter( void )
 {
   /* libspectrum_snap: late_timings getter/setter */

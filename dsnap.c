@@ -68,8 +68,6 @@ write_header( libspectrum_buffer *buffer, libspectrum_snap *snap,
 static libspectrum_error
 write_48k_dsnap( libspectrum_buffer *buffer, libspectrum_snap *snap,
                libspectrum_word *new_sp );
-static void
-write_page( libspectrum_buffer *buffer, libspectrum_snap *snap, int page );
 
 libspectrum_error
 internal_dsnap_read( libspectrum_snap *snap,
@@ -469,9 +467,9 @@ write_48k_dsnap( libspectrum_buffer *buffer, libspectrum_snap *snap,
 
   offset = libspectrum_buffer_get_data_size( buffer );
 
-  write_page( buffer, snap, 5 );
-  write_page( buffer, snap, 2 );
-  write_page( buffer, snap, 0 );
+  libspectrum_write_snap_page( buffer, snap, 5 );
+  libspectrum_write_snap_page( buffer, snap, 2 );
+  libspectrum_write_snap_page( buffer, snap, 0 );
 
   memory_base = libspectrum_buffer_get_data( buffer ) + offset;
 
@@ -484,18 +482,4 @@ write_48k_dsnap( libspectrum_buffer *buffer, libspectrum_snap *snap,
   *new_sp = new_stack_address;
 
   return LIBSPECTRUM_ERROR_NONE;
-}
-
-
-static void
-write_page( libspectrum_buffer *buffer, libspectrum_snap *snap, int page )
-{
-  libspectrum_byte *ram;
-
-  ram = libspectrum_snap_pages( snap, page );
-  if( ram ) {
-    libspectrum_buffer_write( buffer, ram, 0x4000 );
-  } else {
-    libspectrum_buffer_set( buffer, 0xff, 0x4000 );
-  }
 }

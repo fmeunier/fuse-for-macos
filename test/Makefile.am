@@ -25,6 +25,7 @@ TESTS = $(check_PROGRAMS)
 
 test_test_SOURCES = \
 	test/buffer.c \
+	test/capabilities.c \
 	test/common.c \
 	test/creator.c \
 	test/edges.c \
@@ -39,7 +40,10 @@ test_test_SOURCES = \
 	test/snap-z80.c \
 	test/szx.c \
 	test/tape-edges.c \
-	test/tape.c
+	test/tape.c \
+	test/timings.c \
+	test/utilities.c \
+	test/identify.c
 
 test_test_CFLAGS = -DSRCDIR='"$(srcdir)"'
 
@@ -100,17 +104,33 @@ EXTRA_DIST += \
 	test/szx-chunks/ATRP.szx \
 	test/szx-chunks/ATRP-uncompressed.szx.gz \
 	test/szx-chunks/AY.szx \
+	test/szx-chunks/B128.szx \
 	test/szx-chunks/CFRP.szx \
 	test/szx-chunks/CFRP-uncompressed.szx.gz \
 	test/szx-chunks/COVX.szx \
+	test/szx-chunks/DIDE.szx \
+	test/szx-chunks/DIRP.szx \
+	test/szx-chunks/DMMC.szx \
+	test/szx-chunks/DMRP.szx \
+	test/szx-chunks/DOCK.szx \
 	test/szx-chunks/DRUM.szx \
+	test/szx-chunks/IF1.szx \
+	test/szx-chunks/IF2R.szx \
 	test/szx-chunks/JOY.szx \
 	test/szx-chunks/KEYB.szx \
+	test/szx-chunks/MFCE.szx \
+	test/szx-chunks/OPUS.szx \
+	test/szx-chunks/PLSD.szx \
+	test/szx-chunks/PLTT.szx \
 	test/szx-chunks/RAMP.szx \
 	test/szx-chunks/RAMP-uncompressed.szx.gz \
 	test/szx-chunks/SCLD.szx \
 	test/szx-chunks/SIDE.szx \
+	test/szx-chunks/SNEF.szx \
+	test/szx-chunks/SNER.szx \
+	test/szx-chunks/SNET.szx \
 	test/szx-chunks/SPCR.szx \
+	test/szx-chunks/USPE.szx \
 	test/szx-chunks/Z80R.szx \
 	test/szx-chunks/ZMMC.szx \
 	test/szx-chunks/ZXAT.szx \

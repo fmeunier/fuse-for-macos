@@ -52,7 +52,7 @@ check_edges( const char *filename, test_edge_sequence_t *edges,
 
     if( --ptr->count == 0 ) {
       ptr++;
-      if( ptr->length == -1 ) {
+      if( ptr->length == (libspectrum_dword)-1 ) {
 	r = TEST_PASS;
 	break;
       }

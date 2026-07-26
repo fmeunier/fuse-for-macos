@@ -108,9 +108,9 @@ tracked_realloc( void *ptr, size_t size )
   if( !ptr ) return tracked_malloc( size );
 
   if( !size ) {
-    free( ptr );
     alloc = tracked_memory_find( ptr );
     if( alloc ) alloc->freed = 1;
+    free( ptr );
     return NULL;
   }
 
@@ -655,6 +655,122 @@ rzx_iterator_get_frames_returns_size_t_max_for_non_input_block( void )
   if( libspectrum_rzx_iterator_get_frames( it ) != (size_t)-1 ) {
     fprintf( stderr, "%s: rzx_iterator_get_frames_returns_size_t_max_for_non_input_block: expected (size_t)-1 for snapshot block, got %zu\n",
              progname, libspectrum_rzx_iterator_get_frames( it ) );
+    goto done;
+  }
+
+  r = TEST_PASS;
+
+done:
+  libspectrum_rzx_free( rzx );
+  return r;
+}
+
+test_return_t
+rzx_read_uncompressed_input_respects_declared_block_length( void )
+{
+  libspectrum_rzx *rzx;
+  libspectrum_rzx_iterator it;
+  libspectrum_error error;
+  test_return_t r = TEST_FAIL;
+  static const libspectrum_byte buffer[] = {
+    'R', 'Z', 'X', '!', 0x00, 0x0d, 0x00, 0x00, 0x00, 0x00,
+    0x80,
+    0x17, 0x00, 0x00, 0x00,
+    0x01, 0x00, 0x00, 0x00,
+    0x00,
+    0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+    0x01, 0x00,
+    0x00, 0x00,
+    0x00,
+    0x20,
+    0x0d, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00
+  };
+
+  rzx = libspectrum_rzx_alloc();
+
+  if( !rzx ) {
+    fprintf( stderr, "%s: rzx_read_uncompressed_input_respects_declared_block_length: rzx_alloc returned NULL\n",
+             progname );
+    return TEST_INCOMPLETE;
+  }
+
+  error = libspectrum_rzx_read( rzx, buffer, sizeof( buffer ) );
+  if( error != LIBSPECTRUM_ERROR_NONE ) {
+    fprintf( stderr, "%s: rzx_read_uncompressed_input_respects_declared_block_length: read returned %d\n",
+             progname, error );
+    goto done;
+  }
+
+  it = libspectrum_rzx_iterator_begin( rzx );
+  if( !it ) {
+    fprintf( stderr, "%s: rzx_read_uncompressed_input_respects_declared_block_length: iterator_begin returned NULL\n",
+             progname );
+    goto done;
+  }
+
+  if( libspectrum_rzx_iterator_get_type( it ) != LIBSPECTRUM_RZX_INPUT_BLOCK ) {
+    fprintf( stderr, "%s: rzx_read_uncompressed_input_respects_declared_block_length: first block should be INPUT_BLOCK\n",
+             progname );
+    goto done;
+  }
+
+  if( libspectrum_rzx_iterator_get_frames( it ) != 1 ) {
+    fprintf( stderr, "%s: rzx_read_uncompressed_input_respects_declared_block_length: expected 1 frame, got %zu\n",
+             progname, libspectrum_rzx_iterator_get_frames( it ) );
+    goto done;
+  }
+
+  it = libspectrum_rzx_iterator_next( it );
+  if( !it ) {
+    fprintf( stderr, "%s: rzx_read_uncompressed_input_respects_declared_block_length: second block missing\n",
+             progname );
+    goto done;
+  }
+
+  if( libspectrum_rzx_iterator_get_type( it ) != LIBSPECTRUM_RZX_SIGN_START_BLOCK ) {
+    fprintf( stderr, "%s: rzx_read_uncompressed_input_respects_declared_block_length: second block should be SIGN_START_BLOCK\n",
+             progname );
+    goto done;
+  }
+
+  r = TEST_PASS;
+
+done:
+  libspectrum_rzx_free( rzx );
+  return r;
+}
+
+test_return_t
+rzx_read_input_rejects_block_length_less_than_18( void )
+{
+  libspectrum_rzx *rzx;
+  libspectrum_error error;
+  test_return_t r = TEST_FAIL;
+  static const libspectrum_byte buffer[] = {
+    'R', 'Z', 'X', '!', 0x00, 0x0d, 0x00, 0x00, 0x00, 0x00,
+    0x80,
+    0x11, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+    0x00,
+    0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00
+  };
+
+  rzx = libspectrum_rzx_alloc();
+
+  if( !rzx ) {
+    fprintf( stderr, "%s: rzx_read_input_rejects_block_length_less_than_18: rzx_alloc returned NULL\n",
+             progname );
+    return TEST_INCOMPLETE;
+  }
+
+  error = libspectrum_rzx_read( rzx, buffer, sizeof( buffer ) );
+  if( error != LIBSPECTRUM_ERROR_CORRUPT ) {
+    fprintf( stderr, "%s: rzx_read_input_rejects_block_length_less_than_18: expected CORRUPT, got %d\n",
+             progname, error );
     goto done;
   }
 

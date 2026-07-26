@@ -1,3 +1,28 @@
+2026-07-25  Fredrick Meunier  <fredm@spamcop.net>
+
+        * libspectrum 1.6.3 released.
+
+        * Add libspectrum_zx_string_to_utf8() to translate ZX Spectrum strings
+          to UTF-8 (Fredrick Meunier).
+
+        * Fix 64-bit Windows compilation on MSYS2/MINGW64 (Sergio Baldoví).
+
+        * Fix use-after-free and RZX input block length handling (Fredrick
+          Meunier).
+
+        * Add const qualifiers to tape block getter parameters (Fredrick
+          Meunier).
+
+        * Various minor bug fixes/improvements:
+          * Improve error propagation when writing TAP blocks (Fredrick
+            Meunier).
+          * Enable extra GCC warnings and fix associated warnings (Fredrick
+            Meunier).
+          * Add unit tests for tape, snapshot, timing, file identification,
+            machine capability, SZX chunk, and utility APIs (Fredrick Meunier).
+          * Update GitHub Actions and improve CI dependency cache invalidation
+            (Fredrick Meunier).
+
 2026-06-14  Fredrick Meunier  <fredm@spamcop.net>
 
         * libspectrum 1.6.2 released.

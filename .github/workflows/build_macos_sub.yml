@@ -71,7 +71,7 @@ jobs:
           echo "Use fake glib: ${{ inputs.use_fake_glib && 'yes' || 'no' }}"
 
       - name: (2) Check out repository code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: ${{ env.LIBSPECTRUM_REPO }}
           ref: ${{ env.LIBSPECTRUM_BRANCH }}
@@ -82,7 +82,9 @@ jobs:
         uses: actions/cache/restore@v5
         with:
           path: ~/Library/Caches/Homebrew/downloads
-          key: brew-downloads-libspectrum-1
+          key: brew-downloads-libspectrum-${{ hashFiles('.github/workflows/build_macos_sub.yml') }}
+          restore-keys: |
+            brew-downloads-libspectrum-
 
       - name: (4) Install dependencies
         run: |
@@ -109,7 +111,7 @@ jobs:
         uses: actions/cache/save@v5
         with:
           path: ~/Library/Caches/Homebrew/downloads
-          key: brew-downloads-libspectrum-1
+          key: brew-downloads-libspectrum-${{ hashFiles('.github/workflows/build_macos_sub.yml') }}
 
       - name: (6) Autogen.sh
         run: |
@@ -173,7 +175,7 @@ jobs:
           -C /usr/local/ -T.tar_files
 
       - name: (15) Upload generated tar file
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with: 
           name: libspectrum-installed-macos-${{ inputs.key }}
           path: |

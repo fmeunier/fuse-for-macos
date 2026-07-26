@@ -830,3 +830,276 @@ done:
   libspectrum_snap_free( snap );
   return r;
 }
+
+test_return_t
+snap_melodik_active_getter_setter( void )
+{
+  /* libspectrum_snap: melodik_active getter/setter */
+  libspectrum_snap *snap = libspectrum_snap_alloc();
+  test_return_t r = TEST_FAIL;
+
+  if( !snap ) {
+    fprintf( stderr, "%s: snap_melodik_active_getter_setter: snap_alloc returned NULL\n", progname );
+    return TEST_INCOMPLETE;
+  }
+
+  if( libspectrum_snap_melodik_active( snap ) != 0 ) {
+    fprintf( stderr, "%s: snap_melodik_active_getter_setter: default melodik_active should be 0, got %d\n",
+             progname, libspectrum_snap_melodik_active( snap ) );
+    goto done;
+  }
+
+  libspectrum_snap_set_melodik_active( snap, 1 );
+  if( libspectrum_snap_melodik_active( snap ) != 1 ) {
+    fprintf( stderr, "%s: snap_melodik_active_getter_setter: expected melodik_active=1, got %d\n",
+             progname, libspectrum_snap_melodik_active( snap ) );
+    goto done;
+  }
+
+  libspectrum_snap_set_melodik_active( snap, 0 );
+  if( libspectrum_snap_melodik_active( snap ) != 0 ) {
+    fprintf( stderr, "%s: snap_melodik_active_getter_setter: expected melodik_active=0, got %d\n",
+             progname, libspectrum_snap_melodik_active( snap ) );
+    goto done;
+  }
+
+  r = TEST_PASS;
+
+done:
+  libspectrum_snap_free( snap );
+  return r;
+}
+
+test_return_t
+snap_simpleide_active_getter_setter( void )
+{
+  /* libspectrum_snap: simpleide_active getter/setter */
+  libspectrum_snap *snap = libspectrum_snap_alloc();
+  test_return_t r = TEST_FAIL;
+
+  if( !snap ) {
+    fprintf( stderr, "%s: snap_simpleide_active_getter_setter: snap_alloc returned NULL\n", progname );
+    return TEST_INCOMPLETE;
+  }
+
+  if( libspectrum_snap_simpleide_active( snap ) != 0 ) {
+    fprintf( stderr, "%s: snap_simpleide_active_getter_setter: default simpleide_active should be 0, got %d\n",
+             progname, libspectrum_snap_simpleide_active( snap ) );
+    goto done;
+  }
+
+  libspectrum_snap_set_simpleide_active( snap, 1 );
+  if( libspectrum_snap_simpleide_active( snap ) != 1 ) {
+    fprintf( stderr, "%s: snap_simpleide_active_getter_setter: expected simpleide_active=1, got %d\n",
+             progname, libspectrum_snap_simpleide_active( snap ) );
+    goto done;
+  }
+
+  libspectrum_snap_set_simpleide_active( snap, 0 );
+  if( libspectrum_snap_simpleide_active( snap ) != 0 ) {
+    fprintf( stderr, "%s: snap_simpleide_active_getter_setter: expected simpleide_active=0, got %d\n",
+             progname, libspectrum_snap_simpleide_active( snap ) );
+    goto done;
+  }
+
+  r = TEST_PASS;
+
+done:
+  libspectrum_snap_free( snap );
+  return r;
+}
+
+test_return_t
+snap_issue2_getter_setter( void )
+{
+  /* libspectrum_snap: issue2 keyboard mode getter/setter */
+  libspectrum_snap *snap = libspectrum_snap_alloc();
+  test_return_t r = TEST_FAIL;
+
+  if( !snap ) {
+    fprintf( stderr, "%s: snap_issue2_getter_setter: snap_alloc returned NULL\n", progname );
+    return TEST_INCOMPLETE;
+  }
+
+  if( libspectrum_snap_issue2( snap ) != 0 ) {
+    fprintf( stderr, "%s: snap_issue2_getter_setter: default issue2 should be 0, got %d\n",
+             progname, libspectrum_snap_issue2( snap ) );
+    goto done;
+  }
+
+  libspectrum_snap_set_issue2( snap, 1 );
+  if( libspectrum_snap_issue2( snap ) != 1 ) {
+    fprintf( stderr, "%s: snap_issue2_getter_setter: expected issue2=1, got %d\n",
+             progname, libspectrum_snap_issue2( snap ) );
+    goto done;
+  }
+
+  libspectrum_snap_set_issue2( snap, 0 );
+  if( libspectrum_snap_issue2( snap ) != 0 ) {
+    fprintf( stderr, "%s: snap_issue2_getter_setter: expected issue2=0, got %d\n",
+             progname, libspectrum_snap_issue2( snap ) );
+    goto done;
+  }
+
+  r = TEST_PASS;
+
+done:
+  libspectrum_snap_free( snap );
+  return r;
+}
+
+test_return_t
+snap_interface2_active_and_rom_getter_setter( void )
+{
+  /* libspectrum_snap: interface2_active flag and interface2_rom pointer getter/setter */
+  libspectrum_snap *snap = libspectrum_snap_alloc();
+  libspectrum_byte *rom;
+  test_return_t r = TEST_FAIL;
+
+  if( !snap ) {
+    fprintf( stderr, "%s: snap_interface2_active_and_rom_getter_setter: snap_alloc returned NULL\n", progname );
+    return TEST_INCOMPLETE;
+  }
+
+  if( libspectrum_snap_interface2_active( snap ) != 0 ) {
+    fprintf( stderr, "%s: snap_interface2_active_and_rom_getter_setter: default interface2_active should be 0, got %d\n",
+             progname, libspectrum_snap_interface2_active( snap ) );
+    goto done;
+  }
+
+  libspectrum_snap_set_interface2_active( snap, 1 );
+  if( libspectrum_snap_interface2_active( snap ) != 1 ) {
+    fprintf( stderr, "%s: snap_interface2_active_and_rom_getter_setter: expected interface2_active=1, got %d\n",
+             progname, libspectrum_snap_interface2_active( snap ) );
+    goto done;
+  }
+
+  if( libspectrum_snap_interface2_rom( snap, 0 ) != NULL ) {
+    fprintf( stderr, "%s: snap_interface2_active_and_rom_getter_setter: default interface2_rom[0] should be NULL\n",
+             progname );
+    goto done;
+  }
+
+  rom = libspectrum_new( libspectrum_byte, 0x4000 );
+  rom[0]      = 0xc3;
+  rom[0x3fff] = 0xff;
+
+  libspectrum_snap_set_interface2_rom( snap, 0, rom );
+
+  if( libspectrum_snap_interface2_rom( snap, 0 ) != rom ) {
+    fprintf( stderr, "%s: snap_interface2_active_and_rom_getter_setter: interface2_rom[0] pointer mismatch after set\n",
+             progname );
+    libspectrum_free( rom );
+    goto done;
+  }
+
+  if( libspectrum_snap_interface2_rom( snap, 0 )[0]      != 0xc3 ||
+      libspectrum_snap_interface2_rom( snap, 0 )[0x3fff] != 0xff ) {
+    fprintf( stderr, "%s: snap_interface2_active_and_rom_getter_setter: interface2_rom[0] data mismatch\n",
+             progname );
+    goto done;
+  }
+
+  r = TEST_PASS;
+
+done:
+  libspectrum_snap_free( snap );
+  return r;
+}
+
+test_return_t
+snap_joystick_active_count_list_and_inputs_getter_setter( void )
+{
+  /* libspectrum_snap: joystick_active_count, joystick_list, and joystick_inputs getter/setter */
+  libspectrum_snap *snap = libspectrum_snap_alloc();
+  test_return_t r = TEST_FAIL;
+
+  if( !snap ) {
+    fprintf( stderr, "%s: snap_joystick_active_count_list_and_inputs_getter_setter: snap_alloc returned NULL\n", progname );
+    return TEST_INCOMPLETE;
+  }
+
+  if( libspectrum_snap_joystick_active_count( snap ) != 0 ) {
+    fprintf( stderr, "%s: snap_joystick_active_count_list_and_inputs_getter_setter: default joystick_active_count should be 0, got %zu\n",
+             progname, libspectrum_snap_joystick_active_count( snap ) );
+    goto done;
+  }
+
+  libspectrum_snap_set_joystick_active_count( snap, 1 );
+  if( libspectrum_snap_joystick_active_count( snap ) != 1 ) {
+    fprintf( stderr, "%s: snap_joystick_active_count_list_and_inputs_getter_setter: expected joystick_active_count=1, got %zu\n",
+             progname, libspectrum_snap_joystick_active_count( snap ) );
+    goto done;
+  }
+
+  if( libspectrum_snap_joystick_list( snap, 0 ) != LIBSPECTRUM_JOYSTICK_NONE ) {
+    fprintf( stderr, "%s: snap_joystick_active_count_list_and_inputs_getter_setter: default joystick_list[0] should be NONE\n",
+             progname );
+    goto done;
+  }
+
+  libspectrum_snap_set_joystick_list( snap, 0, LIBSPECTRUM_JOYSTICK_KEMPSTON );
+  if( libspectrum_snap_joystick_list( snap, 0 ) != LIBSPECTRUM_JOYSTICK_KEMPSTON ) {
+    fprintf( stderr, "%s: snap_joystick_active_count_list_and_inputs_getter_setter: expected joystick_list[0]=KEMPSTON\n",
+             progname );
+    goto done;
+  }
+
+  if( libspectrum_snap_joystick_inputs( snap, 0 ) != 0 ) {
+    fprintf( stderr, "%s: snap_joystick_active_count_list_and_inputs_getter_setter: default joystick_inputs[0] should be 0, got %d\n",
+             progname, libspectrum_snap_joystick_inputs( snap, 0 ) );
+    goto done;
+  }
+
+  libspectrum_snap_set_joystick_inputs( snap, 0, LIBSPECTRUM_JOYSTICK_INPUT_JOYSTICK_1 );
+  if( libspectrum_snap_joystick_inputs( snap, 0 ) != LIBSPECTRUM_JOYSTICK_INPUT_JOYSTICK_1 ) {
+    fprintf( stderr, "%s: snap_joystick_active_count_list_and_inputs_getter_setter: expected joystick_inputs[0]=JOYSTICK_1\n",
+             progname );
+    goto done;
+  }
+
+  r = TEST_PASS;
+
+done:
+  libspectrum_snap_free( snap );
+  return r;
+}
+
+test_return_t
+snap_multiface_model_3_getter_setter( void )
+{
+  /* libspectrum_snap: multiface_model_3 flag getter/setter */
+  libspectrum_snap *snap = libspectrum_snap_alloc();
+  test_return_t r = TEST_FAIL;
+
+  if( !snap ) {
+    fprintf( stderr, "%s: snap_multiface_model_3_getter_setter: snap_alloc returned NULL\n", progname );
+    return TEST_INCOMPLETE;
+  }
+
+  if( libspectrum_snap_multiface_model_3( snap ) != 0 ) {
+    fprintf( stderr, "%s: snap_multiface_model_3_getter_setter: default multiface_model_3 should be 0, got %d\n",
+             progname, libspectrum_snap_multiface_model_3( snap ) );
+    goto done;
+  }
+
+  libspectrum_snap_set_multiface_model_3( snap, 1 );
+  if( libspectrum_snap_multiface_model_3( snap ) != 1 ) {
+    fprintf( stderr, "%s: snap_multiface_model_3_getter_setter: expected multiface_model_3=1, got %d\n",
+             progname, libspectrum_snap_multiface_model_3( snap ) );
+    goto done;
+  }
+
+  libspectrum_snap_set_multiface_model_3( snap, 0 );
+  if( libspectrum_snap_multiface_model_3( snap ) != 0 ) {
+    fprintf( stderr, "%s: snap_multiface_model_3_getter_setter: expected multiface_model_3=0 after reset, got %d\n",
+             progname, libspectrum_snap_multiface_model_3( snap ) );
+    goto done;
+  }
+
+  r = TEST_PASS;
+
+done:
+  libspectrum_snap_free( snap );
+  return r;
+}

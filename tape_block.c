@@ -198,7 +198,7 @@ libspectrum_tape_block_free( libspectrum_tape_block *block )
 }
 
 libspectrum_tape_type
-libspectrum_tape_block_type( libspectrum_tape_block *block )
+libspectrum_tape_block_type( const libspectrum_tape_block *block )
 {
   return block->type;
 }
@@ -415,7 +415,7 @@ data_block_init( libspectrum_tape_data_block *block,
 
 /* Does this block consist solely of metadata? */
 int
-libspectrum_tape_block_metadata( libspectrum_tape_block *block )
+libspectrum_tape_block_metadata( const libspectrum_tape_block *block )
 {
   switch( block->type ) {
   case LIBSPECTRUM_TAPE_BLOCK_ROM:
@@ -485,7 +485,7 @@ libspectrum_tape_block_read_symbol_table(
     size_t i, j;
 
     /* Sanity check */
-    if( length < ( 2 * table->max_pulses + 1 ) * table->symbols_in_table ) {
+    if( length < (size_t)( 2 * table->max_pulses + 1 ) * table->symbols_in_table ) {
       libspectrum_print_error( LIBSPECTRUM_ERROR_CORRUPT,
 			       "%s: not enough data in buffer", __func__ );
       return LIBSPECTRUM_ERROR_CORRUPT;
