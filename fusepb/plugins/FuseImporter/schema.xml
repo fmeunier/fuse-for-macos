@@ -15,6 +15,9 @@
         <attribute name="net_sourceforge_projects_fuse_emulator_CartridgeLength" multivalued="false" type="CFNumber"/>
         <attribute name="net_sourceforge_projects_fuse_emulator_WriteProtect" multivalued="false" type="CFString"/>
         <attribute name="net_sourceforge_projects_fuse_emulator_FileNames" multivalued="true" type="CFString"/>
+        <attribute name="net_sourceforge_projects_fuse_emulator_DiskTracks" multivalued="false" type="CFNumber"/>
+        <attribute name="net_sourceforge_projects_fuse_emulator_DiskSides" multivalued="false" type="CFNumber"/>
+        <attribute name="net_sourceforge_projects_fuse_emulator_DiskCreator" multivalued="false" type="CFString"/>
     </attributes>
 	<note>
 		Schema for additional attributes supplied by the Fuse importer.
@@ -141,6 +144,23 @@
             </displayattrs>
             <previewattrs>
                 net_sourceforge_projects_fuse_emulator_FileNames
+            </previewattrs>
+        </type>
+        <type name="net.sourceforge.projects.fuse-emulator.dsk">
+            <allattrs>
+                net_sourceforge_projects_fuse_emulator_DiskTracks
+                net_sourceforge_projects_fuse_emulator_DiskSides
+                net_sourceforge_projects_fuse_emulator_DiskCreator
+            </allattrs>
+            <displayattrs>
+                net_sourceforge_projects_fuse_emulator_DiskTracks
+                net_sourceforge_projects_fuse_emulator_DiskSides
+                net_sourceforge_projects_fuse_emulator_DiskCreator
+            </displayattrs>
+            <previewattrs>
+                net_sourceforge_projects_fuse_emulator_DiskTracks
+                net_sourceforge_projects_fuse_emulator_DiskSides
+                net_sourceforge_projects_fuse_emulator_DiskCreator
             </previewattrs>
         </type>
     </types>
