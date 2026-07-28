@@ -94,6 +94,14 @@ mmap_file( const char *filename, unsigned char **buffer, size_t *length )
 #define TRDOS_ENTRY_DELETED   0x01  /* first byte = deleted entry */
 #define TRDOS_ENTRY_END       0x00  /* first byte = end of catalog */
 
+/* SCL (Sinclair Combined Library) disk archive constants */
+#define SCL_MAGIC        "SINCLAIR"
+#define SCL_MAGIC_LEN    8
+#define SCL_COUNT_OFFSET 8           /* byte offset of file-count byte */
+#define SCL_DIR_OFFSET   9           /* byte offset of first directory entry */
+#define SCL_ENTRY_SIZE   14          /* bytes per directory entry */
+#define SCL_FILENAME_LEN 8           /* filename bytes per entry */
+
 /* EDSK and standard CPC DSK header layout (both formats share offsets 34-49) */
 #define DSK_HEADER_MIN_LEN 256
 #define DSK_CREATOR_OFFSET 34
@@ -726,7 +734,38 @@ process_trd
   NSString *name;
   const libspectrum_byte *entry;
   char name_utf8[ TRDOS_FILENAME_LEN * 9 + 1 ];
-  int i;
+  int i, num_files;
+
+  /* SCL (Sinclair Combined Library) is a TR-DOS archive identified by the
+     8-byte magic "SINCLAIR".  A count byte follows, then N x 14-byte catalog
+     entries (8-byte ZX filename + 6 bytes of type/address/length info). */
+
+  if( length >= SCL_MAGIC_LEN + 1 &&
+      memcmp( buffer, SCL_MAGIC, SCL_MAGIC_LEN ) == 0 ) {
+    num_files = buffer[ SCL_COUNT_OFFSET ];
+    if( length < (size_t)( SCL_DIR_OFFSET + num_files * SCL_ENTRY_SIZE ) )
+      return YES;
+
+    file_names = [NSMutableArray array];
+
+    for( i = 0; i < num_files; i++ ) {
+      entry = buffer + SCL_DIR_OFFSET + i * SCL_ENTRY_SIZE;
+
+      if( libspectrum_zx_string_to_utf8( name_utf8, sizeof( name_utf8 ),
+                                          entry, SCL_FILENAME_LEN ) ) continue;
+
+      if( name_utf8[0] == '\0' ) continue;
+
+      name = [NSString stringWithCString:name_utf8 encoding:NSUTF8StringEncoding];
+      if( name ) [file_names addObject:name];
+    }
+
+    if( file_names.count > 0 )
+      [attributes setObject:file_names
+                     forKey:@"net_sourceforge_projects_fuse_emulator_FileNames"];
+
+    return YES;
+  }
 
   /* TR-DOS catalog occupies the first 2048 bytes of the image file
      (8 sectors x 256 bytes = 128 entries x 16 bytes each).
