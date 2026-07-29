@@ -329,6 +329,75 @@
   XCTAssertNil( [preview previewData] );
 }
 
+- (void)test_trd_without_screen_has_zero_content_size
+{
+  FuseQuickLookPreview *preview;
+
+  /* TRD disk image — disk types have no content */
+  preview = [self previewForFixture:@"tests/fixtures/empty.trd"];
+
+  XCTAssertEqual( [preview contentSize].width,  0.0 );
+  XCTAssertEqual( [preview contentSize].height, 0.0 );
+}
+
+- (void)test_trd_file_produces_no_preview
+{
+  FuseQuickLookPreview *preview;
+
+  /* TRD disk image — disk types yield no preview */
+  preview = [self previewForFixture:@"tests/fixtures/empty.trd"];
+
+  XCTAssertEqual( [preview previewKind], FUSE_QUICKLOOK_PREVIEW_NONE );
+  XCTAssertNil( [preview contentTypeIdentifier] );
+  XCTAssertNil( [preview previewData] );
+}
+
+- (void)test_scl_without_screen_has_zero_content_size
+{
+  FuseQuickLookPreview *preview;
+
+  /* SCL disk archive — disk types have no content */
+  preview = [self previewForFixture:@"tests/fixtures/empty.scl"];
+
+  XCTAssertEqual( [preview contentSize].width,  0.0 );
+  XCTAssertEqual( [preview contentSize].height, 0.0 );
+}
+
+- (void)test_scl_file_produces_no_preview
+{
+  FuseQuickLookPreview *preview;
+
+  /* SCL disk archive — disk types yield no preview */
+  preview = [self previewForFixture:@"tests/fixtures/empty.scl"];
+
+  XCTAssertEqual( [preview previewKind], FUSE_QUICKLOOK_PREVIEW_NONE );
+  XCTAssertNil( [preview contentTypeIdentifier] );
+  XCTAssertNil( [preview previewData] );
+}
+
+- (void)test_dsk_without_screen_has_zero_content_size
+{
+  FuseQuickLookPreview *preview;
+
+  /* Plus3 DSK disk image — disk types have no content */
+  preview = [self previewForFixture:@"tests/fixtures/empty.dsk"];
+
+  XCTAssertEqual( [preview contentSize].width,  0.0 );
+  XCTAssertEqual( [preview contentSize].height, 0.0 );
+}
+
+- (void)test_dsk_file_produces_no_preview
+{
+  FuseQuickLookPreview *preview;
+
+  /* Plus3 DSK disk image — disk types yield no preview */
+  preview = [self previewForFixture:@"tests/fixtures/empty.dsk"];
+
+  XCTAssertEqual( [preview previewKind], FUSE_QUICKLOOK_PREVIEW_NONE );
+  XCTAssertNil( [preview contentTypeIdentifier] );
+  XCTAssertNil( [preview previewData] );
+}
+
 - (void)test_szx_snapshot_content_size_is_standard_spectrum_resolution
 {
   FuseQuickLookPreview *preview;

@@ -498,6 +498,81 @@
   XCTAssertNil( [thumbnail imageData] );
 }
 
+- (void)test_trd_canvas_size_is_zero_without_screen
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSSize canvas_size;
+
+  /* TRD disk image — disk types have no canvas */
+  thumbnail = [self thumbnailForFixture:@"tests/fixtures/empty.trd"];
+  canvas_size = [thumbnail canvasSize];
+
+  XCTAssertEqual( canvas_size.width,  0.0 );
+  XCTAssertEqual( canvas_size.height, 0.0 );
+}
+
+- (void)test_trd_file_produces_no_thumbnail
+{
+  FuseQuickLookThumbnail *thumbnail;
+
+  /* TRD disk image — disk types yield no thumbnail */
+  thumbnail = [self thumbnailForFixture:@"tests/fixtures/empty.trd"];
+
+  XCTAssertEqual( [thumbnail thumbnailKind], FUSE_QUICKLOOK_THUMBNAIL_NONE );
+  XCTAssertNil( [thumbnail bitmapImageRep] );
+  XCTAssertNil( [thumbnail imageData] );
+}
+
+- (void)test_scl_canvas_size_is_zero_without_screen
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSSize canvas_size;
+
+  /* SCL disk archive — disk types have no canvas */
+  thumbnail = [self thumbnailForFixture:@"tests/fixtures/empty.scl"];
+  canvas_size = [thumbnail canvasSize];
+
+  XCTAssertEqual( canvas_size.width,  0.0 );
+  XCTAssertEqual( canvas_size.height, 0.0 );
+}
+
+- (void)test_scl_file_produces_no_thumbnail
+{
+  FuseQuickLookThumbnail *thumbnail;
+
+  /* SCL disk archive — disk types yield no thumbnail */
+  thumbnail = [self thumbnailForFixture:@"tests/fixtures/empty.scl"];
+
+  XCTAssertEqual( [thumbnail thumbnailKind], FUSE_QUICKLOOK_THUMBNAIL_NONE );
+  XCTAssertNil( [thumbnail bitmapImageRep] );
+  XCTAssertNil( [thumbnail imageData] );
+}
+
+- (void)test_dsk_canvas_size_is_zero_without_screen
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSSize canvas_size;
+
+  /* Plus3 DSK disk image — disk types have no canvas */
+  thumbnail = [self thumbnailForFixture:@"tests/fixtures/empty.dsk"];
+  canvas_size = [thumbnail canvasSize];
+
+  XCTAssertEqual( canvas_size.width,  0.0 );
+  XCTAssertEqual( canvas_size.height, 0.0 );
+}
+
+- (void)test_dsk_file_produces_no_thumbnail
+{
+  FuseQuickLookThumbnail *thumbnail;
+
+  /* Plus3 DSK disk image — disk types yield no thumbnail */
+  thumbnail = [self thumbnailForFixture:@"tests/fixtures/empty.dsk"];
+
+  XCTAssertEqual( [thumbnail thumbnailKind], FUSE_QUICKLOOK_THUMBNAIL_NONE );
+  XCTAssertNil( [thumbnail bitmapImageRep] );
+  XCTAssertNil( [thumbnail imageData] );
+}
+
 - (void)test_thumbnail_context_size_matches_requested_maximum_size
 {
   CGSize context_size;
