@@ -163,5 +163,16 @@
                 net_sourceforge_projects_fuse_emulator_DiskCreator
             </previewattrs>
         </type>
+        <type name="net.sourceforge.projects.fuse-emulator.scl">
+            <allattrs>
+                net_sourceforge_projects_fuse_emulator_FileNames
+            </allattrs>
+            <displayattrs>
+                net_sourceforge_projects_fuse_emulator_FileNames
+            </displayattrs>
+            <previewattrs>
+                net_sourceforge_projects_fuse_emulator_FileNames
+            </previewattrs>
+        </type>
     </types>
 </schema>
