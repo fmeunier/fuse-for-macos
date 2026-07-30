@@ -398,6 +398,37 @@
   XCTAssertNil( [preview previewData] );
 }
 
+- (void)test_empty_z80_snapshot_produces_png_preview
+{
+  FuseQuickLookPreview *preview;
+  NSData *preview_data;
+
+  /* Minimal 48K Z80 v2 snapshot with an all-zero screen — still a valid snapshot */
+  preview = [self previewForFixture:@"deps/libspectrum/test/empty.z80"];
+  preview_data = [preview previewData];
+
+  XCTAssertEqual( [preview previewKind], FUSE_QUICKLOOK_PREVIEW_IMAGE_DATA );
+  XCTAssertEqualObjects( [preview contentTypeIdentifier], @"public.png" );
+  XCTAssertEqual( [preview contentSize].width,  256.0 );
+  XCTAssertEqual( [preview contentSize].height, 192.0 );
+  XCTAssertNotNil( preview_data );
+  XCTAssertTrue( [preview_data length] > 8 );
+  XCTAssertEqual( ((const unsigned char *)[preview_data bytes])[0], 0x89 );
+  XCTAssertEqual( ((const unsigned char *)[preview_data bytes])[1], 0x50 );
+}
+
+- (void)test_invalid_szx_produces_no_preview
+{
+  FuseQuickLookPreview *preview;
+
+  /* Truncated SZX (only 17 bytes — valid magic, no body) — must fail gracefully */
+  preview = [self previewForFixture:@"deps/libspectrum/test/invalid.szx"];
+
+  XCTAssertEqual( [preview previewKind], FUSE_QUICKLOOK_PREVIEW_NONE );
+  XCTAssertNil( [preview contentTypeIdentifier] );
+  XCTAssertNil( [preview previewData] );
+}
+
 - (void)test_szx_snapshot_content_size_is_standard_spectrum_resolution
 {
   FuseQuickLookPreview *preview;
