@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-07-30T07:51:00Z",
-  "run_id": "30523678173",
+  "last_run": "2026-07-31T08:11:00Z",
+  "run_id": "30615129647",
   "backlog_cursor": {
     "issues": 0,
     "prs": 0
@@ -74,10 +74,17 @@
     {
       "branch": "repo-assist/test-z80-and-invalid-szx-2026-07-30",
       "title": "Add Quick Look tests for empty.z80 and invalid.szx fixtures",
+      "pr_number": 61,
+      "status": "open",
+      "created_at": "2026-07-30"
+    },
+    {
+      "branch": "repo-assist/improve-hdf-spotlight-2026-07-31",
+      "title": "Spotlight: extract CHS geometry from HDF hard disk images",
       "pr_number": "TBD",
       "status": "open",
-      "created_at": "2026-07-30",
-      "note": "14 new tests: empty.z80 (Z80 v2 snapshot) and invalid.szx (truncated SZX graceful failure) across Image/Preview/Thumbnail"
+      "created_at": "2026-07-31",
+      "note": "Implements process_hdr() stub: parses RS-IDE header, exposes DiskTracks (cylinders) and DiskSides (heads). Also adds hdf schema type."
     }
   ],
   "monthly_activity_issue": 48,
@@ -87,5 +94,5 @@
     "pr_37", "pr_38", "issue_34", "check_comment_pr8", "pr_20",
     "pr_mdr_positive_tests", "pr_36", "pr_59", "pr_60"
   ],
-  "notes": "All PRs #47,#50,#51,#53,#54,#55,#59,#60 merged by maintainer. PR #39 (Copilot pre_activation fix) still open. PR TBD (empty.z80/invalid.szx tests) just created. Remaining Spotlight stubs: process_opd (Opus), process_d80 (Didaktik), process_plusd (MGT IMG), process_hdr (HDF), process_dck (DCK), process_if2r (IF2 ROM). Do NOT re-propose make deps (PR #44 closed). Do NOT re-add Python tests (PR #36 closed). Do NOT re-submit tape duration overflow (PR #52 closed)."
+  "notes": "All PRs #47,#50,#51,#53,#54,#55,#59,#60 merged by maintainer. PR #39 (Copilot pre_activation fix) still open. PR #61 (empty.z80/invalid.szx tests) open. PR TBD (HDF geometry Spotlight) just created. Remaining Spotlight stubs: process_opd (Opus), process_d80 (Didaktik), process_plusd (MGT IMG), process_dck (DCK), process_if2r (IF2 ROM). Do NOT re-propose make deps (PR #44 closed). Do NOT re-add Python tests (PR #36 closed). Do NOT re-submit tape duration overflow (PR #52 closed)."
 }
