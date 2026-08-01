@@ -804,11 +804,31 @@ process_trd
 - (BOOL)
 process_dck
 {
-  BOOL error = NO;
+  libspectrum_error lserror;
+  libspectrum_dck *dck;
+  int num_banks, i;
 
-  /* FIXME: size etc? */
+  dck = libspectrum_dck_alloc();
+  if( !dck ) return NO;
 
-  return error;
+  lserror = libspectrum_dck_read( dck, buffer, length );
+  if( lserror != LIBSPECTRUM_ERROR_NONE ) {
+    libspectrum_dck_free( dck, 0 );
+    return NO;
+  }
+
+  /* Count mapped banks (non-NULL entries in the 256-slot bank array) */
+  num_banks = 0;
+  for( i = 0; i < 256; i++ ) {
+    if( dck->dck[i] ) num_banks++;
+  }
+
+  [attributes setObject:[NSNumber numberWithInt:num_banks]
+                 forKey:@"net_sourceforge_projects_fuse_emulator_CartridgeLength"];
+
+  libspectrum_dck_free( dck, 0 );
+
+  return YES;
 }
 
 - (BOOL)
