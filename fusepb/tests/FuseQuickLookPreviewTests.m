@@ -465,4 +465,50 @@
   XCTAssertEqual( [preview contentSize].height, 400.0 );
 }
 
+- (void)test_csw_without_screen_has_zero_content_size
+{
+  FuseQuickLookPreview *preview;
+
+  /* CSW tape with no loading screen — content size should be zero */
+  preview = [self previewForFixture:@"deps/libspectrum/test/empty.csw"];
+
+  XCTAssertEqual( [preview contentSize].width,  0.0 );
+  XCTAssertEqual( [preview contentSize].height, 0.0 );
+}
+
+- (void)test_csw_tape_produces_no_preview
+{
+  FuseQuickLookPreview *preview;
+
+  /* CSW (Compressed Square Wave) tape — no loading screen, no preview */
+  preview = [self previewForFixture:@"deps/libspectrum/test/empty.csw"];
+
+  XCTAssertEqual( [preview previewKind], FUSE_QUICKLOOK_PREVIEW_NONE );
+  XCTAssertNil( [preview contentTypeIdentifier] );
+  XCTAssertNil( [preview previewData] );
+}
+
+- (void)test_rzx_recording_has_zero_content_size
+{
+  FuseQuickLookPreview *preview;
+
+  /* RZX recording with no extractable snap — content size should be zero */
+  preview = [self previewForFixture:@"deps/libspectrum/test/invalid-repeat-frame.rzx"];
+
+  XCTAssertEqual( [preview contentSize].width,  0.0 );
+  XCTAssertEqual( [preview contentSize].height, 0.0 );
+}
+
+- (void)test_rzx_recording_produces_no_preview
+{
+  FuseQuickLookPreview *preview;
+
+  /* RZX with invalid repeat frame — no extractable snap, no preview */
+  preview = [self previewForFixture:@"deps/libspectrum/test/invalid-repeat-frame.rzx"];
+
+  XCTAssertEqual( [preview previewKind], FUSE_QUICKLOOK_PREVIEW_NONE );
+  XCTAssertNil( [preview contentTypeIdentifier] );
+  XCTAssertNil( [preview previewData] );
+}
+
 @end
