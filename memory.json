@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-07-31T08:11:00Z",
-  "run_id": "30615129647",
+  "last_run": "2026-08-01T07:36:00Z",
+  "run_id": "30690029020",
   "backlog_cursor": {
     "issues": 0,
     "prs": 0
@@ -34,13 +34,6 @@
       "status": "merged"
     },
     {
-      "branch": "repo-assist/improve-tape-duration-overflow-2026-07-03-9b9ed36de6c8c95f",
-      "title": "Fix 32-bit tstates_total overflow in tape duration calculation",
-      "pr_number": 52,
-      "status": "closed_not_merged",
-      "note": "Closed by maintainer - fix applied directly as commit 57f120b. Do NOT re-submit."
-    },
-    {
       "branch": "repo-assist/feature-trd-filenames-spotlight-2026-07-04-2d0102e6416c739c",
       "title": "Spotlight: extract FileNames from TR-DOS disk image catalog",
       "pr_number": 53,
@@ -68,8 +61,7 @@
       "branch": "repo-assist/test-trd-dsk-scl-quicklook-2026-07-29",
       "title": "Add Quick Look null-case tests for TRD, SCL, and DSK disk images",
       "pr_number": 60,
-      "status": "merged",
-      "note": "Confirmed merged as commit 9212faf"
+      "status": "merged"
     },
     {
       "branch": "repo-assist/test-z80-and-invalid-szx-2026-07-30",
@@ -81,18 +73,32 @@
     {
       "branch": "repo-assist/improve-hdf-spotlight-2026-07-31",
       "title": "Spotlight: extract CHS geometry from HDF hard disk images",
+      "pr_number": 62,
+      "status": "open",
+      "created_at": "2026-07-31"
+    },
+    {
+      "branch": "repo-assist/test-csw-rzx-quicklook-2026-08-01",
+      "title": "Add Quick Look tests for CSW tape and RZX recording formats",
       "pr_number": "TBD",
       "status": "open",
-      "created_at": "2026-07-31",
-      "note": "Implements process_hdr() stub: parses RS-IDE header, exposes DiskTracks (cylinders) and DiskSides (heads). Also adds hdf schema type."
+      "created_at": "2026-08-01"
+    },
+    {
+      "branch": "repo-assist/improve-dck-spotlight-2026-08-01",
+      "title": "Spotlight: expose mapped bank count from Timex DCK cartridges",
+      "pr_number": "TBD",
+      "status": "open",
+      "created_at": "2026-08-01"
     }
   ],
-  "monthly_activity_issue": 48,
+  "monthly_activity_issue": "TBD_Aug2026",
+  "july_activity_issue_closed": 48,
   "checked_off_by_user": [
     "pr_15", "issue_17", "issue_16", "pr_18", "pr_22", "pr_23", "pr_25",
     "pr_26", "pr_27", "pr_28", "pr_29", "pr_8", "pr_32", "pr_33", "pr_35",
     "pr_37", "pr_38", "issue_34", "check_comment_pr8", "pr_20",
     "pr_mdr_positive_tests", "pr_36", "pr_59", "pr_60"
   ],
-  "notes": "All PRs #47,#50,#51,#53,#54,#55,#59,#60 merged by maintainer. PR #39 (Copilot pre_activation fix) still open. PR #61 (empty.z80/invalid.szx tests) open. PR TBD (HDF geometry Spotlight) just created. Remaining Spotlight stubs: process_opd (Opus), process_d80 (Didaktik), process_plusd (MGT IMG), process_dck (DCK), process_if2r (IF2 ROM). Do NOT re-propose make deps (PR #44 closed). Do NOT re-add Python tests (PR #36 closed). Do NOT re-submit tape duration overflow (PR #52 closed)."
+  "notes": "August 2026. All PRs #47,#50,#51,#53,#54,#55,#59,#60 merged. PR #61 (z80/szx tests), PR #62 (HDF geometry), PR TBD (CSW/RZX tests), PR TBD (DCK spotlight) open. Remaining Spotlight stubs: process_opd (Opus), process_d80 (Didaktik), process_plusd (MGT IMG), process_if2r (IF2 ROM). July activity issue #48 closed. Do NOT re-propose make deps (PR #44 closed). Do NOT re-add Python tests. Do NOT re-submit tape duration overflow (PR #52 closed)."
 }
