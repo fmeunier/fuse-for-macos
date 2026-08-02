@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-08-01T07:36:00Z",
-  "run_id": "30690029020",
+  "last_run": "2026-08-02T07:40:00Z",
+  "run_id": "30738196324",
   "backlog_cursor": {
     "issues": 0,
     "prs": 0
@@ -64,35 +64,42 @@
       "status": "merged"
     },
     {
-      "branch": "repo-assist/test-z80-and-invalid-szx-2026-07-30",
+      "branch": "repo-assist/test-z80-and-invalid-szx-2026-07-30-03a5857c674785cd",
       "title": "Add Quick Look tests for empty.z80 and invalid.szx fixtures",
       "pr_number": 61,
       "status": "open",
       "created_at": "2026-07-30"
     },
     {
-      "branch": "repo-assist/improve-hdf-spotlight-2026-07-31",
+      "branch": "repo-assist/improve-hdf-spotlight-2026-07-31-b5d09fc1e41897ed",
       "title": "Spotlight: extract CHS geometry from HDF hard disk images",
       "pr_number": 62,
       "status": "open",
       "created_at": "2026-07-31"
     },
     {
-      "branch": "repo-assist/test-csw-rzx-quicklook-2026-08-01",
-      "title": "Add Quick Look tests for CSW tape and RZX recording formats",
-      "pr_number": "TBD",
+      "branch": "repo-assist/improve-dck-spotlight-2026-08-01-52860246567e2df6",
+      "title": "Spotlight: expose mapped bank count from Timex DCK cartridges",
+      "pr_number": 63,
       "status": "open",
       "created_at": "2026-08-01"
     },
     {
-      "branch": "repo-assist/improve-dck-spotlight-2026-08-01",
-      "title": "Spotlight: expose mapped bank count from Timex DCK cartridges",
-      "pr_number": "TBD",
+      "branch": "repo-assist/test-csw-rzx-quicklook-2026-08-01-c804a1c5cc28aeac",
+      "title": "Add Quick Look tests for CSW tape and RZX recording formats",
+      "pr_number": 64,
       "status": "open",
       "created_at": "2026-08-01"
+    },
+    {
+      "branch": "repo-assist/improve-disk-spotlight-stubs-2026-08-02",
+      "title": "Spotlight: implement Opus, Didaktik, PlusD disk and IF2 ROM metadata stubs",
+      "pr_number": "TBD",
+      "status": "open",
+      "created_at": "2026-08-02"
     }
   ],
-  "monthly_activity_issue": "TBD_Aug2026",
+  "monthly_activity_issue": 65,
   "july_activity_issue_closed": 48,
   "checked_off_by_user": [
     "pr_15", "issue_17", "issue_16", "pr_18", "pr_22", "pr_23", "pr_25",
@@ -100,5 +107,5 @@
     "pr_37", "pr_38", "issue_34", "check_comment_pr8", "pr_20",
     "pr_mdr_positive_tests", "pr_36", "pr_59", "pr_60"
   ],
-  "notes": "August 2026. All PRs #47,#50,#51,#53,#54,#55,#59,#60 merged. PR #61 (z80/szx tests), PR #62 (HDF geometry), PR TBD (CSW/RZX tests), PR TBD (DCK spotlight) open. Remaining Spotlight stubs: process_opd (Opus), process_d80 (Didaktik), process_plusd (MGT IMG), process_if2r (IF2 ROM). July activity issue #48 closed. Do NOT re-propose make deps (PR #44 closed). Do NOT re-add Python tests. Do NOT re-submit tape duration overflow (PR #52 closed)."
+  "notes": "August 2026. PRs #61 (z80/szx tests), #62 (HDF geometry), #63 (DCK spotlight), #64 (CSW/RZX tests) open. This run created PR (TBD) for process_opd/plusd/d80/if2r stubs. All Spotlight stubs now implemented. Do NOT re-propose make deps (PR #44 closed). Do NOT re-add Python tests. Do NOT re-submit tape duration overflow (PR #52 closed)."
 }
