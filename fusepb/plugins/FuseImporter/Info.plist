@@ -59,7 +59,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleVersion</key>
-	<string>1.9.0</string>
+	<string>1.9.1</string>
 	<key>CFPlugInDynamicRegisterFunction</key>
 	<string></string>
 	<key>CFPlugInDynamicRegistration</key>
@@ -307,6 +307,7 @@
 				<key>public.filename-extension</key>
 				<array>
 					<string>sna</string>
+					<string>snapshot</string>
 				</array>
 			</dict>
 		</dict>
@@ -343,6 +344,7 @@
 				<key>public.filename-extension</key>
 				<array>
 					<string>szx</string>
+					<string>zx-state</string>
 				</array>
 			</dict>
 		</dict>

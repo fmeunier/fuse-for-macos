@@ -134,6 +134,8 @@
 			<array>
 				<string>sna</string>
 				<string>SNA</string>
+				<string>snapshot</string>
+				<string>SNAPSHOT</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>sna</string>
@@ -168,6 +170,8 @@
 			<array>
 				<string>szx</string>
 				<string>SZX</string>
+				<string>zx-state</string>
+				<string>ZX-STATE</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>szx</string>
@@ -616,11 +620,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.9.0</string>
+	<string>1.9.1</string>
 	<key>CFBundleSignature</key>
 	<string>FUSE</string>
 	<key>CFBundleVersion</key>
-	<string>1.9.0</string>
+	<string>1.9.1</string>
 	<key>SUFeedURL</key>
 	<string>$(SPARKLE_FEED_URL)</string>
 	<key>SUPublicEDKey</key>
@@ -861,6 +865,7 @@
 				<key>public.filename-extension</key>
 				<array>
 					<string>sna</string>
+					<string>snapshot</string>
 				</array>
 			</dict>
 		</dict>
@@ -901,6 +906,7 @@
 				<key>public.filename-extension</key>
 				<array>
 					<string>szx</string>
+					<string>zx-state</string>
 				</array>
 			</dict>
 		</dict>

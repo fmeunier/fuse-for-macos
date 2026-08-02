@@ -3,6 +3,22 @@ title: What's New In Fuse?
 description: This section describes the changes for recent versions of the Fuse emulator.
 ---
 
+## What's new in Fuse for macOS 1.9.1
+
+### New features:
+* Replace the legacy OpenGL display renderer with a Metal renderer (Fredrick Meunier).
+* Quick Look thumbnails and previews can now display SCREEN$ files stored in Microdrive cartridges (Fredrick Meunier).
+* Spotlight now indexes filenames in tape images, Microdrive cartridges, TR-DOS disk images and SCL archives, and disk geometry in +3 DSK/EDSK images (Fredrick Meunier).
+
+### Scaler improvements:
+* Add PAL TV composite filter chroma blending across lines (Fredrick Meunier).
+
+### Miscellaneous improvements:
+* Fall back to the default settings when loading a settings file fails (Fredrick Meunier).
+* Decode BASIC tokens and symbols in tape header names (Fredrick Meunier).
+
+### Various other minor bugfixes.
+
 ## What's new in Fuse for macOS 1.9.0
 
 ### New features:

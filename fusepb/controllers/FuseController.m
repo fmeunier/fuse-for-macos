@@ -254,7 +254,8 @@ static const NSTimeInterval sparkle_updater_start_delay = 0.5;
 
     snapFileTypes = [NSMutableArray arrayWithObjects:@"mgtsnp", @"MGTSNP",
                       @"s", @"S", @"slt", @"SLT", @"sna", @"SNA",
-                      @"sp", @"SP", @"szx", @"SZX", @"snp", @"SNP",
+                      @"snapshot", @"SNAPSHOT", @"sp", @"SP", @"szx",
+                      @"SZX", @"zx-state", @"ZX-STATE", @"snp", @"SNP",
                       @"z80", @"Z80", @"zxs", @"ZXS", nil];
     [snapFileTypes retain];
 
