@@ -398,6 +398,98 @@
   XCTAssertNil( [preview previewData] );
 }
 
+- (void)test_opd_without_screen_has_zero_content_size
+{
+  FuseQuickLookPreview *preview;
+
+  /* Opus Discovery disk image — disk types have no content */
+  preview = [self previewForFixture:@"tests/fixtures/empty.opd"];
+
+  XCTAssertEqual( [preview contentSize].width,  0.0 );
+  XCTAssertEqual( [preview contentSize].height, 0.0 );
+}
+
+- (void)test_opd_file_produces_no_preview
+{
+  FuseQuickLookPreview *preview;
+
+  /* Opus Discovery disk image — disk types yield no preview */
+  preview = [self previewForFixture:@"tests/fixtures/empty.opd"];
+
+  XCTAssertEqual( [preview previewKind], FUSE_QUICKLOOK_PREVIEW_NONE );
+  XCTAssertNil( [preview contentTypeIdentifier] );
+  XCTAssertNil( [preview previewData] );
+}
+
+- (void)test_mgt_without_screen_has_zero_content_size
+{
+  FuseQuickLookPreview *preview;
+
+  /* DISCiPLE/+D MGT disk image — disk types have no content */
+  preview = [self previewForFixture:@"tests/fixtures/empty.mgt"];
+
+  XCTAssertEqual( [preview contentSize].width,  0.0 );
+  XCTAssertEqual( [preview contentSize].height, 0.0 );
+}
+
+- (void)test_mgt_file_produces_no_preview
+{
+  FuseQuickLookPreview *preview;
+
+  /* DISCiPLE/+D MGT disk image — disk types yield no preview */
+  preview = [self previewForFixture:@"tests/fixtures/empty.mgt"];
+
+  XCTAssertEqual( [preview previewKind], FUSE_QUICKLOOK_PREVIEW_NONE );
+  XCTAssertNil( [preview contentTypeIdentifier] );
+  XCTAssertNil( [preview previewData] );
+}
+
+- (void)test_hdf_without_screen_has_zero_content_size
+{
+  FuseQuickLookPreview *preview;
+
+  /* HDF hard disk image — hard disk types have no content */
+  preview = [self previewForFixture:@"tests/fixtures/empty.hdf"];
+
+  XCTAssertEqual( [preview contentSize].width,  0.0 );
+  XCTAssertEqual( [preview contentSize].height, 0.0 );
+}
+
+- (void)test_hdf_file_produces_no_preview
+{
+  FuseQuickLookPreview *preview;
+
+  /* HDF hard disk image — hard disk types yield no preview */
+  preview = [self previewForFixture:@"tests/fixtures/empty.hdf"];
+
+  XCTAssertEqual( [preview previewKind], FUSE_QUICKLOOK_PREVIEW_NONE );
+  XCTAssertNil( [preview contentTypeIdentifier] );
+  XCTAssertNil( [preview previewData] );
+}
+
+- (void)test_dck_without_screen_has_zero_content_size
+{
+  FuseQuickLookPreview *preview;
+
+  /* Timex DCK cartridge image — cartridge types have no content */
+  preview = [self previewForFixture:@"tests/fixtures/empty.dck"];
+
+  XCTAssertEqual( [preview contentSize].width,  0.0 );
+  XCTAssertEqual( [preview contentSize].height, 0.0 );
+}
+
+- (void)test_dck_file_produces_no_preview
+{
+  FuseQuickLookPreview *preview;
+
+  /* Timex DCK cartridge image — cartridge types yield no preview */
+  preview = [self previewForFixture:@"tests/fixtures/empty.dck"];
+
+  XCTAssertEqual( [preview previewKind], FUSE_QUICKLOOK_PREVIEW_NONE );
+  XCTAssertNil( [preview contentTypeIdentifier] );
+  XCTAssertNil( [preview previewData] );
+}
+
 - (void)test_szx_snapshot_content_size_is_standard_spectrum_resolution
 {
   FuseQuickLookPreview *preview;
