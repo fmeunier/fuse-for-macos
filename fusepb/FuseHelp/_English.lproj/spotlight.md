@@ -14,9 +14,9 @@ CSW and similar files.
 
 For TZX and other tape images carrying archive or hardware metadata, Spotlight can
 index title, publishers, authors, year of release, languages, category,
-original price, loader, origin, comment, audio channel count, supported machines
-and peripherals. Simpler tape formats may expose only the metadata available in
-those files.
+original price, loader, origin, comment, audio channel count, duration, supported
+machines and peripherals. It also indexes the filenames in ROM header blocks.
+Simpler tape formats may expose only the metadata available in those files.
 
 ## Snapshots (SZX, Z80, SNA, etc.)
 
@@ -30,7 +30,21 @@ As snapshots above.
 
 ## MDR Microdrive cartridge images
 
-Cartridge length (sector count) and write-protect status.
+Cartridge length (sector count), write-protect status and the filenames stored
+on the cartridge.
+
+## TR-DOS disk images and SCL archives
+
+Filenames stored in TR-DOS disk images and SCL archives.
+
+## +3 DSK and EDSK disk images
+
+Disk geometry (tracks and sides) and, when present, the creator recorded in the
+image header.
+
+## HDF hard disk images
+
+Disk geometry (cylinders and heads).
 
 ## SCR Screen dumps
 
@@ -51,3 +65,7 @@ ATTRIBUTE | DESCRIPTION
 *GraphicsMode* | Standard, HiColour, HiRes
 *CartridgeLength* | number of sectors on a microdrive cartridge
 *WriteProtect* | whether a microdrive cartridge is write protected
+*FileNames* | filenames stored in a tape image, Microdrive cartridge, TR-DOS disk image or SCL archive
+*DiskTracks* | number of tracks in a +3 DSK/EDSK image, or cylinders in an HDF image
+*DiskSides* | number of sides in a +3 DSK/EDSK image, or heads in an HDF image
+*DiskCreator* | creator recorded in a +3 DSK/EDSK image header
