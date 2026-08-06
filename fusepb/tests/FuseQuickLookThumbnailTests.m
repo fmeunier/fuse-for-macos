@@ -573,6 +573,59 @@
   XCTAssertNil( [thumbnail imageData] );
 }
 
+- (void)test_empty_z80_snapshot_produces_bitmap_thumbnail
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSBitmapImageRep *bitmap;
+
+  /* Minimal 48K Z80 v2 snapshot with an all-zero screen — still a valid snapshot */
+  thumbnail = [self thumbnailForFixture:@"deps/libspectrum/test/empty.z80"];
+  bitmap = [thumbnail bitmapImageRep];
+
+  XCTAssertEqual( [thumbnail thumbnailKind], FUSE_QUICKLOOK_THUMBNAIL_BITMAP );
+  XCTAssertNotNil( bitmap );
+  XCTAssertEqual( [bitmap pixelsWide], 256 );
+  XCTAssertEqual( [bitmap pixelsHigh], 192 );
+}
+
+- (void)test_empty_z80_snapshot_canvas_size_is_standard_spectrum_resolution
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSSize canvas_size;
+
+  /* Minimal 48K Z80 v2 snapshot — canvas size is always 256x192 for snapshots */
+  thumbnail = [self thumbnailForFixture:@"deps/libspectrum/test/empty.z80"];
+  canvas_size = [thumbnail canvasSize];
+
+  XCTAssertEqual( canvas_size.width,  256.0 );
+  XCTAssertEqual( canvas_size.height, 192.0 );
+}
+
+- (void)test_invalid_szx_produces_no_thumbnail
+{
+  FuseQuickLookThumbnail *thumbnail;
+
+  /* Truncated SZX (only 17 bytes — valid magic, no body) — must fail gracefully */
+  thumbnail = [self thumbnailForFixture:@"deps/libspectrum/test/invalid.szx"];
+
+  XCTAssertEqual( [thumbnail thumbnailKind], FUSE_QUICKLOOK_THUMBNAIL_NONE );
+  XCTAssertNil( [thumbnail bitmapImageRep] );
+  XCTAssertNil( [thumbnail imageData] );
+}
+
+- (void)test_invalid_szx_canvas_size_is_zero
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSSize canvas_size;
+
+  /* Truncated SZX — parse failure should yield a zero canvas */
+  thumbnail = [self thumbnailForFixture:@"deps/libspectrum/test/invalid.szx"];
+  canvas_size = [thumbnail canvasSize];
+
+  XCTAssertEqual( canvas_size.width,  0.0 );
+  XCTAssertEqual( canvas_size.height, 0.0 );
+}
+
 - (void)test_thumbnail_context_size_matches_requested_maximum_size
 {
   CGSize context_size;

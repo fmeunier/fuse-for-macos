@@ -579,4 +579,62 @@
   XCTAssertEqual( canvas.height, 0.0 );
 }
 
+- (void)test_empty_z80_snapshot_produces_bitmap_image
+{
+  FuseQuickLookImage *image;
+  NSBitmapImageRep *bitmap;
+
+  /* Minimal 48K Z80 v2 snapshot with an all-zero screen — still a valid snapshot */
+  image = [[[FuseQuickLookImage alloc]
+             initWithContentsOfURL:[self fixtureURL:@"deps/libspectrum/test/empty.z80"]] autorelease];
+  bitmap = [image bitmapImageRep];
+
+  XCTAssertEqual( [image libspectrumClass], LIBSPECTRUM_CLASS_SNAPSHOT );
+  XCTAssertEqual( [image imageKind], FUSE_QUICKLOOK_IMAGE_SCR );
+  XCTAssertNotNil( bitmap );
+  XCTAssertEqual( [bitmap pixelsWide], 256 );
+  XCTAssertEqual( [bitmap pixelsHigh], 192 );
+}
+
+- (void)test_empty_z80_snapshot_canvas_size_is_standard_spectrum_resolution
+{
+  FuseQuickLookImage *image;
+  NSSize canvas;
+
+  /* Minimal 48K Z80 v2 snapshot — canvas size is always 256x192 for snapshots */
+  image = [[[FuseQuickLookImage alloc]
+             initWithContentsOfURL:[self fixtureURL:@"deps/libspectrum/test/empty.z80"]] autorelease];
+  canvas = [image canvasSize];
+
+  XCTAssertEqual( canvas.width,  256.0 );
+  XCTAssertEqual( canvas.height, 192.0 );
+}
+
+- (void)test_invalid_szx_produces_no_image
+{
+  FuseQuickLookImage *image;
+
+  /* Truncated SZX (only 17 bytes — valid magic, no body) — must fail gracefully */
+  image = [[[FuseQuickLookImage alloc]
+             initWithContentsOfURL:[self fixtureURL:@"deps/libspectrum/test/invalid.szx"]] autorelease];
+
+  XCTAssertEqual( [image imageKind], FUSE_QUICKLOOK_IMAGE_NONE );
+  XCTAssertNil( [image imageData] );
+  XCTAssertNil( [image bitmapImageRep] );
+}
+
+- (void)test_invalid_szx_canvas_size_is_zero
+{
+  FuseQuickLookImage *image;
+  NSSize canvas;
+
+  /* Truncated SZX — parse failure should yield a zero canvas */
+  image = [[[FuseQuickLookImage alloc]
+             initWithContentsOfURL:[self fixtureURL:@"deps/libspectrum/test/invalid.szx"]] autorelease];
+  canvas = [image canvasSize];
+
+  XCTAssertEqual( canvas.width,  0.0 );
+  XCTAssertEqual( canvas.height, 0.0 );
+}
+
 @end
