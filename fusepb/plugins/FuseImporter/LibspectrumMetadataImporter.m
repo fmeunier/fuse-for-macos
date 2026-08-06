@@ -848,21 +848,44 @@ process_dck
 - (BOOL)
 process_opd
 {
-  BOOL error = NO;
+  /* Opus Discovery raw disk image.
+     The format stores sectors as flat data with no file header.
+     Geometry is inferred from the file size.
+     Standard 80-track double-sided image: 80 × 2 × 18 × 256 = 737,280 bytes.
+     Single-sided variant: 80 × 1 × 18 × 256 = 368,640 bytes. */
+#define OPD_TRACKS           80
+#define OPD_SECTORS_PER_SIDE 18
+#define OPD_BYTES_PER_SECTOR 256
+#define OPD_2S_SIZE  (OPD_TRACKS * 2 * OPD_SECTORS_PER_SIDE * OPD_BYTES_PER_SECTOR)
+#define OPD_1S_SIZE  (OPD_TRACKS * 1 * OPD_SECTORS_PER_SIDE * OPD_BYTES_PER_SECTOR)
 
-  /* FIXME: size, %full?, read-only vs read-write etc? */
+  unsigned char sides = ( length >= OPD_2S_SIZE ) ? 2 : 1;
 
-  return error;
+  [attributes setObject:[NSNumber numberWithUnsignedChar:OPD_TRACKS]
+                 forKey:@"net_sourceforge_projects_fuse_emulator_DiskTracks"];
+
+  [attributes setObject:[NSNumber numberWithUnsignedChar:sides]
+                 forKey:@"net_sourceforge_projects_fuse_emulator_DiskSides"];
+
+  return YES;
 }
 
 - (BOOL)
 process_plusd
 {
-  BOOL error = NO;
+  /* DISCiPLE/+D raw MGT disk image.
+     The format stores sectors as flat data with no file header.
+     Standard geometry: 80 tracks, 2 sides, 10 sectors × 512 bytes = 819,200 bytes. */
+#define MGT_TRACKS 80
+#define MGT_SIDES  2
 
-  /* FIXME: size, %full?, read-only vs read-write etc? */
+  [attributes setObject:[NSNumber numberWithUnsignedChar:MGT_TRACKS]
+                 forKey:@"net_sourceforge_projects_fuse_emulator_DiskTracks"];
 
-  return error;
+  [attributes setObject:[NSNumber numberWithUnsignedChar:MGT_SIDES]
+                 forKey:@"net_sourceforge_projects_fuse_emulator_DiskSides"];
+
+  return YES;
 }
 
 - (BOOL)
@@ -888,21 +911,35 @@ process_auxiliary
 - (BOOL)
 process_d80
 {
-  BOOL error = NO;
+  /* Didaktik D80/D40 raw disk image.
+     The format stores sectors as flat data with no file header.
+     Geometry is inferred from the file size.
+     D80 (80-track double-sided): 80 × 2 × 9 × 512 = 737,280 bytes.
+     D40 (40-track double-sided): 40 × 2 × 9 × 512 = 368,640 bytes. */
+#define D80_SECTORS_PER_SIDE 9
+#define D80_BYTES_PER_SECTOR 512
+#define D80_2S_SIZE  (80 * 2 * D80_SECTORS_PER_SIDE * D80_BYTES_PER_SECTOR)
 
-  /* FIXME: size, %full?, read-only vs read-write etc? */
+  unsigned char tracks = ( length >= D80_2S_SIZE ) ? 80 : 40;
 
-  return error;
+  [attributes setObject:[NSNumber numberWithUnsignedChar:tracks]
+                 forKey:@"net_sourceforge_projects_fuse_emulator_DiskTracks"];
+
+  [attributes setObject:[NSNumber numberWithUnsignedChar:2]
+                 forKey:@"net_sourceforge_projects_fuse_emulator_DiskSides"];
+
+  return YES;
 }
 
 - (BOOL)
 process_if2r
 {
-  BOOL error = NO;
+  /* Interface 2 ROM cartridge image.
+     Standard size is 16 KB (16,384 bytes). */
+  [attributes setObject:[NSNumber numberWithUnsignedLong:length]
+                 forKey:@"net_sourceforge_projects_fuse_emulator_CartridgeLength"];
 
-  /* FIXME: size etc? */
-
-  return error;
+  return YES;
 }
 
 - (BOOL)

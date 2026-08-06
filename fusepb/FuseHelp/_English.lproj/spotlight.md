@@ -50,6 +50,24 @@ image header.
 
 Disk geometry (cylinders and heads).
 
+## Opus Discovery disk images
+
+Disk geometry for OPD and OPU images (80 tracks and one or two sides, inferred
+from the image size).
+
+## DISCiPLE and +D disk images
+
+Disk geometry for MGT and IMG images (80 tracks and two sides).
+
+## Didaktik disk images
+
+Disk geometry for D80 and D40 images (80 or 40 tracks, respectively, and two
+sides).
+
+## Interface 2 ROM cartridge images
+
+Cartridge length in bytes.
+
 ## SCR Screen dumps
 
 Graphics mode, width, height, orientation, colour space
@@ -67,9 +85,9 @@ ATTRIBUTE | DESCRIPTION
 *Machine* | Spectrum 16K, 48K (Issue 1), 48K, 128K, +2, +2A, +3, SE, Timex TC2048, Timex TC2068, Timex TS2068, Scorpion ZS 256, Pentagon 128K
 *Joystick* | Kempston, Cursor, Sinclair 1, Sinclair 2, Timex 1, Timex 2, Fuller
 *GraphicsMode* | Standard, HiColour, HiRes
-*CartridgeLength* | number of sectors on a microdrive cartridge, or mapped 8K banks in a Timex DCK cartridge
+*CartridgeLength* | number of sectors on a microdrive cartridge, mapped 8K banks in a Timex DCK cartridge, or the size in bytes of an Interface 2 ROM cartridge
 *WriteProtect* | whether a microdrive cartridge is write protected
 *FileNames* | filenames stored in a tape image, Microdrive cartridge, TR-DOS disk image or SCL archive
-*DiskTracks* | number of tracks in a +3 DSK/EDSK image, or cylinders in an HDF image
-*DiskSides* | number of sides in a +3 DSK/EDSK image, or heads in an HDF image
+*DiskTracks* | number of tracks in a +3 DSK/EDSK, Opus Discovery, DISCiPLE/+D or Didaktik disk image, or cylinders in an HDF image
+*DiskSides* | number of sides in a +3 DSK/EDSK, Opus Discovery, DISCiPLE/+D or Didaktik disk image, or heads in an HDF image
 *DiskCreator* | creator recorded in a +3 DSK/EDSK image header
