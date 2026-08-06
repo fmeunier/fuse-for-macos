@@ -109,6 +109,20 @@ mmap_file( const char *filename, unsigned char **buffer, size_t *length )
 #define DSK_TRACKS_OFFSET  48
 #define DSK_SIDES_OFFSET   49
 
+/* HDF (RS-IDE) hard disk image header layout
+   Reference: http://www.ramsoft.bbk.org/tech/rs-hdf.txt */
+#define HDF_SIGNATURE        "RS-IDE"
+#define HDF_SIGNATURE_LEN    6
+#define HDF_ID_OFFSET        6
+#define HDF_ID_MAGIC         0x1a
+#define HDF_MIN_LEN          128  /* 6+1+1+1+1+1+11+106 bytes */
+/* Drive identity block starts at byte 22 (after signature, id, revision,
+   flags, datastart_low, datastart_hi, and 11 reserved bytes). */
+#define HDF_IDENTITY_OFFSET  22
+/* ATA identity word indices (each word is 2 bytes, little-endian) */
+#define HDF_CYLINDERS_WORD   1
+#define HDF_HEADS_WORD       3
+
 static void
 hardware_desc( NSMutableArray *machines, NSMutableArray *peripherals, int type,
                int id )
@@ -945,11 +959,30 @@ process_mdr
 - (BOOL)
 process_hdr
 {
-  BOOL error = NO;
+  int cylinders, heads;
 
-  /* FIXME: size, %full?, read-only vs read-write etc? */
+  if( length < HDF_MIN_LEN ) return NO;
 
-  return error;
+  if( memcmp( buffer, HDF_SIGNATURE, HDF_SIGNATURE_LEN ) != 0 ||
+      buffer[ HDF_ID_OFFSET ] != HDF_ID_MAGIC ) return NO;
+
+  /* Extract CHS geometry from the ATA drive identity block.
+     Each word is stored little-endian at byte offset word_index * 2
+     within the identity block. */
+  cylinders = buffer[ HDF_IDENTITY_OFFSET + HDF_CYLINDERS_WORD * 2     ] |
+             (buffer[ HDF_IDENTITY_OFFSET + HDF_CYLINDERS_WORD * 2 + 1 ] << 8);
+  heads     = buffer[ HDF_IDENTITY_OFFSET + HDF_HEADS_WORD     * 2     ] |
+             (buffer[ HDF_IDENTITY_OFFSET + HDF_HEADS_WORD     * 2 + 1 ] << 8);
+
+  if( cylinders )
+    [attributes setObject:[NSNumber numberWithInt:cylinders]
+                   forKey:@"net_sourceforge_projects_fuse_emulator_DiskTracks"];
+
+  if( heads )
+    [attributes setObject:[NSNumber numberWithInt:heads]
+                   forKey:@"net_sourceforge_projects_fuse_emulator_DiskSides"];
+
+  return YES;
 }
 
 - (id)initWithFilename:(NSString*)aFile andAttributes:(NSMutableDictionary*)aDict
