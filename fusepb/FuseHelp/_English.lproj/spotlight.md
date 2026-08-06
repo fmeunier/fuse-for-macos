@@ -33,6 +33,10 @@ As snapshots above.
 Cartridge length (sector count), write-protect status and the filenames stored
 on the cartridge.
 
+## Timex DCK cartridge images
+
+Number of mapped 8K banks in a Timex DCK cartridge image.
+
 ## TR-DOS disk images and SCL archives
 
 Filenames stored in TR-DOS disk images and SCL archives.
@@ -63,7 +67,7 @@ ATTRIBUTE | DESCRIPTION
 *Machine* | Spectrum 16K, 48K (Issue 1), 48K, 128K, +2, +2A, +3, SE, Timex TC2048, Timex TC2068, Timex TS2068, Scorpion ZS 256, Pentagon 128K
 *Joystick* | Kempston, Cursor, Sinclair 1, Sinclair 2, Timex 1, Timex 2, Fuller
 *GraphicsMode* | Standard, HiColour, HiRes
-*CartridgeLength* | number of sectors on a microdrive cartridge
+*CartridgeLength* | number of sectors on a microdrive cartridge, or mapped 8K banks in a Timex DCK cartridge
 *WriteProtect* | whether a microdrive cartridge is write protected
 *FileNames* | filenames stored in a tape image, Microdrive cartridge, TR-DOS disk image or SCL archive
 *DiskTracks* | number of tracks in a +3 DSK/EDSK image, or cylinders in an HDF image

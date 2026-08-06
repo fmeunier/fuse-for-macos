@@ -188,5 +188,16 @@
                 net_sourceforge_projects_fuse_emulator_DiskSides
             </previewattrs>
         </type>
+        <type name="net.sourceforge.projects.fuse-emulator.dck">
+            <allattrs>
+                net_sourceforge_projects_fuse_emulator_CartridgeLength
+            </allattrs>
+            <displayattrs>
+                net_sourceforge_projects_fuse_emulator_CartridgeLength
+            </displayattrs>
+            <previewattrs>
+                net_sourceforge_projects_fuse_emulator_CartridgeLength
+            </previewattrs>
+        </type>
     </types>
 </schema>
