@@ -626,6 +626,56 @@
   XCTAssertEqual( canvas_size.height, 0.0 );
 }
 
+- (void)test_csw_canvas_size_is_zero_without_screen
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSSize canvas_size;
+
+  /* CSW tape with no loading screen — canvas size should be zero */
+  thumbnail = [self thumbnailForFixture:@"deps/libspectrum/test/empty.csw"];
+  canvas_size = [thumbnail canvasSize];
+
+  XCTAssertEqual( canvas_size.width,  0.0 );
+  XCTAssertEqual( canvas_size.height, 0.0 );
+}
+
+- (void)test_csw_tape_produces_no_thumbnail
+{
+  FuseQuickLookThumbnail *thumbnail;
+
+  /* CSW (Compressed Square Wave) tape — tape types with no loading screen yield no thumbnail */
+  thumbnail = [self thumbnailForFixture:@"deps/libspectrum/test/empty.csw"];
+
+  XCTAssertEqual( [thumbnail thumbnailKind], FUSE_QUICKLOOK_THUMBNAIL_NONE );
+  XCTAssertNil( [thumbnail bitmapImageRep] );
+  XCTAssertNil( [thumbnail imageData] );
+}
+
+- (void)test_rzx_canvas_size_is_zero
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSSize canvas_size;
+
+  /* RZX recording with no extractable snap — canvas size should be zero */
+  thumbnail = [self thumbnailForFixture:@"deps/libspectrum/test/invalid-repeat-frame.rzx"];
+  canvas_size = [thumbnail canvasSize];
+
+  XCTAssertEqual( canvas_size.width,  0.0 );
+  XCTAssertEqual( canvas_size.height, 0.0 );
+}
+
+- (void)test_rzx_recording_produces_no_thumbnail
+{
+  FuseQuickLookThumbnail *thumbnail;
+
+  /* RZX with invalid repeat frame — no extractable snap, no thumbnail */
+  thumbnail = [self thumbnailForFixture:@"deps/libspectrum/test/invalid-repeat-frame.rzx"];
+
+  XCTAssertEqual( [thumbnail thumbnailKind], FUSE_QUICKLOOK_THUMBNAIL_NONE );
+  XCTAssertNil( [thumbnail bitmapImageRep] );
+  XCTAssertNil( [thumbnail imageData] );
+}
+
 - (void)test_thumbnail_context_size_matches_requested_maximum_size
 {
   CGSize context_size;
