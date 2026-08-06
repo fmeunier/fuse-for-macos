@@ -292,5 +292,6 @@
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename;
 
 - (void)setAcceptsMouseMovedEvents:(BOOL)flag;
+- (void)setMouseGrabbed:(NSNumber *)grabbed;
 
 @end

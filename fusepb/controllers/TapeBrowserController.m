@@ -39,6 +39,11 @@ static int dialog_created;      /* Have we created the dialog box yet? */
 @implementation TapeBrowserController
 
 static TapeBrowserController *singleton = nil;
+
++ (void)createSingleton:(id)object
+{
+  [[self alloc] init];
+}
    
 + (TapeBrowserController *)singleton 
 {
@@ -47,9 +52,8 @@ static TapeBrowserController *singleton = nil;
   if( [NSThread isMainThread] ) {
     [[self alloc] init];
   } else {
-    dispatch_sync( dispatch_get_main_queue(), ^{
-      [[self alloc] init];
-    } );
+    emulation_session_perform_on_main_thread(
+      self, @selector(createSingleton:), nil, YES );
   }
 
   return singleton;
@@ -161,11 +165,9 @@ add_block_details( libspectrum_tape_block *block, void *user_data )
   tape_block_details( buffer, 256, block );
   data = @(buffer);
   values = @[type, data];
-  [tapeBrowserController
-        performSelectorOnMainThread:@selector(addObjectToTapeContents:)
-        withObject:[NSDictionary dictionaryWithObjects:values forKeys:keys]
-        waitUntilDone:NO
-  ];
+  emulation_session_perform_on_main_thread(
+    tapeBrowserController, @selector(addObjectToTapeContents:),
+    [NSDictionary dictionaryWithObjects:values forKeys:keys], NO );
   
   if( libspectrum_tape_block_type( block ) == LIBSPECTRUM_TAPE_BLOCK_ARCHIVE_INFO ) {
     int i;
@@ -180,11 +182,9 @@ add_block_details( libspectrum_tape_block *block, void *user_data )
                       encoding:NSWindowsCP1252StringEncoding
 #endif
                       ]];
-        [tapeBrowserController
-              performSelectorOnMainThread:@selector(addObjectToInfoContents:)
-              withObject:[NSDictionary dictionaryWithObjects:values forKeys:keys]
-              waitUntilDone:NO
-        ];
+        emulation_session_perform_on_main_thread(
+          tapeBrowserController, @selector(addObjectToInfoContents:),
+          [NSDictionary dictionaryWithObjects:values forKeys:keys], NO );
         break;          
       case   1:
         info = [NSString stringWithCString:
@@ -195,11 +195,9 @@ add_block_details( libspectrum_tape_block *block, void *user_data )
                   ];
         values = @[@"Publishers",
                     [[info componentsSeparatedByString:@"\n"] componentsJoinedByString:@", "]];
-        [tapeBrowserController
-              performSelectorOnMainThread:@selector(addObjectToInfoContents:)
-              withObject:[NSDictionary dictionaryWithObjects:values forKeys:keys]
-              waitUntilDone:NO
-        ];
+        emulation_session_perform_on_main_thread(
+          tapeBrowserController, @selector(addObjectToInfoContents:),
+          [NSDictionary dictionaryWithObjects:values forKeys:keys], NO );
         break;
       case   2:
         info = [NSString stringWithCString:
@@ -210,11 +208,9 @@ add_block_details( libspectrum_tape_block *block, void *user_data )
         ];
         values = @[@"Authors",
                     [[info componentsSeparatedByString:@"\n"] componentsJoinedByString:@", "]];
-        [tapeBrowserController
-              performSelectorOnMainThread:@selector(addObjectToInfoContents:)
-              withObject:[NSDictionary dictionaryWithObjects:values forKeys:keys]
-              waitUntilDone:NO
-        ];
+        emulation_session_perform_on_main_thread(
+          tapeBrowserController, @selector(addObjectToInfoContents:),
+          [NSDictionary dictionaryWithObjects:values forKeys:keys], NO );
         break;
       case   3:
         values = @[@"Year",
@@ -224,11 +220,9 @@ add_block_details( libspectrum_tape_block *block, void *user_data )
                         encoding:NSWindowsCP1252StringEncoding
 #endif
                         ] intValue])];
-        [tapeBrowserController
-              performSelectorOnMainThread:@selector(addObjectToInfoContents:)
-              withObject:[NSDictionary dictionaryWithObjects:values forKeys:keys]
-              waitUntilDone:NO
-        ];
+        emulation_session_perform_on_main_thread(
+          tapeBrowserController, @selector(addObjectToInfoContents:),
+          [NSDictionary dictionaryWithObjects:values forKeys:keys], NO );
         break;
       case   4:
         info = [NSString stringWithCString:
@@ -239,11 +233,9 @@ add_block_details( libspectrum_tape_block *block, void *user_data )
                   ];
         values = @[@"Languages",
                     [[info componentsSeparatedByString:@"\n"] componentsJoinedByString:@", "]];
-        [tapeBrowserController
-              performSelectorOnMainThread:@selector(addObjectToInfoContents:)
-              withObject:[NSDictionary dictionaryWithObjects:values forKeys:keys]
-              waitUntilDone:NO
-        ];
+        emulation_session_perform_on_main_thread(
+          tapeBrowserController, @selector(addObjectToInfoContents:),
+          [NSDictionary dictionaryWithObjects:values forKeys:keys], NO );
         break;
       case   5:
         values = @[@"Category",
@@ -252,11 +244,9 @@ add_block_details( libspectrum_tape_block *block, void *user_data )
                       encoding:NSWindowsCP1252StringEncoding
 #endif
                       ]];
-        [tapeBrowserController
-              performSelectorOnMainThread:@selector(addObjectToInfoContents:)
-              withObject:[NSDictionary dictionaryWithObjects:values forKeys:keys]
-              waitUntilDone:NO
-        ];
+        emulation_session_perform_on_main_thread(
+          tapeBrowserController, @selector(addObjectToInfoContents:),
+          [NSDictionary dictionaryWithObjects:values forKeys:keys], NO );
         break;
       case   6:
         {
@@ -281,11 +271,9 @@ add_block_details( libspectrum_tape_block *block, void *user_data )
                options:NSCaseInsensitiveSearch
                  range:NSMakeRange(0, [priceString length])];
         values = @[@"Price", priceString];
-        [tapeBrowserController
-              performSelectorOnMainThread:@selector(addObjectToInfoContents:)
-              withObject:[NSDictionary dictionaryWithObjects:values forKeys:keys]
-              waitUntilDone:NO
-        ];
+        emulation_session_perform_on_main_thread(
+          tapeBrowserController, @selector(addObjectToInfoContents:),
+          [NSDictionary dictionaryWithObjects:values forKeys:keys], NO );
         }
         break;
       case   7:
@@ -295,11 +283,9 @@ add_block_details( libspectrum_tape_block *block, void *user_data )
                       encoding:NSWindowsCP1252StringEncoding
 #endif
                       ]];
-        [tapeBrowserController
-              performSelectorOnMainThread:@selector(addObjectToInfoContents:)
-              withObject:[NSDictionary dictionaryWithObjects:values forKeys:keys]
-              waitUntilDone:NO
-        ];
+        emulation_session_perform_on_main_thread(
+          tapeBrowserController, @selector(addObjectToInfoContents:),
+          [NSDictionary dictionaryWithObjects:values forKeys:keys], NO );
         break;
       case   8:
         values = @[@"Origin",
@@ -308,11 +294,9 @@ add_block_details( libspectrum_tape_block *block, void *user_data )
                       encoding:NSWindowsCP1252StringEncoding
 #endif
                       ]];
-        [tapeBrowserController
-              performSelectorOnMainThread:@selector(addObjectToInfoContents:)
-              withObject:[NSDictionary dictionaryWithObjects:values forKeys:keys]
-              waitUntilDone:NO
-        ];
+        emulation_session_perform_on_main_thread(
+          tapeBrowserController, @selector(addObjectToInfoContents:),
+          [NSDictionary dictionaryWithObjects:values forKeys:keys], NO );
         break;
       case 255:
         values = @[@"Comment",
@@ -321,11 +305,9 @@ add_block_details( libspectrum_tape_block *block, void *user_data )
                       encoding:NSWindowsCP1252StringEncoding
 #endif
                       ]];
-        [tapeBrowserController
-              performSelectorOnMainThread:@selector(addObjectToInfoContents:)
-              withObject:[NSDictionary dictionaryWithObjects:values forKeys:keys]
-              waitUntilDone:NO
-        ];
+        emulation_session_perform_on_main_thread(
+          tapeBrowserController, @selector(addObjectToInfoContents:),
+          [NSDictionary dictionaryWithObjects:values forKeys:keys], NO );
         break; 
       default: NSLog(@"(Unknown string): %s",
         (const char *)libspectrum_tape_block_texts( block, i ));
@@ -349,23 +331,17 @@ ui_tape_browser_update( ui_tape_browser_update_type change,
   tapeBrowserController = [TapeBrowserController singleton];
 
   if( change == UI_TAPE_BROWSER_NEW_TAPE ) {
-    [tapeBrowserController
-          performSelectorOnMainThread:@selector(clearContents)
-          withObject:nil
-          waitUntilDone:NO
-    ];
+    emulation_session_perform_on_main_thread(
+      tapeBrowserController, @selector(clearContents),
+      nil, NO );
 
-    [tapeBrowserController
-          performSelectorOnMainThread:@selector(setInitialising:)
-          withObject:@(YES)
-          waitUntilDone:NO
-    ];
+    emulation_session_perform_on_main_thread(
+      tapeBrowserController, @selector(setInitialising:),
+      @(YES), NO );
     error = tape_foreach( add_block_details, tapeBrowserController );
-    [tapeBrowserController
-          performSelectorOnMainThread:@selector(setInitialising:)
-          withObject:@(NO)
-          waitUntilDone:NO
-    ];
+    emulation_session_perform_on_main_thread(
+      tapeBrowserController, @selector(setInitialising:),
+      @(NO), NO );
     if( error ) return error;
   }
 
@@ -373,11 +349,9 @@ ui_tape_browser_update( ui_tape_browser_update_type change,
     change == UI_TAPE_BROWSER_NEW_TAPE ) {
     int current_block = tape_get_current_block();
     if(current_block >= 0) {
-      [tapeBrowserController
-            performSelectorOnMainThread:@selector(setTapeIndex:)
-            withObject:@((unsigned int)current_block)
-            waitUntilDone:NO
-      ];
+      emulation_session_perform_on_main_thread(
+        tapeBrowserController, @selector(setTapeIndex:),
+        @((unsigned int)current_block), NO );
     }
   }
 
@@ -386,15 +360,13 @@ ui_tape_browser_update( ui_tape_browser_update_type change,
   }
 
   if( tape_modified ) {
-    [tapeBrowserController
-          performSelectorOnMainThread:@selector(setDocumentEditedValue:)
-          withObject:@YES
-          waitUntilDone:NO];
+    emulation_session_perform_on_main_thread(
+      tapeBrowserController, @selector(setDocumentEditedValue:),
+      @YES, NO );
   } else {
-    [tapeBrowserController
-          performSelectorOnMainThread:@selector(setDocumentEditedValue:)
-          withObject:@NO
-          waitUntilDone:NO];
+    emulation_session_perform_on_main_thread(
+      tapeBrowserController, @selector(setDocumentEditedValue:),
+      @NO, NO );
   }
 
   fuse_emulation_unpause();

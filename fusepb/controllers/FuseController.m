@@ -2774,6 +2774,17 @@ save_as_exit:
   [window setAcceptsMouseMovedEvents:flag];
 }
 
+- (void)setMouseGrabbed:(NSNumber *)grabbed
+{
+  if( [grabbed boolValue] ) {
+    [NSCursor hide];
+    [self setAcceptsMouseMovedEvents:YES];
+  } else {
+    [self setAcceptsMouseMovedEvents:NO];
+    [NSCursor unhide];
+  }
+}
+
 @end
 
 static char*
@@ -3336,11 +3347,8 @@ ui_menu_activate( ui_menu_item item, int active )
   }
 
   if( method )
-    [[FuseController singleton] 
-          performSelectorOnMainThread:method
-          withObject:activeBool
-          waitUntilDone:NO
-    ];
+    emulation_session_perform_on_main_thread(
+      [FuseController singleton], method, activeBool, NO );
 
   return 0;
 }

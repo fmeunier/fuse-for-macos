@@ -154,22 +154,22 @@
 -(int) zxmmcCommit;
 -(int) zxmmcEject;
 
--(void) mouseMoved:(NSEvent *)theEvent;
--(void) mouseDown:(NSEvent *)theEvent;
--(void) mouseUp:(NSEvent *)theEvent;
--(void) rightMouseDown:(NSEvent *)theEvent;
--(void) rightMouseUp:(NSEvent *)theEvent;
--(void) otherMouseDown:(NSEvent *)theEvent;
--(void) otherMouseUp:(NSEvent *)theEvent;
+-(oneway void) mouseMoved:(NSEvent *)theEvent;
+-(oneway void) mouseDown:(NSEvent *)theEvent;
+-(oneway void) mouseUp:(NSEvent *)theEvent;
+-(oneway void) rightMouseDown:(NSEvent *)theEvent;
+-(oneway void) rightMouseUp:(NSEvent *)theEvent;
+-(oneway void) otherMouseDown:(NSEvent *)theEvent;
+-(oneway void) otherMouseUp:(NSEvent *)theEvent;
 
 -(void) initKeyboard;
 -(void) modifierChange:(input_event_type)theType oldState:(BOOL)old newState:(BOOL)new;
--(void) flagsChanged:(NSEvent *)theEvent;
+-(oneway void) flagsChanged:(NSEvent *)theEvent;
 -(input_key) otherKeysymsRemap:(libspectrum_dword)ui_keysym inHash:(GHashTable*)hash;
--(void) keyboardReleaseAll;
+-(oneway void) keyboardReleaseAll;
 -(void) keyChange:(NSEvent *)theEvent type:(input_event_type)type;
--(void) keyDown:(NSEvent *)theEvent;
--(void) keyUp:(NSEvent *)theEvent;
+-(oneway void) keyDown:(NSEvent *)theEvent;
+-(oneway void) keyUp:(NSEvent *)theEvent;
 
 -(ui_confirm_save_t) confirmSave:(NSString*)theMessage;
 -(int) confirm:(NSString*)theMessage;

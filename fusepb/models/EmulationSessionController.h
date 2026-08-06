@@ -17,6 +17,12 @@
 
 @class Emulator;
 
+/* Route all emulator-to-AppKit selector calls through this function so they
+   also run while the main thread is waiting for an NSConnection reply. */
+void emulation_session_perform_on_main_thread( id target, SEL selector,
+                                               id object,
+                                               BOOL wait_until_done );
+
 @interface EmulationSessionController : NSObject
 {
   Emulator *real_emulator;

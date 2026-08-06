@@ -56,6 +56,11 @@ static int debugger_active;
 @implementation DebuggerController
 
 static DebuggerController *singleton = nil;
+
++ (void)createSingleton:(id)object
+{
+  [[self alloc] init];
+}
    
 + (DebuggerController *)singleton 
 {  
@@ -64,9 +69,8 @@ static DebuggerController *singleton = nil;
   if( [NSThread isMainThread] ) {
     [[self alloc] init];
   } else {
-    dispatch_sync( dispatch_get_main_queue(), ^{
-      [[self alloc] init];
-    });
+    emulation_session_perform_on_main_thread(
+      self, @selector(createSingleton:), nil, YES );
   }
 
   return singleton;
@@ -634,10 +638,9 @@ ui_debugger_activate( void )
 int
 ui_debugger_deactivate( int interruptable )
 {
-  [[DebuggerController singleton]
-      performSelectorOnMainThread:@selector(debugger_deactivate:)
-                       withObject:[NSNumber numberWithInt:interruptable]
-                    waitUntilDone:YES];
+  emulation_session_perform_on_main_thread(
+    [DebuggerController singleton], @selector(debugger_deactivate:),
+    [NSNumber numberWithInt:interruptable], YES );
 
   return 0;
 }
@@ -646,10 +649,8 @@ ui_debugger_deactivate( int interruptable )
 int
 ui_debugger_update( void )
 {
-  [[DebuggerController singleton]
-      performSelectorOnMainThread:@selector(debugger_update:)
-                       withObject:nil
-                    waitUntilDone:YES];
+  emulation_session_perform_on_main_thread(
+    [DebuggerController singleton], @selector(debugger_update:), nil, YES );
 
   return 0;
 }
@@ -657,20 +658,18 @@ ui_debugger_update( void )
 void
 ui_breakpoints_updated( void )
 {
-  [[DebuggerController singleton]
-      performSelectorOnMainThread:@selector(debugger_update_breakpoints)
-                       withObject:nil
-                    waitUntilDone:YES];
+  emulation_session_perform_on_main_thread(
+    [DebuggerController singleton], @selector(debugger_update_breakpoints),
+    nil, YES );
 }
 
 /* Set the disassembly to start at 'address' */
 int
 ui_debugger_disassemble( libspectrum_word address )
 {
-  [[DebuggerController singleton]
-      performSelectorOnMainThread:@selector(debugger_disassemble:)
-                       withObject:[NSNumber numberWithUnsignedShort:address]
-                    waitUntilDone:YES];
+  emulation_session_perform_on_main_thread(
+    [DebuggerController singleton], @selector(debugger_disassemble:),
+    [NSNumber numberWithUnsignedShort:address], YES );
 
   return 0;
 }

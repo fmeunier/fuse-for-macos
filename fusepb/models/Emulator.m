@@ -660,7 +660,7 @@ static Emulator *instance = nil;
   }
 }
 
--(void) mouseMoved:(NSEvent *)theEvent
+-(oneway void) mouseMoved:(NSEvent *)theEvent
 {
   if( ui_mouse_grabbed ) {
     int dx = [theEvent deltaX];
@@ -676,32 +676,32 @@ static Emulator *instance = nil;
   }
 }
 
--(void) mouseDown:(NSEvent *)theEvent
+-(oneway void) mouseDown:(NSEvent *)theEvent
 {
   ui_mouse_button( 1, 1 );
 }
 
--(void) mouseUp:(NSEvent *)theEvent
+-(oneway void) mouseUp:(NSEvent *)theEvent
 {
   ui_mouse_button( 1, 0 );
 }
 
--(void) rightMouseDown:(NSEvent *)theEvent
+-(oneway void) rightMouseDown:(NSEvent *)theEvent
 {
   ui_mouse_button( 3, 1 );
 }
 
--(void) rightMouseUp:(NSEvent *)theEvent
+-(oneway void) rightMouseUp:(NSEvent *)theEvent
 {
   ui_mouse_button( 3, 0 );
 }
 
--(void) otherMouseDown:(NSEvent *)theEvent
+-(oneway void) otherMouseDown:(NSEvent *)theEvent
 {
   ui_mouse_button( 2, 1 );
 }
 
--(void) otherMouseUp:(NSEvent *)theEvent
+-(oneway void) otherMouseUp:(NSEvent *)theEvent
 {
   ui_mouse_button( 2, 0 );
 }
@@ -736,7 +736,7 @@ static Emulator *instance = nil;
   }
 }
 
--(void) flagsChanged:(NSEvent *)theEvent
+-(oneway void) flagsChanged:(NSEvent *)theEvent
 {
   int flags = [theEvent modifierFlags];
   BOOL optDownNew = (flags & NSAlternateKeyMask) ? YES : NO;
@@ -810,7 +810,7 @@ static Emulator *instance = nil;
     }
 }
 
--(void) keyboardReleaseAll
+-(oneway void) keyboardReleaseAll
 {
   keyboard_release_all();
 }
@@ -846,12 +846,12 @@ static Emulator *instance = nil;
   }
 }
 
--(void) keyDown:(NSEvent *)theEvent
+-(oneway void) keyDown:(NSEvent *)theEvent
 {
   [self keyChange:theEvent type:INPUT_EVENT_KEYPRESS];
 }
 
--(void) keyUp:(NSEvent *)theEvent
+-(oneway void) keyUp:(NSEvent *)theEvent
 {
   [self keyChange:theEvent type:INPUT_EVENT_KEYRELEASE];
 }

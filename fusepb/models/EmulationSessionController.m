@@ -16,6 +16,25 @@
 
 static EmulationSessionController *instance = nil;
 
+void
+emulation_session_perform_on_main_thread( id target, SEL selector, id object,
+                                          BOOL wait_until_done )
+{
+  NSArray *modes;
+
+  /* A synchronous distributed-object call runs the main run loop in
+     NSConnectionReplyMode while it waits for the emulator. Include that mode
+     only for synchronous callbacks, avoiding unnecessary reentrancy for
+     asynchronous UI updates. */
+  if( wait_until_done ) {
+    modes = @[ NSRunLoopCommonModes, NSConnectionReplyMode ];
+  } else {
+    modes = @[ NSRunLoopCommonModes ];
+  }
+  [target performSelectorOnMainThread:selector withObject:object
+                        waitUntilDone:wait_until_done modes:modes];
+}
+
 static DisplayOverlayItemState
 overlay_item_state( ui_statusbar_state state )
 {
