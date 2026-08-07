@@ -937,4 +937,54 @@
   XCTAssertNil( [thumbnail bitmapImageRep] );
   XCTAssertNil( [thumbnail imageData] );
 }
+
+- (void)test_img_canvas_size_is_zero_without_screen
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSSize canvas_size;
+
+  /* PlusD/DISCiPLE .img disk image — disk types have no canvas */
+  thumbnail = [self thumbnailForFixture:@"tests/fixtures/empty.img"];
+  canvas_size = [thumbnail canvasSize];
+
+  XCTAssertEqual( canvas_size.width,  0.0 );
+  XCTAssertEqual( canvas_size.height, 0.0 );
+}
+
+- (void)test_img_file_produces_no_thumbnail
+{
+  FuseQuickLookThumbnail *thumbnail;
+
+  /* PlusD/DISCiPLE .img disk image — disk types yield no thumbnail */
+  thumbnail = [self thumbnailForFixture:@"tests/fixtures/empty.img"];
+
+  XCTAssertEqual( [thumbnail thumbnailKind], FUSE_QUICKLOOK_THUMBNAIL_NONE );
+  XCTAssertNil( [thumbnail bitmapImageRep] );
+  XCTAssertNil( [thumbnail imageData] );
+}
+
+- (void)test_opu_canvas_size_is_zero_without_screen
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSSize canvas_size;
+
+  /* Opus Discovery .opu disk image — disk types have no canvas */
+  thumbnail = [self thumbnailForFixture:@"tests/fixtures/empty.opu"];
+  canvas_size = [thumbnail canvasSize];
+
+  XCTAssertEqual( canvas_size.width,  0.0 );
+  XCTAssertEqual( canvas_size.height, 0.0 );
+}
+
+- (void)test_opu_file_produces_no_thumbnail
+{
+  FuseQuickLookThumbnail *thumbnail;
+
+  /* Opus Discovery .opu disk image — disk types yield no thumbnail */
+  thumbnail = [self thumbnailForFixture:@"tests/fixtures/empty.opu"];
+
+  XCTAssertEqual( [thumbnail thumbnailKind], FUSE_QUICKLOOK_THUMBNAIL_NONE );
+  XCTAssertNil( [thumbnail bitmapImageRep] );
+  XCTAssertNil( [thumbnail imageData] );
+}
 @end

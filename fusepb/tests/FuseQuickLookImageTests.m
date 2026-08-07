@@ -805,4 +805,60 @@
   XCTAssertEqual( canvas.width,  0.0 );
   XCTAssertEqual( canvas.height, 0.0 );
 }
+
+- (void)test_img_file_produces_no_image
+{
+  FuseQuickLookImage *image;
+
+  /* PlusD/DISCiPLE .img disk image — disk types yield no Quick Look image */
+  image = [[[FuseQuickLookImage alloc]
+             initWithContentsOfURL:[self fixtureURL:@"tests/fixtures/empty.img"]] autorelease];
+
+  XCTAssertEqual( [image libspectrumClass], LIBSPECTRUM_CLASS_DISK_PLUSD );
+  XCTAssertEqual( [image imageKind], FUSE_QUICKLOOK_IMAGE_NONE );
+  XCTAssertNil( [image imageData] );
+  XCTAssertNil( [image bitmapImageRep] );
+}
+
+- (void)test_img_canvas_size_is_zero
+{
+  FuseQuickLookImage *image;
+  NSSize canvas;
+
+  /* PlusD/DISCiPLE .img disk image — disk types have no canvas */
+  image = [[[FuseQuickLookImage alloc]
+             initWithContentsOfURL:[self fixtureURL:@"tests/fixtures/empty.img"]] autorelease];
+  canvas = [image canvasSize];
+
+  XCTAssertEqual( canvas.width,  0.0 );
+  XCTAssertEqual( canvas.height, 0.0 );
+}
+
+- (void)test_opu_file_produces_no_image
+{
+  FuseQuickLookImage *image;
+
+  /* Opus Discovery .opu disk image — disk types yield no Quick Look image */
+  image = [[[FuseQuickLookImage alloc]
+             initWithContentsOfURL:[self fixtureURL:@"tests/fixtures/empty.opu"]] autorelease];
+
+  XCTAssertEqual( [image libspectrumClass], LIBSPECTRUM_CLASS_DISK_OPUS );
+  XCTAssertEqual( [image imageKind], FUSE_QUICKLOOK_IMAGE_NONE );
+  XCTAssertNil( [image imageData] );
+  XCTAssertNil( [image bitmapImageRep] );
+}
+
+- (void)test_opu_canvas_size_is_zero
+{
+  FuseQuickLookImage *image;
+  NSSize canvas;
+
+  /* Opus Discovery .opu disk image — disk types have no canvas */
+  image = [[[FuseQuickLookImage alloc]
+             initWithContentsOfURL:[self fixtureURL:@"tests/fixtures/empty.opu"]] autorelease];
+  canvas = [image canvasSize];
+
+  XCTAssertEqual( canvas.width,  0.0 );
+  XCTAssertEqual( canvas.height, 0.0 );
+}
 @end
