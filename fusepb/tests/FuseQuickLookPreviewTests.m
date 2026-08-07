@@ -634,4 +634,50 @@
   XCTAssertNil( [preview contentTypeIdentifier] );
   XCTAssertNil( [preview previewData] );
 }
+
+- (void)test_img_without_screen_has_zero_content_size
+{
+  FuseQuickLookPreview *preview;
+
+  /* PlusD/DISCiPLE .img disk image — disk types have no content */
+  preview = [self previewForFixture:@"tests/fixtures/empty.img"];
+
+  XCTAssertEqual( [preview contentSize].width,  0.0 );
+  XCTAssertEqual( [preview contentSize].height, 0.0 );
+}
+
+- (void)test_img_file_produces_no_preview
+{
+  FuseQuickLookPreview *preview;
+
+  /* PlusD/DISCiPLE .img disk image — disk types yield no preview */
+  preview = [self previewForFixture:@"tests/fixtures/empty.img"];
+
+  XCTAssertEqual( [preview previewKind], FUSE_QUICKLOOK_PREVIEW_NONE );
+  XCTAssertNil( [preview contentTypeIdentifier] );
+  XCTAssertNil( [preview previewData] );
+}
+
+- (void)test_opu_without_screen_has_zero_content_size
+{
+  FuseQuickLookPreview *preview;
+
+  /* Opus Discovery .opu disk image — disk types have no content */
+  preview = [self previewForFixture:@"tests/fixtures/empty.opu"];
+
+  XCTAssertEqual( [preview contentSize].width,  0.0 );
+  XCTAssertEqual( [preview contentSize].height, 0.0 );
+}
+
+- (void)test_opu_file_produces_no_preview
+{
+  FuseQuickLookPreview *preview;
+
+  /* Opus Discovery .opu disk image — disk types yield no preview */
+  preview = [self previewForFixture:@"tests/fixtures/empty.opu"];
+
+  XCTAssertEqual( [preview previewKind], FUSE_QUICKLOOK_PREVIEW_NONE );
+  XCTAssertNil( [preview contentTypeIdentifier] );
+  XCTAssertNil( [preview previewData] );
+}
 @end
