@@ -987,4 +987,29 @@
   XCTAssertNil( [thumbnail bitmapImageRep] );
   XCTAssertNil( [thumbnail imageData] );
 }
+
+- (void)test_d80_canvas_size_is_zero_without_screen
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSSize canvas_size;
+
+  /* Didaktik D80/D40 disk image — disk types have no canvas */
+  thumbnail = [self thumbnailForFixture:@"tests/fixtures/empty.d80"];
+  canvas_size = [thumbnail canvasSize];
+
+  XCTAssertEqual( canvas_size.width,  0.0 );
+  XCTAssertEqual( canvas_size.height, 0.0 );
+}
+
+- (void)test_d80_file_produces_no_thumbnail
+{
+  FuseQuickLookThumbnail *thumbnail;
+
+  /* Didaktik D80/D40 disk image — disk types yield no thumbnail */
+  thumbnail = [self thumbnailForFixture:@"tests/fixtures/empty.d80"];
+
+  XCTAssertEqual( [thumbnail thumbnailKind], FUSE_QUICKLOOK_THUMBNAIL_NONE );
+  XCTAssertNil( [thumbnail bitmapImageRep] );
+  XCTAssertNil( [thumbnail imageData] );
+}
 @end

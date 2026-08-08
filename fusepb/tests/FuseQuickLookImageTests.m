@@ -861,4 +861,32 @@
   XCTAssertEqual( canvas.width,  0.0 );
   XCTAssertEqual( canvas.height, 0.0 );
 }
+
+- (void)test_d80_file_produces_no_image
+{
+  FuseQuickLookImage *image;
+
+  /* Didaktik D80/D40 disk image — disk types yield no Quick Look image */
+  image = [[[FuseQuickLookImage alloc]
+             initWithContentsOfURL:[self fixtureURL:@"tests/fixtures/empty.d80"]] autorelease];
+
+  XCTAssertEqual( [image libspectrumClass], LIBSPECTRUM_CLASS_DISK_DIDAKTIK );
+  XCTAssertEqual( [image imageKind], FUSE_QUICKLOOK_IMAGE_NONE );
+  XCTAssertNil( [image imageData] );
+  XCTAssertNil( [image bitmapImageRep] );
+}
+
+- (void)test_d80_canvas_size_is_zero
+{
+  FuseQuickLookImage *image;
+  NSSize canvas;
+
+  /* Didaktik D80/D40 disk image — disk types have no canvas */
+  image = [[[FuseQuickLookImage alloc]
+             initWithContentsOfURL:[self fixtureURL:@"tests/fixtures/empty.d80"]] autorelease];
+  canvas = [image canvasSize];
+
+  XCTAssertEqual( canvas.width,  0.0 );
+  XCTAssertEqual( canvas.height, 0.0 );
+}
 @end

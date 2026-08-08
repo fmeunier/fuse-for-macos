@@ -680,4 +680,27 @@
   XCTAssertNil( [preview contentTypeIdentifier] );
   XCTAssertNil( [preview previewData] );
 }
+
+- (void)test_d80_without_screen_has_zero_content_size
+{
+  FuseQuickLookPreview *preview;
+
+  /* Didaktik D80/D40 disk image — disk types have no content */
+  preview = [self previewForFixture:@"tests/fixtures/empty.d80"];
+
+  XCTAssertEqual( [preview contentSize].width,  0.0 );
+  XCTAssertEqual( [preview contentSize].height, 0.0 );
+}
+
+- (void)test_d80_file_produces_no_preview
+{
+  FuseQuickLookPreview *preview;
+
+  /* Didaktik D80/D40 disk image — disk types yield no preview */
+  preview = [self previewForFixture:@"tests/fixtures/empty.d80"];
+
+  XCTAssertEqual( [preview previewKind], FUSE_QUICKLOOK_PREVIEW_NONE );
+  XCTAssertNil( [preview contentTypeIdentifier] );
+  XCTAssertNil( [preview previewData] );
+}
 @end
