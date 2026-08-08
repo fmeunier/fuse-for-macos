@@ -1118,6 +1118,28 @@
 				<string>net.sourceforge.projects.fuse-emulator.MassStorage</string>
 			</array>
 			<key>UTTypeDescription</key>
+			<string>ZX Spectrum Didaktik Disk Image</string>
+			<key>UTTypeIconFile</key>
+			<string>blank</string>
+			<key>UTTypeIdentifier</key>
+			<string>net.sourceforge.projects.fuse-emulator.d80</string>
+			<key>UTTypeReferenceURL</key>
+			<string>http://www.worldofspectrum.org/faq/reference/formats.htm</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>d80</string>
+					<string>d40</string>
+				</array>
+			</dict>
+		</dict>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>net.sourceforge.projects.fuse-emulator.MassStorage</string>
+			</array>
+			<key>UTTypeDescription</key>
 			<string>ZX Spectrum Opus Discovery Disk Image</string>
 			<key>UTTypeIconFile</key>
 			<string>blank</string>

@@ -29,6 +29,7 @@
         <string>net.sourceforge.projects.fuse-emulator.Snapshot</string>
         <string>net.sourceforge.projects.fuse-emulator.Tape</string>
         <string>net.sourceforge.projects.fuse-emulator.csw</string>
+        <string>net.sourceforge.projects.fuse-emulator.d80</string>
         <string>net.sourceforge.projects.fuse-emulator.dck</string>
         <string>net.sourceforge.projects.fuse-emulator.dsk</string>
         <string>net.sourceforge.projects.fuse-emulator.hdf</string>
