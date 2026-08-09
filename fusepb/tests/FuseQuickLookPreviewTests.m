@@ -306,6 +306,34 @@
   XCTAssertNil( [preview previewData] );
 }
 
+- (void)test_tap_with_screen_content_size_is_standard_spectrum_resolution
+{
+  FuseQuickLookPreview *preview;
+
+  /* TAP file with a SCREEN$-sized data block — content size should be 256×192 */
+  preview = [self previewForFixture:@"tests/fixtures/tap-with-screen.tap"];
+
+  XCTAssertEqual( [preview contentSize].width,  256.0 );
+  XCTAssertEqual( [preview contentSize].height, 192.0 );
+}
+
+- (void)test_tap_with_screen_produces_png_preview
+{
+  FuseQuickLookPreview *preview;
+  NSData *preview_data;
+
+  /* TAP file containing a 6912-byte data block — standard Spectrum screen */
+  preview = [self previewForFixture:@"tests/fixtures/tap-with-screen.tap"];
+  preview_data = [preview previewData];
+
+  XCTAssertEqual( [preview previewKind], FUSE_QUICKLOOK_PREVIEW_IMAGE_DATA );
+  XCTAssertEqualObjects( [preview contentTypeIdentifier], @"public.png" );
+  XCTAssertEqual( [preview contentSize].width,  256.0 );
+  XCTAssertEqual( [preview contentSize].height, 192.0 );
+  XCTAssertNotNil( preview_data );
+  XCTAssertTrue( [preview_data length] > 4 );
+}
+
 - (void)test_pzx_without_screen_has_zero_content_size
 {
   FuseQuickLookPreview *preview;
