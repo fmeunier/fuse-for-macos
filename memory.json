@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-08-08T05:23:54Z",
-  "run_id": "31241542274",
+  "last_run": "2026-08-09T05:29:57Z",
+  "run_id": "31296749122",
   "backlog_cursor": {
     "issues": 0,
     "prs": 0
@@ -15,152 +15,30 @@
     "issue_58_transient_auth": "2026-07-29"
   },
   "prs_created": [
-    {
-      "branch": "repo-assist/feature-mdr-filenames-spotlight-2026-07-01-a9106be0241e7a35",
-      "title": "Spotlight: expose file names from MDR cartridges",
-      "pr_number": 47,
-      "status": "merged"
-    },
-    {
-      "branch": "repo-assist/eng-make-help-2026-07-02-3b06cac5efd9312f",
-      "title": "Add make help target",
-      "pr_number": 50,
-      "status": "merged"
-    },
-    {
-      "branch": "repo-assist/feature-tape-filenames-spotlight-2026-07-02-cebdfcfd00d759a8",
-      "title": "Spotlight: extract FileNames from ROM header blocks in tape files",
-      "pr_number": 51,
-      "status": "merged"
-    },
-    {
-      "branch": "repo-assist/feature-trd-filenames-spotlight-2026-07-04-2d0102e6416c739c",
-      "title": "Spotlight: extract FileNames from TR-DOS disk image catalog",
-      "pr_number": 53,
-      "status": "merged"
-    },
-    {
-      "branch": "repo-assist/feature-dsk-metadata-spotlight-2026-07-05-57f120b-073a63483620327f",
-      "title": "Spotlight: extract disk geometry from Plus3 DSK/EDSK disk images",
-      "pr_number": 54,
-      "status": "merged"
-    },
-    {
-      "branch": "repo-assist/test-pzx-and-tap-canvas-2026-07-06-94ababc0cc52104e",
-      "title": "Add missing TAP canvas-size and PZX Quick Look tests",
-      "pr_number": 55,
-      "status": "merged"
-    },
-    {
-      "branch": "repo-assist/improve-scl-filename-extraction-2026-07-28",
-      "title": "Spotlight: extract FileNames from SCL disk archives",
-      "pr_number": 59,
-      "status": "merged"
-    },
-    {
-      "branch": "repo-assist/test-trd-dsk-scl-quicklook-2026-07-29",
-      "title": "Add Quick Look null-case tests for TRD, SCL, and DSK disk images",
-      "pr_number": 60,
-      "status": "merged"
-    },
-    {
-      "branch": "repo-assist/test-z80-and-invalid-szx-2026-07-30-03a5857c674785cd",
-      "title": "Add Quick Look tests for empty.z80 and invalid.szx fixtures",
-      "pr_number": 61,
-      "status": "open",
-      "created_at": "2026-07-30"
-    },
-    {
-      "branch": "repo-assist/improve-hdf-spotlight-2026-07-31-b5d09fc1e41897ed",
-      "title": "Spotlight: extract CHS geometry from HDF hard disk images",
-      "pr_number": 62,
-      "status": "open",
-      "created_at": "2026-07-31"
-    },
-    {
-      "branch": "repo-assist/improve-dck-spotlight-2026-08-01-52860246567e2df6",
-      "title": "Spotlight: expose mapped bank count from Timex DCK cartridges",
-      "pr_number": 63,
-      "status": "open",
-      "created_at": "2026-08-01"
-    },
-    {
-      "branch": "repo-assist/test-csw-rzx-quicklook-2026-08-01-c804a1c5cc28aeac",
-      "title": "Add Quick Look tests for CSW tape and RZX recording formats",
-      "pr_number": 64,
-      "status": "open",
-      "created_at": "2026-08-01"
-    },
-    {
-      "branch": "repo-assist/improve-disk-spotlight-stubs-2026-08-02-523cafd0875cafdf",
-      "title": "Spotlight: implement Opus, Didaktik, PlusD disk and IF2 ROM metadata stubs",
-      "pr_number": 66,
-      "status": "open",
-      "created_at": "2026-08-02"
-    },
-    {
-      "branch": "repo-assist/test-hdf-dck-opd-mgt-quicklook-2026-08-05",
-      "title": "Add Quick Look null-case tests for HDF, DCK, OPD, and MGT formats",
-      "pr_number": 69,
-      "status": "open",
-      "created_at": "2026-08-05"
-    },
-    {
-      "branch": "repo-assist/perf-imageRep-row-cache-2026-08-06-76cf85079b77e6af",
-      "title": "JWSpectrumScreen: hoist y-dependent offsets out of imageRep inner loop",
-      "pr_number": 70,
-      "status": "open",
-      "created_at": "2026-08-06"
-    },
-    {
-      "branch": "repo-assist/test-img-opu-quicklook-2026-08-07",
-      "title": "Add Quick Look null-case tests for PlusD .img and Opus .opu disk formats",
-      "pr_number": "TBD",
-      "status": "merged",
-      "created_at": "2026-08-07"
-    },
-    {
-      "branch": "repo-assist/eng-d80-uti-registration-2026-08-08",
-      "title": "Register Didaktik d80/d40 UTI across importer, Quick Look, and schema",
-      "pr_number": "TBD",
-      "status": "open",
-      "created_at": "2026-08-08"
-    },
-    {
-      "branch": "repo-assist/test-d80-quicklook-2026-08-08",
-      "title": "Add Quick Look null-case tests for Didaktik D80/D40 disk images",
-      "pr_number": "TBD",
-      "status": "open",
-      "created_at": "2026-08-08"
-    }
+    {"branch":"repo-assist/feature-mdr-filenames-spotlight-2026-07-01-a9106be0241e7a35","title":"Spotlight: expose file names from MDR cartridges","pr_number":47,"status":"merged"},
+    {"branch":"repo-assist/eng-make-help-2026-07-02-3b06cac5efd9312f","title":"Add make help target","pr_number":50,"status":"merged"},
+    {"branch":"repo-assist/feature-tape-filenames-spotlight-2026-07-02-cebdfcfd00d759a8","title":"Spotlight: extract FileNames from ROM header blocks in tape files","pr_number":51,"status":"merged"},
+    {"branch":"repo-assist/feature-trd-filenames-spotlight-2026-07-04-2d0102e6416c739c","title":"Spotlight: extract FileNames from TR-DOS disk image catalog","pr_number":53,"status":"merged"},
+    {"branch":"repo-assist/feature-dsk-metadata-spotlight-2026-07-05-57f120b-073a63483620327f","title":"Spotlight: extract disk geometry from Plus3 DSK/EDSK disk images","pr_number":54,"status":"merged"},
+    {"branch":"repo-assist/test-pzx-and-tap-canvas-2026-07-06-94ababc0cc52104e","title":"Add missing TAP canvas-size and PZX Quick Look tests","pr_number":55,"status":"merged"},
+    {"branch":"repo-assist/improve-scl-filename-extraction-2026-07-28","title":"Spotlight: extract FileNames from SCL disk archives","pr_number":59,"status":"merged"},
+    {"branch":"repo-assist/test-trd-dsk-scl-quicklook-2026-07-29","title":"Add Quick Look null-case tests for TRD, SCL, and DSK disk images","pr_number":60,"status":"merged"},
+    {"branch":"repo-assist/test-z80-and-invalid-szx-2026-07-30-03a5857c674785cd","title":"Add Quick Look tests for empty.z80 and invalid.szx fixtures","pr_number":61,"status":"open","created_at":"2026-07-30"},
+    {"branch":"repo-assist/improve-hdf-spotlight-2026-07-31-b5d09fc1e41897ed","title":"Spotlight: extract CHS geometry from HDF hard disk images","pr_number":62,"status":"open","created_at":"2026-07-31"},
+    {"branch":"repo-assist/improve-dck-spotlight-2026-08-01-52860246567e2df6","title":"Spotlight: expose mapped bank count from Timex DCK cartridges","pr_number":63,"status":"open","created_at":"2026-08-01"},
+    {"branch":"repo-assist/test-csw-rzx-quicklook-2026-08-01-c804a1c5cc28aeac","title":"Add Quick Look tests for CSW tape and RZX recording formats","pr_number":64,"status":"open","created_at":"2026-08-01"},
+    {"branch":"repo-assist/improve-disk-spotlight-stubs-2026-08-02-523cafd0875cafdf","title":"Spotlight: implement Opus, Didaktik, PlusD disk and IF2 ROM metadata stubs","pr_number":66,"status":"open","created_at":"2026-08-02"},
+    {"branch":"repo-assist/test-hdf-dck-opd-mgt-quicklook-2026-08-05","title":"Add Quick Look null-case tests for HDF, DCK, OPD, and MGT formats","pr_number":69,"status":"open","created_at":"2026-08-05"},
+    {"branch":"repo-assist/perf-imageRep-row-cache-2026-08-06-76cf85079b77e6af","title":"JWSpectrumScreen: hoist y-dependent offsets out of imageRep inner loop","pr_number":70,"status":"open","created_at":"2026-08-06","rebased_at":"2026-08-09"},
+    {"branch":"repo-assist/test-img-opu-quicklook-2026-08-07","title":"Add Quick Look null-case tests for PlusD .img and Opus .opu disk formats","pr_number":"merged","status":"merged","created_at":"2026-08-07"},
+    {"branch":"repo-assist/eng-d80-uti-registration-2026-08-08-1d43a03d6b0c5e81","title":"Register Didaktik d80/d40 UTI across importer, Quick Look, and schema","pr_number":72,"status":"open","created_at":"2026-08-08"},
+    {"branch":"repo-assist/test-d80-quicklook-2026-08-08-4e46ceb4c8599c3b","title":"Add Quick Look null-case tests for Didaktik D80/D40 disk images","pr_number":73,"status":"open","created_at":"2026-08-08"},
+    {"branch":"repo-assist/test-tap-with-screen-2026-08-09","title":"Add Quick Look positive-path tests for TAP files with a SCREEN$ block","pr_number":"TBD","status":"open","created_at":"2026-08-09"}
   ],
   "monthly_activity_issue": 65,
   "july_activity_issue_closed": 48,
   "checked_off_by_user": [
-    "pr_15",
-    "issue_17",
-    "issue_16",
-    "pr_18",
-    "pr_22",
-    "pr_23",
-    "pr_25",
-    "pr_26",
-    "pr_27",
-    "pr_28",
-    "pr_29",
-    "pr_8",
-    "pr_32",
-    "pr_33",
-    "pr_35",
-    "pr_37",
-    "pr_38",
-    "issue_34",
-    "check_comment_pr8",
-    "pr_20",
-    "pr_mdr_positive_tests",
-    "pr_36",
-    "pr_59",
-    "pr_60"
+    "pr_15","issue_17","issue_16","pr_18","pr_22","pr_23","pr_25","pr_26","pr_27","pr_28","pr_29","pr_8","pr_32","pr_33","pr_35","pr_37","pr_38","issue_34","check_comment_pr8","pr_20","pr_mdr_positive_tests","pr_36","pr_59","pr_60"
   ],
-  "notes": "August 2026. PRs #70 (perf imageRep row-cache), and new ones from this run: d80 UTI registration + d80 Quick Look tests. Tasks 4 + 5 done. Task 3 no-op (no fixable issues)."
+  "notes": "August 2026. Task 6: rebased PR #70 onto master. Task 3→2→1: no fixable issues, no user issues, all labelled. Task 8→9: added TAP positive-path tests (6 tests + tap-with-screen.tap fixture). Open PRs: #61,#62,#63,#64,#66,#69,#70,#72,#73 + new tap test PR."
 }
