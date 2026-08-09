@@ -473,6 +473,34 @@
   XCTAssertNil( [thumbnail imageData] );
 }
 
+- (void)test_tap_with_screen_produces_bitmap_thumbnail
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSBitmapImageRep *bitmap;
+
+  /* TAP file containing a 6912-byte data block — standard Spectrum screen */
+  thumbnail = [self thumbnailForFixture:@"tests/fixtures/tap-with-screen.tap"];
+  bitmap = [thumbnail bitmapImageRep];
+
+  XCTAssertEqual( [thumbnail thumbnailKind], FUSE_QUICKLOOK_THUMBNAIL_BITMAP );
+  XCTAssertNotNil( bitmap );
+  XCTAssertEqual( [bitmap pixelsWide], 256 );
+  XCTAssertEqual( [bitmap pixelsHigh], 192 );
+}
+
+- (void)test_tap_with_screen_canvas_size_is_standard_spectrum_resolution
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSSize canvas_size;
+
+  /* TAP file with a SCREEN$-sized data block — canvas should be standard 256×192 */
+  thumbnail = [self thumbnailForFixture:@"tests/fixtures/tap-with-screen.tap"];
+  canvas_size = [thumbnail canvasSize];
+
+  XCTAssertEqual( canvas_size.width,  256.0 );
+  XCTAssertEqual( canvas_size.height, 192.0 );
+}
+
 - (void)test_pzx_canvas_size_is_zero_without_screen
 {
   FuseQuickLookThumbnail *thumbnail;
