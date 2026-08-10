@@ -29,6 +29,7 @@ on:
     pull-requests: read
   steps:
     - id: check
+      continue-on-error: true
       env:
         GH_TOKEN: ${{ github.token }}
       run: |
