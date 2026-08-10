@@ -1040,4 +1040,60 @@
   XCTAssertNil( [thumbnail bitmapImageRep] );
   XCTAssertNil( [thumbnail imageData] );
 }
+
+- (void)test_timex_hicolour_scr_produces_bitmap_thumbnail
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSBitmapImageRep *bitmap;
+
+  /* Timex HiColour .scr (12288 bytes) — renders as a 256x192 bitmap thumbnail */
+  thumbnail = [self thumbnailForFixture:@"tests/fixtures/timex-hicolour.scr"];
+  bitmap = [thumbnail bitmapImageRep];
+
+  XCTAssertEqual( [thumbnail thumbnailKind], FUSE_QUICKLOOK_THUMBNAIL_BITMAP );
+  XCTAssertNotNil( bitmap );
+  XCTAssertEqual( [bitmap pixelsWide], 256 );
+  XCTAssertEqual( [bitmap pixelsHigh], 192 );
+}
+
+- (void)test_timex_hicolour_scr_canvas_size_is_standard_spectrum_resolution
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSSize canvas_size;
+
+  /* Timex HiColour .scr (12288 bytes) — canvas is 256x192 */
+  thumbnail = [self thumbnailForFixture:@"tests/fixtures/timex-hicolour.scr"];
+  canvas_size = [thumbnail canvasSize];
+
+  XCTAssertEqual( canvas_size.width,  256.0 );
+  XCTAssertEqual( canvas_size.height, 192.0 );
+}
+
+- (void)test_timex_hires_scr_produces_bitmap_thumbnail
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSBitmapImageRep *bitmap;
+
+  /* Timex HiRes .scr (12289 bytes) — renders as a 512x384 bitmap thumbnail */
+  thumbnail = [self thumbnailForFixture:@"tests/fixtures/timex-hires.scr"];
+  bitmap = [thumbnail bitmapImageRep];
+
+  XCTAssertEqual( [thumbnail thumbnailKind], FUSE_QUICKLOOK_THUMBNAIL_BITMAP );
+  XCTAssertNotNil( bitmap );
+  XCTAssertEqual( [bitmap pixelsWide], 512 );
+  XCTAssertEqual( [bitmap pixelsHigh], 384 );
+}
+
+- (void)test_timex_hires_scr_canvas_size_is_hires_resolution
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSSize canvas_size;
+
+  /* Timex HiRes .scr (12289 bytes) — canvas is 512x384 */
+  thumbnail = [self thumbnailForFixture:@"tests/fixtures/timex-hires.scr"];
+  canvas_size = [thumbnail canvasSize];
+
+  XCTAssertEqual( canvas_size.width,  512.0 );
+  XCTAssertEqual( canvas_size.height, 384.0 );
+}
 @end

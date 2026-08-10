@@ -921,4 +921,66 @@
   XCTAssertEqual( canvas.width,  0.0 );
   XCTAssertEqual( canvas.height, 0.0 );
 }
+
+- (void)test_timex_hicolour_scr_produces_bitmap_image
+{
+  FuseQuickLookImage *image;
+  NSBitmapImageRep *bitmap;
+
+  /* Timex HiColour .scr (12288 bytes) — two 6144-byte planes; renders as 256x192 */
+  image = [[[FuseQuickLookImage alloc]
+             initWithContentsOfURL:[self fixtureURL:@"tests/fixtures/timex-hicolour.scr"]] autorelease];
+  bitmap = [image bitmapImageRep];
+
+  XCTAssertEqual( [image libspectrumClass], LIBSPECTRUM_CLASS_SCREENSHOT );
+  XCTAssertEqual( [image imageKind], FUSE_QUICKLOOK_IMAGE_SCR );
+  XCTAssertNotNil( bitmap );
+  XCTAssertEqual( [bitmap pixelsWide], 256 );
+  XCTAssertEqual( [bitmap pixelsHigh], 192 );
+}
+
+- (void)test_timex_hicolour_scr_canvas_size_is_standard_spectrum_resolution
+{
+  FuseQuickLookImage *image;
+  NSSize canvas;
+
+  /* Timex HiColour .scr (12288 bytes) — same canvas dimensions as a standard 256x192 screen */
+  image = [[[FuseQuickLookImage alloc]
+             initWithContentsOfURL:[self fixtureURL:@"tests/fixtures/timex-hicolour.scr"]] autorelease];
+  canvas = [image canvasSize];
+
+  XCTAssertEqual( canvas.width,  256.0 );
+  XCTAssertEqual( canvas.height, 192.0 );
+}
+
+- (void)test_timex_hires_scr_produces_bitmap_image
+{
+  FuseQuickLookImage *image;
+  NSBitmapImageRep *bitmap;
+
+  /* Timex HiRes .scr (12289 bytes) — 512x384 mono display with one colour-mode byte */
+  image = [[[FuseQuickLookImage alloc]
+             initWithContentsOfURL:[self fixtureURL:@"tests/fixtures/timex-hires.scr"]] autorelease];
+  bitmap = [image bitmapImageRep];
+
+  XCTAssertEqual( [image libspectrumClass], LIBSPECTRUM_CLASS_SCREENSHOT );
+  XCTAssertEqual( [image imageKind], FUSE_QUICKLOOK_IMAGE_SCR );
+  XCTAssertNotNil( bitmap );
+  XCTAssertEqual( [bitmap pixelsWide], 512 );
+  XCTAssertEqual( [bitmap pixelsHigh], 384 );
+}
+
+- (void)test_timex_hires_scr_canvas_size_is_hires_resolution
+{
+  FuseQuickLookImage *image;
+  NSSize canvas;
+
+  /* Timex HiRes .scr (12289 bytes) — canvas is 512x384 (double the standard height) */
+  image = [[[FuseQuickLookImage alloc]
+             initWithContentsOfURL:[self fixtureURL:@"tests/fixtures/timex-hires.scr"]] autorelease];
+  canvas = [image canvasSize];
+
+  XCTAssertEqual( canvas.width,  512.0 );
+  XCTAssertEqual( canvas.height, 384.0 );
+}
 @end
