@@ -731,4 +731,27 @@
   XCTAssertNil( [preview contentTypeIdentifier] );
   XCTAssertNil( [preview previewData] );
 }
+
+- (void)test_rom_without_screen_has_zero_content_size
+{
+  FuseQuickLookPreview *preview;
+
+  /* Interface 2 ROM cartridge image — cartridge types have no content */
+  preview = [self previewForFixture:@"tests/fixtures/empty.rom"];
+
+  XCTAssertEqual( [preview contentSize].width,  0.0 );
+  XCTAssertEqual( [preview contentSize].height, 0.0 );
+}
+
+- (void)test_rom_file_produces_no_preview
+{
+  FuseQuickLookPreview *preview;
+
+  /* Interface 2 ROM cartridge image — cartridge types yield no preview */
+  preview = [self previewForFixture:@"tests/fixtures/empty.rom"];
+
+  XCTAssertEqual( [preview previewKind], FUSE_QUICKLOOK_PREVIEW_NONE );
+  XCTAssertNil( [preview contentTypeIdentifier] );
+  XCTAssertNil( [preview previewData] );
+}
 @end

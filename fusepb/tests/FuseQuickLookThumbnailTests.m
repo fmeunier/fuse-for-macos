@@ -1040,4 +1040,29 @@
   XCTAssertNil( [thumbnail bitmapImageRep] );
   XCTAssertNil( [thumbnail imageData] );
 }
+
+- (void)test_rom_canvas_size_is_zero_without_screen
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSSize canvas_size;
+
+  /* Interface 2 ROM cartridge image — cartridge types have no canvas */
+  thumbnail = [self thumbnailForFixture:@"tests/fixtures/empty.rom"];
+  canvas_size = [thumbnail canvasSize];
+
+  XCTAssertEqual( canvas_size.width,  0.0 );
+  XCTAssertEqual( canvas_size.height, 0.0 );
+}
+
+- (void)test_rom_file_produces_no_thumbnail
+{
+  FuseQuickLookThumbnail *thumbnail;
+
+  /* Interface 2 ROM cartridge image — cartridge types yield no thumbnail */
+  thumbnail = [self thumbnailForFixture:@"tests/fixtures/empty.rom"];
+
+  XCTAssertEqual( [thumbnail thumbnailKind], FUSE_QUICKLOOK_THUMBNAIL_NONE );
+  XCTAssertNil( [thumbnail bitmapImageRep] );
+  XCTAssertNil( [thumbnail imageData] );
+}
 @end

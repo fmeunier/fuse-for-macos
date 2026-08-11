@@ -921,4 +921,32 @@
   XCTAssertEqual( canvas.width,  0.0 );
   XCTAssertEqual( canvas.height, 0.0 );
 }
+
+- (void)test_rom_file_produces_no_image
+{
+  FuseQuickLookImage *image;
+
+  /* Interface 2 ROM cartridge image — cartridge types yield no Quick Look image */
+  image = [[[FuseQuickLookImage alloc]
+             initWithContentsOfURL:[self fixtureURL:@"tests/fixtures/empty.rom"]] autorelease];
+
+  XCTAssertEqual( [image libspectrumClass], LIBSPECTRUM_CLASS_CARTRIDGE_IF2 );
+  XCTAssertEqual( [image imageKind], FUSE_QUICKLOOK_IMAGE_NONE );
+  XCTAssertNil( [image imageData] );
+  XCTAssertNil( [image bitmapImageRep] );
+}
+
+- (void)test_rom_canvas_size_is_zero
+{
+  FuseQuickLookImage *image;
+  NSSize canvas;
+
+  /* Interface 2 ROM cartridge image — cartridge types have no canvas */
+  image = [[[FuseQuickLookImage alloc]
+             initWithContentsOfURL:[self fixtureURL:@"tests/fixtures/empty.rom"]] autorelease];
+  canvas = [image canvasSize];
+
+  XCTAssertEqual( canvas.width,  0.0 );
+  XCTAssertEqual( canvas.height, 0.0 );
+}
 @end
