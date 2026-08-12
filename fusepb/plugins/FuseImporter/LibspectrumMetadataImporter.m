@@ -225,6 +225,7 @@ process_tape
 
   error = libspectrum_tape_read( tape, buffer, length, type, fsrep );
   if( error != LIBSPECTRUM_ERROR_NONE ) {
+    libspectrum_tape_free( tape );
     return NO;
   }
 
@@ -242,7 +243,7 @@ process_tape
     error =
       libspectrum_tape_block_description( description, DESCRIPTION_LENGTH,
 					  block );
-    if( error ) return NO;
+    if( error ) { libspectrum_tape_free( tape ); return NO; }
 
     switch( libspectrum_tape_block_type( block ) ) {
 

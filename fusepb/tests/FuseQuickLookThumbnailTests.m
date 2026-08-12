@@ -1121,4 +1121,32 @@
   XCTAssertNil( [thumbnail bitmapImageRep] );
   XCTAssertNil( [thumbnail imageData] );
 }
+
+- (void)test_tzx_turbo_block_with_screen_produces_bitmap_thumbnail
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSBitmapImageRep *bitmap;
+
+  /* TZX with a turbo-speed block containing a SCREEN$-sized payload */
+  thumbnail = [self thumbnailForFixture:@"tests/fixtures/tzx-with-turbo-screen.tzx"];
+  bitmap = [thumbnail bitmapImageRep];
+
+  XCTAssertEqual( [thumbnail thumbnailKind], FUSE_QUICKLOOK_THUMBNAIL_BITMAP );
+  XCTAssertNotNil( bitmap );
+  XCTAssertEqual( [bitmap pixelsWide], 256 );
+  XCTAssertEqual( [bitmap pixelsHigh], 192 );
+}
+
+- (void)test_tzx_turbo_block_with_screen_canvas_size_is_standard_spectrum_resolution
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSSize canvas_size;
+
+  /* TZX turbo block with SCREEN$-sized payload — canvas must be 256×192 */
+  thumbnail = [self thumbnailForFixture:@"tests/fixtures/tzx-with-turbo-screen.tzx"];
+  canvas_size = [thumbnail canvasSize];
+
+  XCTAssertEqual( canvas_size.width,  256.0 );
+  XCTAssertEqual( canvas_size.height, 192.0 );
+}
 @end

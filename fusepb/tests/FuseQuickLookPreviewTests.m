@@ -792,4 +792,32 @@
   XCTAssertNil( [preview contentTypeIdentifier] );
   XCTAssertNil( [preview previewData] );
 }
+
+- (void)test_tzx_turbo_block_with_screen_content_size_is_standard_spectrum_resolution
+{
+  FuseQuickLookPreview *preview;
+
+  /* TZX with a turbo-speed block containing a SCREEN$-sized payload */
+  preview = [self previewForFixture:@"tests/fixtures/tzx-with-turbo-screen.tzx"];
+
+  XCTAssertEqual( [preview contentSize].width,  256.0 );
+  XCTAssertEqual( [preview contentSize].height, 192.0 );
+}
+
+- (void)test_tzx_turbo_block_with_screen_produces_png_preview
+{
+  FuseQuickLookPreview *preview;
+  NSData *preview_data;
+
+  /* TZX turbo block with SCREEN$-sized payload — renders as a 256x192 PNG preview */
+  preview = [self previewForFixture:@"tests/fixtures/tzx-with-turbo-screen.tzx"];
+  preview_data = [preview previewData];
+
+  XCTAssertEqual( [preview previewKind], FUSE_QUICKLOOK_PREVIEW_IMAGE_DATA );
+  XCTAssertEqualObjects( [preview contentTypeIdentifier], @"public.png" );
+  XCTAssertEqual( [preview contentSize].width,  256.0 );
+  XCTAssertEqual( [preview contentSize].height, 192.0 );
+  XCTAssertNotNil( preview_data );
+  XCTAssertTrue( [preview_data length] > 4 );
+}
 @end

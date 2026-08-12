@@ -216,7 +216,7 @@ mmap_file( const char *filename, unsigned char **buffer, size_t *length )
 
   error = libspectrum_tape_read( tape, buffer, length, LIBSPECTRUM_ID_UNKNOWN,
                                  [filename UTF8String] );
-  if( error ) { return; }
+  if( error ) { libspectrum_tape_free( tape ); return; }
 
   block = libspectrum_tape_iterator_init( &iterator, tape );
 

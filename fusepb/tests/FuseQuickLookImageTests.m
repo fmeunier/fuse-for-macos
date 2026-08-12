@@ -1011,4 +1011,37 @@
   XCTAssertEqual( canvas.width,  0.0 );
   XCTAssertEqual( canvas.height, 0.0 );
 }
+
+- (void)test_tzx_turbo_block_with_screen_produces_bitmap_image
+{
+  FuseQuickLookImage *image;
+  NSBitmapImageRep *bitmap;
+
+  /* TZX with a turbo-speed (0x11) block containing a SCREEN$-sized payload —
+     the TURBO/DATA_BLOCK path in process_tape must extract it */
+  image = [[[FuseQuickLookImage alloc]
+             initWithContentsOfURL:[self fixtureURL:@"tests/fixtures/tzx-with-turbo-screen.tzx"]] autorelease];
+  bitmap = [image bitmapImageRep];
+
+  XCTAssertEqual( [image libspectrumClass], LIBSPECTRUM_CLASS_TAPE );
+  XCTAssertEqual( [image imageKind], FUSE_QUICKLOOK_IMAGE_SCR );
+  XCTAssertNotNil( bitmap );
+  XCTAssertEqual( [bitmap pixelsWide], 256 );
+  XCTAssertEqual( [bitmap pixelsHigh], 192 );
+}
+
+- (void)test_tzx_turbo_block_with_screen_canvas_size_is_standard_spectrum_resolution
+{
+  FuseQuickLookImage *image;
+  NSSize canvas;
+
+  /* TZX turbo block with SCREEN$-sized payload — canvas must be 256×192 */
+  image = [[[FuseQuickLookImage alloc]
+             initWithContentsOfURL:[self fixtureURL:@"tests/fixtures/tzx-with-turbo-screen.tzx"]] autorelease];
+  canvas = [image canvasSize];
+
+  XCTAssertEqual( [image libspectrumClass], LIBSPECTRUM_CLASS_TAPE );
+  XCTAssertEqual( canvas.width,  256.0 );
+  XCTAssertEqual( canvas.height, 192.0 );
+}
 @end
