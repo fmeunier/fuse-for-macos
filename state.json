@@ -1,13 +1,13 @@
 {
-  "last_run": "2026-08-11T05:32:22Z",
-  "last_run_id": "31461888443",
+  "last_run": "2026-08-12T05:42:55Z",
+  "last_run_id": "31567369451",
   "monthly_summary_issue": 65,
   "comments_made": {
     "75": "2026-08-10T05:50:34Z"
   },
-  "open_repo_assist_prs": [70, 76],
+  "open_repo_assist_prs": [70, 78],
   "fix_attempts": {},
   "backlog_cursor": 0,
-  "notes": "All open issues labelled. No user issues to comment on. PR #70 has submodule artefact - needs rebase by maintainer. PR #76 (Timex SCR tests) pending review. PR #39 (Copilot) stale since June 27.",
+  "notes": "All open issues labelled. No user issues to comment on. PR #70 has submodule artefact - needs rebase by maintainer. PR #78 (TZX turbo tests + tape leak fixes) pending review. PR #39 (Copilot) stale since June 27.",
   "checked_off_by_user": []
 }

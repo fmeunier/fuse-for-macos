@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-08-10T05:41:14Z",
-  "run_id": "31359301009",
+  "last_run": "2026-08-12T05:42:55Z",
+  "run_id": "31567369451",
   "backlog_cursor": {
     "issues": 0,
     "prs": 0
@@ -34,12 +34,14 @@
     {"branch":"repo-assist/eng-d80-uti-registration-2026-08-08-1d43a03d6b0c5e81","title":"Register Didaktik d80/d40 UTI across importer, Quick Look, and schema","pr_number":72,"status":"merged"},
     {"branch":"repo-assist/test-d80-quicklook-2026-08-08-4e46ceb4c8599c3b","title":"Add Quick Look null-case tests for Didaktik D80/D40 disk images","pr_number":73,"status":"merged"},
     {"branch":"repo-assist/test-tap-with-screen-2026-08-09","title":"Add Quick Look positive-path tests for TAP files with a SCREEN$ block","pr_number":74,"status":"merged"},
-    {"branch":"repo-assist/test-timex-scr-modes-2026-08-10","title":"Add Quick Look tests for Timex HiColour and HiRes SCR screen modes","pr_number":"TBD","status":"open","created_at":"2026-08-10"}
+    {"branch":"repo-assist/test-timex-scr-modes-2026-08-10","title":"Add Quick Look tests for Timex HiColour and HiRes SCR screen modes","pr_number":76,"status":"merged"},
+    {"branch":"repo-assist/test-if2-rom-format-2026-08-11-f71003c6038c437e","title":"Add Quick Look null-case tests for IF2 ROM cartridge format","pr_number":77,"status":"merged"},
+    {"branch":"repo-assist/test-tzx-turbo-screen-fix-tape-leak-2026-08-12","title":"Add TZX turbo-block screen tests and fix tape memory leaks","pr_number":78,"status":"open","created_at":"2026-08-12"}
   ],
   "monthly_activity_issue": 65,
   "july_activity_issue_closed": 48,
   "checked_off_by_user": [
     "pr_15","issue_17","issue_16","pr_18","pr_22","pr_23","pr_25","pr_26","pr_27","pr_28","pr_29","pr_8","pr_32","pr_33","pr_35","pr_37","pr_38","issue_34","check_comment_pr8","pr_20","pr_mdr_positive_tests","pr_36","pr_59","pr_60"
   ],
-  "notes": "August 2026. Task 3→2: commented on issue #75 explaining root cause of workflow failure (submodule artefact in PR #70 branch). Task 5: created PR for Timex HiColour/HiRes SCR tests (10 new tests + 2 fixtures). Open PRs: #70 (needs rebase to fix submodule artefact), #39 (copilot pre_activation fix). Most recent merges: #71,#72,#73,#74."
+  "notes": "August 2026. Task 9: created PR #78 with 6 TZX turbo-block screen tests + tzx-with-turbo-screen.tzx fixture + 2 libspectrum_tape leak fixes. Open PRs: #70 (needs rebase to fix submodule artefact), #39 (copilot pre_activation fix), #78 (new this run)."
 }
