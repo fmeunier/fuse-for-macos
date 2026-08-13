@@ -395,6 +395,35 @@
   XCTAssertEqual( canvas_size.height, 192.0 );
 }
 
+- (void)test_tc2048_szx_snapshot_produces_bitmap_thumbnail
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSBitmapImageRep *bitmap;
+
+  /* TC2048 SZX snapshot — exercises process_snap_timex via snapshot file.
+     With all-zero registers the standard 256x192 screen is produced. */
+  thumbnail = [self thumbnailForFixture:@"tests/fixtures/tc2048.szx"];
+  bitmap = [thumbnail bitmapImageRep];
+
+  XCTAssertEqual( [thumbnail thumbnailKind], FUSE_QUICKLOOK_THUMBNAIL_BITMAP );
+  XCTAssertNotNil( bitmap );
+  XCTAssertEqual( [bitmap pixelsWide], 256 );
+  XCTAssertEqual( [bitmap pixelsHigh], 192 );
+}
+
+- (void)test_tc2048_szx_snapshot_canvas_size_is_standard_spectrum_resolution
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSSize canvas_size;
+
+  /* TC2048 SZX snapshot — canvas size should be the standard 256x192 */
+  thumbnail = [self thumbnailForFixture:@"tests/fixtures/tc2048.szx"];
+  canvas_size = [thumbnail canvasSize];
+
+  XCTAssertEqual( canvas_size.width, 256.0 );
+  XCTAssertEqual( canvas_size.height, 192.0 );
+}
+
 - (void)test_mdr_file_produces_no_thumbnail
 {
   FuseQuickLookThumbnail *thumbnail;

@@ -486,6 +486,26 @@
   XCTAssertEqual( ((const unsigned char *)[preview_data bytes])[1], 0x50 );
 }
 
+- (void)test_tc2048_szx_snapshot_produces_png_preview
+{
+  FuseQuickLookPreview *preview;
+  NSData *preview_data;
+
+  /* TC2048 SZX snapshot — exercises process_snap_timex via snapshot file.
+     With all-zero registers the standard 256x192 screen is rendered as PNG. */
+  preview = [self previewForFixture:@"tests/fixtures/tc2048.szx"];
+  preview_data = [preview previewData];
+
+  XCTAssertEqual( [preview previewKind], FUSE_QUICKLOOK_PREVIEW_IMAGE_DATA );
+  XCTAssertEqualObjects( [preview contentTypeIdentifier], @"public.png" );
+  XCTAssertEqual( [preview contentSize].width,  256.0 );
+  XCTAssertEqual( [preview contentSize].height, 192.0 );
+  XCTAssertNotNil( preview_data );
+  XCTAssertTrue( [preview_data length] > 8 );
+  XCTAssertEqual( ((const unsigned char *)[preview_data bytes])[0], 0x89 );
+  XCTAssertEqual( ((const unsigned char *)[preview_data bytes])[1], 0x50 );
+}
+
 - (void)test_mdr_file_with_screen_content_size_is_standard_spectrum_resolution
 {
   FuseQuickLookPreview *preview;
