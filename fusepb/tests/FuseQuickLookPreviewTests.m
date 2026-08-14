@@ -840,4 +840,35 @@
   XCTAssertNotNil( preview_data );
   XCTAssertTrue( [preview_data length] > 4 );
 }
+
+- (void)test_se_szx_snapshot_content_size_is_standard_spectrum_resolution
+{
+  FuseQuickLookPreview *preview;
+
+  /* SE machine SZX snapshot — exercises process_snap_se; content size must be 256x192 */
+  preview = [self previewForFixture:@"tests/fixtures/se.szx"];
+
+  XCTAssertEqual( [preview contentSize].width,  256.0 );
+  XCTAssertEqual( [preview contentSize].height, 192.0 );
+}
+
+- (void)test_se_szx_snapshot_produces_png_preview
+{
+  FuseQuickLookPreview *preview;
+  NSData *preview_data;
+
+  /* SE machine SZX snapshot — exercises process_snap_se code path.
+     With out_128_memoryport=0 the screen is read from page 5. */
+  preview = [self previewForFixture:@"tests/fixtures/se.szx"];
+  preview_data = [preview previewData];
+
+  XCTAssertEqual( [preview previewKind], FUSE_QUICKLOOK_PREVIEW_IMAGE_DATA );
+  XCTAssertEqualObjects( [preview contentTypeIdentifier], @"public.png" );
+  XCTAssertEqual( [preview contentSize].width,  256.0 );
+  XCTAssertEqual( [preview contentSize].height, 192.0 );
+  XCTAssertNotNil( preview_data );
+  XCTAssertTrue( [preview_data length] > 8 );
+  XCTAssertEqual( ((const unsigned char *)[preview_data bytes])[0], 0x89 );
+  XCTAssertEqual( ((const unsigned char *)[preview_data bytes])[1], 0x50 );
+}
 @end
