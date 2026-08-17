@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-08-16T05:16:09Z",
-  "run_id": "31928554667",
+  "last_run": "2026-08-17T05:21:51Z",
+  "run_id": "31997551431",
   "backlog_cursor": {
     "issues": 0,
     "prs": 0
@@ -41,12 +41,12 @@
     {"branch":"repo-assist/test-se-machine-szx-snapshot-59aee3cccaa0d1d8","title":"Add Quick Look tests for SE machine SZX snapshots","pr_number":80,"status":"merged"},
     {"branch":"repo-assist/test-plus2-szx-snapshot-2026-08-15-8e5a94ce01bc6bcb","title":"Add Quick Look tests for 128k/Plus2 SZX snapshots","pr_number":81,"status":"open","created_at":"2026-08-15"},
     {"branch":"repo-assist/perf-imageRep-row-cache-v2-2026-08-15-aa1134be5ef0aa4b","title":"JWSpectrumScreen: hoist y-dependent offsets out of imageRep inner loop (rebased)","pr_number":82,"status":"open","created_at":"2026-08-15"},
-    {"branch":"repo-assist/test-plus2-page7-szx-snapshot-2026-08-16","title":"Add Quick Look tests for Plus2 SZX snapshots with page-7 screen","pr_number":null,"status":"open","created_at":"2026-08-16"}
+    {"branch":"repo-assist/test-plus2-page7-szx-snapshot-2026-08-17","title":"Add Quick Look tests for 128k SZX snapshots with page-7 screen","pr_number":null,"status":"open","created_at":"2026-08-17"}
   ],
   "monthly_activity_issue": 65,
   "july_activity_issue_closed": 48,
   "checked_off_by_user": [
     "pr_15","issue_17","issue_16","pr_18","pr_22","pr_23","pr_25","pr_26","pr_27","pr_28","pr_29","pr_8","pr_32","pr_33","pr_35","pr_37","pr_38","issue_34","check_comment_pr8","pr_20","pr_mdr_positive_tests","pr_36","pr_59","pr_60","pr_78","pr_79","pr_80"
   ],
-  "notes": "August 2026. Task 9+10: created PR for Plus2 page-7 SZX snapshot tests (plus2-page7.szx fixture + 6 tests; exercises page-7 branch of process_snap_sinclair128). Both branches of process_snap_sinclair128 now covered. Open PRs: #70 (to be closed), #39 (copilot fix), #81 (plus2 page-5 tests), #82 (perf rebase), new page-7 PR. Future: Add Spotlight metadata tests."
+  "notes": "August 2026. Task 5+9: created PR for 128k page-7 SZX snapshot tests (plus2-page7.szx fixture + 6 tests; exercises page-7 branch of process_snap_sinclair128). Both page-5 and page-7 branches of process_snap_sinclair128 now covered (PRs #81 and this). Open PRs: #81 (plus2 page-5 tests), #82 (perf rebase), new page-7 PR. Issue #83 (old blocked page-7 attempt) can be closed once new PR is merged. Future: Add Spotlight metadata tests."
 }
