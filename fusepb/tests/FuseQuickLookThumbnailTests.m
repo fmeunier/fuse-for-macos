@@ -1207,4 +1207,33 @@
   XCTAssertEqual( canvas_size.width,  256.0 );
   XCTAssertEqual( canvas_size.height, 192.0 );
 }
+
+- (void)test_plus2_page7_szx_snapshot_produces_bitmap_thumbnail
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSBitmapImageRep *bitmap;
+
+  /* 128k SZX snapshot with out_128_memoryport bit 3 set — exercises the
+     page-7 branch of process_snap_sinclair128. */
+  thumbnail = [self thumbnailForFixture:@"tests/fixtures/plus2-page7.szx"];
+  bitmap = [thumbnail bitmapImageRep];
+
+  XCTAssertEqual( [thumbnail thumbnailKind], FUSE_QUICKLOOK_THUMBNAIL_BITMAP );
+  XCTAssertNotNil( bitmap );
+  XCTAssertEqual( [bitmap pixelsWide], 256 );
+  XCTAssertEqual( [bitmap pixelsHigh], 192 );
+}
+
+- (void)test_plus2_page7_szx_snapshot_canvas_size_is_standard_spectrum_resolution
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSSize canvas_size;
+
+  /* 128k SZX snapshot with page-7 screen — canvas size should be standard 256x192 */
+  thumbnail = [self thumbnailForFixture:@"tests/fixtures/plus2-page7.szx"];
+  canvas_size = [thumbnail canvasSize];
+
+  XCTAssertEqual( canvas_size.width,  256.0 );
+  XCTAssertEqual( canvas_size.height, 192.0 );
+}
 @end
