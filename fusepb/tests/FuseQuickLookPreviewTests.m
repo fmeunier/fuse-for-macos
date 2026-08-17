@@ -871,4 +871,36 @@
   XCTAssertEqual( ((const unsigned char *)[preview_data bytes])[0], 0x89 );
   XCTAssertEqual( ((const unsigned char *)[preview_data bytes])[1], 0x50 );
 }
+
+- (void)test_plus2_page7_szx_snapshot_content_size_is_standard_spectrum_resolution
+{
+  FuseQuickLookPreview *preview;
+
+  /* 128k SZX snapshot with out_128_memoryport bit 3 set — page-7 screen path;
+     content size must be 256x192. */
+  preview = [self previewForFixture:@"tests/fixtures/plus2-page7.szx"];
+
+  XCTAssertEqual( [preview contentSize].width,  256.0 );
+  XCTAssertEqual( [preview contentSize].height, 192.0 );
+}
+
+- (void)test_plus2_page7_szx_snapshot_produces_png_preview
+{
+  FuseQuickLookPreview *preview;
+  NSData *preview_data;
+
+  /* 128k SZX snapshot with page-7 screen — exercises the page-7 branch of
+     process_snap_sinclair128. */
+  preview = [self previewForFixture:@"tests/fixtures/plus2-page7.szx"];
+  preview_data = [preview previewData];
+
+  XCTAssertEqual( [preview previewKind], FUSE_QUICKLOOK_PREVIEW_IMAGE_DATA );
+  XCTAssertEqualObjects( [preview contentTypeIdentifier], @"public.png" );
+  XCTAssertEqual( [preview contentSize].width,  256.0 );
+  XCTAssertEqual( [preview contentSize].height, 192.0 );
+  XCTAssertNotNil( preview_data );
+  XCTAssertTrue( [preview_data length] > 8 );
+  XCTAssertEqual( ((const unsigned char *)[preview_data bytes])[0], 0x89 );
+  XCTAssertEqual( ((const unsigned char *)[preview_data bytes])[1], 0x50 );
+}
 @end
