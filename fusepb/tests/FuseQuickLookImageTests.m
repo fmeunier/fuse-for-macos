@@ -1109,16 +1109,15 @@
   XCTAssertEqual( canvas.height, 192.0 );
 }
 
-- (void)test_plus2_szx_snapshot_produces_bitmap_image
+- (void)test_plus2_page7_szx_snapshot_produces_bitmap_image
 {
   FuseQuickLookImage *image;
   NSBitmapImageRep *bitmap;
 
-  /* 128k / Plus2 SZX snapshot — exercises process_snap_sinclair128.
-     Machine type SZX_MACHINE_PLUS2 (0x02); with out_128_memoryport=0
-     (bit 3 clear) the screen is read from RAM page 5. */
+  /* 128k SZX snapshot with out_128_memoryport bit 3 set — exercises the
+     page-7 branch of process_snap_sinclair128. */
   image = [[[FuseQuickLookImage alloc]
-             initWithContentsOfURL:[self fixtureURL:@"tests/fixtures/plus2.szx"]] autorelease];
+             initWithContentsOfURL:[self fixtureURL:@"tests/fixtures/plus2-page7.szx"]] autorelease];
   bitmap = [image bitmapImageRep];
 
   XCTAssertEqual( [image libspectrumClass], LIBSPECTRUM_CLASS_SNAPSHOT );
@@ -1128,14 +1127,14 @@
   XCTAssertEqual( [bitmap pixelsHigh], 192 );
 }
 
-- (void)test_plus2_szx_snapshot_canvas_size_is_standard_spectrum_resolution
+- (void)test_plus2_page7_szx_snapshot_canvas_size_is_standard_spectrum_resolution
 {
   FuseQuickLookImage *image;
   NSSize canvas;
 
-  /* 128k / Plus2 SZX snapshot — canvas size should be the standard 256x192 */
+  /* 128k SZX snapshot with page-7 screen — canvas should be standard 256x192 */
   image = [[[FuseQuickLookImage alloc]
-             initWithContentsOfURL:[self fixtureURL:@"tests/fixtures/plus2.szx"]] autorelease];
+             initWithContentsOfURL:[self fixtureURL:@"tests/fixtures/plus2-page7.szx"]] autorelease];
   canvas = [image canvasSize];
 
   XCTAssertEqual( canvas.width,  256.0 );

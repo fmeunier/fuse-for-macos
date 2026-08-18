@@ -872,25 +872,26 @@
   XCTAssertEqual( ((const unsigned char *)[preview_data bytes])[1], 0x50 );
 }
 
-- (void)test_plus2_szx_snapshot_content_size_is_standard_spectrum_resolution
+- (void)test_plus2_page7_szx_snapshot_content_size_is_standard_spectrum_resolution
 {
   FuseQuickLookPreview *preview;
 
-  /* 128k / Plus2 SZX snapshot — exercises process_snap_sinclair128; content size must be 256x192 */
-  preview = [self previewForFixture:@"tests/fixtures/plus2.szx"];
+  /* 128k SZX snapshot with out_128_memoryport bit 3 set — page-7 screen path;
+     content size must be 256x192. */
+  preview = [self previewForFixture:@"tests/fixtures/plus2-page7.szx"];
 
   XCTAssertEqual( [preview contentSize].width,  256.0 );
   XCTAssertEqual( [preview contentSize].height, 192.0 );
 }
 
-- (void)test_plus2_szx_snapshot_produces_png_preview
+- (void)test_plus2_page7_szx_snapshot_produces_png_preview
 {
   FuseQuickLookPreview *preview;
   NSData *preview_data;
 
-  /* 128k / Plus2 SZX snapshot — exercises process_snap_sinclair128 code path.
-     With out_128_memoryport=0 (bit 3 clear) the screen is read from RAM page 5. */
-  preview = [self previewForFixture:@"tests/fixtures/plus2.szx"];
+  /* 128k SZX snapshot with page-7 screen — exercises the page-7 branch of
+     process_snap_sinclair128. */
+  preview = [self previewForFixture:@"tests/fixtures/plus2-page7.szx"];
   preview_data = [preview previewData];
 
   XCTAssertEqual( [preview previewKind], FUSE_QUICKLOOK_PREVIEW_IMAGE_DATA );
