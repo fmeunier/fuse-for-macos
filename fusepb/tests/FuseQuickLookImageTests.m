@@ -1016,6 +1016,38 @@
   XCTAssertEqual( canvas.height, 384.0 );
 }
 
+- (void)test_mlt_multicolour_screen_produces_bitmap_image
+{
+  FuseQuickLookImage *image;
+  NSBitmapImageRep *bitmap;
+
+  /* MLT (MultiColour) .mlt (12288 bytes) — same data layout as HiColour .scr but
+     rendered in ScreenModeMLT; identified by the .mlt file extension. */
+  image = [[[FuseQuickLookImage alloc]
+             initWithContentsOfURL:[self fixtureURL:@"tests/fixtures/test.mlt"]] autorelease];
+  bitmap = [image bitmapImageRep];
+
+  XCTAssertEqual( [image libspectrumClass], LIBSPECTRUM_CLASS_SCREENSHOT );
+  XCTAssertEqual( [image imageKind], FUSE_QUICKLOOK_IMAGE_SCR );
+  XCTAssertNotNil( bitmap );
+  XCTAssertEqual( [bitmap pixelsWide], 256 );
+  XCTAssertEqual( [bitmap pixelsHigh], 192 );
+}
+
+- (void)test_mlt_multicolour_screen_canvas_size_is_standard_spectrum_resolution
+{
+  FuseQuickLookImage *image;
+  NSSize canvas;
+
+  /* MLT (MultiColour) .mlt — canvas dimensions are the same as a standard 256x192 screen */
+  image = [[[FuseQuickLookImage alloc]
+             initWithContentsOfURL:[self fixtureURL:@"tests/fixtures/test.mlt"]] autorelease];
+  canvas = [image canvasSize];
+
+  XCTAssertEqual( canvas.width,  256.0 );
+  XCTAssertEqual( canvas.height, 192.0 );
+}
+
 - (void)test_rom_file_produces_no_image
 {
   FuseQuickLookImage *image;

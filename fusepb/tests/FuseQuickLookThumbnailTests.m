@@ -1126,6 +1126,34 @@
   XCTAssertEqual( canvas_size.height, 384.0 );
 }
 
+- (void)test_mlt_multicolour_screen_produces_bitmap_thumbnail
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSBitmapImageRep *bitmap;
+
+  /* MLT (MultiColour) .mlt (12288 bytes) — renders as a 256x192 bitmap thumbnail */
+  thumbnail = [self thumbnailForFixture:@"tests/fixtures/test.mlt"];
+  bitmap = [thumbnail bitmapImageRep];
+
+  XCTAssertEqual( [thumbnail thumbnailKind], FUSE_QUICKLOOK_THUMBNAIL_BITMAP );
+  XCTAssertNotNil( bitmap );
+  XCTAssertEqual( [bitmap pixelsWide], 256 );
+  XCTAssertEqual( [bitmap pixelsHigh], 192 );
+}
+
+- (void)test_mlt_multicolour_screen_canvas_size_is_standard_spectrum_resolution
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSSize canvas_size;
+
+  /* MLT (MultiColour) .mlt — canvas is 256x192, same as a standard Spectrum screen */
+  thumbnail = [self thumbnailForFixture:@"tests/fixtures/test.mlt"];
+  canvas_size = [thumbnail canvasSize];
+
+  XCTAssertEqual( canvas_size.width,  256.0 );
+  XCTAssertEqual( canvas_size.height, 192.0 );
+}
+
 - (void)test_rom_canvas_size_is_zero_without_screen
 {
   FuseQuickLookThumbnail *thumbnail;
