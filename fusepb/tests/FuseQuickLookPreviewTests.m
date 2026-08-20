@@ -445,6 +445,25 @@
   XCTAssertEqual( ((const unsigned char *)[preview_data bytes])[1], 0x50 );
 }
 
+- (void)test_empty_sna_snapshot_produces_png_preview
+{
+  FuseQuickLookPreview *preview;
+  NSData *preview_data;
+
+  /* Minimal 48K SNA snapshot with an all-zero screen — still a valid snapshot */
+  preview = [self previewForFixture:@"tests/fixtures/empty.sna"];
+  preview_data = [preview previewData];
+
+  XCTAssertEqual( [preview previewKind], FUSE_QUICKLOOK_PREVIEW_IMAGE_DATA );
+  XCTAssertEqualObjects( [preview contentTypeIdentifier], @"public.png" );
+  XCTAssertEqual( [preview contentSize].width,  256.0 );
+  XCTAssertEqual( [preview contentSize].height, 192.0 );
+  XCTAssertNotNil( preview_data );
+  XCTAssertTrue( [preview_data length] > 8 );
+  XCTAssertEqual( ((const unsigned char *)[preview_data bytes])[0], 0x89 );
+  XCTAssertEqual( ((const unsigned char *)[preview_data bytes])[1], 0x50 );
+}
+
 - (void)test_invalid_szx_produces_no_preview
 {
   FuseQuickLookPreview *preview;

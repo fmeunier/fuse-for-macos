@@ -658,6 +658,34 @@
   XCTAssertEqual( canvas_size.height, 192.0 );
 }
 
+- (void)test_empty_sna_snapshot_produces_bitmap_thumbnail
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSBitmapImageRep *bitmap;
+
+  /* Minimal 48K SNA snapshot with an all-zero screen — still a valid snapshot */
+  thumbnail = [self thumbnailForFixture:@"tests/fixtures/empty.sna"];
+  bitmap = [thumbnail bitmapImageRep];
+
+  XCTAssertEqual( [thumbnail thumbnailKind], FUSE_QUICKLOOK_THUMBNAIL_BITMAP );
+  XCTAssertNotNil( bitmap );
+  XCTAssertEqual( [bitmap pixelsWide], 256 );
+  XCTAssertEqual( [bitmap pixelsHigh], 192 );
+}
+
+- (void)test_empty_sna_snapshot_canvas_size_is_standard_spectrum_resolution
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSSize canvas_size;
+
+  /* Minimal 48K SNA snapshot — canvas size is always 256x192 for snapshots */
+  thumbnail = [self thumbnailForFixture:@"tests/fixtures/empty.sna"];
+  canvas_size = [thumbnail canvasSize];
+
+  XCTAssertEqual( canvas_size.width,  256.0 );
+  XCTAssertEqual( canvas_size.height, 192.0 );
+}
+
 - (void)test_invalid_szx_produces_no_thumbnail
 {
   FuseQuickLookThumbnail *thumbnail;
