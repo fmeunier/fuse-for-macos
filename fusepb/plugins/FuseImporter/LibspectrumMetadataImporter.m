@@ -576,6 +576,12 @@ process_snap2:(libspectrum_snap *)snap
   if( libspectrum_snap_covox_active( snap ) ) {
     [peripherals addObject:@"Covox"];
   }
+  if( libspectrum_snap_ttx2000s_active( snap ) ) {
+    [peripherals addObject:@"TTX 2000S"];
+  }
+  if( libspectrum_snap_uspeech_active( snap ) ) {
+    [peripherals addObject:@"Currah \u00b5Speech"];
+  }
   if( libspectrum_snap_multiface_active( snap ) ) {
     if( libspectrum_snap_multiface_model_one( snap ) ) {
       [peripherals addObject:@"Multiface One"];
