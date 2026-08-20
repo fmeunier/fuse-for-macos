@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-08-19T05:17:32Z",
-  "run_id": "32218777440",
+  "last_run": "2026-08-20T05:18:16Z",
+  "run_id": "32335001370",
   "backlog_cursor": {
     "issues": 0,
     "prs": 0
@@ -29,7 +29,6 @@
     {"branch": "repo-assist/test-csw-rzx-quicklook-2026-08-01-c804a1c5cc28aeac", "title": "Add Quick Look tests for CSW tape and RZX recording formats", "pr_number": 64, "status": "merged"},
     {"branch": "repo-assist/improve-disk-spotlight-stubs-2026-08-02-523cafd0875cafdf", "title": "Spotlight: implement Opus, Didaktik, PlusD disk and IF2 ROM metadata stubs", "pr_number": 66, "status": "merged"},
     {"branch": "repo-assist/test-hdf-dck-opd-mgt-quicklook-2026-08-05", "title": "Add Quick Look null-case tests for HDF, DCK, OPD, and MGT formats", "pr_number": 69, "status": "merged"},
-    {"branch": "repo-assist/perf-imageRep-row-cache-2026-08-06-76cf85079b77e6af", "title": "JWSpectrumScreen: hoist y-dependent offsets out of imageRep inner loop", "pr_number": 70, "status": "stale_replaced"},
     {"branch": "repo-assist/test-img-opu-quicklook-2026-08-07", "title": "Add Quick Look null-case tests for PlusD .img and Opus .opu disk formats", "pr_number": 71, "status": "merged"},
     {"branch": "repo-assist/eng-d80-uti-registration-2026-08-08-1d43a03d6b0c5e81", "title": "Register Didaktik d80/d40 UTI across importer, Quick Look, and schema", "pr_number": 72, "status": "merged"},
     {"branch": "repo-assist/test-d80-quicklook-2026-08-08-4e46ceb4c8599c3b", "title": "Add Quick Look null-case tests for Didaktik D80/D40 disk images", "pr_number": 73, "status": "merged"},
@@ -43,12 +42,14 @@
     {"branch": "repo-assist/perf-imageRep-row-cache-v2-2026-08-15-aa1134be5ef0aa4b", "title": "JWSpectrumScreen: hoist y-dependent offsets out of imageRep inner loop (rebased)", "pr_number": 82, "status": "open", "created_at": "2026-08-15"},
     {"branch": "repo-assist/test-plus2-page7-szx-snapshot-2026-08-17", "title": "Add Quick Look tests for 128k SZX snapshots with page-7 screen", "pr_number": 84, "status": "merged", "created_at": "2026-08-17"},
     {"branch": "repo-assist/eng-schema-tap-rzx-types-2026-08-18-2a9b34e3aa64c930", "title": "Spotlight: register tap FileNames and rzx Machines/Peripherals in schema.xml", "pr_number": 85, "status": "open", "created_at": "2026-08-18"},
-    {"branch": "repo-assist/test-mlt-and-fix-metadata-2026-08-19", "title": "Add MLT Quick Look tests and fix MultiColour metadata label", "pr_number": null, "status": "open", "created_at": "2026-08-19"}
+    {"branch": "repo-assist/test-mlt-and-fix-metadata-2026-08-19-349ff14eebd8b30e", "title": "Add MLT Quick Look tests and fix MultiColour metadata label", "pr_number": 86, "status": "open", "created_at": "2026-08-19"},
+    {"branch": "repo-assist/eng-missing-peripherals-2026-08-20", "title": "Spotlight: report TTX 2000S and Currah µSpeech peripherals in snapshots", "pr_number": null, "status": "open", "created_at": "2026-08-20"},
+    {"branch": "repo-assist/test-sna-snapshot-2026-08-20", "title": "Add Quick Look tests for SNA snapshot format", "pr_number": null, "status": "open", "created_at": "2026-08-20"}
   ],
   "monthly_activity_issue": 65,
   "july_activity_issue_closed": 48,
   "checked_off_by_user": [
     "pr_15", "issue_17", "issue_16", "pr_18", "pr_22", "pr_23", "pr_25", "pr_26", "pr_27", "pr_28", "pr_29", "pr_8", "pr_32", "pr_33", "pr_35", "pr_37", "pr_38", "issue_34", "check_comment_pr8", "pr_20", "pr_mdr_positive_tests", "pr_36", "pr_59", "pr_60", "pr_78", "pr_79", "pr_80", "pr_84"
   ],
-  "notes": "August 2026. PR #81 open (plus2 tests). PR #82 open (perf - imageRep row cache). PR #85 open (schema.xml tap/rzx). New PR this run: MLT tests + MultiColour metadata fix (process_screenshot returned HiColour for .mlt files). No new human activity on open issues #5/#68."
+  "notes": "August 2026. Open PRs: #81 (plus2 szx tests), #82 (perf imageRep), #85 (schema.xml tap/rzx), #86 (MLT tests+bug fix), plus 2 new this run (missing peripherals, SNA tests). All snapshot Quick Look formats now have test coverage. Remaining gap: Spotlight metadata tests need new Xcode test target."
 }
