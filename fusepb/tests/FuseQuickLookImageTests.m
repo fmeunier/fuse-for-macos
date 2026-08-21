@@ -1140,4 +1140,70 @@
   XCTAssertEqual( canvas.width,  256.0 );
   XCTAssertEqual( canvas.height, 192.0 );
 }
+
+- (void)test_tc2048_hicolour_szx_snapshot_produces_bitmap_image
+{
+  FuseQuickLookImage *image;
+  NSBitmapImageRep *bitmap;
+
+  /* TC2048 SZX with SCLD dec=0x02 — HiColour mode (two 6144-byte planes per page).
+     Exercises the HICOLOUR branch of process_snap_timex:inPage: via a snapshot file.
+     All-zero page 5 yields a valid all-black 256x192 HiColour image. */
+  image = [[[FuseQuickLookImage alloc]
+             initWithContentsOfURL:[self fixtureURL:@"tests/fixtures/tc2048-hicolour.szx"]] autorelease];
+  bitmap = [image bitmapImageRep];
+
+  XCTAssertEqual( [image libspectrumClass], LIBSPECTRUM_CLASS_SNAPSHOT );
+  XCTAssertEqual( [image imageKind], FUSE_QUICKLOOK_IMAGE_SCR );
+  XCTAssertNotNil( bitmap );
+  XCTAssertEqual( [bitmap pixelsWide], 256 );
+  XCTAssertEqual( [bitmap pixelsHigh], 192 );
+}
+
+- (void)test_tc2048_hicolour_szx_snapshot_canvas_size_is_standard_spectrum_resolution
+{
+  FuseQuickLookImage *image;
+  NSSize canvas;
+
+  /* TC2048 HiColour SZX snapshot — canvas should be standard 256x192 */
+  image = [[[FuseQuickLookImage alloc]
+             initWithContentsOfURL:[self fixtureURL:@"tests/fixtures/tc2048-hicolour.szx"]] autorelease];
+  canvas = [image canvasSize];
+
+  XCTAssertEqual( canvas.width,  256.0 );
+  XCTAssertEqual( canvas.height, 192.0 );
+}
+
+- (void)test_tc2048_hires_szx_snapshot_produces_bitmap_image
+{
+  FuseQuickLookImage *image;
+  NSBitmapImageRep *bitmap;
+
+  /* TC2048 SZX with SCLD dec=0x04 — HiRes mode (two 6144-byte bitmap halves plus
+     one colour-mode byte). Exercises the HIRES branch of process_snap_timex:inPage:
+     via a snapshot file. All-zero page 5 yields a valid black-on-white 512x384 image. */
+  image = [[[FuseQuickLookImage alloc]
+             initWithContentsOfURL:[self fixtureURL:@"tests/fixtures/tc2048-hires.szx"]] autorelease];
+  bitmap = [image bitmapImageRep];
+
+  XCTAssertEqual( [image libspectrumClass], LIBSPECTRUM_CLASS_SNAPSHOT );
+  XCTAssertEqual( [image imageKind], FUSE_QUICKLOOK_IMAGE_SCR );
+  XCTAssertNotNil( bitmap );
+  XCTAssertEqual( [bitmap pixelsWide], 512 );
+  XCTAssertEqual( [bitmap pixelsHigh], 384 );
+}
+
+- (void)test_tc2048_hires_szx_snapshot_canvas_size_is_hires_resolution
+{
+  FuseQuickLookImage *image;
+  NSSize canvas;
+
+  /* TC2048 HiRes SZX snapshot — canvas should be 512x384 (double-height HiRes display) */
+  image = [[[FuseQuickLookImage alloc]
+             initWithContentsOfURL:[self fixtureURL:@"tests/fixtures/tc2048-hires.szx"]] autorelease];
+  canvas = [image canvasSize];
+
+  XCTAssertEqual( canvas.width,  512.0 );
+  XCTAssertEqual( canvas.height, 384.0 );
+}
 @end

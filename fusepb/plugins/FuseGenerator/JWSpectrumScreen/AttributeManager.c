@@ -243,7 +243,7 @@ float commonColours(int* block, int blockSize, int* paperInk)
         }
     }
     
-    static float retval = 0.0f;
+    float retval = 0.0f;
     if(blockSize - specColours[0]) {
         retval = (float)bright / ((float)(blockSize - specColours[0]));
     }

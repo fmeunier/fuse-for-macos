@@ -903,4 +903,66 @@
   XCTAssertEqual( ((const unsigned char *)[preview_data bytes])[0], 0x89 );
   XCTAssertEqual( ((const unsigned char *)[preview_data bytes])[1], 0x50 );
 }
+
+- (void)test_tc2048_hicolour_szx_snapshot_content_size_is_standard_spectrum_resolution
+{
+  FuseQuickLookPreview *preview;
+
+  /* TC2048 SZX with SCLD dec=0x02 (HiColour) — content size must be 256x192 */
+  preview = [self previewForFixture:@"tests/fixtures/tc2048-hicolour.szx"];
+
+  XCTAssertEqual( [preview contentSize].width,  256.0 );
+  XCTAssertEqual( [preview contentSize].height, 192.0 );
+}
+
+- (void)test_tc2048_hicolour_szx_snapshot_produces_png_preview
+{
+  FuseQuickLookPreview *preview;
+  NSData *preview_data;
+
+  /* TC2048 SZX with SCLD dec=0x02 — HiColour mode.  Exercises the HICOLOUR
+     branch of process_snap_timex:inPage: via a snapshot file. */
+  preview = [self previewForFixture:@"tests/fixtures/tc2048-hicolour.szx"];
+  preview_data = [preview previewData];
+
+  XCTAssertEqual( [preview previewKind], FUSE_QUICKLOOK_PREVIEW_IMAGE_DATA );
+  XCTAssertEqualObjects( [preview contentTypeIdentifier], @"public.png" );
+  XCTAssertEqual( [preview contentSize].width,  256.0 );
+  XCTAssertEqual( [preview contentSize].height, 192.0 );
+  XCTAssertNotNil( preview_data );
+  XCTAssertTrue( [preview_data length] > 8 );
+  XCTAssertEqual( ((const unsigned char *)[preview_data bytes])[0], 0x89 );
+  XCTAssertEqual( ((const unsigned char *)[preview_data bytes])[1], 0x50 );
+}
+
+- (void)test_tc2048_hires_szx_snapshot_content_size_is_hires_resolution
+{
+  FuseQuickLookPreview *preview;
+
+  /* TC2048 SZX with SCLD dec=0x04 (HiRes) — content size must be 512x384 */
+  preview = [self previewForFixture:@"tests/fixtures/tc2048-hires.szx"];
+
+  XCTAssertEqual( [preview contentSize].width,  512.0 );
+  XCTAssertEqual( [preview contentSize].height, 384.0 );
+}
+
+- (void)test_tc2048_hires_szx_snapshot_produces_png_preview
+{
+  FuseQuickLookPreview *preview;
+  NSData *preview_data;
+
+  /* TC2048 SZX with SCLD dec=0x04 — HiRes mode.  Exercises the HIRES branch
+     of process_snap_timex:inPage: via a snapshot file. */
+  preview = [self previewForFixture:@"tests/fixtures/tc2048-hires.szx"];
+  preview_data = [preview previewData];
+
+  XCTAssertEqual( [preview previewKind], FUSE_QUICKLOOK_PREVIEW_IMAGE_DATA );
+  XCTAssertEqualObjects( [preview contentTypeIdentifier], @"public.png" );
+  XCTAssertEqual( [preview contentSize].width,  512.0 );
+  XCTAssertEqual( [preview contentSize].height, 384.0 );
+  XCTAssertNotNil( preview_data );
+  XCTAssertTrue( [preview_data length] > 8 );
+  XCTAssertEqual( ((const unsigned char *)[preview_data bytes])[0], 0x89 );
+  XCTAssertEqual( ((const unsigned char *)[preview_data bytes])[1], 0x50 );
+}
 @end
