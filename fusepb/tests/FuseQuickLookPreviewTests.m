@@ -790,6 +790,36 @@
   XCTAssertEqual( ((const unsigned char *)[preview_data bytes])[1], 0x50 );
 }
 
+- (void)test_mlt_multicolour_screen_content_size_is_standard_spectrum_resolution
+{
+  FuseQuickLookPreview *preview;
+
+  /* MLT (MultiColour) .mlt — same canvas as a standard 256x192 screen */
+  preview = [self previewForFixture:@"tests/fixtures/test.mlt"];
+
+  XCTAssertEqual( [preview contentSize].width,  256.0 );
+  XCTAssertEqual( [preview contentSize].height, 192.0 );
+}
+
+- (void)test_mlt_multicolour_screen_produces_png_preview
+{
+  FuseQuickLookPreview *preview;
+  NSData *preview_data;
+
+  /* MLT (MultiColour) .mlt (12288 bytes) — renders as a 256x192 PNG preview */
+  preview = [self previewForFixture:@"tests/fixtures/test.mlt"];
+  preview_data = [preview previewData];
+
+  XCTAssertEqual( [preview previewKind], FUSE_QUICKLOOK_PREVIEW_IMAGE_DATA );
+  XCTAssertEqualObjects( [preview contentTypeIdentifier], @"public.png" );
+  XCTAssertEqual( [preview contentSize].width,  256.0 );
+  XCTAssertEqual( [preview contentSize].height, 192.0 );
+  XCTAssertNotNil( preview_data );
+  XCTAssertTrue( [preview_data length] > 8 );
+  XCTAssertEqual( ((const unsigned char *)[preview_data bytes])[0], 0x89 );
+  XCTAssertEqual( ((const unsigned char *)[preview_data bytes])[1], 0x50 );
+}
+
 - (void)test_rom_without_screen_has_zero_content_size
 {
   FuseQuickLookPreview *preview;

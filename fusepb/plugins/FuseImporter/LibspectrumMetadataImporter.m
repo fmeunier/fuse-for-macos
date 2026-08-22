@@ -669,7 +669,9 @@ process_screenshot
 
   switch( length ) {
   case HICOLOUR_SCR_SIZE:
-    mode = @"HiColour";
+    /* MLT (MultiColour) files are the same size as HiColour .scr but use a
+       different rendering mode — distinguish them via the libspectrum type. */
+    mode = ( type == LIBSPECTRUM_ID_SCREEN_MLT ) ? @"MultiColour" : @"HiColour";
     width = 256;
     break;
   case STANDARD_SCR_SIZE:
