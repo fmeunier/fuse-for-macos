@@ -62,12 +62,10 @@ static BitmapByteData bitmapByteDataAt(const char *bitmapBytes, int x, int y,
 {
 	self = [super init];
 	if(self) {
-		zxScreen = [[NSMutableData alloc] init];
-		[zxScreen setData:scrData];
-		
-        if( [self initialise:mltHint] == NO ) {
-		NSLog( @"JWSpectrumScreen: initFromData : Some problem with the source scrData.\n" );
-			// Some problem with the source scrData.
+		zxScreen = [[NSMutableData alloc] initWithData:scrData];
+
+		if( [self initialise:mltHint] == NO ) {
+			/* Some problem with the source scrData. */
 			[self release];
 			self = nil;
 		}
@@ -105,12 +103,21 @@ static BitmapByteData bitmapByteDataAt(const char *bitmapBytes, int x, int y,
 				int inkColour = spectrumColourFromIndex(bitmapByteData.ink);
 				int paperColour = spectrumColourFromIndex(bitmapByteData.paper);
 
+				/* Decompose ink and paper into RGB bytes once per 8-pixel column
+				   so the inner bit loop only does comparisons and byte stores. */
+				unsigned char ink_r = RED(inkColour);
+				unsigned char ink_g = GREEN(inkColour);
+				unsigned char ink_b = BLUE(inkColour);
+				unsigned char paper_r = RED(paperColour);
+				unsigned char paper_g = GREEN(paperColour);
+				unsigned char paper_b = BLUE(paperColour);
+
 				for(int bit = 0; bit < 8; ++bit) {
 					unsigned char mask = 1 << (7 - bit);
-					int colour = (bitmapByteData.bitmapByte & mask) ? inkColour : paperColour;
-					*imageBytes++ = RED(colour);
-					*imageBytes++ = GREEN(colour);
-					*imageBytes++ = BLUE(colour);
+					int use_ink = bitmapByteData.bitmapByte & mask;
+					*imageBytes++ = use_ink ? ink_r : paper_r;
+					*imageBytes++ = use_ink ? ink_g : paper_g;
+					*imageBytes++ = use_ink ? ink_b : paper_b;
 				}
 			}
 		}

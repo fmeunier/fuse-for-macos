@@ -1292,4 +1292,62 @@
   XCTAssertEqual( canvas_size.width,  256.0 );
   XCTAssertEqual( canvas_size.height, 192.0 );
 }
+
+- (void)test_tc2048_hicolour_szx_snapshot_produces_bitmap_thumbnail
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSBitmapImageRep *bitmap;
+
+  /* TC2048 SZX with SCLD dec=0x02 (HiColour) — exercises the HICOLOUR branch
+     of process_snap_timex:inPage: via a snapshot file. */
+  thumbnail = [self thumbnailForFixture:@"tests/fixtures/tc2048-hicolour.szx"];
+  bitmap = [thumbnail bitmapImageRep];
+
+  XCTAssertEqual( [thumbnail thumbnailKind], FUSE_QUICKLOOK_THUMBNAIL_BITMAP );
+  XCTAssertNotNil( bitmap );
+  XCTAssertEqual( [bitmap pixelsWide], 256 );
+  XCTAssertEqual( [bitmap pixelsHigh], 192 );
+}
+
+- (void)test_tc2048_hicolour_szx_snapshot_canvas_size_is_standard_spectrum_resolution
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSSize canvas_size;
+
+  /* TC2048 HiColour SZX snapshot — canvas size should be standard 256x192 */
+  thumbnail = [self thumbnailForFixture:@"tests/fixtures/tc2048-hicolour.szx"];
+  canvas_size = [thumbnail canvasSize];
+
+  XCTAssertEqual( canvas_size.width,  256.0 );
+  XCTAssertEqual( canvas_size.height, 192.0 );
+}
+
+- (void)test_tc2048_hires_szx_snapshot_produces_bitmap_thumbnail
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSBitmapImageRep *bitmap;
+
+  /* TC2048 SZX with SCLD dec=0x04 (HiRes) — exercises the HIRES branch of
+     process_snap_timex:inPage: via a snapshot file.  Canvas is 512x384. */
+  thumbnail = [self thumbnailForFixture:@"tests/fixtures/tc2048-hires.szx"];
+  bitmap = [thumbnail bitmapImageRep];
+
+  XCTAssertEqual( [thumbnail thumbnailKind], FUSE_QUICKLOOK_THUMBNAIL_BITMAP );
+  XCTAssertNotNil( bitmap );
+  XCTAssertEqual( [bitmap pixelsWide], 512 );
+  XCTAssertEqual( [bitmap pixelsHigh], 384 );
+}
+
+- (void)test_tc2048_hires_szx_snapshot_canvas_size_is_hires_resolution
+{
+  FuseQuickLookThumbnail *thumbnail;
+  NSSize canvas_size;
+
+  /* TC2048 HiRes SZX snapshot — canvas size should be 512x384 */
+  thumbnail = [self thumbnailForFixture:@"tests/fixtures/tc2048-hires.szx"];
+  canvas_size = [thumbnail canvasSize];
+
+  XCTAssertEqual( canvas_size.width,  512.0 );
+  XCTAssertEqual( canvas_size.height, 384.0 );
+}
 @end
