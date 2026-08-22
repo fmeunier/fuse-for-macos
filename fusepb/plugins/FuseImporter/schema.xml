@@ -269,5 +269,30 @@
                 net_sourceforge_projects_fuse_emulator_DiskSides
             </previewattrs>
         </type>
+        <type name="net.sourceforge.projects.fuse-emulator.tap">
+            <allattrs>
+                net_sourceforge_projects_fuse_emulator_FileNames
+            </allattrs>
+            <displayattrs>
+                net_sourceforge_projects_fuse_emulator_FileNames
+            </displayattrs>
+            <previewattrs>
+                net_sourceforge_projects_fuse_emulator_FileNames
+            </previewattrs>
+        </type>
+        <type name="net.sourceforge.projects.fuse-emulator.rzx">
+            <allattrs>
+                net_sourceforge_projects_fuse_emulator_Machines
+                net_sourceforge_projects_fuse_emulator_Peripherals
+            </allattrs>
+            <displayattrs>
+                net_sourceforge_projects_fuse_emulator_Machines
+                net_sourceforge_projects_fuse_emulator_Peripherals
+            </displayattrs>
+            <previewattrs>
+                net_sourceforge_projects_fuse_emulator_Machines
+                net_sourceforge_projects_fuse_emulator_Peripherals
+            </previewattrs>
+        </type>
     </types>
 </schema>
