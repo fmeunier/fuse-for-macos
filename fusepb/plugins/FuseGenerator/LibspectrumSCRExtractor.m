@@ -258,23 +258,27 @@ mmap_file( const char *filename, unsigned char **buffer, size_t *length )
             strncmp( "Spectrum Screen ", description, 0x10 ) == 0 ) {
           size_t data_length = libspectrum_tape_block_data_length( block );
           libspectrum_byte *data = libspectrum_tape_block_data( block );
-          size_t scr_length = data_length - data[0] - 2;
 
-          if( scr_length == STANDARD_SCR_SIZE ||
-              scr_length == HICOLOUR_SCR_SIZE ||
-              scr_length == HIRES_SCR_SIZE ) {
-            scrData = [NSData dataWithBytes:(const void *)(data+data[0]+2)
-                                     length:scr_length];    
+          if( data && data_length >= 2 && data[0] <= data_length - 2 ) {
+            size_t scr_length = data_length - data[0] - 2;
 
-            image_type = TYPE_SCR;
+            if( scr_length == STANDARD_SCR_SIZE ||
+                scr_length == HICOLOUR_SCR_SIZE ||
+                scr_length == HIRES_SCR_SIZE ) {
+              scrData = [NSData dataWithBytes:(const void *)(data+data[0]+2)
+                                       length:scr_length];
+
+              image_type = TYPE_SCR;
+            }
           }
         } else if( strncmp( "Picture        ", description, 0x10 ) == 0 ) {
           size_t data_length = libspectrum_tape_block_data_length( block );
           libspectrum_byte *data = libspectrum_tape_block_data( block );
-          size_t picture_length = data_length - data[1] - 2;
 
-          /* Image is an 'Inlay Card' and is in GIF or JPEG format */
-          if( data[1] == 0 && ( data[0] == 0 || data[0] == 1 ) ) {
+          /* Image is an 'Inlay Card' and is in GIF or JPEG format. */
+          if( data && data_length >= 2 && data[1] <= data_length - 2 &&
+              data[1] == 0 && ( data[0] == 0 || data[0] == 1 ) ) {
+            size_t picture_length = data_length - data[1] - 2;
             id myValue = nil;
 
             switch( data[0] ) {
@@ -316,19 +320,19 @@ read_le16( const unsigned char *data )
 }
 
 static int
-microdrive_header_is_screen_dump( const unsigned char *data, int length )
+microdrive_screen_header_length( const unsigned char *data, int length )
 {
-  if( length >= 7 &&
+  if( length >= 9 &&
       data[0] == CODE_FILE_TYPE &&
       read_le16( data + 1 ) == STANDARD_SCR_SIZE &&
       read_le16( data + 3 ) == SCREEN_ADDRESS )
-    return 1;
+    return 9;
 
-  if( length >= 8 &&
+  if( length >= 10 &&
       data[1] == CODE_FILE_TYPE &&
       read_le16( data + 2 ) == STANDARD_SCR_SIZE &&
       read_le16( data + 4 ) == SCREEN_ADDRESS )
-    return 1;
+    return 10;
 
   return 0;
 }
@@ -343,12 +347,14 @@ microdrive_header_is_screen_dump( const unsigned char *data, int length )
      reclen (2 bytes) -- number of valid data bytes in this sector (LE)
      recnam (10 bytes)-- file name, space-padded
    Actual sector data follows at offset LIBSPECTRUM_MICRODRIVE_HEAD_LEN*2.
-   For real formatted cartridges, the file descriptor is stored as recnum 0,
-   and file data starts at recnum 1. */
+   For real formatted cartridges, recnum 0 starts with a nine-byte file header;
+   the screen payload follows immediately in the rest of that record and
+   continues in recnum 1 and later records. */
 - (void) process_mdr
 {
-  int num_blocks, i, found, header_block;
+  int num_blocks, i, copied, header_block, file_header_length;
   unsigned char file_name[10], screen[STANDARD_SCR_SIZE];
+  unsigned char records[256];
 
   if( length < (size_t)LIBSPECTRUM_MICRODRIVE_BLOCK_LEN ) return;
 
@@ -357,6 +363,7 @@ microdrive_header_is_screen_dump( const unsigned char *data, int length )
     num_blocks = LIBSPECTRUM_MICRODRIVE_BLOCK_MAX;
 
   header_block = -1;
+  file_header_length = 0;
 
   for( i = 0; i < num_blocks; i++ ) {
     const unsigned char *blk, *data;
@@ -370,7 +377,8 @@ microdrive_header_is_screen_dump( const unsigned char *data, int length )
     if( recnum != 0 || reclen == 0 ) continue;
 
     data = blk + LIBSPECTRUM_MICRODRIVE_HEAD_LEN * 2;
-    if( !microdrive_header_is_screen_dump( data, reclen ) ) continue;
+    file_header_length = microdrive_screen_header_length( data, reclen );
+    if( !file_header_length ) continue;
 
     memcpy( file_name, blk + LIBSPECTRUM_MICRODRIVE_HEAD_LEN + 4,
             sizeof( file_name ) );
@@ -381,43 +389,49 @@ microdrive_header_is_screen_dump( const unsigned char *data, int length )
   if( header_block < 0 ) return;
 
   memset( screen, 0, sizeof( screen ) );
-  found = 0;
+  memset( records, 0, sizeof( records ) );
+  copied = 0;
 
   for( i = 0; i < num_blocks; i++ ) {
-    const unsigned char *blk;
+    const unsigned char *blk, *data;
     int recnum, reclen, offset, copy_len;
-
-    if( i == header_block ) continue;
 
     blk = buffer + i * LIBSPECTRUM_MICRODRIVE_BLOCK_LEN;
     recnum = blk[ LIBSPECTRUM_MICRODRIVE_HEAD_LEN + 1 ];
     reclen = blk[ LIBSPECTRUM_MICRODRIVE_HEAD_LEN + 2 ] |
              ( blk[ LIBSPECTRUM_MICRODRIVE_HEAD_LEN + 3 ] << 8 );
 
-    /* Ignore empty sectors and the recnum 0 file descriptor sector; only
-       recnum 1..n hold the file payload on a real formatted cartridge. */
-    if( recnum == 0 || reclen == 0 ) continue;
+    if( reclen == 0 || records[ recnum ] ) continue;
 
     if( memcmp( blk + LIBSPECTRUM_MICRODRIVE_HEAD_LEN + 4, file_name,
                 sizeof( file_name ) ) != 0 )
       continue;
 
-    offset = ( recnum - 1 ) * LIBSPECTRUM_MICRODRIVE_DATA_LEN;
-    if( offset >= STANDARD_SCR_SIZE ) continue;
+    data = blk + LIBSPECTRUM_MICRODRIVE_HEAD_LEN * 2;
+    offset = recnum * LIBSPECTRUM_MICRODRIVE_DATA_LEN -
+             file_header_length;
+    copy_len = reclen;
 
-    copy_len = reclen < LIBSPECTRUM_MICRODRIVE_DATA_LEN
-               ? reclen : LIBSPECTRUM_MICRODRIVE_DATA_LEN;
+    /* Record zero contains the file header followed immediately by the
+       beginning of the payload. */
+    if( recnum == 0 ) {
+      data += file_header_length;
+      copy_len -= file_header_length;
+      offset = 0;
+    }
+
+    if( offset < 0 || offset >= STANDARD_SCR_SIZE || copy_len <= 0 ) continue;
+    if( copy_len > LIBSPECTRUM_MICRODRIVE_DATA_LEN )
+      copy_len = LIBSPECTRUM_MICRODRIVE_DATA_LEN;
     if( offset + copy_len > STANDARD_SCR_SIZE )
       copy_len = STANDARD_SCR_SIZE - offset;
 
-    memcpy( screen + offset,
-            blk + LIBSPECTRUM_MICRODRIVE_HEAD_LEN * 2,
-            copy_len );
-    found++;
+    memcpy( screen + offset, data, copy_len );
+    records[ recnum ] = 1;
+    copied += copy_len;
   }
 
-  /* Require at least the 13 sectors that cover the full bitmap area. */
-  if( found >= 13 ) {
+  if( copied == STANDARD_SCR_SIZE ) {
     scrData = [NSData dataWithBytes:screen length:STANDARD_SCR_SIZE];
     image_type = TYPE_SCR;
   }
@@ -440,10 +454,16 @@ microdrive_header_is_screen_dump( const unsigned char *data, int length )
   rzx = libspectrum_rzx_alloc();
 
   error = libspectrum_rzx_read( rzx, buffer, length );
-  if( error != LIBSPECTRUM_ERROR_NONE ) { return; }
+  if( error != LIBSPECTRUM_ERROR_NONE ) {
+    libspectrum_rzx_free( rzx );
+    return;
+  }
 
   error = libspectrum_rzx_start_playback( rzx, 0, &snap );
-  if( error ) { return; }
+  if( error ) {
+    libspectrum_rzx_free( rzx );
+    return;
+  }
 
   if( snap ) {
     [self process_snap2:snap];

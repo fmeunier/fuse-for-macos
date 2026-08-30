@@ -441,6 +441,26 @@
   XCTAssertEqual( [bitmap pixelsHigh], 192 );
 }
 
+- (void)test_mdr_file_with_screen_extracts_complete_screen_data
+{
+  FuseQuickLookImage *image;
+  NSData *screen_data;
+  const unsigned char *bytes;
+  NSUInteger i;
+
+  image = [[[FuseQuickLookImage alloc]
+             initWithContentsOfURL:[self fixtureURL:@"tests/fixtures/test.mdr"]] autorelease];
+  screen_data = [image imageData];
+  bytes = [screen_data bytes];
+
+  XCTAssertEqual( [screen_data length], (NSUInteger)6912 );
+
+  /* This fixture uses grey attributes throughout the final 768 bytes. The
+     old extractor skipped record zero and left this part zero-filled. */
+  for( i = 6144; i < 6912; i++ )
+    XCTAssertEqual( bytes[i], (unsigned char)0x38 );
+}
+
 - (void)test_mdr_file_with_screen_canvas_size_is_standard_spectrum_resolution
 {
   FuseQuickLookImage *image;
