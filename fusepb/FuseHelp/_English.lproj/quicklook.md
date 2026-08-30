@@ -1,35 +1,35 @@
 ---
 title: Quick Look Generator
-description: This section describes Fuse's support of the Quick Look feature of macOS 10.5 and newer.
+description: This section describes Fuse's Quick Look previews and thumbnails.
 order: 250
 ---
 
-On macOS 10.5 and newer, the Fuse Quick Look generator allows viewing
-thumbnails and previews of ZX Spectrum emulation related files. The supported
-types are:
+Fuse's Quick Look extensions provide thumbnails and previews for supported ZX
+Spectrum files. The supported types are:
 
-## SCR and MLT Screen dumps
+## SCR and MLT screen dumps
 
-Preview and thumbnails for SCR and MLT screen dumps in all graphics modes.
+Previews and thumbnails are available for standard Spectrum screens, MLT
+MultiColour screens, and Timex HiColour and HiRes screens.
 
 ## Snapshots (SZX, Z80, SNA, etc.)
 
-The screen image embedded in the snapshot is extracted and used as the
-thumbnail for the file. Advanced graphics effects produced in some demo programs
-cannot be reproduced in this way in the same way as SCR files.
+The current emulated screen is reconstructed from the snapshot and used for its
+preview and thumbnail. Supported modes include standard, Timex HiColour and
+Timex HiRes screens. Advanced effects that depend on precisely timed screen
+changes cannot be reproduced from a static snapshot.
 
 ## RZX Spectrum recordings
 
-The first embedded snapshot in the file is extracted and used as the thumbnail
-for the file in the same way as snapshots above.
+The first embedded snapshot is rendered in the same way as a standalone
+snapshot.
 
 ## Tape images (TAP and TZX)
 
 Fuse uses the same extracted artwork for both Quick Look previews and
 thumbnails of tape images when suitable image data is present.
 
-If a tape contains embedded inlay artwork, that image is used. Otherwise, the
-first Spectrum screen file (SCREEN$) stored with the standard ROM loader in the
-tape is extracted and used in the same way as snapshot files above. Tapes which
-do not contain extractable image data do not produce a Quick Look preview or
-thumbnail.
+If a tape contains embedded inlay artwork, that image is used. Otherwise, Fuse
+looks for a Spectrum SCREEN$ stored with a standard ROM or supported turbo
+loader. Tapes without extractable image data do not produce a Quick Look preview
+or thumbnail.

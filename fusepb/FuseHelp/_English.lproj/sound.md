@@ -15,6 +15,6 @@ OPTION | DESCRIPTION
 *SpecDrum Volume* | Slider for the relative volume of the SpecDrum when used as a peripheral.
 *Covox Volume* | Slider for the relative volume of the Covox in machines/interfaces that have one.
 *μSpeech Volume* | Slider for the relative volume of the Currah μSpeech speech output.
-*Speaker Type* | This option allows the emulation of the sound output system to be modified. Different choices of speaker limit the bass and treble response that can be produced from the machine. Choose between a "TV" type speaker and a small beeper type speaker that significantly limits bass and treble response or Unfiltered for the full frequency range like from the MIC output.
+*Speaker Type* | Select the response used for the Spectrum's ULA sound output. Automatic chooses the appropriate TV or internal-beeper response for the emulated machine. TV speaker models the MIC/ULA path through a television speaker, Beeper models a machine's internal speaker, and Unfiltered provides the raw MIC/ULA output without speaker filtering.
 *Loading sounds* | Normally, Fuse emulates tape-loading noise when loading from PZXs, TAPs or TZXs in real-time, albeit at a deliberately lower volume than on a real Spectrum. You can disable this option to eliminate the loading noise entirely.
 *AY stereo separation* | By default, the sound output is mono, since this is all you got from an unmodified Spectrum. But using this option allows you to choose from None (mono), so-called ACB stereo or ABC stereo (for sound from the 128's AY-3-8912 sound chip).

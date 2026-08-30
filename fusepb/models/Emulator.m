@@ -37,6 +37,7 @@
 #include "keystate.h"
 #include "machine.h"
 #include "menu.h"
+#include "ui/cocoa/cocoaui.h"
 #include "movie.h"
 #include "peripherals/disk/didaktik.h"
 #include "peripherals/multiface.h"
@@ -304,7 +305,7 @@ static Emulator *instance = nil;
 {
   ui_media_drive_info_t *drive;
   
-  drive = ui_media_drive_find( which );
+  drive = cocoaui_find_disk_drive( which );
   if( !drive )
     return;
   ui_media_drive_insert( drive, NULL, 0 );
@@ -314,30 +315,40 @@ static Emulator *instance = nil;
 {
   ui_media_drive_info_t *drive;
   
-  drive = ui_media_drive_find( which );
+  drive = cocoaui_find_disk_drive( which );
   if( !drive )
     return;
   ui_media_drive_insert( drive, filename, 0 );
 }
 
--(void) diskEject:(int)drive
+-(void) diskEject:(int)which
 {
-  ui_media_drive_eject( drive );
+  ui_media_drive_info_t *drive = cocoaui_find_disk_drive( which );
+
+  if( drive ) ui_media_drive_eject( drive->controller_index, which );
 }
 
--(void) diskSave:(int)drive saveAs:(bool)saveas
+-(void) diskSave:(int)which saveAs:(bool)saveas
 {
-  ui_media_drive_save( drive, saveas );
+  ui_media_drive_info_t *drive = cocoaui_find_disk_drive( which );
+
+  if( drive )
+    ui_media_drive_save( drive->controller_index, which, saveas );
 }
 
 -(void) diskFlip:(int)which side:(int)flip
 {
-  ui_media_drive_flip( which, flip );
+  ui_media_drive_info_t *drive = cocoaui_find_disk_drive( which );
+
+  if( drive ) ui_media_drive_flip( drive->controller_index, which, flip );
 }
 
 -(void) diskWriteProtect:(int)which protect:(int)write
 {
-  ui_media_drive_writeprotect( which, write );
+  ui_media_drive_info_t *drive = cocoaui_find_disk_drive( which );
+
+  if( drive )
+    ui_media_drive_writeprotect( drive->controller_index, which, write );
 }
 
 -(void) snapshotWrite:(const char *)filename
@@ -813,6 +824,12 @@ static Emulator *instance = nil;
 -(oneway void) keyboardReleaseAll
 {
   keyboard_release_all();
+  reset_keystate();
+
+  optDown = NO;
+  ctrlDown = NO;
+  shiftDown = NO;
+  commandDown = NO;
 }
 
 -(void) keyChange:(NSEvent *)theEvent type:(input_event_type)type

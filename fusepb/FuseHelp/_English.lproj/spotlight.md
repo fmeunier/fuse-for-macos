@@ -21,12 +21,13 @@ Simpler tape formats may expose only the metadata available in those files.
 ## Snapshots (SZX, Z80, SNA, etc.)
 
 Machine type, and status of the enabled joysticks (Kempston, Cursor, Sinclair,
-Timex and Fuller), ZXATASP and ZXCF IDE peripherals, and the Interface II and
-Timex dock cartridges.
+Timex and Fuller), ZXATASP and ZXCF IDE peripherals, Interface II and Timex dock
+cartridges, TTX 2000S teletext adaptor, and Currah μSpeech.
 
 ## RZX Spectrum recordings
 
-As snapshots above.
+Machine and peripheral metadata from the first embedded snapshot, together
+with filenames found in the recording.
 
 ## MDR Microdrive cartridge images
 

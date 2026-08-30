@@ -228,6 +228,9 @@
 		B64E2A170A6534A3006863D9 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B64E2A160A6534A3006863D9 /* Carbon.framework */; };
 		B6501DF411AABD6800898AD1 /* blipbuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = B6501DF211AABD6800898AD1 /* blipbuffer.c */; };
 		B6501DF711AABD9300898AD1 /* sound.c in Sources */ = {isa = PBXBuildFile; fileRef = B6501DF611AABD9300898AD1 /* sound.c */; };
+		F19200013B01000100F19200 /* speaker_filter.c in Sources */ = {isa = PBXBuildFile; fileRef = F19200113B01000100F19200 /* speaker_filter.c */; };
+		F19200023B01000100F19200 /* ula_filter.c in Sources */ = {isa = PBXBuildFile; fileRef = F19200133B01000100F19200 /* ula_filter.c */; };
+		F19200033B01000100F19200 /* display_timing.c in Sources */ = {isa = PBXBuildFile; fileRef = F19200153B01000100F19200 /* display_timing.c */; };
 		B6501DFC11AABE2300898AD1 /* rectangle.c in Sources */ = {isa = PBXBuildFile; fileRef = B6501DFA11AABE2300898AD1 /* rectangle.c */; };
 		B650986D09366C8F003AF1BF /* hdf.icns in Resources */ = {isa = PBXBuildFile; fileRef = B650986A09366C8F003AF1BF /* hdf.icns */; };
 		B650986E09366C8F003AF1BF /* rom.icns in Resources */ = {isa = PBXBuildFile; fileRef = B650986B09366C8F003AF1BF /* rom.icns */; };
@@ -610,6 +613,12 @@
 		B64E2A160A6534A3006863D9 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		B6501DF211AABD6800898AD1 /* blipbuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = blipbuffer.c; path = sound/blipbuffer.c; sourceTree = "<group>"; };
 		B6501DF311AABD6800898AD1 /* blipbuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = blipbuffer.h; path = sound/blipbuffer.h; sourceTree = "<group>"; };
+		F19200113B01000100F19200 /* speaker_filter.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = speaker_filter.c; path = sound/speaker_filter.c; sourceTree = "<group>"; };
+		F19200123B01000100F19200 /* speaker_filter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = speaker_filter.h; path = sound/speaker_filter.h; sourceTree = "<group>"; };
+		F19200133B01000100F19200 /* ula_filter.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = ula_filter.c; path = sound/ula_filter.c; sourceTree = "<group>"; };
+		F19200143B01000100F19200 /* ula_filter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ula_filter.h; path = sound/ula_filter.h; sourceTree = "<group>"; };
+		F19200153B01000100F19200 /* display_timing.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = display_timing.c; path = ui/display_timing.c; sourceTree = "<group>"; };
+		F19200163B01000100F19200 /* display_timing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = display_timing.h; path = ui/display_timing.h; sourceTree = "<group>"; };
 		B6501DF611AABD9300898AD1 /* sound.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sound.c; sourceTree = "<group>"; };
 		B6501DFA11AABE2300898AD1 /* rectangle.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = rectangle.c; sourceTree = "<group>"; };
 		B6501DFB11AABE2300898AD1 /* rectangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rectangle.h; sourceTree = "<group>"; };
@@ -1347,6 +1356,10 @@
 				B6501DF211AABD6800898AD1 /* blipbuffer.c */,
 				B6501DF311AABD6800898AD1 /* blipbuffer.h */,
 				B6A6F0950B3C108C000B88E9 /* coreaudiosound.c */,
+				F19200113B01000100F19200 /* speaker_filter.c */,
+				F19200123B01000100F19200 /* speaker_filter.h */,
+				F19200133B01000100F19200 /* ula_filter.c */,
+				F19200143B01000100F19200 /* ula_filter.h */,
 				B6F06100078FC2C900CD5D95 /* sfifo.c */,
 				B6F06101078FC2C900CD5D95 /* sfifo.h */,
 			);
@@ -1843,6 +1856,8 @@
 				B6871C9D04AF7BEF00C24D83 /* compat.h */,
 				F55985D3038922B901A804BA /* display.c */,
 				F55985D4038922B901A804BA /* display.h */,
+				F19200153B01000100F19200 /* display_timing.c */,
+				F19200163B01000100F19200 /* display_timing.h */,
 				F55985D5038922B901A804BA /* event.c */,
 				F55985D6038922B901A804BA /* event.h */,
 				B62B1A270DD6655800D42AAF /* fuse.c */,
@@ -2793,6 +2808,9 @@
 				B635EAE7116A0FE500A166F2 /* keystate.c in Sources */,
 				B6501DF411AABD6800898AD1 /* blipbuffer.c in Sources */,
 				B6501DF711AABD9300898AD1 /* sound.c in Sources */,
+				F19200013B01000100F19200 /* speaker_filter.c in Sources */,
+				F19200023B01000100F19200 /* ula_filter.c in Sources */,
+				F19200033B01000100F19200 /* display_timing.c in Sources */,
 				B6501DFC11AABE2300898AD1 /* rectangle.c in Sources */,
 				B6BDE2DB125DF4A800B81C58 /* spec48_ntsc.c in Sources */,
 				B6E1F19C14F6527300600EB0 /* pzx_read.c in Sources */,

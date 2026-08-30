@@ -1,6 +1,6 @@
 /* Localized versions of Info.plist keys */
 
 CFBundleName = "Fuse";
-CFBundleShortVersionString = "1.9.1";
-CFBundleGetInfoString = "Fuse version 1.9.1, Copyright 1999-2026 Philip Kendall and others.";
+CFBundleShortVersionString = "1.9.2";
+CFBundleGetInfoString = "Fuse version 1.9.2, Copyright 1999-2026 Philip Kendall and others.";
 NSHumanReadableCopyright = "Copyright 1999-2026 Philip Kendall and others.";

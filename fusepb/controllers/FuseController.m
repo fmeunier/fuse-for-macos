@@ -57,6 +57,7 @@
 #include "tape.h"
 #include "timer.h"
 #include "ui.h"
+#include "ui/cocoa/cocoaui.h"
 #include "uimedia.h"
 #include "uidisplay.h"
 #include "utils.h"
@@ -2375,7 +2376,7 @@ save_as_exit:
     fileTypes = plusdFileTypes;
   }
 
-  drive_info = ui_media_drive_find( drive );
+  drive_info = cocoaui_find_disk_drive( drive );
   if( !drive_info ) {
     [[EmulationSessionController instance] unpause];
     return;
@@ -2505,7 +2506,7 @@ save_as_exit:
     fileTypes = @[@"mgt", @"img"];
   }
   
-  drive_info = ui_media_drive_find( which );
+  drive_info = cocoaui_find_disk_drive( which );
   if( !drive_info )  { [[EmulationSessionController instance] unpause]; return 1; }
 
   if( drive_info->fdd->disk.filename == NULL )
