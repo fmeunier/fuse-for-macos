@@ -6,25 +6,16 @@ description: This section describes the changes for recent versions of the Fuse 
 ## What's new in Fuse for macOS 1.9.2
 
 ### Emulation core improvements:
-* Improve ZX Spectrum ULA beeper emulation with separate MIC and speaker paths,
-  improved speaker-response modelling and automatic machine-appropriate speaker
-  selection (Fredrick Meunier).
-* Preserve snapshot peripheral ROMs across soft resets and correct Multiface
-  ROM handling after machine resets (Fredrick Meunier and Sergio Baldoví).
-* Correct tape traps for short ROM blocks and emulate the ROM flag comparison
-  performed by real hardware (Fredrick Meunier; thanks, Woody).
-* Avoid rereading startup media and reduce display dirty-tracking memory usage
-  (Fredrick Meunier).
+* Improve ZX Spectrum ULA beeper emulation with separate MIC and speaker paths, improved speaker-response modelling and automatic machine-appropriate speaker selection (Fredrick Meunier).
+* Preserve snapshot peripheral ROMs across soft resets and correct Multiface ROM handling after machine resets (Fredrick Meunier and Sergio Baldoví).
+* Correct tape traps for short ROM blocks and emulate the ROM flag comparison performed by real hardware (Fredrick Meunier; thanks, Woody).
+* Avoid rereading startup media and reduce display dirty-tracking memory usage (Fredrick Meunier).
 
 ### macOS improvements:
-* Improve communication between the main UI and emulator threads, avoiding
-  synchronous callback deadlocks and stale keyboard state after changing
-  applications (Fredrick Meunier).
+* Improve communication between the main UI and emulator threads, avoiding synchronous callback deadlocks and stale keyboard state after changing applications (Fredrick Meunier).
 
 ### Quick Look and Spotlight improvements:
-* Add Spotlight metadata for HDF, Opus, DISCiPLE/+D and Didaktik disk
-  geometry, Interface 2 and Timex DCK cartridges, tape and RZX contents, and
-  additional snapshot peripherals (Fredrick Meunier).
+* Add Spotlight metadata for HDF, Opus, DISCiPLE/+D and Didaktik disk geometry, Interface 2 and Timex DCK cartridges, tape and RZX contents, and additional snapshot peripherals (Fredrick Meunier).
 
 ### Miscellaneous improvements:
 * Allocate Pokefinder working memory only when needed (Fredrick Meunier).
@@ -34,13 +25,9 @@ description: This section describes the changes for recent versions of the Fuse 
 ## What's new in Fuse for macOS 1.9.1
 
 ### New features:
-* Replace the legacy OpenGL display renderer with a Metal renderer (Fredrick
-  Meunier).
-* Quick Look thumbnails and previews can now display SCREEN$ files stored in
-  Microdrive cartridges (Fredrick Meunier).
-* Spotlight now indexes filenames in tape images, Microdrive cartridges,
-  TR-DOS disk images and SCL archives, and disk geometry in +3 DSK/EDSK images
-  (Fredrick Meunier).
+* Replace the legacy OpenGL display renderer with a Metal renderer (Fredrick Meunier).
+* Quick Look thumbnails and previews can now display SCREEN$ files stored in Microdrive cartridges (Fredrick Meunier).
+* Spotlight now indexes filenames in tape images, Microdrive cartridges, TR-DOS disk images and SCL archives, and disk geometry in +3 DSK/EDSK images (Fredrick Meunier).
 
 ### Scaler improvements:
 * Add PAL TV composite filter chroma blending across lines (Fredrick Meunier).
