@@ -1,154 +1,159 @@
 # Sparkle integration
 
-This repository keeps Sparkle update publishing separate from the existing human-facing `Fuse.zip` release archive.
+Use this document to prepare and publish Sparkle updates.
 
-## Current shape
+The Sparkle update archive is different from the `Fuse.zip` archive:
 
-- `make dist` produces the traditional `Fuse.zip` archive for manual distribution.
-- `make sparkle-zip` produces `Fuse-<version>-sparkle.zip`, containing only `Fuse.app`.
-- Sparkle appcast metadata is generated locally and is intended for publication to GitHub Pages.
-- Sparkle archive signing uses a local EdDSA key stored in the macOS login Keychain.
+- `make dist` creates `Fuse.zip` for manual distribution.
+- `make sparkle-zip` creates `Fuse-<version>-sparkle.zip` for Sparkle. This archive contains only `Fuse.app`.
 
-The feed layouts are:
+Sparkle appcast metadata is generated on the release Mac. Publish this metadata with GitHub Pages. Sparkle signs the update archive with a local EdDSA key in the macOS login keychain.
 
-- staging appcast: `https://fmeunier.github.io/fuse-for-macos/appcast-staging.xml`
-- production appcast: `https://fmeunier.github.io/fuse-for-macos/appcast.xml`
-- release notes: `https://fmeunier.github.io/fuse-for-macos/release-notes/<version>.md`
+## Feed locations
 
-## Local prerequisites
+Use these feed locations:
 
-You need all of the following on the release machine:
+- Staging appcast: `https://fmeunier.github.io/fuse-for-macos/appcast-staging.xml`
+- Production appcast: `https://fmeunier.github.io/fuse-for-macos/appcast.xml`
+- Release notes: `https://fmeunier.github.io/fuse-for-macos/release-notes/<version>.md`
 
-- Xcode and command line tools
-- a local Developer ID Application certificate for code signing
-- a configured `notarytool` keychain profile for notarization
-- Sparkle tools resolved via Swift Package Manager in Xcode DerivedData
-- a local Sparkle EdDSA private key in the login Keychain
+## Prerequisites
 
-If Sparkle package artifacts are missing, resolve them with:
+Make sure that the release Mac has these items:
+
+- Xcode and the command-line tools
+- A Developer ID Application certificate
+- A `notarytool` keychain profile for notarization
+- The Sparkle tools in the Xcode DerivedData directory
+- A Sparkle EdDSA private key in the login keychain
+
+If the Sparkle package artifacts are not available, resolve the package dependencies:
 
 ```sh
 xcodebuild -resolvePackageDependencies -project fusepb/Fuse.xcodeproj -scheme Fuse
 ```
 
-## Sparkle Makefile targets
+Make sure that `fusepb/LocalSigning.xcconfig` or the environment specifies a valid `DEVELOPMENT_TEAM`.
 
-These targets are available in the root `Makefile`:
+## Makefile targets
 
-```sh
-make sparkle-zip                    # build, notarize, staple, and package Fuse-<version>-sparkle.zip
-make sparkle-key-setup              # generate or import the local Sparkle EdDSA key via generate_keys
-make sparkle-key-public             # print the existing Sparkle EdDSA public key
-make sparkle-key-check              # fail if the local Sparkle private key is missing
-make sparkle-release-notes          # extract release-notes/<version>.md from changelog.md
-make sparkle-stage-archive          # copy the Sparkle ZIP into the local metadata tree
-make sparkle-github-release         # create/update a GitHub release and upload the Sparkle ZIP
-make sparkle-appcast                # generate local Sparkle appcast metadata
-make sparkle-appcast-github         # upload the Sparkle ZIP and generate the appcast in one step
-make sparkle-github-release-staging # staging alias for sparkle-github-release
-make sparkle-appcast-staging        # staging alias for sparkle-appcast
-make sparkle-appcast-staging-github # staging alias for sparkle-appcast-github
-make sparkle-stage-clean            # remove generated local metadata
-```
-
-## Sparkle signing key setup
-
-Run this once per Mac:
+Use these targets from the repository root:
 
 ```sh
-make sparkle-key-setup
+make sparkle-zip                    # Build, notarize, staple, and package the Sparkle ZIP.
+make sparkle-key-setup              # Generate or import the Sparkle EdDSA key.
+make sparkle-key-public             # Print the Sparkle EdDSA public key.
+make sparkle-key-check              # Make sure that the Sparkle private key is available.
+make sparkle-release-notes          # Extract the release notes from the changelog.
+make sparkle-stage-archive          # Copy the Sparkle ZIP to the staging directory.
+make sparkle-github-release         # Create or update a GitHub release and upload the Sparkle ZIP.
+make sparkle-appcast                # Generate the local Sparkle appcast metadata.
+make sparkle-appcast-github         # Upload the Sparkle ZIP and generate the appcast.
+make sparkle-github-release-staging # Run sparkle-github-release for staging.
+make sparkle-appcast-staging        # Run sparkle-appcast for staging.
+make sparkle-appcast-staging-github # Run sparkle-appcast-github for staging.
+make sparkle-stage-clean            # Remove generated staging metadata.
 ```
 
-This uses Sparkle's `generate_keys` tool. The private EdDSA key stays in the login Keychain and must not be committed to the repository.
+## Set up the Sparkle signing key
 
-To print the existing public key again:
+Do this procedure one time on each release Mac.
 
-```sh
-make sparkle-key-public
+1. Generate or import the EdDSA key:
+
+   ```sh
+   make sparkle-key-setup
+   ```
+
+2. Print the public key when you must copy it:
+
+   ```sh
+   make sparkle-key-public
+   ```
+
+3. Put the public key in `SUPublicEDKey` in `fusepb/Info-Fuse.plist` or in the applicable build setting when you enable the updater.
+
+> **Important:** Do not commit the private EdDSA key. The `generate_keys` tool keeps this key in the login keychain.
+
+## Generate release notes
+
+The release-notes source is `fusepb/FuseHelp/_English.lproj/changelog.md`.
+
+The changelog must contain this heading for the release version:
+
+```text
+## What's new in Fuse for macOS <version>
 ```
 
-When updater wiring is enabled in the app, copy that public key into `SUPublicEDKey` in `fusepb/Info-Fuse.plist` or the eventual substituted build setting.
-
-## Release notes extraction
-
-The source of truth for Sparkle release notes is:
-
-- `fusepb/FuseHelp/_English.lproj/changelog.md`
-
-Per-version notes are extracted from the heading:
-
-- `## What's new in Fuse for macOS <version>`
-
-Generate staged notes with:
+Generate the release notes:
 
 ```sh
 make sparkle-release-notes
 ```
 
-By default, `VERSION` comes from `CFBundleShortVersionString` in `fusepb/Info-Fuse.plist` and falls back to `CFBundleVersion`.
+The command reads `CFBundleShortVersionString` from `fusepb/Info-Fuse.plist`. If this value is not available, the command reads `CFBundleVersion`.
 
-Override it explicitly if needed:
+To specify a different version, set `VERSION`:
 
 ```sh
 make sparkle-release-notes VERSION=1.8.0
 ```
 
-The generated file is written to:
+The command creates `.sparkle-stage/release-notes/<version>.md`.
 
-- `.sparkle-stage/release-notes/<version>.md`
+## Generate a local staging appcast
 
-## Local staging appcast generation
-
-Generate local staging metadata with:
+Generate the local staging metadata:
 
 ```sh
 make sparkle-appcast-staging
 ```
 
-This target currently:
+This command does these operations:
 
-1. builds and notarizes `Fuse.app` if needed via `make sparkle-zip`
-2. verifies that the local Sparkle EdDSA key exists
-3. stages `Fuse-<version>-sparkle.zip` in `.sparkle-stage/`
-4. extracts `.sparkle-stage/release-notes/<version>.md`
-5. runs Sparkle `generate_appcast`
-6. patches the generated release-notes links back to the published Pages URL shape
+1. Build and notarize `Fuse.app` if necessary.
+2. Make sure that the local EdDSA key is available.
+3. Copy `Fuse-<version>-sparkle.zip` to `.sparkle-stage/`.
+4. Extract `.sparkle-stage/release-notes/<version>.md`.
+5. Run the Sparkle `generate_appcast` tool.
+6. Change the generated release-notes links to the GitHub Pages URLs.
 
-The output staging tree is:
+The command creates these files:
 
 - `.sparkle-stage/appcast-staging.xml`
 - `.sparkle-stage/Fuse-<version>-sparkle.zip`
 - `.sparkle-stage/release-notes/<version>.md`
 
-The generated appcast currently defaults to these URL prefixes:
+The default URL prefixes are:
 
-- downloads: `https://fmeunier.github.io/fuse-for-macos/`
-- release notes: `https://fmeunier.github.io/fuse-for-macos/release-notes/`
+- Downloads: `https://fmeunier.github.io/fuse-for-macos/`
+- Release notes: `https://fmeunier.github.io/fuse-for-macos/release-notes/`
 
-If the published archive host differs from Pages, override the download prefix:
+If a different host supplies the archive, specify its URL prefix:
 
 ```sh
 make sparkle-appcast SPARKLE_DOWNLOAD_URL_PREFIX='https://example.invalid/path/'
 ```
 
-## Staging GitHub Release publication
+## Publish a staging GitHub release
 
-Create or update the staging GitHub prerelease and upload the Sparkle ZIP with:
+Create or update the staging prerelease:
 
 ```sh
 make sparkle-github-release-staging
 ```
 
-This target currently:
+This command does these operations:
 
-1. reuses the staged `Fuse-<version>-sparkle.zip`
-2. creates `sparkle-staging-<version>` as a GitHub prerelease when it does not exist yet
-3. updates the prerelease title and notes when it already exists
-4. uploads the Sparkle ZIP asset with `gh release upload --clobber`
-5. prints the GitHub Releases download URL prefix used by the staging appcast flow
+1. Use the staged `Fuse-<version>-sparkle.zip`.
+2. Create the `sparkle-staging-<version>` prerelease if it does not exist.
+3. Update the title and notes if the prerelease exists.
+4. Upload the Sparkle ZIP with `gh release upload --clobber`.
+5. Print the GitHub Releases download URL prefix.
 
-By default the target publishes to `fmeunier/fuse-for-macos`.
-Override any of these if needed:
+The default repository is `fmeunier/fuse-for-macos`.
+
+To change the repository, tag, or title, set the applicable variables:
 
 ```sh
 make sparkle-github-release-staging \
@@ -157,32 +162,34 @@ make sparkle-github-release-staging \
   SPARKLE_GITHUB_RELEASE_TITLE='Fuse 1.8.0 staging update'
 ```
 
-Generate the staging appcast for the GitHub Releases staging path in one step with:
+To upload the ZIP and generate the staging appcast in one operation, use:
 
 ```sh
 make sparkle-appcast-staging-github
 ```
 
-This runs the GitHub upload flow first and then regenerates the local staging appcast from the already-staged archive and release notes with:
+This command uses these URL prefixes:
 
-- downloads: `https://github.com/<owner>/<repo>/releases/download/<tag>/`
-- release notes: `https://fmeunier.github.io/fuse-for-macos/release-notes/`
+- Downloads: `https://github.com/<owner>/<repo>/releases/download/<tag>/`
+- Release notes: `https://fmeunier.github.io/fuse-for-macos/release-notes/`
 
-The generated enclosure URL matches the published GitHub Releases asset path directly, so no manual post-generation enclosure rewrite is needed when you use this target. The Makefile now avoids rebuilding or repackaging between the GitHub upload step and the appcast generation step, which keeps the uploaded ZIP and the signed appcast metadata in sync.
+The enclosure URL points directly to the GitHub Releases asset. The command does not rebuild or package the app between the upload and appcast operations. Thus, the uploaded ZIP agrees with the signed appcast metadata.
 
-Important: if you need to republish the same version after fixing the archive, prefer a new asset name or a new release tag instead of replacing the existing GitHub asset in place. GitHub's CDN may continue serving the older ZIP for a while at the original URL, which will make Sparkle reject the update if the appcast length/signature was generated from the newer ZIP.
+> **Warning:** Do not replace an existing GitHub asset at the same URL. GitHub can supply the old ZIP from its cache. Sparkle will reject the update if the cached ZIP does not agree with the appcast length or signature. Use a new tag or a new asset name.
 
-## Staging publication procedure
+## Publish a staging update
 
-Use this end-to-end order for a staging publish.
+Use this procedure to publish a staging update.
 
-If you want the deterministic steps wrapped in one command, use:
+For the standard procedure, run:
 
 ```sh
 scripts/release-staging-sparkle.sh
 ```
 
-Useful options:
+The script uses a new temporary staging directory by default. This prevents `generate_appcast` from finding duplicate archives from previous tests. The script builds `Fuse.zip` and the Sparkle ZIP from the same notarized `Fuse.app`. It also publishes the staging appcast and release notes to `gh-pages`.
+
+Use these options when necessary:
 
 ```sh
 scripts/release-staging-sparkle.sh --tag sparkle-staging-1.9.0-r1
@@ -190,123 +197,184 @@ scripts/release-staging-sparkle.sh --skip-pages-publish
 scripts/release-staging-sparkle.sh --staging-dir /tmp/fuse-sparkle-stage
 ```
 
-The script runs the prerequisite checks, uses a fresh temporary staging directory by default so `generate_appcast` does not see old duplicate archives from earlier rehearsals, builds both `Fuse.zip` and the Sparkle ZIP from the same notarized `Fuse.app`, generates staging metadata, and publishes the staging appcast plus release notes to `gh-pages` unless `--skip-pages-publish` is used.
+### 1. Check the prerequisites
 
-### 1. Check local prerequisites
+1. Resolve the Sparkle package dependencies:
 
-Verify the release machine is ready:
+   ```sh
+   xcodebuild -resolvePackageDependencies -project fusepb/Fuse.xcodeproj -scheme Fuse
+   ```
 
-```sh
-xcodebuild -resolvePackageDependencies -project fusepb/Fuse.xcodeproj -scheme Fuse
-make sparkle-key-check
-xcrun notarytool history --keychain-profile fuse-notarize >/dev/null
-gh auth status
-```
+2. Make sure that the Sparkle private key is available:
 
-Also confirm that:
+   ```sh
+   make sparkle-key-check
+   ```
 
-- `fusepb/LocalSigning.xcconfig` or your environment provides a valid `DEVELOPMENT_TEAM`
-- the `gh-pages` branch exists and is configured as the GitHub Pages source, published from the branch root
-- the release notes for the version you are publishing exist in `fusepb/FuseHelp/_English.lproj/changelog.md`
+3. Make sure that the notarization profile is valid:
 
-### 2. Build, notarize, upload, and generate staging metadata
+   ```sh
+   xcrun notarytool history --keychain-profile fuse-notarize >/dev/null
+   ```
 
-The normal staging command is:
+4. Make sure that GitHub CLI authentication is valid:
 
-```sh
-make sparkle-stage-clean
-make sparkle-appcast-staging-github
-```
+   ```sh
+   gh auth status
+   ```
 
-If you want to avoid reusing `.sparkle-stage` entirely, override the staging directory for the run:
+5. Make sure that the `gh-pages` branch exists.
 
-```sh
-make sparkle-appcast-staging-github SPARKLE_STAGING_DIR=/tmp/fuse-sparkle-stage
-```
+6. Make sure that GitHub Pages publishes from the root of the `gh-pages` branch.
 
-That performs the release steps in this order:
+7. Make sure that the changelog contains release notes for the version.
 
-1. build `Fuse.app`
-2. notarize it and staple the notarization ticket
-3. create `Fuse-<version>-sparkle.zip`
-4. extract `.sparkle-stage/release-notes/<version>.md`
-5. create or update the GitHub prerelease `sparkle-staging-<version>`
-6. upload the Sparkle ZIP asset to that prerelease
-7. regenerate `.sparkle-stage/appcast-staging.xml` with the final GitHub Releases download URL prefix
+### 2. Build and upload the staging archive
 
-Expected local outputs:
+1. Remove old staging files:
 
-- `.sparkle-stage/appcast-staging.xml`
-- `.sparkle-stage/Fuse-<version>-sparkle.zip`
-- `.sparkle-stage/release-notes/<version>.md`
+   ```sh
+   make sparkle-stage-clean
+   ```
 
-### 3. Publish the Pages content
+2. Build, notarize, upload, and generate the appcast:
 
-Publish only the metadata files to the `gh-pages` branch root:
+   ```sh
+   make sparkle-appcast-staging-github
+   ```
 
-```sh
-VERSION=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' fusepb/Info-Fuse.plist 2>/dev/null || \
-  /usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' fusepb/Info-Fuse.plist)
-PAGES_DIR=/tmp/fuse-gh-pages
+   To use a different staging directory, run:
 
-git worktree add "$PAGES_DIR" gh-pages
-cp .sparkle-stage/appcast-staging.xml "$PAGES_DIR"/
-mkdir -p "$PAGES_DIR"/release-notes
-cp ".sparkle-stage/release-notes/${VERSION}.md" "$PAGES_DIR"/release-notes/
-cd "$PAGES_DIR"
-touch .nojekyll
-git add appcast-staging.xml release-notes .nojekyll
-git commit -m "Publish staging Sparkle metadata"
-git push origin gh-pages
-cd -
-git worktree remove "$PAGES_DIR"
-```
+   ```sh
+   make sparkle-appcast-staging-github SPARKLE_STAGING_DIR=/tmp/fuse-sparkle-stage
+   ```
 
-If you already have a local checkout of `gh-pages`, update that instead. The branch root should contain:
+3. Make sure that these files exist:
+
+   - `.sparkle-stage/appcast-staging.xml`
+   - `.sparkle-stage/Fuse-<version>-sparkle.zip`
+   - `.sparkle-stage/release-notes/<version>.md`
+
+### 3. Publish the staging metadata
+
+Skip this procedure if the release script published the GitHub Pages files.
+
+1. Set the version and worktree paths:
+
+   ```sh
+   VERSION=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' fusepb/Info-Fuse.plist 2>/dev/null || \
+     /usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' fusepb/Info-Fuse.plist)
+   PAGES_DIR=/tmp/fuse-gh-pages
+   ```
+
+2. Add a worktree for the `gh-pages` branch:
+
+   ```sh
+   git worktree add "$PAGES_DIR" gh-pages
+   ```
+
+3. Copy the appcast to the branch root:
+
+   ```sh
+   cp .sparkle-stage/appcast-staging.xml "$PAGES_DIR"/
+   ```
+
+4. Copy the release notes:
+
+   ```sh
+   mkdir -p "$PAGES_DIR"/release-notes
+   cp ".sparkle-stage/release-notes/${VERSION}.md" "$PAGES_DIR"/release-notes/
+   ```
+
+5. Commit and push the metadata:
+
+   ```sh
+   cd "$PAGES_DIR"
+   touch .nojekyll
+   git add appcast-staging.xml release-notes .nojekyll
+   git commit -m "Publish staging Sparkle metadata"
+   git push origin gh-pages
+   cd -
+   ```
+
+6. Remove the worktree:
+
+   ```sh
+   git worktree remove "$PAGES_DIR"
+   ```
+
+The branch root must contain these files:
 
 - `appcast-staging.xml`
 - `release-notes/<version>.md`
 - `.nojekyll`
 
-### 4. Verify the published staging feed
+If you have a local checkout of `gh-pages`, update that checkout instead.
 
-Check both the Pages content and the GitHub Release asset:
+### 4. Verify the staging update
 
-```sh
-curl -fsSL https://fmeunier.github.io/fuse-for-macos/appcast-staging.xml
-curl -fsSL "https://fmeunier.github.io/fuse-for-macos/release-notes/${VERSION}.md"
-gh release view "sparkle-staging-${VERSION}" -R fmeunier/fuse-for-macos
-```
+1. Get the published appcast:
 
-Confirm that:
+   ```sh
+   curl -fsSL https://fmeunier.github.io/fuse-for-macos/appcast-staging.xml
+   ```
 
-- the appcast enclosure URL points at `https://github.com/fmeunier/fuse-for-macos/releases/download/sparkle-staging-<version>/Fuse-<version>-sparkle.zip`
-- the release notes URL points at `https://fmeunier.github.io/fuse-for-macos/release-notes/<version>.md`
-- the appcast and release-notes URLs return HTTP 200
-- the downloaded GitHub release asset size matches the appcast enclosure `length`
-- Sparkle update testing with a staging-wired build sees the new item
+2. Get the published release notes:
 
-GitHub Pages publication can lag briefly after the `gh-pages` push. If the first `curl` returns 404, wait a little and retry instead of assuming the publish failed immediately.
+   ```sh
+   curl -fsSL "https://fmeunier.github.io/fuse-for-macos/release-notes/${VERSION}.md"
+   ```
 
-If Sparkle reports that the update is improperly signed, check the macOS log for a length mismatch first:
+3. Get the GitHub prerelease information:
 
-```sh
-log show --last 15m --predicate 'process == "Fuse" OR subsystem == "org.sparkle-project.Sparkle"' --style compact
-```
+   ```sh
+   gh release view "sparkle-staging-${VERSION}" -R fmeunier/fuse-for-macos
+   ```
 
-A stale GitHub/CDN asset usually shows up as "expected content length ... differs from the downloaded file length ...". In that case, upload the corrected ZIP under a new asset name, regenerate the appcast so the enclosure URL changes, and republish `appcast-staging.xml`.
+4. Make sure that the enclosure URL has this form:
 
-## Production publication procedure
+   ```text
+   https://github.com/fmeunier/fuse-for-macos/releases/download/sparkle-staging-<version>/Fuse-<version>-sparkle.zip
+   ```
 
-Use this end-to-end order for the first public rollout after staging signoff.
+5. Make sure that the release-notes URL has this form:
 
-If you want the deterministic steps wrapped in one command, use:
+   ```text
+   https://fmeunier.github.io/fuse-for-macos/release-notes/<version>.md
+   ```
+
+6. Make sure that the appcast and release-notes URLs return HTTP status 200.
+
+7. Make sure that the GitHub asset size is equal to the appcast enclosure `length`.
+
+8. Use a staging build to check for the update.
+
+> **Note:** GitHub Pages can take time to publish the files. If `curl` returns HTTP status 404 immediately after the push, wait and try again.
+
+## Publish a production update
+
+Use this procedure only after the staging update passes all tests.
+
+For the standard procedure, run:
 
 ```sh
 scripts/release-public-sparkle.sh
 ```
 
-Useful options:
+The script publishes these items:
+
+- `appcast.xml`
+- A normal GitHub release
+- `release-notes/<version>.md`
+
+The script uses these defaults:
+
+- Git tag: `fuse-for-macos-<version>`
+- GitHub release title: `Fuse for macOS <version>`
+- Appcast path: `appcast.xml`
+- Feed override: `SPARKLE_FEED_URL=https://fmeunier.github.io/fuse-for-macos/appcast.xml`
+
+Use these options when necessary:
 
 ```sh
 scripts/release-public-sparkle.sh --tag fuse-for-macos-1.9.0
@@ -315,22 +383,17 @@ scripts/release-public-sparkle.sh --skip-pages-publish
 scripts/release-public-sparkle.sh --staging-dir /tmp/fuse-sparkle-public
 ```
 
-The production helper mirrors the staging helper but publishes:
+### 1. Check the production tag
 
-- `appcast.xml`
-- a normal GitHub release instead of a prerelease
-- the same shared `release-notes/<version>.md`
+1. Set `VERSION` to the app version.
 
-The default production assumptions are:
+2. Make sure that the `fuse-for-macos-$VERSION` tag exists.
 
-- Git tag: `fuse-for-macos-<version>`
-- GitHub release title: `Fuse for macOS <version>`
-- Pages appcast path: `appcast.xml`
-- local updater feed override: `SPARKLE_FEED_URL=https://fmeunier.github.io/fuse-for-macos/appcast.xml`
+The production script uses `gh release create --verify-tag`. The command stops if the tag does not exist. It does not create the tag.
 
-The production helper expects that tag to already exist before it creates the GitHub release. It passes `--verify-tag` through `gh release create`, so it will fail rather than creating a new tag implicitly.
+### 2. Build and publish the production update
 
-The production command path is:
+Run:
 
 ```sh
 make dist sparkle-appcast-github \
@@ -341,30 +404,84 @@ make dist sparkle-appcast-github \
   SPARKLE_GITHUB_VERIFY_TAG=1
 ```
 
-After publishing, verify:
+This command builds the distribution archives, creates the GitHub release, uploads the Sparkle ZIP, and generates `appcast.xml`.
+
+Publish `appcast.xml` and `release-notes/<version>.md` to the root of the `gh-pages` branch. Use the same GitHub Pages procedure as for staging, but replace `appcast-staging.xml` with `appcast.xml`.
+
+### 3. Verify the production update
+
+1. Get the production appcast:
+
+   ```sh
+   curl -fsSL https://fmeunier.github.io/fuse-for-macos/appcast.xml
+   ```
+
+2. Get the release notes:
+
+   ```sh
+   curl -fsSL "https://fmeunier.github.io/fuse-for-macos/release-notes/${VERSION}.md"
+   ```
+
+3. Get the GitHub release information:
+
+   ```sh
+   gh release view "fuse-for-macos-${VERSION}" -R fmeunier/fuse-for-macos
+   ```
+
+4. Install an older build that uses `appcast.xml`.
+
+5. Select **Help > Check for Updates…**.
+
+6. Make sure that Sparkle finds the new version.
+
+7. Make sure that Sparkle displays the correct release notes.
+
+8. Make sure that Sparkle downloads the update.
+
+9. Make sure that Sparkle validates the signature.
+
+10. Make sure that Sparkle installs the update.
+
+11. Make sure that the app starts again.
+
+12. Make sure that the app shows the new version.
+
+13. Make sure that Gatekeeper permits the updated app to start.
+
+## Troubleshooting
+
+### Sparkle reports an incorrect signature
+
+First, examine the macOS log:
 
 ```sh
-curl -fsSL https://fmeunier.github.io/fuse-for-macos/appcast.xml
-curl -fsSL "https://fmeunier.github.io/fuse-for-macos/release-notes/${VERSION}.md"
-gh release view "$VERSION" -R fmeunier/fuse-for-macos
+log show --last 15m --predicate 'process == "Fuse" OR subsystem == "org.sparkle-project.Sparkle"' --style compact
 ```
 
-Then do the conservative manual client validation against the production feed:
+Look for this type of message:
 
-- install an older build that points at `appcast.xml`
-- run `Help > Check for Updates…`
-- confirm discovery, notes, download, signature validation, install, relaunch, and resulting version
-- confirm launch/Gatekeeper behavior after update
+```text
+expected content length ... differs from the downloaded file length ...
+```
 
-## Manual patching notes
+This message usually means that GitHub supplied an old asset from its cache.
 
-- Preferred path: use `make sparkle-appcast-staging-github`. It uploads first, then generates the appcast with the final GitHub Releases URL prefix, so manual enclosure URL patching should not be needed.
-- `make sparkle-appcast-staging` alone is mainly for local or non-GitHub-hosted archive testing unless you explicitly pass the final `SPARKLE_DOWNLOAD_URL_PREFIX`.
-- If you do need to rewrite links after generation, use `fusepb/scripts/patch_sparkle_appcast.py` instead of hand-editing XML.
+1. Upload the corrected ZIP with a new asset name or a new tag.
+2. Generate the appcast again.
+3. Make sure that the enclosure URL changes.
+4. Publish the appcast again.
 
-## Current limitations
+### The appcast has incorrect links
 
-- the archive signing key must exist locally before `generate_appcast` can sign the Sparkle ZIP.
-- signed feeds are intentionally not enabled yet; the current plan is archive signing over HTTPS only.
-- Pages publication is still a manual git step on the `gh-pages` branch.
-- Replacing an existing GitHub release asset in place is risky for rehearsal retries because CDN caches can keep serving the older ZIP at the same URL for a while.
+Use `make sparkle-appcast-staging-github` when GitHub Releases supplies the archive. This command generates the appcast with the final download URL.
+
+Use `make sparkle-appcast-staging` only for local tests or for archives that are not on GitHub Releases. Set the final `SPARKLE_DOWNLOAD_URL_PREFIX` when necessary.
+
+If you must change links after appcast generation, use `fusepb/scripts/patch_sparkle_appcast.py`. Do not edit the XML manually.
+
+## Limitations
+
+- The EdDSA private key must be available before `generate_appcast` can sign the Sparkle ZIP.
+- Signed feeds are not enabled. Sparkle uses archive signing over HTTPS.
+- GitHub Pages publication is a manual Git operation on the `gh-pages` branch.
+- GitHub can cache a replaced release asset. Use a new URL for each corrected archive.
