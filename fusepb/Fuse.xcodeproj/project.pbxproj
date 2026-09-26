@@ -351,6 +351,9 @@
 		B6DDE53C0D67963600D6F905 /* ui.c in Sources */ = {isa = PBXBuildFile; fileRef = B6DDE53B0D67963600D6F905 /* ui.c */; };
 		B6E0252C0B38AFE500E23A0F /* keysyms.m in Sources */ = {isa = PBXBuildFile; fileRef = B6E0252B0B38AFE500E23A0F /* keysyms.m */; };
 		B6E0CBA41D9E809000426949 /* unittests.c in Sources */ = {isa = PBXBuildFile; fileRef = B6E0CBA21D9E809000426949 /* unittests.c */; };
+		B7F110010000000000000001 /* helpers.c in Sources */ = {isa = PBXBuildFile; fileRef = B7F110010000000000000004 /* helpers.c */; };
+		B7F110010000000000000002 /* loader.c in Sources */ = {isa = PBXBuildFile; fileRef = B7F110010000000000000005 /* loader.c */; };
+		B7F110010000000000000003 /* tape.c in Sources */ = {isa = PBXBuildFile; fileRef = B7F110010000000000000006 /* tape.c */; };
 		B6E1F19C14F6527300600EB0 /* pzx_read.c in Sources */ = {isa = PBXBuildFile; fileRef = B6E1F19B14F6527300600EB0 /* pzx_read.c */; };
 		B6E1F19E14F6528A00600EB0 /* utilities.c in Sources */ = {isa = PBXBuildFile; fileRef = B6E1F19D14F6528A00600EB0 /* utilities.c */; };
 		B6E1F1A114F652E300600EB0 /* pokemem.c in Sources */ = {isa = PBXBuildFile; fileRef = B6E1F19F14F652E300600EB0 /* pokemem.c */; };
@@ -874,6 +877,9 @@
 		B6E0252B0B38AFE500E23A0F /* keysyms.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = keysyms.m; sourceTree = "<group>"; };
 		B6E0CBA21D9E809000426949 /* unittests.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = unittests.c; sourceTree = "<group>"; };
 		B6E0CBA31D9E809000426949 /* unittests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unittests.h; sourceTree = "<group>"; };
+		B7F110010000000000000004 /* helpers.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = helpers.c; sourceTree = "<group>"; };
+		B7F110010000000000000005 /* loader.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = loader.c; sourceTree = "<group>"; };
+		B7F110010000000000000006 /* tape.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = tape.c; sourceTree = "<group>"; };
 		B6E1F19B14F6527300600EB0 /* pzx_read.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pzx_read.c; sourceTree = "<group>"; };
 		B6E1F19D14F6528A00600EB0 /* utilities.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = utilities.c; sourceTree = "<group>"; };
 		B6E1F19F14F652E300600EB0 /* pokemem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pokemem.c; sourceTree = "<group>"; };
@@ -1739,6 +1745,9 @@
 		B6E0CBA11D9E805900426949 /* unittests */ = {
 			isa = PBXGroup;
 			children = (
+				B7F110010000000000000004 /* helpers.c */,
+				B7F110010000000000000005 /* loader.c */,
+				B7F110010000000000000006 /* tape.c */,
 				B6E0CBA21D9E809000426949 /* unittests.c */,
 				B6E0CBA31D9E809000426949 /* unittests.h */,
 			);
@@ -2807,6 +2816,9 @@
 				B61F469409121DF100C8096C /* ide.c in Sources */,
 				B6825549091817F30014B5EE /* divide.c in Sources */,
 				B6E0CBA41D9E809000426949 /* unittests.c in Sources */,
+				B7F110010000000000000001 /* helpers.c in Sources */,
+				B7F110010000000000000002 /* loader.c in Sources */,
+				B7F110010000000000000003 /* tape.c in Sources */,
 				B6403FD80A7E4B1A00E00B11 /* loader.c in Sources */,
 				B6CE7F420B2830A300EB65B3 /* cocoajoystick.c in Sources */,
 				B7A1C42A3A78F00000C0DE01 /* MetalDisplayView.m in Sources */,
