@@ -461,6 +461,32 @@
     XCTAssertEqual( bytes[i], (unsigned char)0x38 );
 }
 
+- (void)test_mdr_screen_with_bad_record_checksum_produces_no_image
+{
+  NSMutableData *cartridge;
+  unsigned char *bytes;
+  NSString *path;
+  FuseQuickLookImage *image;
+
+  cartridge = [NSMutableData dataWithContentsOfURL:[self fixtureURL:@"tests/fixtures/test.mdr"]];
+  XCTAssertNotNil( cartridge );
+  bytes = [cartridge mutableBytes];
+  /* Sector 84 is record one of the SCREEN$ file. Corrupt its data checksum. */
+  bytes[84 * LIBSPECTRUM_MICRODRIVE_BLOCK_LEN +
+        LIBSPECTRUM_MICRODRIVE_BLOCK_LEN - 1] ^= 0x01;
+  path = [NSTemporaryDirectory() stringByAppendingPathComponent:
+            [[NSUUID UUID].UUIDString stringByAppendingPathExtension:@"mdr"]];
+  XCTAssertTrue( [cartridge writeToFile:path atomically:YES] );
+  @try {
+    image = [[[FuseQuickLookImage alloc]
+               initWithContentsOfURL:[NSURL fileURLWithPath:path]] autorelease];
+    XCTAssertEqual( [image imageKind], FUSE_QUICKLOOK_IMAGE_NONE );
+    XCTAssertNil( [image imageData] );
+  } @finally {
+    [[NSFileManager defaultManager] removeItemAtPath:path error:NULL];
+  }
+}
+
 - (void)test_mdr_file_with_screen_canvas_size_is_standard_spectrum_resolution
 {
   FuseQuickLookImage *image;

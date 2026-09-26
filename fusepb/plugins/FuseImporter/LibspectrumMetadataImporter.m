@@ -956,10 +956,8 @@ process_mdr
 {
   libspectrum_error error;
   libspectrum_microdrive *microdrive;
-  int num_blocks, i;
+  size_t count, i;
   NSMutableArray *file_names;
-  const unsigned char *blk;
-  int recnum, reclen;
   const libspectrum_byte *name_bytes;
   char name_utf8[ 10 * 9 + 1 ];
   NSString *name;
@@ -981,29 +979,20 @@ process_mdr
                            @"Yes" : @"No" )
                  forKey:@"net_sourceforge_projects_fuse_emulator_WriteProtect"];
 
-  libspectrum_microdrive_free( microdrive );
-
-  /* Extract the names of files stored on the cartridge.
-     Each sector whose recnum is 0 and reclen is non-zero is a file-descriptor
-     sector; bytes 4–13 of the second header hold the 10-byte space-padded
-     file name. */
-  if( length < (size_t)LIBSPECTRUM_MICRODRIVE_BLOCK_LEN ) return YES;
-
-  num_blocks = (int)( length / LIBSPECTRUM_MICRODRIVE_BLOCK_LEN );
-  if( num_blocks > LIBSPECTRUM_MICRODRIVE_BLOCK_MAX )
-    num_blocks = LIBSPECTRUM_MICRODRIVE_BLOCK_MAX;
-
+  /* Like fuse-utils, group records by their ten-byte file name rather than
+     relying on a raw sector offset. Only index files with a valid first
+     record; malformed records and preset bad blocks are not files. */
   file_names = [NSMutableArray array];
+  count = libspectrum_microdrive_block_count( microdrive );
 
-  for( i = 0; i < num_blocks; i++ ) {
-    blk = buffer + i * LIBSPECTRUM_MICRODRIVE_BLOCK_LEN;
-    recnum = blk[ LIBSPECTRUM_MICRODRIVE_HEAD_LEN + 1 ];
-    reclen = blk[ LIBSPECTRUM_MICRODRIVE_HEAD_LEN + 2 ] |
-             ( blk[ LIBSPECTRUM_MICRODRIVE_HEAD_LEN + 3 ] << 8 );
+  for( i = 0; i < count; i++ ) {
+    if( libspectrum_microdrive_block_record_number( microdrive, i ) != 0 ||
+        libspectrum_microdrive_block_record_length( microdrive, i ) == 0 ||
+        libspectrum_microdrive_block_record_length( microdrive, i ) >
+          LIBSPECTRUM_MICRODRIVE_DATA_LEN ||
+        libspectrum_microdrive_checksum( microdrive, i ) != 0 ) continue;
 
-    if( recnum != 0 || reclen == 0 ) continue;
-
-    name_bytes = blk + LIBSPECTRUM_MICRODRIVE_HEAD_LEN + 4;
+    name_bytes = libspectrum_microdrive_block_record_name( microdrive, i );
     if( libspectrum_zx_string_to_utf8( name_utf8, sizeof( name_utf8 ),
                                         name_bytes, 10 ) ) continue;
 
@@ -1019,6 +1008,7 @@ process_mdr
                    forKey:@"net_sourceforge_projects_fuse_emulator_FileNames"];
   }
 
+  libspectrum_microdrive_free( microdrive );
   return YES;
 }
 

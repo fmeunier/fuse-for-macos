@@ -47,6 +47,15 @@ OPTION | DESCRIPTION
 *Beta autoboot in 48K* | When Beta 128 emulation is enabled and a 48K or TC2048 machine is being emulated, this option controls whether the machine boots directly into the TR-DOS system.
 
 <br>
+### DISCiPLE options
+
+See [DISCiPLE Emulation](disciple.html) for more details.
+
+OPTION | DESCRIPTION
+:--- | :---
+*DISCiPLE inhibit* | Controls the interface's physical inhibit switch. Turning it on immediately pages the DISCiPLE out; with inhibit on, control-port bit 4 can permit later paging triggers.
+
+<br>
 ### DivIDE options
 
 See the [DivIDE Emulation](divide.html) section for more details.

@@ -369,6 +369,20 @@
 		B6F5E1801EE16CA70005178D /* covox.c in Sources */ = {isa = PBXBuildFile; fileRef = B6F5E17E1EE16CA70005178D /* covox.c */; };
 		B6F66E351E473D68005B270A /* memory_pages.c in Sources */ = {isa = PBXBuildFile; fileRef = B6F66E331E473D68005B270A /* memory_pages.c */; };
 		5PK000013A7B00000C0DE01 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 5PK000043A7B00000C0DE01 /* Sparkle */; };
+		A71000000000000000000000 /* compat/unix/monotonic.c in Sources */ = {isa = PBXBuildFile; fileRef = A72000000000000000000000 /* compat/unix/monotonic.c */; };
+		A71000000000000000000001 /* display_border.c in Sources */ = {isa = PBXBuildFile; fileRef = A72000000000000000000001 /* display_border.c */; };
+		A71000000000000000000002 /* display_dirty.c in Sources */ = {isa = PBXBuildFile; fileRef = A72000000000000000000002 /* display_dirty.c */; };
+		A71000000000000000000003 /* display_render.c in Sources */ = {isa = PBXBuildFile; fileRef = A72000000000000000000003 /* display_render.c */; };
+		A71000000000000000000004 /* loader_detector.c in Sources */ = {isa = PBXBuildFile; fileRef = A72000000000000000000004 /* loader_detector.c */; };
+		A71000000000000000000005 /* rzx_recording.c in Sources */ = {isa = PBXBuildFile; fileRef = A72000000000000000000005 /* rzx_recording.c */; };
+		A71000000000000000000006 /* sound/ay_engine.c in Sources */ = {isa = PBXBuildFile; fileRef = A72000000000000000000006 /* sound/ay_engine.c */; };
+		A71000000000000000000007 /* sound/dc_filter.c in Sources */ = {isa = PBXBuildFile; fileRef = A72000000000000000000007 /* sound/dc_filter.c */; };
+		A71000000000000000000008 /* sound/output_mixer.c in Sources */ = {isa = PBXBuildFile; fileRef = A72000000000000000000008 /* sound/output_mixer.c */; };
+		A71000000000000000000009 /* sound/source_synths.c in Sources */ = {isa = PBXBuildFile; fileRef = A72000000000000000000009 /* sound/source_synths.c */; };
+		A7100000000000000000000A /* sound/tv_filter.c in Sources */ = {isa = PBXBuildFile; fileRef = A7200000000000000000000A /* sound/tv_filter.c */; };
+		A7100000000000000000000B /* tape_block.c in Sources */ = {isa = PBXBuildFile; fileRef = A7200000000000000000000B /* tape_block.c */; };
+		A7100000000000000000000C /* tape_record.c in Sources */ = {isa = PBXBuildFile; fileRef = A7200000000000000000000C /* tape_record.c */; };
+		A7100000000000000000000D /* tape_traps.c in Sources */ = {isa = PBXBuildFile; fileRef = A7200000000000000000000D /* tape_traps.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -966,6 +980,20 @@
 		F5F291060396932B01730B00 /* Credits.html */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.html; path = Credits.html; sourceTree = "<group>"; };
 		F5F876370399540D011FA3A4 /* FuseController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = FuseController.h; path = controllers/FuseController.h; sourceTree = SOURCE_ROOT; };
 		F5F876380399540D011FA3A4 /* FuseController.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 2; lastKnownFileType = sourcecode.c.objc; name = FuseController.m; path = controllers/FuseController.m; sourceTree = SOURCE_ROOT; tabWidth = 2; };
+		A72000000000000000000000 /* compat/unix/monotonic.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ../fuse/compat/unix/monotonic.c; sourceTree = SOURCE_ROOT; };
+		A72000000000000000000001 /* display_border.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ../fuse/display_border.c; sourceTree = SOURCE_ROOT; };
+		A72000000000000000000002 /* display_dirty.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ../fuse/display_dirty.c; sourceTree = SOURCE_ROOT; };
+		A72000000000000000000003 /* display_render.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ../fuse/display_render.c; sourceTree = SOURCE_ROOT; };
+		A72000000000000000000004 /* loader_detector.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ../fuse/loader_detector.c; sourceTree = SOURCE_ROOT; };
+		A72000000000000000000005 /* rzx_recording.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ../fuse/rzx_recording.c; sourceTree = SOURCE_ROOT; };
+		A72000000000000000000006 /* sound/ay_engine.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ../fuse/sound/ay_engine.c; sourceTree = SOURCE_ROOT; };
+		A72000000000000000000007 /* sound/dc_filter.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ../fuse/sound/dc_filter.c; sourceTree = SOURCE_ROOT; };
+		A72000000000000000000008 /* sound/output_mixer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ../fuse/sound/output_mixer.c; sourceTree = SOURCE_ROOT; };
+		A72000000000000000000009 /* sound/source_synths.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ../fuse/sound/source_synths.c; sourceTree = SOURCE_ROOT; };
+		A7200000000000000000000A /* sound/tv_filter.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ../fuse/sound/tv_filter.c; sourceTree = SOURCE_ROOT; };
+		A7200000000000000000000B /* tape_block.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ../fuse/tape_block.c; sourceTree = SOURCE_ROOT; };
+		A7200000000000000000000C /* tape_record.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ../fuse/tape_record.c; sourceTree = SOURCE_ROOT; };
+		A7200000000000000000000D /* tape_traps.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ../fuse/tape_traps.c; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1854,6 +1882,20 @@
 			children = (
 				B6CE3A140CD21838005ACDC8 /* bitmap.h */,
 				B6871C9D04AF7BEF00C24D83 /* compat.h */,
+				A72000000000000000000000 /* compat/unix/monotonic.c */,
+				A72000000000000000000001 /* display_border.c */,
+				A72000000000000000000002 /* display_dirty.c */,
+				A72000000000000000000003 /* display_render.c */,
+				A72000000000000000000004 /* loader_detector.c */,
+				A72000000000000000000005 /* rzx_recording.c */,
+				A72000000000000000000006 /* sound/ay_engine.c */,
+				A72000000000000000000007 /* sound/dc_filter.c */,
+				A72000000000000000000008 /* sound/output_mixer.c */,
+				A72000000000000000000009 /* sound/source_synths.c */,
+				A7200000000000000000000A /* sound/tv_filter.c */,
+				A7200000000000000000000B /* tape_block.c */,
+				A7200000000000000000000C /* tape_record.c */,
+				A7200000000000000000000D /* tape_traps.c */,
 				F55985D3038922B901A804BA /* display.c */,
 				F55985D4038922B901A804BA /* display.h */,
 				F19200153B01000100F19200 /* display_timing.c */,
@@ -2658,6 +2700,20 @@
 				B61F463B09121DF100C8096C /* ay.c in Sources */,
 				B61F463B09121DF100C8097D /* sp0256.c in Sources */,
 				B61F463B09121DF100C8097E /* uspeech.c in Sources */,
+				A71000000000000000000000 /* compat/unix/monotonic.c in Sources */,
+				A71000000000000000000001 /* display_border.c in Sources */,
+				A71000000000000000000002 /* display_dirty.c in Sources */,
+				A71000000000000000000003 /* display_render.c in Sources */,
+				A71000000000000000000004 /* loader_detector.c in Sources */,
+				A71000000000000000000005 /* rzx_recording.c in Sources */,
+				A71000000000000000000006 /* sound/ay_engine.c in Sources */,
+				A71000000000000000000007 /* sound/dc_filter.c in Sources */,
+				A71000000000000000000008 /* sound/output_mixer.c in Sources */,
+				A71000000000000000000009 /* sound/source_synths.c in Sources */,
+				A7100000000000000000000A /* sound/tv_filter.c in Sources */,
+				A7100000000000000000000B /* tape_block.c in Sources */,
+				A7100000000000000000000C /* tape_record.c in Sources */,
+				A7100000000000000000000D /* tape_traps.c in Sources */,
 				B61F463C09121DF100C8096C /* display.c in Sources */,
 				B6D71DD31F6A94750000D666 /* divxxx.c in Sources */,
 				B61F463D09121DF100C8096C /* event.c in Sources */,
@@ -3284,7 +3340,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(FUSE_SUPERPROJECT_ROOT)",
 				);
-				GCC_C_LANGUAGE_STANDARD = gnu89;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_CPP_RTTI = NO;
@@ -3349,7 +3405,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(FUSE_SUPERPROJECT_ROOT)",
 				);
-				GCC_C_LANGUAGE_STANDARD = gnu89;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_CPP_RTTI = NO;
@@ -3409,7 +3465,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(FUSE_SUPERPROJECT_ROOT)",
 				);
-				GCC_C_LANGUAGE_STANDARD = gnu89;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_CPP_RTTI = NO;
@@ -3469,7 +3525,7 @@
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_TESTABILITY = YES;
-				GCC_C_LANGUAGE_STANDARD = c89;
+				GCC_C_LANGUAGE_STANDARD = c11;
 				GCC_DYNAMIC_NO_PIC = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_VERSION = "";
@@ -3499,7 +3555,7 @@
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEPLOYMENT_POSTPROCESSING = YES;
-				GCC_C_LANGUAGE_STANDARD = c89;
+				GCC_C_LANGUAGE_STANDARD = c11;
 				GCC_DYNAMIC_NO_PIC = YES;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_VERSION = "";
@@ -3527,7 +3583,7 @@
 				CODE_SIGN_IDENTITY = "";
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_C_LANGUAGE_STANDARD = c89;
+				GCC_C_LANGUAGE_STANDARD = c11;
 				GCC_DYNAMIC_NO_PIC = YES;
 				GCC_VERSION = "";
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
@@ -3572,7 +3628,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -3627,7 +3683,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -3674,7 +3730,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;

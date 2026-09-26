@@ -6,17 +6,21 @@ group: Floppy Disk Interfaces
 ---
 
 Fuse supports emulating the DISCiPLE disk and printer interface, although it
-does not currently support emulation of the Sinclair Network, or support
-emulation of a DISCiPLE attached to a 128K machine. See the
-[Disk File Formats](formats.html) section for more details on supported disk
-file formats, which are the same as for +D emulation. The DISCiPLE's printer
-port is emulated. (See the [Printer Emulation](printer.html) section for more
-details.) The DISCiPLE may only be used with 48K emulation at present. To access
-disks, you will first need to load GDOS, by inserting a disk containing the DOS
-file (SYS) and entering "RUN". Once DOS is loaded, you can load to/from DISCiPLE
-disks by prefixing filenames with 'd n' where ' n ' is the number of the drive
-in use.  For example, `LOAD d1;"myfile"` would load the file named 'myfile' from
-the emulated drive 1. Microdrive syntax may also be used.
+does not currently support the Sinclair Network. The DISCiPLE works with 48K,
+128K and grey +2 machines, but not +2A or +3 machines. See the
+[Disk File Formats](formats.html) section for supported disk formats, which
+are the same as for +D emulation. The DISCiPLE's printer port is emulated (see
+[Printer Emulation](printer.html)). To access disks, load GDOS by inserting a
+disk containing the DOS file (SYS) and entering "RUN". Once DOS is loaded, you
+can load to/from DISCiPLE disks by prefixing filenames with 'd n' where ' n '
+is the number of the drive in use.  For example, `LOAD d1;"myfile"` would load
+the file named 'myfile' from the emulated drive 1. Microdrive syntax may also
+be used.
+
+The *DISCiPLE inhibit* switch in [Peripherals preferences](peripherals.html)
+controls whether the interface pages into memory. Turning it on immediately
+pages the DISCiPLE out. With the switch off, automatic paging is enabled;
+with it on, control-port bit 4 can still permit subsequent paging triggers.
 
 Snapshots can be saved in a similar manner to that of the +D as described above,
 but note that GDOS on the DISCiPLE contains a bug which causes corruption as

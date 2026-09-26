@@ -337,104 +337,96 @@ microdrive_screen_header_length( const unsigned char *data, int length )
   return 0;
 }
 
-/* Look for the first microdrive CODE file saved to the standard Spectrum
-   screen address. SCREEN$ is BASIC shorthand for such a file, not a literal
-   filename. MDR data is split into up to LIBSPECTRUM_MICRODRIVE_BLOCK_MAX
-   sectors of LIBSPECTRUM_MICRODRIVE_BLOCK_LEN bytes. Each sector's second
-   header (at byte offset LIBSPECTRUM_MICRODRIVE_HEAD_LEN) contains:
-     recflg (1 byte)  -- record flags
-     recnum (1 byte)  -- sector sequence number within the file
-     reclen (2 bytes) -- number of valid data bytes in this sector (LE)
-     recnam (10 bytes)-- file name, space-padded
-   Actual sector data follows at offset LIBSPECTRUM_MICRODRIVE_HEAD_LEN*2.
-   For real formatted cartridges, recnum 0 starts with a nine-byte file header;
-   the screen payload follows immediately in the rest of that record and
-   continues in recnum 1 and later records. */
+/* Assemble each candidate file by its ten-byte name and record number, as
+   fuse-utils does. Reject bad checksums, oversized records, duplicate record
+   numbers and missing data rather than displaying a partially decoded screen. */
 - (void) process_mdr
 {
-  int num_blocks, i, copied, header_block, file_header_length;
-  unsigned char file_name[10], screen[STANDARD_SCR_SIZE];
+  libspectrum_microdrive *microdrive;
+  size_t count, i, j;
+  libspectrum_byte file_name[10];
+  libspectrum_byte screen[STANDARD_SCR_SIZE];
   unsigned char records[256];
+  int header_length;
 
-  if( length < (size_t)LIBSPECTRUM_MICRODRIVE_BLOCK_LEN ) return;
-
-  num_blocks = (int)( length / LIBSPECTRUM_MICRODRIVE_BLOCK_LEN );
-  if( num_blocks > LIBSPECTRUM_MICRODRIVE_BLOCK_MAX )
-    num_blocks = LIBSPECTRUM_MICRODRIVE_BLOCK_MAX;
-
-  header_block = -1;
-  file_header_length = 0;
-
-  for( i = 0; i < num_blocks; i++ ) {
-    const unsigned char *blk, *data;
-    int recnum, reclen;
-
-    blk = buffer + i * LIBSPECTRUM_MICRODRIVE_BLOCK_LEN;
-    recnum = blk[ LIBSPECTRUM_MICRODRIVE_HEAD_LEN + 1 ];
-    reclen = blk[ LIBSPECTRUM_MICRODRIVE_HEAD_LEN + 2 ] |
-             ( blk[ LIBSPECTRUM_MICRODRIVE_HEAD_LEN + 3 ] << 8 );
-
-    if( recnum != 0 || reclen == 0 ) continue;
-
-    data = blk + LIBSPECTRUM_MICRODRIVE_HEAD_LEN * 2;
-    file_header_length = microdrive_screen_header_length( data, reclen );
-    if( !file_header_length ) continue;
-
-    memcpy( file_name, blk + LIBSPECTRUM_MICRODRIVE_HEAD_LEN + 4,
-            sizeof( file_name ) );
-    header_block = i;
-    break;
+  microdrive = libspectrum_microdrive_alloc();
+  if( !microdrive ) return;
+  if( libspectrum_microdrive_mdr_read( microdrive, buffer, length ) ) {
+    libspectrum_microdrive_free( microdrive );
+    return;
   }
 
-  if( header_block < 0 ) return;
+  count = libspectrum_microdrive_block_count( microdrive );
+  for( i = 0; i < count; i++ ) {
+    const libspectrum_byte *data, *name;
+    size_t first_length, total, last_record;
+    int invalid = 0;
 
-  memset( screen, 0, sizeof( screen ) );
-  memset( records, 0, sizeof( records ) );
-  copied = 0;
+    if( libspectrum_microdrive_block_record_number( microdrive, i ) != 0 ||
+        libspectrum_microdrive_checksum( microdrive, i ) != 0 ) continue;
 
-  for( i = 0; i < num_blocks; i++ ) {
-    const unsigned char *blk, *data;
-    int recnum, reclen, offset, copy_len;
+    first_length = libspectrum_microdrive_block_record_length( microdrive, i );
+    if( first_length > LIBSPECTRUM_MICRODRIVE_DATA_LEN ) continue;
+    data = libspectrum_microdrive_block_data( microdrive, i );
+    header_length = microdrive_screen_header_length( data, (int)first_length );
+    if( !header_length ) continue;
 
-    blk = buffer + i * LIBSPECTRUM_MICRODRIVE_BLOCK_LEN;
-    recnum = blk[ LIBSPECTRUM_MICRODRIVE_HEAD_LEN + 1 ];
-    reclen = blk[ LIBSPECTRUM_MICRODRIVE_HEAD_LEN + 2 ] |
-             ( blk[ LIBSPECTRUM_MICRODRIVE_HEAD_LEN + 3 ] << 8 );
+    name = libspectrum_microdrive_block_record_name( microdrive, i );
+    memcpy( file_name, name, sizeof( file_name ) );
+    memset( records, 0, sizeof( records ) );
+    total = 0;
+    last_record = 0;
 
-    if( reclen == 0 || records[ recnum ] ) continue;
+    for( j = 0; j < count; j++ ) {
+      size_t offset, record_length, copy_length;
+      unsigned int record;
 
-    if( memcmp( blk + LIBSPECTRUM_MICRODRIVE_HEAD_LEN + 4, file_name,
-                sizeof( file_name ) ) != 0 )
-      continue;
+      name = libspectrum_microdrive_block_record_name( microdrive, j );
+      if( memcmp( name, file_name, sizeof( file_name ) ) ) continue;
 
-    data = blk + LIBSPECTRUM_MICRODRIVE_HEAD_LEN * 2;
-    offset = recnum * LIBSPECTRUM_MICRODRIVE_DATA_LEN -
-             file_header_length;
-    copy_len = reclen;
+      record_length = libspectrum_microdrive_block_record_length( microdrive, j );
+      if( !record_length || record_length > LIBSPECTRUM_MICRODRIVE_DATA_LEN ||
+          libspectrum_microdrive_checksum( microdrive, j ) != 0 ) {
+        invalid = 1;
+        break;
+      }
 
-    /* Record zero contains the file header followed immediately by the
-       beginning of the payload. */
-    if( recnum == 0 ) {
-      data += file_header_length;
-      copy_len -= file_header_length;
-      offset = 0;
+      record = libspectrum_microdrive_block_record_number( microdrive, j );
+      offset = (size_t)record * LIBSPECTRUM_MICRODRIVE_DATA_LEN;
+      if( records[ record ] || offset >= STANDARD_SCR_SIZE + (size_t)header_length ) {
+        invalid = 1;
+        break;
+      }
+      records[ record ] = 1;
+      if( record > last_record ) last_record = record;
+
+      data = libspectrum_microdrive_block_data( microdrive, j );
+      if( record == 0 ) {
+        if( record_length < (size_t)header_length ) { invalid = 1; break; }
+        data += header_length;
+        record_length -= header_length;
+        offset = 0;
+      } else {
+        offset -= header_length;
+      }
+      copy_length = record_length;
+      if( copy_length > STANDARD_SCR_SIZE - offset )
+        copy_length = STANDARD_SCR_SIZE - offset;
+      memcpy( screen + offset, data, copy_length );
+      total += copy_length;
     }
 
-    if( offset < 0 || offset >= STANDARD_SCR_SIZE || copy_len <= 0 ) continue;
-    if( copy_len > LIBSPECTRUM_MICRODRIVE_DATA_LEN )
-      copy_len = LIBSPECTRUM_MICRODRIVE_DATA_LEN;
-    if( offset + copy_len > STANDARD_SCR_SIZE )
-      copy_len = STANDARD_SCR_SIZE - offset;
-
-    memcpy( screen + offset, data, copy_len );
-    records[ recnum ] = 1;
-    copied += copy_len;
+    if( !invalid && total == STANDARD_SCR_SIZE ) {
+      for( j = 0; j <= last_record; j++ )
+        if( !records[j] ) { invalid = 1; break; }
+    }
+    if( !invalid && total == STANDARD_SCR_SIZE ) {
+      scrData = [NSData dataWithBytes:screen length:STANDARD_SCR_SIZE];
+      image_type = TYPE_SCR;
+      break;
+    }
   }
-
-  if( copied == STANDARD_SCR_SIZE ) {
-    scrData = [NSData dataWithBytes:screen length:STANDARD_SCR_SIZE];
-    image_type = TYPE_SCR;
-  }
+  libspectrum_microdrive_free( microdrive );
 }
 
 // Populate scrData directly

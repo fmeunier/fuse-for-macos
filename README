@@ -178,10 +178,13 @@ number, for example `1.10.0`:
 Resolve conflicts without losing the macOS changes. Review upstream API,
 generator, build, and resource changes against the Cocoa code in `fusepb/`;
 make and commit any required macOS adaptations on the integration branch.
-Regenerate derived files from their source inputs where needed. Run the
-relevant upstream tests (for example `make test` in `fuse/`) and `make fuse`
-from the superproject root. Then finish the submodule integration (from
-`fuse/`):
+Regenerate derived files from their source inputs where needed. This patched
+`fuse/` submodule is not independently runnable; verify the integration using
+the canonical macOS build from the superproject root:
+
+  make fuse
+
+Then finish the submodule integration (from `fuse/`):
 
   git switch master
   git merge --no-ff merge-fuse-<version>
@@ -189,8 +192,8 @@ from the superproject root. Then finish the submodule integration (from
 
 The superproject records only the resulting submodule commit, not the Fuse
 source changes themselves. Return to the superproject root, review the `fuse`
-gitlink and any necessary `fusepb/` changes, run `make fuse` and `make test`,
-then commit and push the superproject. Push the submodule first: otherwise the
+gitlink and any necessary `fusepb/` changes, rerun `make fuse` and relevant
+macOS tests, then commit and push the superproject. Push the submodule first: otherwise the
 superproject may refer to a Fuse commit other clones cannot fetch.
 
 If you have any problems you can email me at fredm@spamcop.net, and I look

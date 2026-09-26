@@ -77,6 +77,7 @@ private struct PeripheralsPreferencesView: View {
   @AppStorage("multiface1stealth") private var multiface1Stealth = false
   @AppStorage("plus3detectspeedlock") private var plus3DetectSpeedlock = false
   @AppStorage("beta12848boot") private var beta12848Boot = false
+  @AppStorage("discipleinhibit") private var discipleInhibit = false
   @AppStorage("dividewriteprotect") private var divideWriteProtect = false
   @AppStorage("divmmcwriteprotect") private var divMMCWriteProtect = false
   @AppStorage("spectranetdisable") private var spectranetDisable = false
@@ -123,6 +124,7 @@ private struct PeripheralsPreferencesView: View {
         VStack(alignment: .leading, spacing: 8) {
           Toggle("+3 Detect Speedlock", isOn: $plus3DetectSpeedlock)
           Toggle("Beta autoboot in 48K", isOn: $beta12848Boot)
+          Toggle("DISCiPLE inhibit", isOn: $discipleInhibit)
           Toggle("DivIDE write protect", isOn: $divideWriteProtect)
           Toggle("DivMMC write protect", isOn: $divMMCWriteProtect)
           Toggle("Spectranet disable", isOn: $spectranetDisable)

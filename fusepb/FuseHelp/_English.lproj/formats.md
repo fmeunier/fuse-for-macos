@@ -33,4 +33,6 @@ type from the disk save dialog.
 
 Not all image formats can store all disk image information. You cannot save a
 disk image with an inappropriate format that loses some information (e.g.
-variable track length or sector length).
+variable track length or sector length). Classic CPCEMU `.dsk` images cannot
+store unformatted tracks. Save a newly inserted blank disk in another format,
+such as UDI.
