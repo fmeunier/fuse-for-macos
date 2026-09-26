@@ -3,14 +3,14 @@
     <channel>
         <title>Fuse</title>
         <item>
-            <title>1.9.2</title>
-            <pubDate>Mon, 31 Aug 2026 19:32:24 +1000</pubDate>
-            <sparkle:version>1.9.2</sparkle:version>
-            <sparkle:shortVersionString>1.9.2</sparkle:shortVersionString>
+            <title>1.10.0</title>
+            <pubDate>Sun, 27 Sep 2026 09:40:00 +1000</pubDate>
+            <sparkle:version>1.10.0</sparkle:version>
+            <sparkle:shortVersionString>1.10.0</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>13.0</sparkle:minimumSystemVersion>
             <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
-            <sparkle:releaseNotesLink>https://fmeunier.github.io/fuse-for-macos/release-notes/1.9.2.md</sparkle:releaseNotesLink>
-            <enclosure url="https://github.com/fmeunier/fuse-for-macos/releases/download/sparkle-staging-1.9.2-r1/Fuse-1.9.2-sparkle.zip" length="4073177" type="application/octet-stream" sparkle:edSignature="rmMM8J1NuoTRptuEueYH+gosMFqNmkZXs+VhvUQOtukjqvceWqaPLbFUBLhbJ+YRIRnZUV3XFY1zFDjLYEMpAA==" />
+            <sparkle:releaseNotesLink>https://fmeunier.github.io/fuse-for-macos/release-notes/1.10.0.md</sparkle:releaseNotesLink>
+            <enclosure url="https://github.com/fmeunier/fuse-for-macos/releases/download/sparkle-staging-1.10.0/Fuse-1.10.0-sparkle.zip" length="4069487" type="application/octet-stream" sparkle:edSignature="QCALx8OzE1f8R9K3MvFfRaTd9Uf/eodUmQfG9dxaFtDae0UwLLcagnHc9Bt8jhOHwyvg417Xer3/25X+yVHcBA==" />
         </item>
     </channel>
 </rss>
