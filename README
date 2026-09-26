@@ -154,6 +154,45 @@ Then verify with:
 
   make fuse
 
+Updating Fuse upstream
+
+`fuse/` is a separate Git repository tracked as a submodule, not a subtree.
+Merge upstream releases inside `fuse/` so their history remains intact. The
+submodule's `upstream` remote points to the Fuse source repository; configure
+it if your clone does not have it:
+
+  cd fuse
+  git remote add upstream git@github.com:fuse-emulator/fuse.git
+  cd ..
+
+For a new release, start with clean working trees in both repositories (commit
+or set aside unrelated changes first). Replace `<version>` with the release
+number, for example `1.10.0`:
+
+  cd fuse                         # from the superproject root
+  git fetch upstream --tags
+  git switch master
+  git switch -c merge-fuse-<version>
+  git merge fuse-<version>        # preserve upstream history; do not squash
+
+Resolve conflicts without losing the macOS changes. Review upstream API,
+generator, build, and resource changes against the Cocoa code in `fusepb/`;
+make and commit any required macOS adaptations on the integration branch.
+Regenerate derived files from their source inputs where needed. Run the
+relevant upstream tests (for example `make test` in `fuse/`) and `make fuse`
+from the superproject root. Then finish the submodule integration (from
+`fuse/`):
+
+  git switch master
+  git merge --no-ff merge-fuse-<version>
+  git push origin master
+
+The superproject records only the resulting submodule commit, not the Fuse
+source changes themselves. Return to the superproject root, review the `fuse`
+gitlink and any necessary `fusepb/` changes, run `make fuse` and `make test`,
+then commit and push the superproject. Push the submodule first: otherwise the
+superproject may refer to a Fuse commit other clones cannot fetch.
+
 If you have any problems you can email me at fredm@spamcop.net, and I look
 forward to your patches and bug fixes!
 
