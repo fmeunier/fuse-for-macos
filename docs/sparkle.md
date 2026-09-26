@@ -2,6 +2,37 @@
 
 Use this document to prepare and publish Sparkle updates.
 
+## Short path: staging test, then production
+
+Run these commands from the repository root on the release Mac. The remaining sections document prerequisites, individual targets, manual publication, and troubleshooting.
+
+1. Set the release version in `fusepb/Info-Fuse.plist` and add a matching `## What's new in Fuse for macOS <version>` section to `fusepb/FuseHelp/_English.lproj/changelog.md`. Commit and push those changes before making the production tag. Both release scripts read `<version>` from `CFBundleShortVersionString`, falling back to `CFBundleVersion`.
+2. Publish the staging update:
+
+   ```sh
+   scripts/release-staging-sparkle.sh
+   ```
+
+   This builds and notarizes the app, uploads the Sparkle ZIP to a GitHub staging prerelease, and publishes the staging appcast and notes to `gh-pages`. The default staging tag is `sparkle-staging-<version>`; you do **not** need to create it yourself. For a corrected archive, use a fresh URL, for example `--tag sparkle-staging-<version>-r1`, rather than replacing an asset at the old URL.
+3. Test with an older build configured for the staging feed. Use **Help > Check for Updates…** and confirm the update downloads, validates, installs, and relaunches.
+4. Once staging passes, create and push the production Git tag at the committed release source:
+
+   ```sh
+   git tag fuse-for-macos-<version>
+   git push origin fuse-for-macos-<version>
+   ```
+
+   Replace `<version>` with the actual plist version (for example, `fuse-for-macos-1.9.0`). Unlike staging, the production release script **requires this tag to exist**; it does not create it.
+5. Publish production:
+
+   ```sh
+   scripts/release-public-sparkle.sh
+   ```
+
+   This creates the normal GitHub release, uploads the archive, and publishes `appcast.xml` and the notes to `gh-pages`. Finally, verify an update from an older build configured for the production feed.
+
+A tag identifies the GitHub release hosting the ZIP and appears in the appcast download URL. The appcast and release notes themselves live on `gh-pages`; Sparkle signs the ZIP separately with the EdDSA key.
+
 The Sparkle update archive is different from the `Fuse.zip` archive:
 
 - `make dist` creates `Fuse.zip` for manual distribution.
