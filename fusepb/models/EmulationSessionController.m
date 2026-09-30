@@ -8,6 +8,7 @@
 */
 
 #import "DebuggerController.h"
+#import "DisplayHostView.h"
 #import "Emulator.h"
 #import "EmulationSessionController.h"
 #import "FuseController.h"
@@ -62,13 +63,16 @@ overlay_item_state( ui_statusbar_state state )
   NSPort *port2;
   NSArray *portArray;
 
-  display_presenter = presenter;
   overlay_state.disk_state = DISPLAY_OVERLAY_STATE_NOT_AVAILABLE;
   overlay_state.microdrive_state = DISPLAY_OVERLAY_STATE_NOT_AVAILABLE;
   overlay_state.tape_state = DISPLAY_OVERLAY_STATE_NOT_AVAILABLE;
   if( real_emulator ) return;
 
+  display_presenter = [presenter retain];
   real_emulator = [[Emulator alloc] init];
+  stop_requested = NO;
+  emulator_finished = NO;
+  termination_pending = NO;
 
   port1 = [NSPort port];
   port2 = [NSPort port];
@@ -107,19 +111,80 @@ overlay_item_state( ui_statusbar_state state )
 
 -(void) stop
 {
-  [proxy_emulator stop];
+  if( !real_emulator || stop_requested ) return;
+  stop_requested = YES;
+
+  /* Post directly to the emulator's run loop: a distributed-object call
+     can race its connection being invalidated during debugger shutdown. */
+  if( !emulator_run_loop ) return;
+  CFRunLoopPerformBlock( emulator_run_loop, kCFRunLoopDefaultMode, ^{
+    [real_emulator stop];
+    CFRunLoopStop( CFRunLoopGetCurrent() );
+  });
+  CFRunLoopWakeUp( emulator_run_loop );
+}
+
+-(void) checkMediaChangedForClose
+{
+  if( ![self isEmulatorRunning] || stop_requested || !emulator_run_loop )
+    return;
+
+  CFRunLoopPerformBlock( emulator_run_loop, kCFRunLoopDefaultMode, ^{
+    [real_emulator checkMediaChangedForClose];
+  });
+  CFRunLoopWakeUp( emulator_run_loop );
+}
+
+-(void) completeCloseCheck:(BOOL)may_close
+{
+  if( ![self isEmulatorRunning] || stop_requested ) return;
+  [(DisplayHostView *)display_presenter completeCloseCheck:may_close];
+}
+
+-(BOOL) isEmulatorRunning
+{
+  return real_emulator && !emulator_finished;
+}
+
+-(void) deferTermination
+{
+  termination_pending = YES;
+  [self stop];
+}
+
+-(void) emulatorDidFinish
+{
+  emulator_finished = YES;
   [proxy_emulator release];
   proxy_emulator = nil;
   [real_emulator release];
   real_emulator = nil;
   [kit_connection release];
   kit_connection = nil;
+  if( emulator_run_loop ) CFRelease( emulator_run_loop );
+  emulator_run_loop = NULL;
+  [display_presenter shutdown];
+  [display_presenter release];
   display_presenter = nil;
+
+  /* Complete an AppKit quit request, or initiate one for debugger exit. */
+  if( termination_pending ) [NSApp replyToApplicationShouldTerminate:YES];
+  else [NSApp terminate:nil];
 }
 
 -(void) setServer:(Emulator *)server
 {
   proxy_emulator = [server retain];
+}
+
+-(void) setEmulatorRunLoop:(CFRunLoopRef)run_loop
+{
+  emulator_run_loop = CFRetain( run_loop );
+  if( stop_requested ) {
+    /* A quit request may arrive before the emulator has connected. */
+    stop_requested = NO;
+    [self stop];
+  }
 }
 
 -(int) checkMediaChanged

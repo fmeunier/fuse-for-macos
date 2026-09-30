@@ -82,6 +82,7 @@
 -(void) hard_reset;
 -(void) nmi;
 -(int) checkMediaChanged;
+-(void) checkMediaChangedForClose;
 
 -(void) diskInsertNew:(int)which;
 -(void) diskInsert:(const char *)filename inDrive:(int)which;

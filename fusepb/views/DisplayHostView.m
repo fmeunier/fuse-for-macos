@@ -187,7 +187,8 @@
 {
   [[self window] setDelegate:nil];
   [[EmulationSessionController instance] stop];
-  [display_presenter shutdown];
+  /* The session keeps this view alive and shuts down the presenter once
+     the emulator has finished using its framebuffers. */
 }
 
 -(void) windowDidResignKey:(NSNotification *)notification
@@ -197,9 +198,28 @@
 
 -(BOOL) windowShouldClose:(id)window
 {
-  if( !cocoaui_confirm( "Exit Fuse?" ) ) return NO;
+  EmulationSessionController *session = [EmulationSessionController instance];
 
-  return ![[EmulationSessionController instance] checkMediaChanged];
+  if( close_approved || ![session isEmulatorRunning] ) return YES;
+  if( close_check_pending ) return NO;
+  if( !cocoaui_confirm( "Exit Fuse?" ) ) return NO;
+  if( ![session isEmulatorRunning] ) return YES;
+
+  /* Do not wait for an RPC: debugger exit can disconnect the emulator at
+     any point while the main thread is checking whether it may close. */
+  close_check_pending = YES;
+  [session checkMediaChangedForClose];
+  return NO;
+}
+
+-(void) completeCloseCheck:(BOOL)may_close
+{
+  close_check_pending = NO;
+  if( !may_close ) return;
+
+  close_approved = YES;
+  [[self window] performClose:nil];
+  close_approved = NO;
 }
 
 -(void) windowWillMiniaturize:(NSNotification *)notification

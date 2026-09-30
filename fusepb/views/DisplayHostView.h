@@ -14,8 +14,11 @@
 @interface DisplayHostView : NSView <DisplayPresenting, NSWindowDelegate>
 {
   id <DisplayPresenting> display_presenter;
+  BOOL close_check_pending;
+  BOOL close_approved;
 }
 
+-(void) completeCloseCheck:(BOOL)may_close;
 -(IBAction) fullscreen:(id)sender;
 -(IBAction) zoom:(id)sender;
 

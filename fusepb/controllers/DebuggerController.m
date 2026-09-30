@@ -187,6 +187,11 @@ static DebuggerController *singleton = nil;
   if( !debugger_active ) activate_debugger();
 
   [NSApp runModalForWindow:[self window]];
+
+  /* The debugger's `exit' command sets fuse_exiting while the modal session
+     above is running. The emulator thread asks AppKit to quit once it has
+     shut down; until then, don't leave the debugger window standing. */
+  if( fuse_exiting ) [[self window] orderOut:nil];
 }
 
 - (void)debugger_deactivate:(NSNumber *)interruptable

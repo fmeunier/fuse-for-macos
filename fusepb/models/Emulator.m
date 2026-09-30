@@ -82,6 +82,7 @@ static Emulator *instance = nil;
 {
   NSAutoreleasePool *pool;
   NSConnection *serverConnection;
+  CFRunLoopRef run_loop;
 
   pool = [[NSAutoreleasePool alloc] init];
 
@@ -91,6 +92,11 @@ static Emulator *instance = nil;
   [serverConnection setRootObject:self];
   proxy_session = (EmulationSessionController *)[serverConnection rootProxy];
   [proxy_session setServer:self];
+  run_loop = CFRetain( CFRunLoopGetCurrent() );
+  dispatch_async( dispatch_get_main_queue(), ^{
+    [[EmulationSessionController instance] setEmulatorRunLoop:run_loop];
+    CFRelease( run_loop );
+  });
 
   if( fuse_init( ac, av ) ) {
     fprintf( stderr, "%s: error initialising -- giving up!\n", fuse_progname );
@@ -104,6 +110,12 @@ static Emulator *instance = nil;
   [serverConnection invalidate];
 
   fuse_end();
+
+  /* Only the main thread may terminate AppKit. Report completion after
+     fuse_end(), including for UI-initiated quits. */
+  dispatch_async( dispatch_get_main_queue(), ^{
+    [[EmulationSessionController instance] emulatorDidFinish];
+  });
 
   instance = nil;
   [pool release];
@@ -151,6 +163,15 @@ static Emulator *instance = nil;
     [self updateEmulationForTimeDelta:deltaTime];
   }
   time = nowTime;
+
+  /* A breakpoint's `exit' command sets fuse_exiting in the middle of
+     emulation. Timers don't make -runMode:beforeDate: return, so the loop in
+     -connectWithPorts: would never see the flag; stop the run loop so it
+     does. */
+  if( fuse_exiting ) {
+    [self stopEmulationTimer];
+    CFRunLoopStop( CFRunLoopGetCurrent() );
+  }
 }
 
 /* given a delta time in seconds, update overall emulation state */
@@ -299,6 +320,15 @@ static Emulator *instance = nil;
 -(int) checkMediaChanged
 {
   return menu_check_media_changed();
+}
+
+-(void) checkMediaChangedForClose
+{
+  BOOL may_close = !menu_check_media_changed();
+
+  dispatch_async( dispatch_get_main_queue(), ^{
+    [[EmulationSessionController instance] completeCloseCheck:may_close];
+  });
 }
 
 -(void) diskInsertNew:(int)which

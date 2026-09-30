@@ -15,7 +15,8 @@
 
 @protocol DisplayPresenting <NSObject>
 
-/* DisplayHostView starts and stops each selected presenter exactly once. */
+/* DisplayHostView starts the selected presenter; the session stops it
+   after the emulator has finished. */
 -(void) start;
 -(void) shutdown;
 

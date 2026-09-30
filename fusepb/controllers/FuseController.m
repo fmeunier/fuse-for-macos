@@ -2672,6 +2672,32 @@ save_as_exit:
   return YES;
 }
 
+- (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)application
+{
+  EmulationSessionController *session = [EmulationSessionController instance];
+
+  if( [session isEmulatorRunning] ) {
+    [session deferTermination];
+    /* The emulator may be waiting for the debugger's modal callback to
+       return before it can process the stop request. */
+    if( [NSApp modalWindow] == [[DebuggerController singleton] window] ) {
+      [[NSApp modalWindow] orderOut:nil];
+      [NSApp abortModal];
+    }
+    return NSTerminateLater;
+  }
+  return NSTerminateNow;
+}
+
+- (void)applicationWillTerminate:(NSNotification *)notification
+{
+  int exit_code = debugger_get_exit_code();
+
+  /* A non-zero debugger exit status must be passed to the process. The
+     termination gate above ensures fuse_end() has finished first. */
+  if( exit_code ) exit( exit_code );
+}
+
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename
 {
   utils_file file; libspectrum_id_t type;

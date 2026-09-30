@@ -28,6 +28,10 @@ void emulation_session_perform_on_main_thread( id target, SEL selector,
   Emulator *real_emulator;
   Emulator *proxy_emulator;
   NSConnection *kit_connection;
+  CFRunLoopRef emulator_run_loop;
+  BOOL stop_requested;
+  BOOL emulator_finished;
+  BOOL termination_pending;
   id <DisplayPresenting> display_presenter;
   DisplayOverlayState overlay_state;
 }
@@ -40,7 +44,13 @@ void emulation_session_perform_on_main_thread( id target, SEL selector,
 -(void) publishFramebufferWithValue:(NSValue *)framebuffer_value;
 -(void) removeFramebuffer;
 -(void) stop;
+-(void) checkMediaChangedForClose;
+-(void) completeCloseCheck:(BOOL)may_close;
+-(BOOL) isEmulatorRunning;
+-(void) deferTermination;
+-(void) emulatorDidFinish;
 -(void) setServer:(Emulator *)server;
+-(void) setEmulatorRunLoop:(CFRunLoopRef)run_loop;
 -(int) checkMediaChanged;
 -(void) setEmulationHz:(float)hz;
 
