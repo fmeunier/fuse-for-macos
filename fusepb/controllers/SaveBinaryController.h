@@ -26,18 +26,10 @@
 #import <Cocoa/Cocoa.h>
 
 @interface SaveBinaryController : NSWindowController
-{
-    IBOutlet NSButton *apply;
-    IBOutlet NSFormCell *file;
-    IBOutlet NSFormCell *length;
-    IBOutlet NSFormCell *start;
-}
 
 - (IBAction)apply:(id)sender;
 - (IBAction)cancel:(id)sender;
 - (void)showWindow:(id)sender;
 - (IBAction)chooseFile:(id)sender;
-- (void)awakeFromNib;
-- (void)controlTextDidChange:(NSNotification *)notification;
 
 @end

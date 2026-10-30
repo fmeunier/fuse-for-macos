@@ -24,15 +24,15 @@
 */
 
 #include <config.h>
+#include <string.h>
 
 #import "LoadBinaryController.h"
+#import "BinaryDataContainerView.h"
 #import "EmulationSessionController.h"
-#import "NumberFormatter.h"
 
 #include "memory_pages.h"
 #include "spectrum.h"
 #include <libspectrum.h>
-#include "ui/ui.h"
 #include "utils.h"
 
 static utils_file u_file;
@@ -41,48 +41,37 @@ static utils_file u_file;
 
 - (id)init
 {
-  self = [super initWithWindowNibName:@"LoadBinary"];
+  NSWindow *window = [[NSWindow alloc]
+    initWithContentRect:NSMakeRect( 0, 0, 580, 200 )
+              styleMask:NSWindowStyleMaskTitled
+                backing:NSBackingStoreBuffered defer:NO];
+  self = [super initWithWindow:window];
+  [window release];
+  if( !self ) return nil;
 
-  [self setWindowFrameAutosaveName:@"LoadBinaryWindow"];
-
+  [window setTitle:@"Import Binary Data"];
+  [window center];
+  BinaryDataContainerView *container = [[BinaryDataContainerView alloc]
+    initWithFrame:[[window contentView] bounds]];
+  __block LoadBinaryController *controller = self;
+  container.chooseHandler = ^{ [controller chooseFile:nil]; };
+  container.applyHandler = ^{ [controller apply:nil]; };
+  container.cancelHandler = ^{ [controller cancel:nil]; };
+  [window setContentView:container];
+  [container release];
   return self;
-}
-
-- (void)awakeFromNib
-{
-  NumberFormatter *startFormatter = [[NumberFormatter alloc] init];
-  NumberFormatter *lengthFormatter = [[NumberFormatter alloc] init];
-  
-  [startFormatter setMinimum:[NSDecimalNumber zero]];
-  [startFormatter setFormat:@"0"];
-  [start setFormatter:startFormatter];
-  
-  [lengthFormatter setMinimum:[NSDecimalNumber one]];
-  [lengthFormatter setFormat:@"0"];
-  [length setFormatter:lengthFormatter];
-  
-  // The formatter is retained by the text field
-  [startFormatter release];
-  [lengthFormatter release];
 }
 
 - (IBAction)apply:(id)sender
 {
-  libspectrum_word s, len; size_t i;
+  BinaryDataContainerView *view = (id)[[self window] contentView];
+  size_t i, length = [view lengthValue];
+  libspectrum_word start = (libspectrum_word)[view startValue];
 
-  len = [length intValue];
+  if( ![view canApply] || !u_file.buffer || length > u_file.length ) return;
 
-  if( len > u_file.length ) {
-    ui_error( UI_ERROR_ERROR,
-              "'%s' contains only %lu bytes",
-              [[file stringValue] UTF8String], (unsigned long)u_file.length );
-    return;
-  }
-
-  s = [start intValue];
-
-  for( i = 0; i < len; i++ )
-    writebyte_internal( s + i, u_file.buffer[ i ] );
+  for( i = 0; i < length; i++ )
+    writebyte_internal( (libspectrum_word)(start + i), u_file.buffer[i] );
 
   [self cancel:self];
 }
@@ -90,75 +79,37 @@ static utils_file u_file;
 - (IBAction)cancel:(id)sender
 {
   [NSApp stopModal];
-  [[self window] close];
-  
-  [[EmulationSessionController instance] unpause];
+  [[self window] orderOut:nil];
 }
 
 - (void)showWindow:(id)sender
 {
+  if( [[self window] isVisible] ) return;
   [[EmulationSessionController instance] pause];
-  
+  [(BinaryDataContainerView *)[[self window] contentView] reset];
   [super showWindow:sender];
-
-  [file setStringValue:@""];
-  [start setStringValue:@""];
-  [length setStringValue:@""];
-  
-  [apply setEnabled:NO];
-
   [NSApp runModalForWindow:[self window]];
+  [[self window] orderOut:nil];
+  utils_close_file( &u_file );
+  memset( &u_file, 0, sizeof( u_file ) );
+  [[EmulationSessionController instance] unpause];
 }
 
 - (IBAction)chooseFile:(id)sender
 {
-  int result;
-  NSOpenPanel *oPanel = [NSOpenPanel openPanel];
-
-  [oPanel setAllowedFileTypes:nil];
-
-  result = [oPanel runModal];
-  if (result == NSOKButton) {
-    char buffer[PATH_MAX+1];
-    int error;
-    NSString *oFile = [[oPanel URL] path];
-
+  NSOpenPanel *panel = [NSOpenPanel openPanel];
+  [panel setAllowsMultipleSelection:NO];
+  [panel setCanChooseDirectories:NO];
+  if( [panel runModal] == NSModalResponseOK ) {
     utils_file new_file;
+    NSString *path = [[panel URL] path];
 
-    [oFile getFileSystemRepresentation:buffer maxLength:PATH_MAX];
-
-    error = utils_read_file( buffer, &new_file );
-    if( error ) { return; }
-
+    if( utils_read_file( [path fileSystemRepresentation], &new_file ) ) return;
     utils_close_file( &u_file );
-
     u_file = new_file;
-
-    [file setStringValue:@(buffer)];
-
-    [start setIntValue:0];
-    [length setIntValue:new_file.length];
-    
-    [apply setEnabled:YES];
+    [(BinaryDataContainerView *)[[self window] contentView]
+      selectFile:path importLength:@(new_file.length)];
   }
-}
-
-- (void)controlTextDidChange:(NSNotification *)notification
-{
-  if (([[file stringValue] length] == 0) ||
-      ([[start stringValue] length] == 0) ||
-      ([[length stringValue] length] == 0)) {
-    [apply setEnabled:NO];
-    return;
-  }
-  
-  if (([start intValue] < 0 || [start intValue] > 65535) ||
-       ([length intValue] < 1 || [length intValue] > 65536)) {
-    [apply setEnabled:NO];
-    return;
-  }
-
-  [apply setEnabled:YES];
 }
 
 @end
