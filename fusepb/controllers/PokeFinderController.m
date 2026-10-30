@@ -181,14 +181,18 @@
 	tableContents = [NSMutableArray arrayWithCapacity:pokefinder_count];
 	[tableContents retain];
 
-    for( page = 0; page < 2 * SPECTRUM_RAM_PAGES; page++ )
-	  for( offset = 0; offset < 0x2000; offset++ )
-	    if( !(pokefinder_impossible[page][offset/8] & 1 << (offset & 7)) ) {
-          NSNumber *p = @(page/2);
-          NSString *o = [NSString stringWithFormat:@"0x%04lX", offset + 8192 * (page & 1)];
-          NSNumber *on = @(offset + 8192 * (page & 1));
+    for( page = 0; page < MEMORY_PAGES_IN_16K * SPECTRUM_RAM_PAGES; page++ ) {
+      memory_page *mapping = &memory_map_ram[page];
+
+      for( offset = 0; offset < MEMORY_PAGE_SIZE; offset++ )
+        if( !(pokefinder_impossible[page][offset/8] & 1 << (offset & 7)) ) {
+          unsigned long bank_offset = mapping->offset + offset;
+          NSNumber *p = @(mapping->page_num);
+          NSString *o = [NSString stringWithFormat:@"0x%04lX", bank_offset];
+          NSNumber *on = @(bank_offset);
           [tableContents addObject: @{@"page": p, @"offset": o, @"offset_number": on}];
-		}
+        }
+    }
   } else {
     [tableContents release];
     tableContents = nil;
