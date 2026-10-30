@@ -22,185 +22,114 @@
    E-mail: pak21-fuse@srcf.ucam.org
 
 */
-
 #include <config.h>
 
-#import "NumberFormatter.h"
 #import "PokeFinderController.h"
 #import "EmulationSessionController.h"
 
-#include "fuse.h"
 #include "debugger/debugger.h"
 #include "pokefinder/pokefinder.h"
 #include "spectrum.h"
+
+/* Match the Objective-C bridge used by the other SwiftUI containers. */
+@interface PokeFinderContainerView : NSView
+@property(copy) void (^searchHandler)(NSInteger);
+@property(copy) void (^incrementHandler)(void);
+@property(copy) void (^decrementHandler)(void);
+@property(copy) void (^resetHandler)(void);
+@property(copy) void (^closeHandler)(void);
+@property(copy) void (^breakpointHandler)(NSInteger, NSInteger);
+- (void)updateWithCount:(NSInteger)count locations:(NSArray *)locations;
+@end
 
 @implementation PokeFinderController
 
 - (id)init
 {
-  [super init];
-  self = [super initWithWindowNibName:@"PokeFinder"];
+  NSWindow *window = [[NSWindow alloc]
+    initWithContentRect:NSMakeRect( 0, 0, 360, 420 )
+              styleMask:(NSWindowStyleMaskTitled | NSWindowStyleMaskClosable |
+                         NSWindowStyleMaskResizable)
+                backing:NSBackingStoreBuffered defer:NO];
+  self = [super initWithWindow:window];
+  [window release];
+  if( !self ) return nil;
 
-  [self setWindowFrameAutosaveName:@"PokeFinderWindow"];
+  [window setTitle:@"Poke Finder"];
+  [window setContentMinSize:NSMakeSize( 320, 380 )];
+  [window setDelegate:self];
+  [window center];
+  [self setWindowFrameAutosaveName:@"PokeFinderCompactWindow"];
 
-  tableContents = nil;
-
+  PokeFinderContainerView *container = [[PokeFinderContainerView alloc]
+    initWithFrame:[[window contentView] bounds]];
+  /* The controller owns the content view; blocks must not retain it back. */
+  __block PokeFinderController *controller = self;
+  container.searchHandler = ^(NSInteger value) {
+    pokefinder_search( (int)value );
+    [controller update_pokefinder];
+  };
+  container.incrementHandler = ^{
+    pokefinder_incremented();
+    [controller update_pokefinder];
+  };
+  container.decrementHandler = ^{
+    pokefinder_decremented();
+    [controller update_pokefinder];
+  };
+  container.resetHandler = ^{
+    pokefinder_clear();
+    [controller update_pokefinder];
+  };
+  container.closeHandler = ^{ [[controller window] close]; };
+  container.breakpointHandler = ^(NSInteger bank, NSInteger offset) {
+    (void)debugger_breakpoint_add_address( DEBUGGER_BREAKPOINT_TYPE_WRITE,
+      memory_source_ram, (int)bank, offset, 0,
+      DEBUGGER_BREAKPOINT_LIFE_PERMANENT, NULL );
+  };
+  [window setContentView:container];
+  [container release];
   return self;
-}
-
-- (void)awakeFromNib
-{
-  NumberFormatter *searchForFormatter = [[[NumberFormatter alloc] init] autorelease];
-
-  [searchForFormatter setMinimum:[NSDecimalNumber zero]];
-  [searchForFormatter setMaximum:[NSDecimalNumber decimalNumberWithString:@"255"]];
-  [searchForFormatter setFormat:@"0"];
-  [searchFor setFormatter:searchForFormatter];
-
-  [matchList setTarget:self];
-  [matchList setDoubleAction:@selector(matchListDoubleAction:)];
-}
-
-- (void)matchListDoubleAction:(id)sender
-{
-  int row;
-  id record, value;
-  unsigned long page, offset;
-  
-  row = [matchList clickedRow];
-  
-  if( row < 0 || row >= [tableContents count] ) return;
-  
-  record = [tableContents objectAtIndex:row];
-  value  = [record valueForKey:@"page"];
-  page   = [value unsignedLongValue];
-  value  = [record valueForKey:@"offset_number"];
-  offset = [value unsignedLongValue];
-  
-  (void)debugger_breakpoint_add_address( DEBUGGER_BREAKPOINT_TYPE_WRITE,
-                                         memory_source_ram, page, offset, 0,
-                                         DEBUGGER_BREAKPOINT_LIFE_PERMANENT, NULL);
-}
-
-- (void) dealloc
-{
-  NSNotificationCenter *nc;
-  
-  nc = [NSNotificationCenter defaultCenter];
-  [nc removeObserver:self];
-
-  [super dealloc];
-}
-
-- (void)handleWillClose:(NSNotification *)note
-{
-  [NSApp stopModal];
-
-  [tableContents removeAllObjects];
-  [tableContents release];
-  
-  tableContents = nil;
-  
-  [matchList reloadData];
-
-  [[EmulationSessionController instance] unpause];
 }
 
 - (void)showWindow:(id)sender
 {
-  NSNotificationCenter *nc;
+  if( [[self window] isVisible] ) {
+    [[self window] makeKeyAndOrderFront:sender];
+    return;
+  }
 
-  nc = [NSNotificationCenter defaultCenter];
-  [nc addObserver:self
-	     selector:@selector(handleWillClose:)
-		     name:@"NSWindowWillCloseNotification"
-	       object:[self window]];
-  
   [[EmulationSessionController instance] pause];
-
+  [self update_pokefinder];
   [super showWindow:sender];
-
-  [self update_pokefinder];
-  
   [NSApp runModalForWindow:[self window]];
+  [[self window] orderOut:nil];
+  [[EmulationSessionController instance] unpause];
 }
 
-- (IBAction)search:(id)sender
+- (void)windowWillClose:(NSNotification *)notification
 {
-  pokefinder_search( [searchFor intValue] );
-  [self update_pokefinder];
-}
-
-- (IBAction)incremented:(id)sender
-{
-  pokefinder_incremented();
-  [self update_pokefinder];
-}
-
-- (IBAction)decremented:(id)sender
-{
-  pokefinder_decremented();
-  [self update_pokefinder];
-}
-
-- (IBAction)reset:(id)sender
-{
-  pokefinder_clear();
-  [searchFor setStringValue:@""];
-  [self update_pokefinder];
-}
-
-- (IBAction)apply:(id)sender
-{
-  [[self window] close];
-}
-
-- (int)numberOfRowsInTableView:(NSTableView *)table
-{
-  if( tableContents != nil )
-    return [tableContents count];
-    
-  return 0;
-}
-
-- (id)tableView:(NSTableView *)table objectValueForTableColumn:(NSTableColumn *)col row:(int)row
-{
-  id record, value;
-
-  if( row < 0 || row >= [tableContents count] ) return nil;
-  record = [tableContents objectAtIndex:row];
-  value = [record valueForKey:[col identifier]];
-  return value;
+  if( [NSApp modalWindow] == [self window] ) [NSApp stopModal];
 }
 
 - (void)update_pokefinder
 {
+  NSMutableArray *locations = [NSMutableArray array];
   unsigned long page, offset;
 
   if( pokefinder_count && pokefinder_count <= 20 ) {
-	tableContents = [NSMutableArray arrayWithCapacity:pokefinder_count];
-	[tableContents retain];
-
     for( page = 0; page < MEMORY_PAGES_IN_16K * SPECTRUM_RAM_PAGES; page++ ) {
       memory_page *mapping = &memory_map_ram[page];
-
-      for( offset = 0; offset < MEMORY_PAGE_SIZE; offset++ )
+      for( offset = 0; offset < MEMORY_PAGE_SIZE; offset++ ) {
         if( !(pokefinder_impossible[page][offset/8] & 1 << (offset & 7)) ) {
-          unsigned long bank_offset = mapping->offset + offset;
-          NSNumber *p = @(mapping->page_num);
-          NSString *o = [NSString stringWithFormat:@"0x%04lX", bank_offset];
-          NSNumber *on = @(bank_offset);
-          [tableContents addObject: @{@"page": p, @"offset": o, @"offset_number": on}];
+          [locations addObject:@{ @"bank": @(mapping->page_num),
+                                 @"offset": @(mapping->offset + offset) }];
         }
+      }
     }
-  } else {
-    [tableContents release];
-    tableContents = nil;
   }
-
-  [matchList reloadData];
-
-  [locations setIntValue:pokefinder_count];
+  [(PokeFinderContainerView *)[[self window] contentView]
+    updateWithCount:pokefinder_count locations:locations];
 }
 
 @end

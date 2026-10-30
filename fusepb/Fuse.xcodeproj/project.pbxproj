@@ -23,6 +23,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		C8F050013A00000000000001 /* PokeFinderContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8F050023A00000000000001 /* PokeFinderContainerView.swift */; };
 		B6013812164692F5005FD3AE /* Fuse.iconset in Resources */ = {isa = PBXBuildFile; fileRef = B6013811164692F5005FD3AE /* Fuse.iconset */; };
 		D0M000013A79000000C0DE01 /* FuseThumbnailExtension.appex in CopyFiles */ = {isa = PBXBuildFile; fileRef = D0M001043A79000000C0DE01 /* FuseThumbnailExtension.appex */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0DI000013A7A00000C0DE01 /* FusePreviewExtension.appex in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0DI001043A7A00000C0DE01 /* FusePreviewExtension.appex */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -243,7 +244,6 @@
 		B665EE0B1052A39000FCFED8 /* Keyboard.xib in Resources */ = {isa = PBXBuildFile; fileRef = B665EE0A1052A39000FCFED8 /* Keyboard.xib */; };
 		B665EE101052A3BD00FCFED8 /* LoadBinary.xib in Resources */ = {isa = PBXBuildFile; fileRef = B665EE0F1052A3BD00FCFED8 /* LoadBinary.xib */; };
 		B665EE131052A3DC00FCFED8 /* MemoryBrowser.xib in Resources */ = {isa = PBXBuildFile; fileRef = B665EE121052A3DC00FCFED8 /* MemoryBrowser.xib */; };
-		B665EE161052A40000FCFED8 /* PokeFinder.xib in Resources */ = {isa = PBXBuildFile; fileRef = B665EE151052A40000FCFED8 /* PokeFinder.xib */; };
 		B665EE191052A41F00FCFED8 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = B665EE181052A41F00FCFED8 /* Preferences.xib */; };
 		B665EE1C1052A43900FCFED8 /* Rollback.xib in Resources */ = {isa = PBXBuildFile; fileRef = B665EE1B1052A43900FCFED8 /* Rollback.xib */; };
 		B665EE1F1052A45200FCFED8 /* SaveBinary.xib in Resources */ = {isa = PBXBuildFile; fileRef = B665EE1E1052A45200FCFED8 /* SaveBinary.xib */; };
@@ -493,6 +493,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		C8F050023A00000000000001 /* PokeFinderContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = controllers/PokeFinderContainerView.swift; sourceTree = SOURCE_ROOT; };
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
@@ -667,7 +668,6 @@
 		B665EE0A1052A39000FCFED8 /* Keyboard.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = Keyboard.xib; sourceTree = "<group>"; };
 		B665EE0F1052A3BD00FCFED8 /* LoadBinary.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LoadBinary.xib; sourceTree = "<group>"; };
 		B665EE121052A3DC00FCFED8 /* MemoryBrowser.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MemoryBrowser.xib; sourceTree = "<group>"; };
-		B665EE151052A40000FCFED8 /* PokeFinder.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PokeFinder.xib; sourceTree = "<group>"; };
 		B665EE181052A41F00FCFED8 /* Preferences.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = Preferences.xib; sourceTree = "<group>"; };
 		B665EE1B1052A43900FCFED8 /* Rollback.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = Rollback.xib; sourceTree = "<group>"; };
 		B665EE1E1052A45200FCFED8 /* SaveBinary.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SaveBinary.xib; sourceTree = "<group>"; };
@@ -1274,6 +1274,7 @@
 				B61700FB163EAFC600142336 /* GeneralPreferencesContainerView.swift */,
 				B61700F8163EAFC600142336 /* InputsPreferencesContainerView.swift */,
 				B7A1C4153A77EE0000C0DE01 /* JoystickConfigurationContainerView.swift */,
+				C8F050023A00000000000001 /* PokeFinderContainerView.swift */,
 				B7A1C4133A77D20000C0DE01 /* JoystickConfigurationModels.swift */,
 				B6170103163EAFC600142336 /* MachinePreferencesContainerView.swift */,
 				B6170101163EAFC600142336 /* PeripheralsPreferencesContainerView.swift */,
@@ -1372,7 +1373,6 @@
 				B665EE0A1052A39000FCFED8 /* Keyboard.xib */,
 				B665EE0F1052A3BD00FCFED8 /* LoadBinary.xib */,
 				B665EE121052A3DC00FCFED8 /* MemoryBrowser.xib */,
-				B665EE151052A40000FCFED8 /* PokeFinder.xib */,
 				B61700F3163EAF8D00142336 /* PokeMemory.xib */,
 				B665EE181052A41F00FCFED8 /* Preferences.xib */,
 				B665EE1B1052A43900FCFED8 /* Rollback.xib */,
@@ -2231,7 +2231,6 @@
 				B665EE0B1052A39000FCFED8 /* Keyboard.xib in Resources */,
 				B665EE101052A3BD00FCFED8 /* LoadBinary.xib in Resources */,
 				B665EE131052A3DC00FCFED8 /* MemoryBrowser.xib in Resources */,
-				B665EE161052A40000FCFED8 /* PokeFinder.xib in Resources */,
 				B665EE191052A41F00FCFED8 /* Preferences.xib in Resources */,
 				B665EE1C1052A43900FCFED8 /* Rollback.xib in Resources */,
 				B665EE1F1052A45200FCFED8 /* SaveBinary.xib in Resources */,
@@ -2797,6 +2796,7 @@
 				B61700FA163EAFC600142336 /* GeneralPreferencesContainerView.swift in Sources */,
 				B61700F9163EAFC600142336 /* InputsPreferencesContainerView.swift in Sources */,
 				B7A1C4163A77EE0000C0DE01 /* JoystickConfigurationContainerView.swift in Sources */,
+				C8F050013A00000000000001 /* PokeFinderContainerView.swift in Sources */,
 				B7A1C4143A77D20000C0DE01 /* JoystickConfigurationModels.swift in Sources */,
 				B61700FC163EAFC600142336 /* PreferencesPaneLayout.swift in Sources */,
 				B7A1C4113A76C40000C0DE01 /* PreferencesRootContainerView.swift in Sources */,

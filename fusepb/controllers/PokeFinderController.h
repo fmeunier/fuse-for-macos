@@ -24,23 +24,6 @@
 */
 #import <AppKit/AppKit.h>
 
-
-@interface PokeFinderController : NSWindowController
-{
-  IBOutlet NSFormCell *searchFor;
-  IBOutlet NSFormCell *locations;
-  IBOutlet NSTableView *matchList;
-  NSMutableArray *tableContents;
-}
-- (IBAction)apply:(id)sender;
-- (IBAction)search:(id)sender;
-- (IBAction)incremented:(id)sender;
-- (IBAction)decremented:(id)sender;
-- (IBAction)reset:(id)sender;
-- (void)showWindow:(id)sender;
-- (int)numberOfRowsInTableView:(NSTableView *)table;
-- (id)tableView:(NSTableView *)table objectValueForTableColumn:(NSTableColumn *)col row:(int)row;
+@interface PokeFinderController : NSWindowController <NSWindowDelegate>
 - (void)update_pokefinder;
-- (void)handleWillClose:(NSNotification *)note;
-- (void)matchListDoubleAction:(id)sender;
 @end
