@@ -543,17 +543,33 @@ overlay_item_state( ui_statusbar_state state )
 
 -(void) flagsChanged:(NSEvent *)event
 {
-  [proxy_emulator flagsChanged:event];
+  if( stop_requested ) return;
+  [proxy_emulator flagsChanged:[event modifierFlags]];
+}
+
+-(void) keyChange:(NSEvent *)event type:(input_event_type)type
+{
+  NSString *characters;
+
+  if( stop_requested || [event isARepeat] ) return;
+  characters = [event charactersIgnoringModifiers];
+  if( ![characters length] ) return;
+
+  /* Snapshot AppKit events on the main thread. Passing NSEvent through
+     NSConnection creates a proxy whose property reads can block the
+     emulator waiting for the main thread during modal UI or shutdown. */
+  [proxy_emulator keyChange:[event keyCode]
+                 character:[characters characterAtIndex:0] type:type];
 }
 
 -(void) keyDown:(NSEvent *)event
 {
-  [proxy_emulator keyDown:event];
+  [self keyChange:event type:INPUT_EVENT_KEYPRESS];
 }
 
 -(void) keyUp:(NSEvent *)event
 {
-  [proxy_emulator keyUp:event];
+  [self keyChange:event type:INPUT_EVENT_KEYRELEASE];
 }
 
 -(void) keyboardReleaseAll

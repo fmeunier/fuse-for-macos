@@ -165,12 +165,11 @@
 
 -(void) initKeyboard;
 -(void) modifierChange:(input_event_type)theType oldState:(BOOL)old newState:(BOOL)new;
--(oneway void) flagsChanged:(NSEvent *)theEvent;
+-(oneway void) flagsChanged:(NSUInteger)flags;
 -(input_key) otherKeysymsRemap:(libspectrum_dword)ui_keysym inHash:(GHashTable*)hash;
 -(oneway void) keyboardReleaseAll;
--(void) keyChange:(NSEvent *)theEvent type:(input_event_type)type;
--(oneway void) keyDown:(NSEvent *)theEvent;
--(oneway void) keyUp:(NSEvent *)theEvent;
+-(oneway void) keyChange:(unsigned short)keyCode character:(unichar)character
+                   type:(input_event_type)type;
 
 -(ui_confirm_save_t) confirmSave:(NSString*)theMessage;
 -(int) confirm:(NSString*)theMessage;

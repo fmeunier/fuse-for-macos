@@ -777,9 +777,8 @@ static Emulator *instance = nil;
   }
 }
 
--(oneway void) flagsChanged:(NSEvent *)theEvent
+-(oneway void) flagsChanged:(NSUInteger)flags
 {
-  int flags = [theEvent modifierFlags];
   BOOL optDownNew = (flags & NSAlternateKeyMask) ? YES : NO;
   BOOL ctrlDownNew = (flags & NSControlKeyMask) ? YES : NO;
   BOOL shiftDownNew = ( flags & NSShiftKeyMask ) ? YES : NO;
@@ -862,12 +861,10 @@ static Emulator *instance = nil;
   commandDown = NO;
 }
 
--(void) keyChange:(NSEvent *)theEvent type:(input_event_type)type
+-(oneway void) keyChange:(unsigned short)keyCode character:(unichar)character
+                   type:(input_event_type)type
 {
-  if( [theEvent isARepeat] == YES ) return;
-  unsigned short keyCode = [theEvent keyCode];
-  NSString *characters = [theEvent charactersIgnoringModifiers];
-  if( NO == commandDown && [characters length] ) {
+  if( NO == commandDown ) {
     input_key fuse_keysym;
     enum events event_type;
 
@@ -877,7 +874,7 @@ static Emulator *instance = nil;
            (fuse_keysym = [self otherKeysymsRemap:keyCode inHash:recreated_keysyms_hash]) != INPUT_KEY_NONE) ) {
       fuse_keysym = keysyms_remap( keyCode );
       if( fuse_keysym == INPUT_KEY_NONE ) {
-        fuse_keysym = [self otherKeysymsRemap:[characters characterAtIndex:0]
+        fuse_keysym = [self otherKeysymsRemap:character
                                        inHash:unicode_keysyms_hash];
       }
     }
@@ -891,16 +888,6 @@ static Emulator *instance = nil;
 
     process_keyevent( event_type, fuse_keysym );
   }
-}
-
--(oneway void) keyDown:(NSEvent *)theEvent
-{
-  [self keyChange:theEvent type:INPUT_EVENT_KEYPRESS];
-}
-
--(oneway void) keyUp:(NSEvent *)theEvent
-{
-  [self keyChange:theEvent type:INPUT_EVENT_KEYRELEASE];
 }
 
 -(ui_confirm_save_t) confirmSave:(NSString*)theMessage
