@@ -30,6 +30,7 @@ libspectrum_la_SOURCES = bzip2.c \
 			 creator.c \
 			 crypto.c \
 			 csw.c \
+			 csw_write.c \
 			 dck.c \
 			 file.c \
 			 ide.c \
@@ -38,7 +39,12 @@ libspectrum_la_SOURCES = bzip2.c \
 			 microdrive.c \
 			 mmc.c \
 			 plusd.c \
+			 pzx.c \
 			 pzx_read.c \
+			 pzx_write.c \
+			 pzx_write_plan.c \
+			 pzx_write_playback.c \
+			 pzx_write_validate.c \
 			 rzx.c \
 			 sna.c \
 			 snp.c \
@@ -49,13 +55,16 @@ libspectrum_la_SOURCES = bzip2.c \
 			 symbol_table.c \
 			 szx.c \
 			 tap.c \
+			 tap_pzx.c \
 			 tape.c \
 			 tape_accessors.c \
 			 tape_block.c \
+			 tape_text.c \
 			 tape_set.c \
 		 	 timings.c \
 			 tzx_read.c \
 			 tzx_write.c \
+			 tzx_pzx.c \
 			 utilities.c \
 			 warajevo_read.c \
 			 windres.rc \
@@ -63,12 +72,10 @@ libspectrum_la_SOURCES = bzip2.c \
 			 z80em.c \
 			 zxs.c
 
-if WAV_SUPPORT
 libspectrum_la_SOURCES += wav.c
-endif
 
-if WAV_INTERNAL_AUDIOFILE
-libspectrum_la_SOURCES += wav_audiofile.c
+if WAV_INTERNAL_PCM
+libspectrum_la_SOURCES += wav_pcm.c
 endif
 
 if WAV_INTERNAL_MACOS
@@ -89,9 +96,9 @@ endif
 ## * Always increase the revision value.
 ## * Increase the age value only if the changes made to the ABI are backward
 ##   compatible.
-libspectrum_la_LDFLAGS = -version-info 21:0:0 -no-undefined @WINDRES_LDFLAGS@ @WAV_BACKEND_LDFLAGS@
+libspectrum_la_LDFLAGS = -version-info 22:0:1 -no-undefined @WINDRES_LDFLAGS@ @WAV_BACKEND_LDFLAGS@
 
-libspectrum_la_LIBADD = @WAV_BACKEND_LIBADD@ @GLIB_LIBS@ -lm
+libspectrum_la_LIBADD = @WAV_BACKEND_LIBADD@ @GLIB_LIBS@ @ICONV_LIBS@ -lm
 
 libspectrum_la_DEPENDENCIES = @WINDRES_OBJ@
 
@@ -99,6 +106,8 @@ BUILT_SOURCES = libspectrum.h snap_accessors.c tape_accessors.c tape_set.c
 
 nodist_include_HEADERS = libspectrum.h
 noinst_HEADERS = internals.h \
+			 pzx_internals.h \
+			 pzx_write_internal.h \
 			 wav_internals.h \
 			 zip.h
 
@@ -139,7 +148,6 @@ EXTRA_DIST = accessor.pl \
 	     buffer_license.txt \
 	     dll.c \
 	     generate.pl.in \
-	     m4/audiofile.m4 \
 	     m4/ax_create_stdint_h.m4 \
 	     m4/pkg.m4 \
 	     make-perl.c \

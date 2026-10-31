@@ -843,7 +843,7 @@ rzx_read_creator( libspectrum_rzx *rzx, const libspectrum_byte **ptr,
 {
   libspectrum_creator *creator;
   libspectrum_byte *custom = NULL;
-  size_t length, custom_length;
+  size_t length, custom_length, i;
   char program[21];
 
   /* Check we've got enough data for the fixed part of the block */
@@ -881,6 +881,9 @@ rzx_read_creator( libspectrum_rzx *rzx, const libspectrum_byte **ptr,
 
   memcpy( program, *ptr, 20 );
   program[20] = '\0';
+  /* The RZX identification field is ASCII, not a locale-specific charset. */
+  for( i = 0; i < 20 && program[i]; i++ )
+    if( (unsigned char)program[i] >= 0x80 ) program[i] = '?';
   libspectrum_creator_set_program( creator, program );
   (*ptr) += 20;
 
@@ -1432,9 +1435,16 @@ rzx_write_creator( libspectrum_buffer *buffer, libspectrum_buffer *block_data,
                    libspectrum_creator *creator )
 {
   size_t custom_length = libspectrum_creator_custom_length( creator );
+  size_t length;
+  char *ascii;
+  libspectrum_byte program[20] = { 0 };
 
-  libspectrum_buffer_write( block_data, libspectrum_creator_program( creator ),
-                            20 );
+  internal_tape_text_convert( libspectrum_creator_program( creator ), 3, &ascii );
+  length = strlen( ascii );
+  if( length > sizeof( program ) ) length = sizeof( program );
+  memcpy( program, ascii, length );
+  libspectrum_free( ascii );
+  libspectrum_buffer_write( block_data, program, sizeof( program ) );
 
   libspectrum_buffer_write_word( block_data, libspectrum_creator_major( creator ) );
   libspectrum_buffer_write_word( block_data, libspectrum_creator_minor( creator ) );

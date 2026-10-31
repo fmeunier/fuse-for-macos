@@ -22,7 +22,7 @@
 .\" E-mail: philip-fuse@shadowmagic.org.uk
 .\"
 .\"
-.TH libspectrum 3 "16th September, 2026" "Version 1.7.0" "Emulators"
+.TH libspectrum 3 "25th October, 2026" "Version 1.8.0" "Emulators"
 .\"
 .\"------------------------------------------------------------------
 .\"
@@ -99,8 +99,10 @@ are:
 Snapshots: .z80, .szx, .sna (all read/write), .zxs, .sp., .snp and +D
 snapshots (read only).
 .IP \(bu 2
-Tape images: .tzx, .tap, .spc, .sta, .ltp (read/write) and .pzx, Warajevo .tap,
-Z80Em and CSW version 1 (read only).
+Tape images: .tzx, .tap, .spc, .sta, .ltp and .pzx (read/write); CSW v1/v2
+(read) and v2 (write); Warajevo .tap and Z80Em (read only).
+PZX writing supports native blocks and ROM/turbo/pure-data conversion;
+unsupported blocks are rejected.
 .IP \(bu 2
 Input recordings: .rzx (read/write).
 .IP \(bu 2

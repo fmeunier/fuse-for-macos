@@ -75,8 +75,7 @@ find_szx_chunk( libspectrum_byte *in_buffer, size_t in_buffer_length,
     memcpy( length_buffer, data, 4 );
     data += 4; data_remaining -= 4;
 
-    length = length_buffer[0] + (length_buffer[1] << 8) +
-      (length_buffer[2] << 16) + (length_buffer[3] << 24);
+    length = libspectrum_read_dword_le( length_buffer );
 
     if( data_remaining < length ) {
       fprintf( stderr, "Not enough data for chunk\n" );

@@ -3030,6 +3030,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				OTHER_LDFLAGS = (
 					"-lspectrum",
+					"-liconv",
 					"-lgcrypt",
 					"-lgpg-error",
 					"-lbz2",
@@ -3061,6 +3062,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				OTHER_LDFLAGS = (
 					"-lspectrum",
+					"-liconv",
 					"-lgcrypt",
 					"-lgpg-error",
 					"-lbz2",
@@ -3092,6 +3094,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				OTHER_LDFLAGS = (
 					"-lspectrum",
+					"-liconv",
 					"-lgcrypt",
 					"-lgpg-error",
 					"-lbz2",
@@ -3126,6 +3129,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				OTHER_LDFLAGS = (
 					"-lspectrum",
+					"-liconv",
 					"-lgcrypt",
 					"-lgpg-error",
 					"-lbz2",
@@ -3165,6 +3169,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				OTHER_LDFLAGS = (
 					"-lspectrum",
+					"-liconv",
 					"-lgcrypt",
 					"-lgpg-error",
 					"-lbz2",
@@ -3204,6 +3209,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				OTHER_LDFLAGS = (
 					"-lspectrum",
+					"-liconv",
 					"-lgcrypt",
 					"-lgpg-error",
 					"-lbz2",
@@ -3243,6 +3249,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				OTHER_LDFLAGS = (
 					"-lspectrum",
+					"-liconv",
 					"-lgcrypt",
 					"-lgpg-error",
 					"-lbz2",
@@ -3282,6 +3289,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				OTHER_LDFLAGS = (
 					"-lspectrum",
+					"-liconv",
 					"-lgcrypt",
 					"-lgpg-error",
 					"-lbz2",
@@ -3321,6 +3329,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				OTHER_LDFLAGS = (
 					"-lspectrum",
+					"-liconv",
 					"-lgcrypt",
 					"-lgpg-error",
 					"-lbz2",
@@ -3382,6 +3391,7 @@
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-lspectrum",
+					"-liconv",
 					"-lgcrypt",
 					"-lgpg-error",
 					"-lbz2",
@@ -3446,6 +3456,7 @@
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-lspectrum",
+					"-liconv",
 					"-lgcrypt",
 					"-lgpg-error",
 					"-lbz2",
@@ -3506,6 +3517,7 @@
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-lspectrum",
+					"-liconv",
 					"-lgcrypt",
 					"-lgpg-error",
 					"-lbz2",
@@ -3798,6 +3810,7 @@
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-lspectrum",
+					"-liconv",
 					"-lgcrypt",
 					"-lgpg-error",
 					"-lbz2",
@@ -3850,6 +3863,7 @@
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-lspectrum",
+					"-liconv",
 					"-lgcrypt",
 					"-lgpg-error",
 					"-lbz2",
@@ -3901,6 +3915,7 @@
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-lspectrum",
+					"-liconv",
 					"-lgcrypt",
 					"-lgpg-error",
 					"-lbz2",

@@ -44,15 +44,7 @@ jobs:
       key: "no-libgcrypt"
       use_libgcrypt: false
 
-  # 5. Without libaudiofile (real glib)
-  no-libaudiofile:
-    name: "Libspectrum w/o libaudiofile (Linux, real glib)"
-    uses: ./.github/workflows/build_linux_sub.yml
-    with:
-      key: "no-libaudiofile"
-      use_libaudiofile: false
-
-  # 6. Without all libs (real glib)
+  # 5. Without all libs (real glib)
   no-libs:
     name: "Libspectrum w/o all libs (Linux, real glib)"
     uses: ./.github/workflows/build_linux_sub.yml
@@ -61,13 +53,12 @@ jobs:
       use_zlib: false
       use_bzip2: false
       use_libgcrypt: false
-      use_libaudiofile: false
 
   #################
   ### FAKE GLIB ###
   #################
 
-  # 7. Default = all libs enabled, fake glib yes
+  # 6. Default = all libs enabled, fake glib yes
   default-fake-glib:
     name: "Libspectrum + all libs (Linux, fake glib)"
     uses: ./.github/workflows/build_linux_sub.yml
@@ -75,7 +66,7 @@ jobs:
       key: "default-fake-glib"
       use_fake_glib: true
 
-  # 8. Without zlib (fake glib)
+  # 7. Without zlib (fake glib)
   no-zlib-fake-glib:
     name: "Libspectrum w/o zlib (Linux, fake glib)"
     uses: ./.github/workflows/build_linux_sub.yml
@@ -84,7 +75,7 @@ jobs:
       use_zlib: false
       use_fake_glib: true
 
-  # 9. Without bzip2 (fake glib)
+  # 8. Without bzip2 (fake glib)
   no-bzip2-fake-glib:
     name: "Libspectrum w/o bzip2 (Linux, fake glib)"
     uses: ./.github/workflows/build_linux_sub.yml
@@ -93,7 +84,7 @@ jobs:
       use_bzip2: false
       use_fake_glib: true
 
-  # 10. Without libgcrypt (fake glib)
+  # 9. Without libgcrypt (fake glib)
   no-libgcrypt-fake-glib:
     name: "Libspectrum w/o libgcrypt (Linux, fake glib)"
     uses: ./.github/workflows/build_linux_sub.yml
@@ -102,16 +93,7 @@ jobs:
       use_libgcrypt: false
       use_fake_glib: true
 
-  # 11. Without libaudiofile (fake glib)
-  no-libaudiofile-fake-glib:
-    name: "Libspectrum w/o libaudiofile (Linux, fake glib)"
-    uses: ./.github/workflows/build_linux_sub.yml
-    with:
-      key: "no-libaudiofile-fake-glib"
-      use_libaudiofile: false
-      use_fake_glib: true
-
-  # 12. Without all libs (fake glib)
+  # 10. Without all libs (fake glib)
   no-libs-fake-glib:
     name: "Libspectrum w/o all libs (Linux, fake glib)"
     uses: ./.github/workflows/build_linux_sub.yml
@@ -120,5 +102,4 @@ jobs:
       use_zlib: false
       use_bzip2: false
       use_libgcrypt: false
-      use_libaudiofile: false
       use_fake_glib: true

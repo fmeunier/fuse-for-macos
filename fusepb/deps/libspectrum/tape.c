@@ -143,6 +143,10 @@ static libspectrum_error
 jump_blocks( libspectrum_tape *tape, libspectrum_tape_block_state *it,
              int offset );
 
+static void
+do_tail_pause( libspectrum_dword *tstates,
+               end_of_block_t *end_of_block, int *flags );
+
 static libspectrum_error
 rle_pulse_edge( libspectrum_tape_rle_pulse_block *block,
                 libspectrum_tape_rle_pulse_block_state *state,
@@ -286,16 +290,7 @@ libspectrum_tape_read( libspectrum_tape *tape, const libspectrum_byte *buffer,
     error = libspectrum_csw_read( tape, buffer, length ); break;
 
   case LIBSPECTRUM_ID_TAPE_WAV:
-#ifdef HAVE_WAV_BACKEND
     error = libspectrum_wav_read( tape, filename ); break;
-#else     /* #ifdef HAVE_WAV_BACKEND */
-    error = LIBSPECTRUM_ERROR_LOGIC;
-    libspectrum_print_error(
-      LIBSPECTRUM_ERROR_LOGIC,
-      "libspectrum_tape_read: format not supported without a WAV backend"
-    );
-    break;
-#endif    /* #ifdef HAVE_WAV_BACKEND */
 
   case LIBSPECTRUM_ID_TAPE_PZX:
     error = internal_pzx_read( tape, buffer, length ); break;
@@ -341,14 +336,35 @@ libspectrum_tape_write( libspectrum_byte **buffer, size_t *length,
   case LIBSPECTRUM_ID_TAPE_STA:
   case LIBSPECTRUM_ID_TAPE_LTP:
     error = internal_tap_write( new_buffer, tape, type );
+    if( error ) {
+      libspectrum_buffer_free( new_buffer );
+      return error;
+    }
     break;
 
   case LIBSPECTRUM_ID_TAPE_TZX:
     error = internal_tzx_write( new_buffer, tape );
+    if( error ) {
+      libspectrum_buffer_free( new_buffer );
+      return error;
+    }
+    break;
+
+  case LIBSPECTRUM_ID_TAPE_PZX:
+    error = internal_pzx_write( new_buffer, tape );
+    /* Do not expose a partial PZX file when conversion is rejected. */
+    if( error ) {
+      libspectrum_buffer_free( new_buffer );
+      return error;
+    }
     break;
 
   case LIBSPECTRUM_ID_TAPE_CSW:
     error = libspectrum_csw_write( new_buffer, tape );
+    if( error ) {
+      libspectrum_buffer_free( new_buffer );
+      return error;
+    }
     break;
 
   default:
@@ -522,7 +538,54 @@ libspectrum_tape_get_next_edge_internal( libspectrum_dword *tstates,
       end_of_block = END_OF_BLOCK_NORMAL;
       break;
 
+    case LIBSPECTRUM_TAPE_BLOCK_TZX_CSW:
+      if( it->block_state.rle_pulse.csw_pause_pending ) {
+        /* The pause follows the last pulse: zero adds no edge, while a
+           nonzero pause finishes low. */
+        *tstates = block->types.tzx_csw.pause_tstates;
+        do_tail_pause( tstates, &end_of_block, flags );
+        if( *tstates ) *flags |= LIBSPECTRUM_TAPE_FLAGS_LEVEL_LOW;
+      } else if( block->types.tzx_csw.rle.length == 0 ) {
+        it->block_state.rle_pulse.csw_pause_pending = 1;
+        *tstates = 0;
+        *flags |= LIBSPECTRUM_TAPE_FLAGS_NO_EDGE;
+      } else {
+        int first_pulse = it->block_state.rle_pulse.index == 0;
+
+        /* The first event holds the incoming level, even for a sole pulse.
+           Do not override it with a forced transition at tape start. */
+        if( first_pulse && it->force_low_level )
+          it->force_low_level = 0;
+
+        error = rle_pulse_edge( &block->types.tzx_csw.rle,
+                                &it->block_state.rle_pulse, tstates,
+                                &end_of_block );
+        if( error ) return error;
+
+        /* Events describe the level held during the pulse, not its closing
+           edge. Pulse count must not change the first pulse's polarity. */
+        if( first_pulse )
+          *flags |= LIBSPECTRUM_TAPE_FLAGS_NO_EDGE;
+
+        if( end_of_block ) {
+          end_of_block = END_OF_BLOCK_NONE;
+          it->block_state.rle_pulse.csw_pause_pending = 1;
+        }
+      }
+      break;
+
     case LIBSPECTRUM_TAPE_BLOCK_RLE_PULSE:
+      /* An explicit level belongs to the first run, not to an extra edge.
+         Otherwise preserve inherited exact-rate and legacy scaled behaviour. */
+      if( it->block_state.rle_pulse.index == 0 ) {
+        libspectrum_tape_rle_pulse_block *rle = &block->types.rle_pulse;
+        if( rle->has_initial_level || rle->sample_rate ) {
+          int level = rle->has_initial_level ? rle->initial_level :
+                                              (int)it->signal_level;
+          *flags |= level ? LIBSPECTRUM_TAPE_FLAGS_LEVEL_HIGH :
+                            LIBSPECTRUM_TAPE_FLAGS_LEVEL_LOW;
+        }
+      }
       error = rle_pulse_edge( &(block->types.rle_pulse),
                               &(it->block_state.rle_pulse), tstates, &end_of_block);
       if( error ) return error;
@@ -587,9 +650,9 @@ libspectrum_tape_get_next_edge_internal( libspectrum_dword *tstates,
       if( libspectrum_tape_iterator_current( it->current_block ) == NULL ) {
 	*flags |= LIBSPECTRUM_TAPE_FLAGS_STOP;
         *flags |= LIBSPECTRUM_TAPE_FLAGS_TAPE;
-        /* Need to have an edge at the end of the tape to terminate the last
-           pulse so clear the NO_EDGE flag if it has been set */
-        *flags &= ~LIBSPECTRUM_TAPE_FLAGS_NO_EDGE;
+        /* A zero-time terminal event closes the last pulse. A timed event
+           still describes that pulse, so preserve its transition semantics. */
+        if( !*tstates ) *flags &= ~LIBSPECTRUM_TAPE_FLAGS_NO_EDGE;
         libspectrum_tape_iterator_init( &(it->current_block), tape );
         end_of_block = END_OF_BLOCK_NEXT_LOW;
       }
@@ -1194,9 +1257,14 @@ get_generalised_data_bit( libspectrum_tape_generalised_data_block *block,
   state->current_byte <<= 1;
 
   if( ++state->bits_through_byte == 8 ) {
+    size_t data_count =
+      ( block->bits_per_data_symbol * block->data_table.symbols_in_block + 7 ) / 8;
+
     state->bits_through_byte = 0;
     state->bytes_through_stream++;
-    state->current_byte = block->data[ state->bytes_through_stream ];
+    /* The final symbol may end on a byte boundary. */
+    if( state->bytes_through_stream < data_count )
+      state->current_byte = block->data[ state->bytes_through_stream ];
   }
   
   return r;
@@ -1225,6 +1293,13 @@ set_tstates_and_flags( libspectrum_tape_generalised_data_symbol *symbol,
 		       int *flags )
 {
   *tstates = symbol->lengths[ edge ];
+
+  /* A zero length terminates the symbol; it is not a zero-time pulse.
+     An empty symbol therefore has no polarity effect. */
+  if( !*tstates ) {
+    *flags |= LIBSPECTRUM_TAPE_FLAGS_NO_EDGE;
+    return;
+  }
 
   if( !edge ) {
     switch( symbol->edge_type ) {
@@ -1263,18 +1338,22 @@ generalised_data_edge( libspectrum_tape_generalised_data_block *block,
 			   flags );
 
     state->edges_through_symbol++;
-    if( state->edges_through_symbol == table->max_pulses    ||
-	symbol->lengths[ state->edges_through_symbol ] == 0    ) {
+    if( !*tstates || state->edges_through_symbol == table->max_pulses ||
+        symbol->lengths[ state->edges_through_symbol ] == 0 ) {
       state->edges_through_symbol = 0;
       if( ++state->symbols_through_run == block->pilot_repeats[ state->run ] ) {
 	state->symbols_through_run = 0;
 	if( ++state->run == table->symbols_in_block ) {
-	  state->state = LIBSPECTRUM_TAPE_STATE_DATA1;
-	  state->bits_through_byte = 0;
-	  state->bytes_through_stream = 0;
-	  state->symbols_through_stream = 0;
-	  state->current_byte = block->data[ 0 ];
-	  state->current_symbol = get_generalised_data_symbol( block, state );
+          if( block->data_table.symbols_in_block ) {
+	    state->state = LIBSPECTRUM_TAPE_STATE_DATA1;
+	    state->bits_through_byte = 0;
+	    state->bytes_through_stream = 0;
+	    state->symbols_through_stream = 0;
+	    state->current_byte = block->data[ 0 ];
+	    state->current_symbol = get_generalised_data_symbol( block, state );
+          } else {
+            state->state = LIBSPECTRUM_TAPE_STATE_PAUSE;
+          }
 	}
       }
     }
@@ -1288,8 +1367,8 @@ generalised_data_edge( libspectrum_tape_generalised_data_block *block,
 			   flags );
 
     state->edges_through_symbol++;
-    if( state->edges_through_symbol == table->max_pulses    ||
-	symbol->lengths[ state->edges_through_symbol ] == 0    ) {
+    if( !*tstates || state->edges_through_symbol == table->max_pulses ||
+        symbol->lengths[ state->edges_through_symbol ] == 0 ) {
       if( ++state->symbols_through_stream == table->symbols_in_block ) {
 	state->state = LIBSPECTRUM_TAPE_STATE_PAUSE;
       } else {
@@ -1338,24 +1417,30 @@ rle_pulse_edge( libspectrum_tape_rle_pulse_block *block,
                 libspectrum_tape_rle_pulse_block_state *state,
 		libspectrum_dword *tstates, end_of_block_t *end_of_block )
 {
+  libspectrum_dword samples;
+
   if( block->data[state->index] ) {
-
-    *tstates = block->scale * block->data[ state->index++ ];
-
+    samples = block->data[ state->index++ ];
   } else {
-
     if( state->index + 5 > block->length ) {
       libspectrum_print_error( LIBSPECTRUM_ERROR_LOGIC,
-			       "rle_pulse_edge: file is truncated\n" );
+                               "rle_pulse_edge: file is truncated\n" );
       return LIBSPECTRUM_ERROR_LOGIC;
     }
-
-    *tstates = block->scale * ( block->data[ state->index + 1 ]       |
-			        block->data[ state->index + 2 ] << 8  |
-			        block->data[ state->index + 3 ] << 16 |
-			        block->data[ state->index + 4 ] << 24   );
+    samples = libspectrum_read_dword_le( block->data + state->index + 1 );
     state->index += 5;
+  }
 
+  if( block->sample_rate ) {
+    libspectrum_qword total = (libspectrum_qword)samples * 3500000 +
+                              state->remainder;
+    if( total / block->sample_rate > UINT32_MAX ) return LIBSPECTRUM_ERROR_INVALID;
+    *tstates = total / block->sample_rate;
+    state->remainder = total % block->sample_rate;
+  } else {
+    libspectrum_qword duration = (libspectrum_qword)block->scale * samples;
+    if( duration > UINT32_MAX ) return LIBSPECTRUM_ERROR_INVALID;
+    *tstates = duration;
   }
 
   if( state->index == block->length ) *end_of_block = END_OF_BLOCK_NORMAL;
@@ -1395,9 +1480,8 @@ pulse_sequence_edge( libspectrum_tape_pulse_sequence_block *block,
     *flags |= new_level ? LIBSPECTRUM_TAPE_FLAGS_LEVEL_HIGH :
                           LIBSPECTRUM_TAPE_FLAGS_LEVEL_LOW;
     state->level = new_level;
-  } else if( !(*tstates) ) {
-    /* If the net effect of this edge was 0 tstates and no level change, it was
-       much ado about nothing */
+  } else {
+    /* Zero pulses can cancel the transition before a timed pulse too. */
     *flags |= LIBSPECTRUM_TAPE_FLAGS_NO_EDGE;
   }
 
@@ -1682,6 +1766,7 @@ tape_block_description( libspectrum_tape_type type )
   case LIBSPECTRUM_TAPE_BLOCK_ARCHIVE_INFO:     return "Archive Info";
   case LIBSPECTRUM_TAPE_BLOCK_HARDWARE:         return "Hardware Information";
   case LIBSPECTRUM_TAPE_BLOCK_CUSTOM:           return "Custom Info";
+  case LIBSPECTRUM_TAPE_BLOCK_TZX_CSW:          return "CSW Recording";
   case LIBSPECTRUM_TAPE_BLOCK_RLE_PULSE:        return "RLE Pulse";
   case LIBSPECTRUM_TAPE_BLOCK_PULSE_SEQUENCE:   return "Pulse Sequence";
   case LIBSPECTRUM_TAPE_BLOCK_DATA_BLOCK:       return "Data Block";

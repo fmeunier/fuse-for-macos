@@ -44,8 +44,10 @@ typedef libspectrum_error (*read_chunk_fn)( libspectrum_snap *snap,
 					    int parameter );
 
 static libspectrum_error
-inflate_block( libspectrum_byte **uncompressed, size_t *uncompressed_length,
-	       const libspectrum_byte **compressed, size_t compressed_length )
+inflate_block( libspectrum_byte **uncompressed GCC_UNUSED,
+               size_t *uncompressed_length GCC_UNUSED,
+	       const libspectrum_byte **compressed GCC_UNUSED,
+               size_t compressed_length GCC_UNUSED )
 {
 
 #ifdef HAVE_ZLIB_H

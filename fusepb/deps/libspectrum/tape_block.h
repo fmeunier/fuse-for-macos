@@ -351,14 +351,33 @@ typedef struct libspectrum_tape_rle_pulse_block {
   size_t length;
   libspectrum_byte *data;
   long scale;
+  /* Nonzero for sampled recordings: exact samples/second. Zero uses scale. */
+  libspectrum_dword sample_rate;
+  /* Optional absolute level of the first run. The public level accessor uses
+     -1 for the existing playback convention, 0 for low and 1 for high.
+     Zero-initialised blocks keep their legacy behaviour. These fields are
+     ignored in the embedded TZX CSW member, which inherits the tape level. */
+  int has_initial_level;
+  int initial_level;
 
 } libspectrum_tape_rle_pulse_block;
+
+/* The RLE member is first so timing and stream decoding can be shared. */
+typedef struct libspectrum_tape_tzx_csw_block {
+  libspectrum_tape_rle_pulse_block rle;
+  libspectrum_word pause;
+  libspectrum_dword pause_tstates;
+  libspectrum_dword pulses;
+  libspectrum_byte compression;
+} libspectrum_tape_tzx_csw_block;
 
 typedef struct libspectrum_tape_rle_pulse_block_state {
 
   /* Private data */
 
   size_t index;
+  libspectrum_dword remainder;
+  int csw_pause_pending;
 
 } libspectrum_tape_rle_pulse_block_state;
 
@@ -463,6 +482,7 @@ struct libspectrum_tape_block {
     libspectrum_tape_custom_block custom;
 
     libspectrum_tape_rle_pulse_block rle_pulse;
+    libspectrum_tape_tzx_csw_block tzx_csw;
 
     libspectrum_tape_pulse_sequence_block pulse_sequence;
     libspectrum_tape_data_block data_block;

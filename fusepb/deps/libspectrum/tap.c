@@ -144,6 +144,17 @@ internal_tap_write( libspectrum_buffer *buffer, libspectrum_tape *tape,
   libspectrum_tape_block *block;
   libspectrum_error error;
 
+  /* Recorded PZX pulses need decoding, not the legacy skip-and-warn path. */
+  for( block = libspectrum_tape_iterator_init( &iterator, tape ); block;
+       block = libspectrum_tape_iterator_next( &iterator ) ) {
+    libspectrum_tape_type block_type = libspectrum_tape_block_type( block );
+    if( block_type == LIBSPECTRUM_TAPE_BLOCK_PULSE_SEQUENCE ||
+        block_type == LIBSPECTRUM_TAPE_BLOCK_DATA_BLOCK ) {
+      if( type != LIBSPECTRUM_ID_TAPE_TAP ) return LIBSPECTRUM_ERROR_INVALID;
+      return internal_tap_write_pzx( buffer, tape );
+    }
+  }
+
   for( block = libspectrum_tape_iterator_init( &iterator, tape );
        block;
        block = libspectrum_tape_iterator_next( &iterator ) )
@@ -176,6 +187,7 @@ internal_tap_write( libspectrum_buffer *buffer, libspectrum_tape *tape,
     case LIBSPECTRUM_TAPE_BLOCK_GENERALISED_DATA:
     case LIBSPECTRUM_TAPE_BLOCK_LOOP_START:     /* Could do better? */
     case LIBSPECTRUM_TAPE_BLOCK_LOOP_END:
+    case LIBSPECTRUM_TAPE_BLOCK_TZX_CSW:
     case LIBSPECTRUM_TAPE_BLOCK_RLE_PULSE:
     case LIBSPECTRUM_TAPE_BLOCK_PULSE_SEQUENCE:
     case LIBSPECTRUM_TAPE_BLOCK_DATA_BLOCK:

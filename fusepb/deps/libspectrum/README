@@ -1,4 +1,4 @@
-libspectrum 1.7.0
+libspectrum 1.8.0
 =================
 
 libspectrum is a library which is designed to make the input and
@@ -10,8 +10,10 @@ Currently supported are:
 
 * Snapshots: .z80, .szx, .sna (all read/write), .zxs, .sp., .snp and
   +D snapshots (read only).
-* Tape images: .tzx, .tap, .spc, .sta and .ltp (read/write) and
-  .pzx, Warajevo .tap, Z80Em and CSW version 1 (read only).
+* Tape images: .tzx, .tap, .spc, .sta, .ltp and .pzx (read/write); CSW v1/v2
+  (read) and v2 (write); Warajevo .tap and Z80Em (read only).
+  PZX writing supports native blocks and ROM/turbo/pure-data conversion;
+  unsupported blocks are rejected (see doc/libspectrum.txt).
 * Input recordings: .rzx (read/write).
 * Disk images: .dsk (both plain and extended), .d40, .d80, .fdi, .img,
   .mgt, .opd, .sad, .scl, .td0, .trd and .udi (identification only).
@@ -55,6 +57,26 @@ If you're using version of libspectrum from Git rather than one
 of the released tarballs, you'll need to run `autogen.sh' before
 running 'configure' for the first time.
 
+WAV input
+---------
+
+WAV input uses a dependency-free standard C reader by default. Configure with
+--with-wav-backend=pcm (also the default for auto) or macos (native macOS).
+WAV input is always enabled.
+
+The portable reader supports RIFF/WAVE unsigned 8-bit and signed 16-, 24-,
+and 32-bit integer PCM at any nonzero sample rate. Extensible PCM is accepted
+when valid bits equal container bits. Channels are averaged equally after
+conversion to signed 16-bit, without resampling; channel masks are ignored.
+Zero is low, positive is high, matching the native macOS tape decoder.
+Samples retain signed 16-bit precision for zero-crossing detection.
+
+Compressed audio, IEEE float, RIFX, RF64, multiple fmt/data chunks and partial
+frames are unsupported. RIFF sizes and odd-chunk padding are checked strictly.
+Files must be seekable and fit the host C library's long-based fseek/ftell
+range (typically below 2 GiB on Windows). Empty data is valid WAV but rejected
+by the tape decoder. The common decoder still holds all samples in memory.
+
 Compiling for the Wii
 ---------------------
 
@@ -63,12 +85,12 @@ To compile for the Wii, first make sure the dev tools are in your path
 
 ./configure --target=powerpc-gekko --host=powerpc-gekko \
             --prefix=$DEVKITPPC \
-            --without-libgcrypt --with-fake-glib --without-libaudiofile
+            --without-libgcrypt --with-fake-glib
 
-That is assuming you don't have libgcrypt, glib and libaudiofile for the
+That is assuming you don't have libgcrypt and glib for the
 Wii. At the time of writing, those haven't been ported yet.
 
 Then, type "make" and if everything went well, "make install".
 
 Philip Kendall <philip-fuse@shadowmagic.org.uk>
-16th September, 2026
+25th October, 2026

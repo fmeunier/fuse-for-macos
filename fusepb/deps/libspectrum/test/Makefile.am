@@ -43,9 +43,16 @@ test_test_SOURCES = \
 	test/tape-edges.c \
 	test/tape-iterator.c \
 	test/tape.c \
+	test/tape-text.c \
+	test/pzx-write.c \
+	test/pzx-flow.c \
+	test/csw-write.c \
+	test/rle-recordings.c \
+	test/tap-pzx.c \
 	test/timings.c \
 	test/utilities.c \
-	test/identify.c
+	test/identify.c \
+	test/wav.c
 
 # The test program links the static archive to exercise private helpers.
 # On Windows, avoid dllimport declarations for the archive's public symbols.
@@ -54,10 +61,12 @@ test_test_CFLAGS = -DSRCDIR='"$(srcdir)"' -DLIBSPECTRUM_EXPORTS
 test_test_DEPENDENCIES = libspectrum.la \
 			 test/complete-tzx.tzx \
 			 test/wav-mono-threshold.wav \
+			 test/wav-exact-timing.wav \
 			 test/wav-stereo-mixdown.wav
 
 noinst_DATA += test/complete-tzx.tzx \
 		test/wav-mono-threshold.wav \
+		test/wav-exact-timing.wav \
 		test/wav-stereo-mixdown.wav
 
 noinst_HEADERS += \
@@ -71,10 +80,23 @@ test/complete-tzx.tzx: test/complete-tzx.pl
 test/wav-mono-threshold.wav: test/wav-fixtures.pl
 	$(AM_V_GEN)$(PERL) $< mono-threshold > $@.tmp && mv $@.tmp $@
 
+test/wav-exact-timing.wav: test/wav-fixtures.pl
+	$(AM_V_GEN)$(PERL) $< exact-timing > $@.tmp && mv $@.tmp $@
+
 test/wav-stereo-mixdown.wav: test/wav-fixtures.pl
 	$(AM_V_GEN)$(PERL) $< stereo-mixdown > $@.tmp && mv $@.tmp $@
 
+if BUILD_TEST_ARCHIVE
+libspectrum-test.a: libspectrum.la
+	$(AM_V_at)$(AR) crs $@ .libs/*.o
+test_test_DEPENDENCIES += libspectrum-test.a
+test_test_LDADD = libspectrum-test.a $(libspectrum_la_LIBADD)
+noinst_DATA += libspectrum-test.a
+CLEANFILES += libspectrum-test.a
+else
 test_test_LDADD = libspectrum.la
+endif
+
 test_test_LDFLAGS = -static
 
 EXTRA_DIST += \
@@ -148,10 +170,13 @@ EXTRA_DIST += \
 	test/turbo-zeropilot.tzx \
 	test/writeprotected.mdr \
 	test/zero-tail.pzx \
-	test/pzx-archive-info-tags.pzx
+	test/pzx-archive-info-tags.pzx \
+	test/fuse-rom-recording.pzx \
+	test/fuse-rom-recording.tap
 
 CLEANFILES += \
 	test/.libs/test \
 	test/complete-tzx.tzx \
 	test/wav-mono-threshold.wav \
+	test/wav-exact-timing.wav \
 	test/wav-stereo-mixdown.wav

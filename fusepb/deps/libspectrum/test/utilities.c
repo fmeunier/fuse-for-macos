@@ -23,11 +23,148 @@
 
 #include "config.h"
 
+#include <errno.h>
+#include <fcntl.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "internals.h"
 #include "test.h"
+
+static libspectrum_byte
+mmc_command( libspectrum_mmc_card *card, libspectrum_byte command,
+             libspectrum_dword argument )
+{
+  int shift;
+  libspectrum_mmc_write( card, 0x40 | command );
+  for( shift = 24; shift >= 0; shift -= 8 )
+    libspectrum_mmc_write( card, ( argument >> shift ) & 0xff );
+  libspectrum_mmc_write( card, 0xff );
+  return libspectrum_mmc_read( card );
+}
+
+static int
+mmc_initialise( libspectrum_mmc_card *card )
+{
+  int i;
+  libspectrum_mmc_reset( card );
+  if( mmc_command( card, 8, 0x1aa ) != 1 ) return 1;
+  for( i = 0; i < 4; i++ ) libspectrum_mmc_read( card );
+  return mmc_command( card, 55, 0 ) != 1 ||
+         mmc_command( card, 41, 0x40000000 ) != 0;
+}
+
+test_return_t
+mmc_high_bit_command_arguments( void )
+{
+  libspectrum_hdf_header header;
+  libspectrum_mmc_card *card = NULL;
+  const char *filename = "test-mmc-dword.hdf";
+  FILE *file;
+  int fd, flags = O_WRONLY | O_CREAT | O_EXCL;
+  test_return_t r = TEST_INCOMPLETE;
+  size_t i, j;
+  static const libspectrum_dword arguments[] = { 0x80000001, 0xffffffff };
+
+  /* Avoid overwriting an existing file, without relying on C11 fopen modes
+     that older Windows runtimes do not support. */
+#ifdef O_BINARY
+  flags |= O_BINARY;
+#endif
+  fd = open( filename, flags, 0600 );
+  if( fd < 0 ) {
+    fprintf( stderr, "%s: unable to create %s: %s\n",
+             progname, filename, strerror( errno ) );
+    return r;
+  }
+  file = fdopen( fd, "wb" );
+  if( !file ) {
+    fprintf( stderr, "%s: unable to open stream for %s: %s\n",
+             progname, filename, strerror( errno ) );
+    close( fd );
+    goto done;
+  }
+  memset( &header, 0, sizeof( header ) );
+  memcpy( header.signature, "RS-IDE", 6 );
+  header.id = 0x1a;
+  header.datastart_low = sizeof( header );
+  /* 1024 sectors; all tested accesses must be rejected before disk I/O. */
+  header.drive_identity[3] = 4;
+  header.drive_identity[6] = 1;
+  header.drive_identity[12] = 1;
+  if( fwrite( &header, 1, sizeof( header ), file ) != sizeof( header ) ) {
+    fprintf( stderr, "%s: unable to write %s: %s\n",
+             progname, filename, strerror( errno ) );
+    fclose( file );
+    goto done;
+  }
+  if( fclose( file ) ) {
+    fprintf( stderr, "%s: unable to close %s: %s\n",
+             progname, filename, strerror( errno ) );
+    goto done;
+  }
+  card = libspectrum_mmc_alloc();
+  if( libspectrum_mmc_insert( card, filename ) ) {
+    fprintf( stderr, "%s: unable to insert MMC image %s\n",
+             progname, filename );
+    goto done;
+  }
+  r = TEST_FAIL;
+  for( j = 0; j < sizeof( arguments ) / sizeof( arguments[0] ); j++ ) {
+    libspectrum_dword argument = arguments[j];
+    if( mmc_initialise( card ) || mmc_command( card, 17, argument ) != 0x40 ||
+        mmc_command( card, 32, argument ) != 0x40 ||
+        mmc_command( card, 32, 0 ) != 0 ||
+        mmc_command( card, 33, argument ) != 0x40 ||
+        mmc_command( card, 24, argument ) != 0 ) goto done;
+    libspectrum_mmc_write( card, 0xfe );
+    for( i = 0; i < 514; i++ ) libspectrum_mmc_write( card, 0 );
+    if( libspectrum_mmc_read( card ) != 0x40 ||
+        libspectrum_mmc_dirty( card ) ) goto done;
+  }
+  r = TEST_PASS;
+done:
+  if( r == TEST_FAIL )
+    fprintf( stderr, "%s: MMC high-bit argument mismatch\n", progname );
+  if( card ) libspectrum_mmc_free( card );
+  if( remove( filename ) ) {
+    fprintf( stderr, "%s: unable to remove %s\n", progname, filename );
+    r = TEST_FAIL;
+  }
+  return r;
+}
+
+test_return_t
+utilities_dword_decoders( void )
+{
+  static const libspectrum_dword values[] = {
+    0, 0x12345678, 0x80000001, 0xffffffff
+  };
+  libspectrum_byte le[5], be[5];
+  const libspectrum_byte *ptr;
+  size_t i;
+
+  for( i = 0; i < sizeof( values ) / sizeof( values[0] ); i++ ) {
+    libspectrum_dword value = values[i];
+    size_t j;
+
+    /* Decode at an unaligned offset as well as checking the high bit. */
+    for( j = 0; j < 4; j++ ) {
+      le[j + 1] = ( value >> ( 8 * j ) ) & 0xff;
+      be[4 - j] = le[j + 1];
+    }
+    ptr = le + 1;
+    if( libspectrum_read_dword_le( ptr ) != value ||
+        libspectrum_read_dword_be( be + 1 ) != value ||
+        libspectrum_read_dword( &ptr ) != value || ptr != le + 5 ) {
+      fprintf( stderr, "%s: dword decoder mismatch at %zu\n", progname, i );
+      return TEST_FAIL;
+    }
+  }
+
+  return TEST_PASS;
+}
 
 /* NULL source is invalid */
 test_return_t

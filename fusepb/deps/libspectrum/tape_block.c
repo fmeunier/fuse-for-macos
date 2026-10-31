@@ -104,6 +104,9 @@ libspectrum_tape_block_free( libspectrum_tape_block *block )
   case LIBSPECTRUM_TAPE_BLOCK_RAW_DATA:
     libspectrum_free( block->types.raw_data.data );
     break;
+  case LIBSPECTRUM_TAPE_BLOCK_TZX_CSW:
+    libspectrum_free( block->types.tzx_csw.rle.data );
+    break;
   case LIBSPECTRUM_TAPE_BLOCK_GENERALISED_DATA:
     free_symbol_table( &block->types.generalised_data.pilot_table );
     free_symbol_table( &block->types.generalised_data.data_table );
@@ -240,8 +243,11 @@ libspectrum_tape_block_init( libspectrum_tape_block *block,
   case LIBSPECTRUM_TAPE_BLOCK_GENERALISED_DATA:
     return generalised_data_init( &(block->types.generalised_data),
                                   &(state->block_state.generalised_data) );
+  case LIBSPECTRUM_TAPE_BLOCK_TZX_CSW:
   case LIBSPECTRUM_TAPE_BLOCK_RLE_PULSE:
     state->block_state.rle_pulse.index = 0;
+    state->block_state.rle_pulse.remainder = 0;
+    state->block_state.rle_pulse.csw_pause_pending = 0;
     return LIBSPECTRUM_ERROR_NONE;
   case LIBSPECTRUM_TAPE_BLOCK_PULSE_SEQUENCE:
     state->block_state.pulse_sequence.index = 0;
@@ -429,6 +435,7 @@ libspectrum_tape_block_metadata( const libspectrum_tape_block *block )
   case LIBSPECTRUM_TAPE_BLOCK_SELECT:
   case LIBSPECTRUM_TAPE_BLOCK_STOP48:
   case LIBSPECTRUM_TAPE_BLOCK_SET_SIGNAL_LEVEL:
+  case LIBSPECTRUM_TAPE_BLOCK_TZX_CSW:
   case LIBSPECTRUM_TAPE_BLOCK_RLE_PULSE:
   case LIBSPECTRUM_TAPE_BLOCK_PULSE_SEQUENCE:
   case LIBSPECTRUM_TAPE_BLOCK_DATA_BLOCK:
@@ -681,12 +688,33 @@ static libspectrum_dword
 rle_pulse_block_length( libspectrum_tape_rle_pulse_block *rle_pulse )
 {
   libspectrum_dword length = 0;
-  size_t i;
+  libspectrum_qword samples = 0;
+  /* RLE pulse data stores each pulse as a single byte if the pulse is no
+     longer than 255 samples, and as a zero marker followed by an LSB dword
+     otherwise (the same encoding used by rle_pulse_edge()). */
+  for( size_t i = 0; i < rle_pulse->length; ) {
+    if( rle_pulse->data[ i ] ) {
+      samples += rle_pulse->data[ i ];
+      if( !rle_pulse->sample_rate )
+        length += rle_pulse->data[ i ] * rle_pulse->scale;
+      i++;
+    } else {
+      libspectrum_dword value;
 
-  for( i = 0; i < rle_pulse->length; i++ ) {
-    length += rle_pulse->data[ i ] * rle_pulse->scale;
+      if( rle_pulse->length - i < 5 ) {
+        libspectrum_print_error( LIBSPECTRUM_ERROR_CORRUPT,
+                                 "rle_pulse_block_length: file is truncated\n" );
+        return (libspectrum_dword)-1;
+      }
+      value = libspectrum_read_dword_le( rle_pulse->data + i + 1 );
+      samples += value;
+      if( !rle_pulse->sample_rate ) length += value * rle_pulse->scale;
+      i += 5;
+    }
   }
 
+  if( rle_pulse->sample_rate )
+    return samples * 3500000 / rle_pulse->sample_rate;
   return length;
 }
 
@@ -793,6 +821,13 @@ libspectrum_tape_block_length( libspectrum_tape_block *block )
     return block->types.pause.length_tstates;
   case LIBSPECTRUM_TAPE_BLOCK_RAW_DATA:
     return raw_data_block_length( &block->types.raw_data );
+  case LIBSPECTRUM_TAPE_BLOCK_TZX_CSW:
+    {
+      libspectrum_dword length =
+        rle_pulse_block_length( &block->types.tzx_csw.rle );
+      return length == (libspectrum_dword)-1 ? length :
+             length + block->types.tzx_csw.pause_tstates;
+    }
   case LIBSPECTRUM_TAPE_BLOCK_RLE_PULSE:
     return rle_pulse_block_length( &block->types.rle_pulse );
   case LIBSPECTRUM_TAPE_BLOCK_GENERALISED_DATA:

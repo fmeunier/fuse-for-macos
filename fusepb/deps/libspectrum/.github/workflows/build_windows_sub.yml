@@ -32,10 +32,6 @@ on:
         type: boolean
         required: false
         default: true
-      use_libaudiofile:
-        type: boolean
-        required: false
-        default: true
       # Repo is taken from var.LIBSPECTRUM_REPO, cannot be passed as input.
 
 jobs:
@@ -77,7 +73,6 @@ jobs:
           echo "Use lib zlib: ${{ inputs.use_zlib && 'yes' || 'no' }}"
           echo "Use lib bzip2: ${{ inputs.use_bzip2 && 'yes' || 'no' }}"
           echo "Use lib libgcrypt: ${{ inputs.use_libgcrypt && 'yes' || 'no' }}"
-          echo "Use lib libaudiofile: ${{ inputs.use_libaudiofile && 'yes' || 'no' }}"
 
       - name: (2) Check out repository code
         uses: actions/checkout@v7
@@ -86,22 +81,29 @@ jobs:
           ref: ${{ env.LIBSPECTRUM_BRANCH }}
           path: ${{ env.LIBSPECTRUM_PATH }}
 
+      - name: (2b) Resolve Cygwin package cache path
+        id: cygwin-cache-path
+        shell: pwsh
+        run: |
+          # Match cygwin-install-action's default drive selection.
+          $volume = if (Test-Path -LiteralPath 'D:\') { 'D:' } else { 'C:' }
+          "path=$volume\cygwin-packages" >> $env:GITHUB_OUTPUT
+
       - name: (3) Restore Cygwin packages
         id: cygwin-cache-load
         uses: actions/cache/restore@v6
         with:
-          path: |
-            C:\cygwin-packages
+          path: ${{ steps.cygwin-cache-path.outputs.path }}
           key: cygwin-packages-libspectrum-${{ hashFiles('.github/workflows/build_windows_sub.yml') }}
           restore-keys: |
             cygwin-packages-libspectrum-
 
       - name: (4) Install Cygwin (32 bit) with libs
-        uses: cygwin/cygwin-install-action@v6
+        id: cygwin-install
+        uses: cygwin/cygwin-install-action@711d29f3da23c9f4a1798e369a6f01198c13b11a # v6
         with:
           platform: x86
           packages: |
-            audiofile \
             autoconf \
             automake \
             bison \
@@ -110,9 +112,7 @@ jobs:
             gcc-g++ \
             gettext-devel \
             libtool \
-            libaudiofile-devel \
             make \
-            mingw64-i686-audiofile \
             mingw64-i686-bzip2 \
             mingw64-i686-gcc-core \
             mingw64-i686-gcc-g++ \
@@ -130,8 +130,7 @@ jobs:
         if: steps.cygwin-cache-load.outputs.cache-hit != 'true'
         uses: actions/cache/save@v6
         with:
-          path: |
-            C:\cygwin-packages
+          path: ${{ steps.cygwin-install.outputs.package-cache }}
           key: cygwin-packages-libspectrum-${{ hashFiles('.github/workflows/build_windows_sub.yml') }}
 
       - name: (6) Autogen.sh
@@ -154,7 +153,7 @@ jobs:
           ${{ inputs.use_zlib == false && '--without-zlib' || '' }} \
           ${{ inputs.use_bzip2 == false && '--without-bzip2' || '' }} \
           ${{ inputs.use_libgcrypt == false && '--without-libgcrypt' || '' }} \
-          ${{ inputs.use_libaudiofile == false && '--without-libaudiofile' || '' }} \
+          --with-wav-backend=pcm \
           | tee ./configure.out
 
       - name: (8) Verify output from configure
@@ -165,7 +164,7 @@ jobs:
           .github/scripts/in_config.sh "zlib support: ${{ inputs.use_zlib && 'yes' || 'no' }}"
           .github/scripts/in_config.sh "bzip2 support: ${{ inputs.use_bzip2 && 'yes' || 'no' }}"
           .github/scripts/in_config.sh "libgcrypt support: ${{ inputs.use_libgcrypt && 'yes' || 'no' }}"
-          .github/scripts/in_config.sh "libaudiofile support: ${{ inputs.use_libaudiofile && 'yes' || 'no' }}"
+          .github/scripts/in_config.sh "selected WAV backend: pcm"
           .github/scripts/in_config.sh "Internal GLib replacement: yes"
 
       - name: (9) Make
@@ -196,9 +195,6 @@ jobs:
           ${{ inputs.use_zlib         && 'cp -f ${CYGWIN_LIBDIR}zlib1.dll .'          || ''}}
           ${{ inputs.use_bzip2        && 'cp -f ${CYGWIN_LIBDIR}libbz2-1.dll .'       || ''}}
           ${{ inputs.use_libgcrypt    && 'cp -f ${CYGWIN_LIBDIR}libgcrypt-20.dll .'   || ''}}
-          ${{ inputs.use_libaudiofile && 'cp -f ${CYGWIN_LIBDIR}libaudiofile-1.dll .' || ''}}
-          ${{ inputs.use_libaudiofile && 'cp -f ${CYGWIN_LIBDIR}libFLAC-8.dll .'      || ''}}
-          ${{ inputs.use_libaudiofile && 'cp -f ${CYGWIN_LIBDIR}libOGG-0.dll .'       || ''}}
           
           echo "Copying own dll.."
           cp -f .libs/libspectrum-*.dll .
@@ -208,18 +204,24 @@ jobs:
         run: |
           cd ${GITHUB_WORKSPACE}
           
-          echo "Building and running tests .."
-          make check
+          echo "Building and running tests with live progress .."
+          make test/test.exe
+          # Bypass the Libtool launcher, retaining the source working directory
+          # so that relative test fixture paths continue to work.
+          if test -f test/.libs/lt-test.exe; then
+            test_executable=test/.libs/lt-test.exe
+          elif test -f test/.libs/test.exe; then
+            test_executable=test/.libs/test.exe
+          else
+            # Static test builds produce the real executable here, without
+            # a Libtool launcher or an executable in test/.libs/.
+            test_executable=test/test.exe
+          fi
+          export PATH="$PWD/.libs:$PWD:/usr/local/i686-w64-mingw32/bin:${CYGWIN_LIBDIR}:$PATH"
+          echo "Launching $test_executable directly .."
+          "$test_executable"
 
-      - name: (13) Verbose check tests (on failure)
-        if: failure() && steps.run-tests.outcome != 'success'
-        run: |
-          cd ${GITHUB_WORKSPACE}
-          
-          echo "Listing all tests individually .."
-          test/test.exe
-
-      - name: (14) Pack installed library files
+      - name: (13) Pack installed library files
         # Need to pack files to maintain permissions
         run: |
           cd ${GITHUB_WORKSPACE}
@@ -228,13 +230,13 @@ jobs:
           libspectrum-installed-windows.tar \
           -C /usr/local/i686-w64-mingw32/ .
 
-      - name: (15) Upload generated tar file
+      - name: (14) Upload generated tar file
         uses: actions/upload-artifact@v7
         with: 
           name: libspectrum-installed-windows-${{ inputs.key }}
           path: |
             libspectrum-installed-windows.tar
 
-      - name: (16) Finish
+      - name: (15) Finish
         run: |
           echo "🍏 Finishing with status ${{ job.status }}."

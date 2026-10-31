@@ -1,3 +1,48 @@
+2026-10-25  Fredrick Meunier  <fredm@spamcop.net>
+
+        * libspectrum 1.8.0 released.
+
+        * Add PZX tape writing, including conversion of legacy tape blocks,
+          recordings, generalised data, bounded jumps and finite loops
+          (Fredrick Meunier).
+
+        * Support TZX CSW recording blocks and add tape sample-rate and CSW
+          accessors (fixes bug #528) (Fredrick Meunier, thanks AJ B).
+
+        * Replace libaudiofile with a portable PCM WAV reader, enabling WAV
+          input in every build (Fredrick Meunier).
+
+        * Standardise metadata APIs on UTF-8, converting legacy encodings
+          with lossy substitution where necessary (Fredrick Meunier).
+
+        * Improve waveform, timing and initial polarity preservation when
+          converting between PZX, TZX and CSW tapes (Fredrick Meunier).
+
+        * Recognise ROM pulse recordings when exporting PZX tapes as TAP
+          (Fredrick Meunier).
+
+        * Various minor bug fixes/improvements:
+          * Increase snapshot RAM storage to 64 pages (Fredrick Meunier).
+          * Avoid reading past the end of generalised tape data (fixes bug
+            #529) (Fredrick Meunier, thanks AJ B).
+          * Fix generalised symbol termination and terminal tape transitions
+            (Fredrick Meunier).
+          * Fix RLE pulse block lengths for long-form pulses (Fredrick
+            Meunier).
+          * Fix TZX message duration encoding and reject overflow (Fredrick
+            Meunier).
+          * Use unsigned, endian-safe dword decoding (fixes bug #533)
+            (Fredrick Meunier, thanks Sergio Baldoví).
+          * Improve PZX payload bounds checking (Fredrick Meunier).
+          * Tolerate incorrect byte rates in PCM WAV headers (Fredrick
+            Meunier).
+          * Support test builds with static libraries disabled (Fredrick
+            Meunier, thanks Nico P).
+          * Extend tape, WAV, metadata and snapshot regression tests
+            (Fredrick Meunier).
+          * Fix compiler warnings and improve Windows builds and CI
+            (Fredrick Meunier, thanks Alberto Garcia).
+
 2026-09-20  Fredrick Meunier  <fredm@spamcop.net>
 
         * libspectrum 1.7.0 released.

@@ -161,15 +161,61 @@ play_tape( const char *filename )
   return TEST_PASS;
 }
 
-#ifdef HAVE_WAV_BACKEND
+static int
+check_wav_exports( libspectrum_tape *source, const size_t *runs,
+                    const libspectrum_tape_signal_level *levels,
+                    size_t count, libspectrum_dword rate )
+{
+  static const libspectrum_id_t formats[] = {
+    LIBSPECTRUM_ID_TAPE_CSW, LIBSPECTRUM_ID_TAPE_TZX, LIBSPECTRUM_ID_TAPE_PZX
+  };
+  libspectrum_tape *dest = libspectrum_tape_alloc();
+  libspectrum_byte *output = NULL;
+  size_t f, i, seen, length = 0;
+  libspectrum_qword samples, elapsed;
+  libspectrum_tape_edge edge;
+  int result = 0;
+
+  for( f = 0; f < sizeof( formats ) / sizeof( formats[0] ); f++ ) {
+    if( libspectrum_tape_write( &output, &length, source, formats[f] ) ||
+        libspectrum_tape_read( dest, output, length, formats[f], NULL ) ) goto done;
+    samples = elapsed = seen = 0;
+    for( i = 0; i < 64; i++ ) {
+      if( libspectrum_tape_get_next_edge( &edge, dest ) ) goto done;
+      if( edge.tstates ) {
+        libspectrum_qword end;
+        if( seen >= count || edge.level != levels[seen] ) goto done;
+        samples += runs[seen++];
+        end = samples * 3500000 / rate;
+        if( edge.tstates != end - elapsed ) goto done;
+        elapsed = end;
+      }
+      if( edge.flags & LIBSPECTRUM_TAPE_FLAGS_STOP ) break;
+    }
+    if( i == 64 || seen != count ) goto done;
+    libspectrum_free( output ); output = NULL; length = 0;
+    libspectrum_tape_clear( dest );
+  }
+  result = 1;
+done:
+  libspectrum_free( output );
+  libspectrum_tape_free( dest );
+  return result;
+}
+
 test_return_t
-check_wav_block( const char *filename, libspectrum_dword expected_bit_length,
-                 libspectrum_byte expected_byte )
+check_wav_block( const char *filename, libspectrum_dword sample_rate,
+                 libspectrum_byte expected_byte, size_t samples_per_bit )
 {
   libspectrum_tape *tape;
   libspectrum_tape_iterator it;
   libspectrum_tape_block *block;
   libspectrum_byte *data;
+  size_t i, count = 0, samples = 0, run_count = 0;
+  size_t runs[8];
+  libspectrum_tape_signal_level levels[8];
+  libspectrum_qword elapsed = 0;
+  libspectrum_tape_edge edge;
   test_return_t r;
 
   r = load_tape( &tape, filename, LIBSPECTRUM_ERROR_NONE );
@@ -183,55 +229,107 @@ check_wav_block( const char *filename, libspectrum_dword expected_bit_length,
     return TEST_FAIL;
   }
 
-  if( libspectrum_tape_block_type( block ) != LIBSPECTRUM_TAPE_BLOCK_RAW_DATA ) {
-    fprintf( stderr, "%s: `%s' produced block type %d, expected raw data\n",
-             progname, filename, libspectrum_tape_block_type( block ) );
+  if( libspectrum_tape_block_type( block ) !=
+        LIBSPECTRUM_TAPE_BLOCK_RLE_PULSE ||
+      libspectrum_tape_block_level( block ) != !!( expected_byte & 0x80 ) ) {
     libspectrum_tape_free( tape );
     return TEST_FAIL;
   }
-
-  if( libspectrum_tape_block_bit_length( block ) != expected_bit_length ) {
-    fprintf( stderr, "%s: `%s' produced bit length %lu, expected %lu\n",
+  if( libspectrum_tape_block_sample_rate( block ) != sample_rate ) {
+    fprintf( stderr, "%s: `%s' produced sample rate %lu, expected %lu\n",
              progname, filename,
-             (unsigned long)libspectrum_tape_block_bit_length( block ),
-             (unsigned long)expected_bit_length );
-    libspectrum_tape_free( tape );
-    return TEST_FAIL;
-  }
-
-  if( libspectrum_tape_block_bits_in_last_byte( block ) != 8 ) {
-    fprintf( stderr, "%s: `%s' used %lu bits in last byte, expected 8\n",
-             progname, filename,
-             (unsigned long)libspectrum_tape_block_bits_in_last_byte( block ) );
-    libspectrum_tape_free( tape );
-    return TEST_FAIL;
-  }
-
-  if( libspectrum_tape_block_data_length( block ) != 1 ) {
-    fprintf( stderr, "%s: `%s' produced data length %lu, expected 1\n",
-             progname, filename,
-             (unsigned long)libspectrum_tape_block_data_length( block ) );
+             (unsigned long)libspectrum_tape_block_sample_rate( block ),
+             (unsigned long)sample_rate );
     libspectrum_tape_free( tape );
     return TEST_FAIL;
   }
 
   data = libspectrum_tape_block_data( block );
-  if( !data || data[0] != expected_byte ) {
-    fprintf( stderr, "%s: `%s' produced data byte 0x%02x, expected 0x%02x\n",
-             progname, filename, data ? data[0] : 0, expected_byte );
+  for( i = 0; i < 8; ) {
+    size_t start = i;
+    int high = !!( expected_byte & ( 0x80 >> i ) );
+    libspectrum_dword encoded;
+    do { i++; } while( i < 8 &&
+                       !!( expected_byte & ( 0x80 >> i ) ) == high );
+    runs[run_count] = ( i - start ) * samples_per_bit;
+    levels[run_count] = high ? LIBSPECTRUM_TAPE_SIGNAL_HIGH :
+                               LIBSPECTRUM_TAPE_SIGNAL_LOW;
+    if( count >= libspectrum_tape_block_data_length( block ) ) {
+      libspectrum_tape_free( tape );
+      return TEST_FAIL;
+    }
+    encoded = data[count++];
+    if( !encoded ) {
+      if( libspectrum_tape_block_data_length( block ) - count < 4 ) {
+        libspectrum_tape_free( tape );
+        return TEST_FAIL;
+      }
+      encoded = libspectrum_read_dword_le( data + count );
+      count += 4;
+    }
+    if( encoded != runs[run_count++] ) {
+      libspectrum_tape_free( tape );
+      return TEST_FAIL;
+    }
+  }
+
+  if( libspectrum_tape_block_data_length( block ) != count ) {
+    fprintf( stderr, "%s: `%s' has trailing RLE data\n", progname, filename );
+    libspectrum_tape_free( tape );
+    return TEST_FAIL;
+  }
+
+  /* Playback must round cumulative samples, not each individual run. */
+  count = 0;
+  for( i = 0; i < 32; i++ ) {
+    if( libspectrum_tape_get_next_edge( &edge, tape ) ) {
+      libspectrum_tape_free( tape );
+      return TEST_FAIL;
+    }
+    if( edge.tstates ) {
+      libspectrum_qword end;
+      if( count >= run_count || edge.level != levels[count] ) {
+        libspectrum_tape_free( tape );
+        return TEST_FAIL;
+      }
+      samples += runs[count++];
+      end = (libspectrum_qword)samples * 3500000 / sample_rate;
+      if( edge.tstates != end - elapsed ) {
+        libspectrum_tape_free( tape );
+        return TEST_FAIL;
+      }
+      elapsed = end;
+    }
+    if( edge.flags & LIBSPECTRUM_TAPE_FLAGS_STOP ) break;
+  }
+  if( samples != 8 * samples_per_bit ||
+      elapsed != (libspectrum_qword)8 * samples_per_bit * 3500000 / sample_rate ) {
+    fprintf( stderr, "%s: `%s' has incorrect cumulative duration\n",
+             progname, filename );
+    libspectrum_tape_free( tape );
+    return TEST_FAIL;
+  }
+
+  if( count != run_count ) {
+    fprintf( stderr, "%s: `%s' has incorrect pulse count\n", progname, filename );
     libspectrum_tape_free( tape );
     return TEST_FAIL;
   }
 
   if( libspectrum_tape_iterator_next( &it ) ) {
-    fprintf( stderr, "%s: `%s' produced more than one tape block\n", progname,
+    fprintf( stderr, "%s: `%s' produced unexpected trailing tape blocks\n", progname,
              filename );
     libspectrum_tape_free( tape );
     return TEST_FAIL;
   }
 
+  if( !check_wav_exports( tape, runs, levels, run_count, sample_rate ) ) {
+    fprintf( stderr, "%s: `%s' lost its waveform during export\n", progname,
+             filename );
+    libspectrum_tape_free( tape );
+    return TEST_FAIL;
+  }
   if( libspectrum_tape_free( tape ) ) return TEST_INCOMPLETE;
 
   return TEST_PASS;
 }
-#endif
