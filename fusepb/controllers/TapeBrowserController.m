@@ -157,13 +157,16 @@ add_block_details( libspectrum_tape_block *block, void *user_data )
   TapeBrowserController *tapeBrowserController = (TapeBrowserController*)user_data;
   NSString *type, *data;
   char buffer[256];
+  char *details = NULL;
   NSArray *keys = @[@"type", @"data"];
   NSArray *values;
 
   libspectrum_tape_block_description( buffer, 256, block );
   type = @(buffer);
-  tape_block_details( buffer, 256, block );
-  data = @(buffer);
+  if( tape_block_details( &details, block ) ) return;
+  data = [NSString stringWithUTF8String:details];
+  libspectrum_free( details );
+  if( !data ) data = @"";
   values = @[type, data];
   emulation_session_perform_on_main_thread(
     tapeBrowserController, @selector(addObjectToTapeContents:),

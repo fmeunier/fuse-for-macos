@@ -23,6 +23,8 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		C8F060013A00000000000001 /* utils_string.c in Sources */ = {isa = PBXBuildFile; fileRef = C8F060023A00000000000001 /* utils_string.c */; };
+		C8F060033A00000000000001 /* wait.c in Sources */ = {isa = PBXBuildFile; fileRef = C8F060043A00000000000001 /* wait.c */; };
 		C8F051013A00000000000001 /* BinaryDataContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8F051023A00000000000001 /* BinaryDataContainerView.swift */; };
 		C8F050013A00000000000001 /* PokeFinderContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8F050023A00000000000001 /* PokeFinderContainerView.swift */; };
 		B6013812164692F5005FD3AE /* Fuse.iconset in Resources */ = {isa = PBXBuildFile; fileRef = B6013811164692F5005FD3AE /* Fuse.iconset */; };
@@ -492,6 +494,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		C8F060023A00000000000001 /* utils_string.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = utils_string.c; sourceTree = "<group>"; };
+		C8F060043A00000000000001 /* wait.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = wait.c; path = ../fuse/compat/darwin/wait.c; sourceTree = SOURCE_ROOT; };
 		C8F051033A00000000000001 /* BinaryDataContainerView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = controllers/BinaryDataContainerView.h; sourceTree = SOURCE_ROOT; };
 		C8F051023A00000000000001 /* BinaryDataContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = controllers/BinaryDataContainerView.swift; sourceTree = SOURCE_ROOT; };
 		C8F050023A00000000000001 /* PokeFinderContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = controllers/PokeFinderContainerView.swift; sourceTree = SOURCE_ROOT; };
@@ -1500,6 +1504,7 @@
 			isa = PBXGroup;
 			children = (
 				B6B274051672AC8C00FC209B /* paths.c */,
+				C8F060043A00000000000001 /* wait.c */,
 			);
 			name = darwin;
 			path = compat/darwin;
@@ -1964,6 +1969,7 @@
 				B6D0E10A1CFD54D400202683 /* uimedia.c */,
 				B6FD5C7A05A4F5B600A6C4FC /* utils.h */,
 				F536B56503A0C275011517A0 /* utils.c */,
+				C8F060023A00000000000001 /* utils_string.c */,
 			);
 			name = fuse;
 			sourceTree = "<group>";
@@ -2744,6 +2750,7 @@
 				B61F465109121DF100C8096C /* FuseController.m in Sources */,
 				B61F465209121DF100C8096C /* TapeBrowserController.m in Sources */,
 				B61F465309121DF100C8096C /* utils.c in Sources */,
+				C8F060013A00000000000001 /* utils_string.c in Sources */,
 				B61F465409121DF100C8096C /* settings.m in Sources */,
 				B6D0E1091CFD54B800202683 /* svg.c in Sources */,
 				B61F465509121DF100C8096C /* KeyboardController.m in Sources */,
@@ -2896,6 +2903,7 @@
 				B69D8D4D1D6B34490031BAFC /* zip.c in Sources */,
 				B69BE5451660E04000C5D0CE /* spectranet.c in Sources */,
 				B6B274061672AC8C00FC209B /* paths.c in Sources */,
+				C8F060033A00000000000001 /* wait.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2995,21 +3003,21 @@
 		B7A1C4093A75C00000C0DE01 /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.4;
 			};
 			name = Default;
 		};
 		B7A1C40F3A75C10000C0DE01 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.4;
 			};
 			name = Development;
 		};
 		B7A1C4103A75C10000C0DE01 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.4;
 			};
 			name = Deployment;
 		};
@@ -3027,7 +3035,7 @@
 					"$(PROJECT_DERIVED_FILE_DIR)/deps/libgpg-error-prefix/lib",
 					"$(inherited)",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.4;
 				OTHER_LDFLAGS = (
 					"-lspectrum",
 					"-liconv",
@@ -3059,7 +3067,7 @@
 					"$(PROJECT_DERIVED_FILE_DIR)/deps/libgpg-error-prefix/lib",
 					"$(inherited)",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.4;
 				OTHER_LDFLAGS = (
 					"-lspectrum",
 					"-liconv",
@@ -3091,7 +3099,7 @@
 					"$(PROJECT_DERIVED_FILE_DIR)/deps/libgpg-error-prefix/lib",
 					"$(inherited)",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.4;
 				OTHER_LDFLAGS = (
 					"-lspectrum",
 					"-liconv",
@@ -3126,7 +3134,7 @@
 					"$(inherited)",
 				);
 				LLVM_LTO = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.4;
 				OTHER_LDFLAGS = (
 					"-lspectrum",
 					"-liconv",
@@ -3166,7 +3174,7 @@
 					"$(inherited)",
 				);
 				LLVM_LTO = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.4;
 				OTHER_LDFLAGS = (
 					"-lspectrum",
 					"-liconv",
@@ -3206,7 +3214,7 @@
 					"$(inherited)",
 				);
 				LLVM_LTO = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.4;
 				OTHER_LDFLAGS = (
 					"-lspectrum",
 					"-liconv",
@@ -3246,7 +3254,7 @@
 					"$(inherited)",
 				);
 				LLVM_LTO = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.4;
 				OTHER_LDFLAGS = (
 					"-lspectrum",
 					"-liconv",
@@ -3286,7 +3294,7 @@
 					"$(inherited)",
 				);
 				LLVM_LTO = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.4;
 				OTHER_LDFLAGS = (
 					"-lspectrum",
 					"-liconv",
@@ -3326,7 +3334,7 @@
 					"$(inherited)",
 				);
 				LLVM_LTO = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.4;
 				OTHER_LDFLAGS = (
 					"-lspectrum",
 					"-liconv",
@@ -3387,7 +3395,7 @@
 					"$(inherited)",
 					".",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.4;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-lspectrum",
@@ -3452,7 +3460,7 @@
 					"$(inherited)",
 					".",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.4;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-lspectrum",
@@ -3513,7 +3521,7 @@
 					"$(inherited)",
 					".",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.4;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-lspectrum",
@@ -3557,7 +3565,7 @@
 				GCC_WARN_SHADOW = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				LLVM_LTO = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.4;
 				ONLY_ACTIVE_ARCH = YES;
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				SDKROOT = macosx;
@@ -3587,7 +3595,7 @@
 				GCC_WARN_SHADOW = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				LLVM_LTO = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.4;
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				SDKROOT = macosx;
 				YACCFLAGS = "-d";
@@ -3614,7 +3622,7 @@
 				GCC_WARN_SHADOW = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				LLVM_LTO = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.4;
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				SDKROOT = macosx;
 				YACCFLAGS = "-d";
@@ -3666,7 +3674,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = FuseHelp/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.4;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "net.sourceforge.projects.fuse-for-macosx.FuseHelp";
@@ -3715,7 +3723,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = FuseHelp/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.4;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "net.sourceforge.projects.fuse-for-macosx.FuseHelp";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -3762,7 +3770,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = FuseHelp/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.4;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "net.sourceforge.projects.fuse-for-macosx.FuseHelp";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -3806,7 +3814,7 @@
 				);
 				LIBRARY_STYLE = Bundle;
 				LLVM_LTO = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.4;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-lspectrum",
@@ -3859,7 +3867,7 @@
 				);
 				LIBRARY_STYLE = Bundle;
 				LLVM_LTO = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.4;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-lspectrum",
@@ -3911,7 +3919,7 @@
 				);
 				LIBRARY_STYLE = Bundle;
 				LLVM_LTO = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.4;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-lspectrum",

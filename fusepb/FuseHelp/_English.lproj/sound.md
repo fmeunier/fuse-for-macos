@@ -5,7 +5,7 @@ order: 20
 group: Fuse Preferences
 ---
 
-Use the Sound pane of Fuse preferences to configure Fuses sound output.
+Use the Sound pane of Fuse preferences to configure Fuse's sound output.
 
 OPTION | DESCRIPTION
 :--- | :---

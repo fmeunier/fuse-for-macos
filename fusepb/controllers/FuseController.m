@@ -2467,7 +2467,7 @@ save_as_exit:
 
   [[EmulationSessionController instance] pause];
 
-  filename = cocoaui_savepanel_get_filename( @"Write Tape As", @[@"tzx", @"tap", @"csw"] );
+  filename = cocoaui_savepanel_get_filename( @"Write Tape As", @[@"tzx", @"tap", @"pzx", @"csw"] );
 
   if( !filename ) { [[EmulationSessionController instance] unpause]; return 1; }
 

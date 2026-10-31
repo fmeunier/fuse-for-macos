@@ -3,6 +3,27 @@ title: What's New In Fuse?
 description: This section describes the changes for recent versions of the Fuse emulator.
 ---
 
+## What's new in Fuse for macOS 1.10.1
+
+### Tape improvements:
+* Support writing PZX files from the tape save dialog (Fredrick Meunier).
+* Improve direct tape recording timing and polarity, correct playback timing on machines with clocks other than 3.5 MHz, and support ROM tape traps for standard PZX data blocks (Fredrick Meunier).
+* Avoid mistaking keyboard scans for tape loader activity (thanks, Sergio Baldoví) (Fredrick Meunier).
+* Preserve complete UTF-8 tape browser descriptions and show CSW recording details and stored RLE sample rates (Fredrick Meunier).
+
+### Emulation core improvements:
+* Improve AY sound accuracy across video frame boundaries (Fredrick Meunier).
+* Correct restoration of machine and peripheral ROMs from snapshots (thanks, Sergio Baldoví) (Fredrick Meunier).
+* Improve Timex cartridge loading, reset, replacement, ejection and snapshot handling (thanks, Sergio Baldoví) (Fredrick Meunier).
+* Correct UDI and FDI disk image decoding, and clear joystick state on reset and snapshot load to prevent stuck inputs (Fredrick Meunier).
+* Correct composite 3x scaler rendering at the right edge of the screen and movie recording across embedded RZX snapshots (thanks, Alberto Garcia) (Fredrick Meunier).
+
+### Audio and macOS improvements:
+* Improve Core Audio buffering and pacing to reduce latency where possible (Fredrick Meunier).
+* Add balanced low-level noise during exact silence to prevent DAC auto-muting on some devices (thanks, Alberto Garcia) (Fredrick Meunier).
+
+### Various other minor bugfixes.
+
 ## What's new in Fuse for macOS 1.10.0
 
 ### Emulation core improvements:

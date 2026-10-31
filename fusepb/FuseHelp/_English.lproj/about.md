@@ -10,8 +10,8 @@ display and sound.
 
 The emulator can load Z80, SNA (also `.snapshot`), SZX (also `.zx-state`), SP,
 SNP, ZXS, +D (MGTSNP), and D40/D80 (.S) snapshots, as well as TAP, TZX and PZX
-virtual-tape files. Saving to SZX, Z80, and SNA snapshots and TZX and TAP tape
-files is supported. The SLT extension to the Z80 format is partly supported
+virtual-tape files. Saving to SZX, Z80, and SNA snapshots and TZX, TAP, PZX and
+CSW tape files is supported. The SLT extension to the Z80 format is partly supported
 (enough for multi-load games); however, loading of the old DAT-file variant is
 not.
 

@@ -30,8 +30,8 @@ MENU|SHORTCUT|DESCRIPTION
 *File > Export Screenshot…*||Save the current screen as any supported format (currently PNG, TIFF, BMP, JPG and GIF).
 *File > Import Binary Data…*||Load binary data from a file into the Spectrum's memory. After selecting the file to load data from, you can choose where to load the data and how much data to load.
 *File > Export Binary Data…*||Save an arbitrary chunk of the Spectrum's memory to a file. Select the file you wish to save to, followed by the location and length of data you wish to save.
-*Machine > Reset*||Reset the emulated Spectrum.
-*Machine > Hard Reset*||Reset the emulated Spectrum. A hard reset is equivalent to turning the Spectrum's power off, and then turning it back on.
+*Machine > Reset*||Reset the emulated Spectrum. A soft reset preserves active ROM and cartridge images loaded from a snapshot, including Timex cartridge ROM and RAM contents.
+*Machine > Hard Reset*||Reset the emulated Spectrum as if its power had been turned off and back on. Configured ROM and Interface II cartridge images are reloaded. Timex cartridge ROM is retained and cartridge RAM is cleared without reopening the original image, including for cartridges restored from snapshots.
 *Machine > Debugger*||Start the monitor/debugger. See the [Monitor/Debugger](monitor.html) section for more information.
 *Machine > POKE Finder*||Start the 'poke finder'. See the [POKE Finder](pokefinder.html) section for more information.
 *Machine > POKEs/Cheats*||Allow one to use multiface POKEs for things such as infinite lives. See the [POKES/Cheats](pokememory.html) section for more information.
@@ -48,7 +48,7 @@ MENU|SHORTCUT|DESCRIPTION
 *Media > Tape > Browse*||Browse through the current tape. A brief display of each of the data blocks on the current tape will appear, from which you can select which block Fuse will play next. Emulation will continue while the browser is displayed; clicking on a block will select it and 'fast-foward' the virtual tape deck.
 *Media > Tape > Rewind*||Rewind the current virtual tape, so it can be read again from the beginning.
 *Media > Tape > Close*||Close the current virtual tape file. This is particularly useful when you want a 'clean slate' to add newly-saved files to, before doing *Tape, Save As…*
-*Media > Tape > Save As…*||Write the current virtual-tape contents to a TZX file. The virtual-tape contents are the contents of the previously-loaded tape (if any has been loaded since you last did a Tape, Close), followed by anything you've saved from the emulated machine since. These newly-saved files are not written to any tape file until you choose this option!
+*Media > Tape > Save As…*||Write the current virtual-tape contents to a TZX, TAP, PZX or CSW file by choosing the corresponding filename extension. Not every format can represent every tape block; use a suitable format if saving reports that information would be lost. The virtual-tape contents are the contents of the previously-loaded tape (if any has been loaded since you last did a Tape, Close), followed by anything you've saved from the emulated machine since. These newly-saved files are not written to any tape file until you choose this option!
 *Media > Tape > Record*||Starts directly recording the output from the emulated Spectrum to the current virtual-tape. This is useful when you want to record using a non-standard ROM or from a custom save routine. Most tape operations are disabled during recording. Stop recording with the *Media > Tape > Stop Recording* menu option.
 *Media > Tape > Stop Recording*||Stops the direct recording and places the new recording into the virtual-tape.
 *Media > Microdrive*||Virtual Microdrive images are accessible only when the Interface I is active from the [Preferences > Peripherals](peripherals.html) menu. Note that any changes to the Microdrive image will not be written to the file on disk until the appropriate 'eject and write' option is used. Each Microdrive cartridge has it's own version of the following menus:
@@ -73,8 +73,8 @@ MENU|SHORTCUT|DESCRIPTION
 *Media > Drive B: > Save as…*||As above, but for drive B:/2.
 *Media > Drive B: > Flip*||Flip the disk image currently in the machine's drive B:/2, only applicable for single sided drives and two-sided disk images.
 *Media > Drive B: > Write Protect*||Enable the write protect tab for the image in drive B:/2.
-*Media > Cartridge > Open…*||Insert a cartridge into the Timex 2068 dock or Interface II cartridge slot. This will cause the emulated machine to be reset.
-*Media > Cartridge > Close*||Remove the cartridge from the Timex 2068 dock or Interface II cartridge slot. This will cause the emulated machine to be reset.
+*Media > Cartridge > Open…*||Insert a cartridge into the Timex 2068 dock or Interface II cartridge slot. Inserting a Timex cartridge hard resets the machine, replacing any previous cartridge, including one restored from a snapshot. Initial RAM contents supplied by the image are retained. The cartridge remains in memory, so later resets do not require the original file.
+*Media > Cartridge > Close*||Remove the cartridge from the Timex 2068 dock or Interface II cartridge slot. Removing a Timex cartridge hard resets the machine, as if power had been cycled to remove the physical cartridge.
 *Media > IDE Master > Insert…*||Connect an IDE hard disk to the current IDE interface's master channel.
 *Media > IDE Master > Commit*||Cause any writes which have been done to virtual hard disk attached to the current IDE interface's master channel to be committed to the real disk, such that they survive the virtual disk being ejected.
 *Media > IDE Master > Eject*||Eject the virtual hard disk from the current IDE interface's master channel. Note that any writes to the virtual hard disk will be lost unless the *Media > IDE Master > Commit* option is used before the disk is ejected.
