@@ -26,8 +26,7 @@ cartridges, TTX 2000S teletext adaptor, and Currah μSpeech.
 
 ## RZX Spectrum recordings
 
-Machine and peripheral metadata from the first embedded snapshot, together
-with filenames found in the recording.
+Machine and peripheral metadata from the first embedded snapshot.
 
 ## MDR Microdrive cartridge images
 
@@ -69,9 +68,10 @@ sides).
 
 Cartridge length in bytes.
 
-## SCR Screen dumps
+## SCR and MLT screen dumps
 
-Graphics mode, width, height, orientation, colour space
+Graphics mode (Standard, HiColour, HiRes or MultiColour), width, height,
+orientation and colour space.
 
 ## Custom Metadata Attribute Details
 
@@ -85,7 +85,7 @@ ATTRIBUTE | DESCRIPTION
 *Origin* | (Original, Budget re-release, ...)
 *Machine* | Spectrum 16K, 48K (Issue 1), 48K, 128K, +2, +2A, +3, SE, Timex TC2048, Timex TC2068, Timex TS2068, Scorpion ZS 256, Pentagon 128K
 *Joystick* | Kempston, Cursor, Sinclair 1, Sinclair 2, Timex 1, Timex 2, Fuller
-*GraphicsMode* | Standard, HiColour, HiRes
+*GraphicsMode* | Standard, HiColour, HiRes, MultiColour
 *CartridgeLength* | number of sectors on a microdrive cartridge, mapped 8K banks in a Timex DCK cartridge, or the size in bytes of an Interface 2 ROM cartridge
 *WriteProtect* | whether a microdrive cartridge is write protected
 *FileNames* | filenames stored in a tape image, Microdrive cartridge, TR-DOS disk image or SCL archive

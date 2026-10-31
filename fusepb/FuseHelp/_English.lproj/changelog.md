@@ -18,9 +18,17 @@ description: This section describes the changes for recent versions of the Fuse 
 * Correct UDI and FDI disk image decoding, and clear joystick state on reset and snapshot load to prevent stuck inputs (Fredrick Meunier).
 * Correct composite 3x scaler rendering at the right edge of the screen and movie recording across embedded RZX snapshots (thanks, Alberto Garcia) (Fredrick Meunier).
 
-### Audio and macOS improvements:
-* Improve Core Audio buffering and pacing to reduce latency where possible (Fredrick Meunier).
+### Audio improvements:
+* Improve Core Audio to reduce audio latency where possible (Fredrick Meunier).
 * Add balanced low-level noise during exact silence to prevent DAC auto-muting on some devices (thanks, Alberto Garcia) (Fredrick Meunier).
+
+### macOS improvements:
+* Modernise the Poke Finder and binary import/export dialogs with native SwiftUI layouts (Fredrick Meunier).
+* Correct RAM bank and offset reporting in Poke Finder results (fixes bug #32) (Fredrick Meunier).
+* Fix the X key when using a Recreated ZX Spectrum keyboard (fixes bug #36) (Fredrick Meunier).
+* Prevent quitting from hanging while keyboard events are being forwarded to the emulator (Fredrick Meunier).
+* Coordinate debugger exit and application termination with emulator teardown, preserving the debugger's process exit status (thanks, Joerg Pleumann) (Fredrick Meunier).
+* Skip unavailable disk controllers when selecting a drive (thanks, Amru Shabeer) (Fredrick Meunier).
 
 ### Various other minor bugfixes.
 
@@ -39,6 +47,10 @@ description: This section describes the changes for recent versions of the Fuse 
 ### RZX improvements:
 * Improve playback compatibility with older Fuse, Spectaculator and SPIN recordings, including interrupt timing, snapshot paging and tape-save input (Fredrick Meunier).
 * Place autosave snapshots after interrupt processing for more reliable unfinalised recordings (thanks, Sergio Baldoví) (Fredrick Meunier).
+
+### Quick Look and Spotlight improvements:
+* Improve SCREEN$ extraction from Microdrive images, rejecting corrupt, duplicate or incomplete records instead of displaying damaged previews (Fredrick Meunier).
+* Improve Spotlight filename indexing for Microdrive images, ignoring malformed records and bad checksums (Fredrick Meunier).
 
 ### Miscellaneous improvements:
 * Improve composite scaler performance and edge colours (Fredrick Meunier).
@@ -59,6 +71,9 @@ description: This section describes the changes for recent versions of the Fuse 
 
 ### Quick Look and Spotlight improvements:
 * Add Spotlight metadata for HDF, Opus, DISCiPLE/+D and Didaktik disk geometry, Interface 2 and Timex DCK cartridges, tape and RZX contents, and additional snapshot peripherals (Fredrick Meunier).
+* Correct SCREEN$ extraction from Microdrive images, including screen data stored in the first record (Fredrick Meunier).
+* Validate embedded TZX screen and inlay data before extracting Quick Look images (Fredrick Meunier).
+* Identify MLT screenshots as MultiColour rather than HiColour in Spotlight metadata (Fredrick Meunier).
 
 ### Miscellaneous improvements:
 * Allocate Pokefinder working memory only when needed (Fredrick Meunier).
