@@ -156,11 +156,11 @@ The helper script will:
 The configure flags used are:
 
 ```sh
---with-fake-glib --without-libgcrypt --without-libaudiofile
+--with-fake-glib --without-libgcrypt
 ```
 
-Using a fixed feature set helps keep the exported ABI consistent across
-runs and avoids accidental differences caused by optional dependencies.
+These fixed dependency options help keep the exported ABI consistent across
+runs and avoid accidental differences caused by optional dependencies.
 
 The Docker image also installs Universal Ctags for `abi-dumper`, and the
 helper configures builds with `CFLAGS='-Og -g'` to improve ABI analysis

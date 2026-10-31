@@ -58,11 +58,12 @@ build_one() {
 
   sh ./autogen.sh
 
-  CFLAGS='-Og -g' ./configure \
-    --prefix="$PREFIX" \
-    --with-fake-glib \
-    --without-libgcrypt \
-    --without-libaudiofile
+  set -- --prefix="$PREFIX" --with-fake-glib --without-libgcrypt
+  # Older refs may use optional libaudiofile; current refs have built-in WAV.
+  if ./configure --help | grep -q -- '--without-libaudiofile'; then
+    set -- "$@" --without-libaudiofile
+  fi
+  CFLAGS='-Og -g' ./configure "$@"
 
   make -j"$(nproc)"
   make install

@@ -72,7 +72,7 @@ file_read_data_resolves_nested_gzip( void )
   libspectrum_file_free( file );
   return result;
 #else
-  return TEST_INCOMPLETE;
+  return TEST_SKIPPED; /* gzip not enabled in build */
 #endif
 }
 
@@ -94,7 +94,7 @@ file_open_resolves_compressed_file( void )
   libspectrum_file_free( file );
   return result;
 #else
-  return TEST_INCOMPLETE;
+  return TEST_SKIPPED; /* gzip not enabled in build */
 #endif
 }
 

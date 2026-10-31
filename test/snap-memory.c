@@ -104,6 +104,89 @@ done:
   return r;
 }
 
+/* RAM page 63 and slt[47] occupy distinct slots. The snapshot structure
+   holds all 64 RAM page numbers the snapshot formats accept (patch #476
+   widened the array from 16) while the .slt level data lives in its own
+   256-entry array; the two arrays must never overlap, otherwise setting
+   one overwrites the other exactly as the pre-#476 overflow did. */
+test_return_t
+snap_ram_page_63_and_slt_47_distinct_slots( void )
+{
+  libspectrum_snap *snap = libspectrum_snap_alloc();
+  libspectrum_byte *page63, *level47;
+  test_return_t r = TEST_FAIL;
+
+  if( !snap ) {
+    fprintf( stderr, "%s: snap_ram_page_63_and_slt_47_distinct_slots: snap_alloc returned NULL\n", progname );
+    return TEST_INCOMPLETE;
+  }
+
+  if( libspectrum_snap_pages( snap, 63 ) != NULL ) {
+    fprintf( stderr, "%s: snap_ram_page_63_and_slt_47_distinct_slots: default pages[63] should be NULL\n", progname );
+    goto done;
+  }
+
+  if( libspectrum_snap_slt( snap, 47 ) != NULL ) {
+    fprintf( stderr, "%s: snap_ram_page_63_and_slt_47_distinct_slots: default slt[47] should be NULL\n", progname );
+    goto done;
+  }
+
+  page63 = libspectrum_new( libspectrum_byte, 0x4000 );
+  page63[0]      = 0xa3;
+  page63[0x3fff] = 0x63;
+  libspectrum_snap_set_pages( snap, 63, page63 );
+
+  level47 = libspectrum_new( libspectrum_byte, 0x1000 );
+  level47[0]      = 0xb4;
+  level47[0x0fff] = 0x74;
+  libspectrum_snap_set_slt( snap, 47, level47 );
+  libspectrum_snap_set_slt_length( snap, 47, 0x1000 );
+
+  if( libspectrum_snap_pages( snap, 63 ) == libspectrum_snap_slt( snap, 47 ) ) {
+    fprintf( stderr, "%s: snap_ram_page_63_and_slt_47_distinct_slots: pages[63] and slt[47] alias one slot\n", progname );
+    goto done;
+  }
+
+  if( libspectrum_snap_pages( snap, 63 ) != page63 ) {
+    fprintf( stderr, "%s: snap_ram_page_63_and_slt_47_distinct_slots: pages[63] pointer mismatch after the slt[47] set\n", progname );
+    goto done;
+  }
+  if( libspectrum_snap_pages( snap, 63 )[0]     != 0xa3 ||
+      libspectrum_snap_pages( snap, 63 )[0x3fff] != 0x63 ) {
+    fprintf( stderr, "%s: snap_ram_page_63_and_slt_47_distinct_slots: pages[63] data mismatch\n", progname );
+    goto done;
+  }
+
+  if( libspectrum_snap_slt( snap, 47 ) != level47 ) {
+    fprintf( stderr, "%s: snap_ram_page_63_and_slt_47_distinct_slots: slt[47] pointer mismatch after set\n", progname );
+    goto done;
+  }
+  if( libspectrum_snap_slt( snap, 47 )[0]     != 0xb4 ||
+      libspectrum_snap_slt( snap, 47 )[0x0fff] != 0x74 ) {
+    fprintf( stderr, "%s: snap_ram_page_63_and_slt_47_distinct_slots: slt[47] data mismatch\n", progname );
+    goto done;
+  }
+  if( libspectrum_snap_slt_length( snap, 47 ) != 0x1000 ) {
+    fprintf( stderr, "%s: snap_ram_page_63_and_slt_47_distinct_slots: slt_length[47] should be 0x1000, got %lu\n",
+             progname, (unsigned long)libspectrum_snap_slt_length( snap, 47 ) );
+    goto done;
+  }
+
+  /* The neighbouring slots stay untouched */
+  if( libspectrum_snap_pages( snap, 62 ) != NULL ||
+      libspectrum_snap_slt( snap, 48 ) != NULL ) {
+    fprintf( stderr, "%s: snap_ram_page_63_and_slt_47_distinct_slots: neighbouring slots should still be NULL\n", progname );
+    goto done;
+  }
+
+  r = TEST_PASS;
+
+done:
+  /* snap_free frees all pointers including the ones we set */
+  libspectrum_snap_free( snap );
+  return r;
+}
+
 test_return_t
 snap_interface1_active_paged_and_drive_count_getter_setter( void )
 {

@@ -9,4 +9,4 @@ URL: https://fuse-emulator.sourceforge.net/libspectrum.php
 Version: @PACKAGE_VERSION@
 Cflags: -I${includedir}
 Libs: -L${libdir} -lspectrum
-Libs.private: @WAV_BACKEND_PRIVATE_LIBS@
+Libs.private: @WAV_BACKEND_PRIVATE_LIBS@ @ICONV_LIBS@

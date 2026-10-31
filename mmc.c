@@ -299,10 +299,7 @@ erase_wr_blk_start( libspectrum_mmc_card *card )
   }
 
   card->erase_block_start =
-    card->current_argument[ 3 ] +
-    (card->current_argument[ 2 ] << 8) +
-    (card->current_argument[ 1 ] << 16) +
-    (card->current_argument[ 0 ] << 24);
+    libspectrum_read_dword_be( card->current_argument );
 
   /* Sector out of range */
   if( card->erase_block_start >= card->total_sectors ) {
@@ -335,10 +332,7 @@ erase_wr_blk_end( libspectrum_mmc_card *card )
   }
 
   card->erase_block_end =
-    card->current_argument[ 3 ] +
-    (card->current_argument[ 2 ] << 8) +
-    (card->current_argument[ 1 ] << 16) +
-    (card->current_argument[ 0 ] << 24);
+    libspectrum_read_dword_be( card->current_argument );
 
   /* Sector out of range */
   if( card->erase_block_end >= card->total_sectors ) {
@@ -409,11 +403,7 @@ read_single_block( libspectrum_mmc_card *card )
     return;
   }
 
-  sector_number =
-    card->current_argument[ 3 ] +
-    (card->current_argument[ 2 ] << 8) +
-    (card->current_argument[ 1 ] << 16) +
-    (card->current_argument[ 0 ] << 24);
+  sector_number = libspectrum_read_dword_be( card->current_argument );
 
   /* Sector out of range */
   if( sector_number >= card->total_sectors ) {
@@ -671,11 +661,7 @@ write_single_block( libspectrum_mmc_card *card )
     return;
   }
 
-  sector_number =
-    card->current_argument[ 3 ] +
-    (card->current_argument[ 2 ] << 8) +
-    (card->current_argument[ 1 ] << 16) +
-    (card->current_argument[ 0 ] << 24);
+  sector_number = libspectrum_read_dword_be( card->current_argument );
 
   /* Sector out of range */
   if( sector_number >= card->total_sectors ) {

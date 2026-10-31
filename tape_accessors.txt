@@ -86,6 +86,7 @@ libspectrum_byte*	data			0	NULL
 	pure_data
 	raw_data
 	rle_pulse
+	tzx_csw	rle.data
 	rom
 	turbo
 
@@ -95,6 +96,7 @@ size_t			data_length		0	-1
        pure_data	length
        raw_data		length
        rle_pulse	length
+       tzx_csw	rle.length
        rom		length
        turbo		length
 
@@ -119,8 +121,10 @@ libspectrum_dword	pause			0	-1
 	raw_data
 	rom
 	turbo
+	tzx_csw
 
 libspectrum_dword	pause_tstates		0	-1
+	tzx_csw
 	generalised_data
 	message         time_tstates
 	pause           length_tstates
@@ -149,6 +153,17 @@ libspectrum_dword	pulse_length		0	-1
 
 libspectrum_dword	scale			0	-1
 	rle_pulse
+	tzx_csw	rle.scale
+
+libspectrum_dword	sample_rate		0	-1
+	rle_pulse
+	tzx_csw	rle.sample_rate
+
+libspectrum_dword	csw_pulses		0	-1
+	tzx_csw	pulses
+
+libspectrum_byte	csw_compression	0	-1
+	tzx_csw	compression
 
 libspectrum_dword	pulse_lengths		1	-1
 	pulses		lengths
@@ -185,6 +200,7 @@ int			values			1	-1
 int			level			0	-1
 	pause
 	data_block      initial_level
+	rle_pulse       initial_level
 	set_signal_level
 
 libspectrum_byte	bit0_pulse_count	0	-1

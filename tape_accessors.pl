@@ -88,6 +88,13 @@ while( <> ) {
 
 	$member ||= $name;
 
+        if( $name eq 'level' && $type eq 'rle_pulse' ) {
+            print "    case LIBSPECTRUM_TAPE_BLOCK_RLE_PULSE:\n";
+            print "      return block->types.rle_pulse.has_initial_level ?\n";
+            print "        block->types.rle_pulse.initial_level : -1;\n";
+            next;
+        }
+
 	printf "    case LIBSPECTRUM_TAPE_BLOCK_%s: return %sblock->types.$type.$member%s;\n",
 	    uc $type, $pointer ? '&' : '', $indexed ? '[ index ]' : '';
 

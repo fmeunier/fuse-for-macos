@@ -27,6 +27,14 @@ if( $fixture eq 'mono-threshold' ) {
     0, 3,
   );
 
+} elsif( $fixture eq 'exact-timing' ) {
+  $channels = 1;
+  $sample_rate = 48000;
+  # Low initial polarity and extended RLE runs with fractional T-state lengths.
+  for my $bit ( 0, 1, 1, 0, 1, 0, 0, 1 ) {
+    push @samples, ( $bit ? 32767 : -32768 ) x 301;
+  }
+
 } else {
   die "unknown fixture '$fixture'\n";
 }

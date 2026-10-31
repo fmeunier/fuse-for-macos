@@ -18,5 +18,4 @@ jobs:
       use_zlib: false
       use_bzip2: false
       use_libgcrypt: false
-      use_libaudiofile: false
       use_fake_glib: true

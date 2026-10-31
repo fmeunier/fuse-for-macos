@@ -15,10 +15,9 @@ test_return_t read_snap( const char *filename,
                          libspectrum_error expected_result );
 test_return_t play_tape( const char *filename );
 
-#ifdef HAVE_WAV_BACKEND
 test_return_t check_wav_block( const char *filename,
-                               libspectrum_dword expected_bit_length,
-                               libspectrum_byte expected_byte );
-#endif
+                               libspectrum_dword sample_rate,
+                               libspectrum_byte expected_byte,
+                               size_t samples_per_bit );
 
 #endif

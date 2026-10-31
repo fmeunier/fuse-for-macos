@@ -23,6 +23,9 @@
 
 #include "config.h"
 
+#include <stdint.h>
+#include <string.h>
+
 #include "internals.h"
 #include "tape_block.h"
 #include "wav_internals.h"
@@ -32,9 +35,11 @@ libspectrum_wav_read( libspectrum_tape *tape, const char *filename )
 {
   libspectrum_wav_reader *reader = NULL;
   libspectrum_signed_word *buffer = NULL;
-  libspectrum_byte *tape_buffer = NULL;
+  libspectrum_buffer *pulses = NULL;
   libspectrum_tape_block *block = NULL;
-  size_t sample_rate, length, tape_length, data_length;
+  size_t sample_rate, length, i;
+  libspectrum_dword run;
+  int high;
   size_t total_frames = 0, frames_read;
   libspectrum_error error;
 
@@ -58,10 +63,14 @@ libspectrum_wav_read( libspectrum_tape *tape, const char *filename )
     return LIBSPECTRUM_ERROR_CORRUPT;
   }
 
-  tape_length = length;
-  if( tape_length % 8 ) tape_length += 8 - ( tape_length % 8 );
+  if( !sample_rate || sample_rate > UINT32_MAX ) {
+    internal_wav_close( reader );
+    libspectrum_print_error( LIBSPECTRUM_ERROR_INVALID,
+                            "libspectrum_wav_read: invalid sample rate" );
+    return LIBSPECTRUM_ERROR_INVALID;
+  }
 
-  buffer = libspectrum_new0( libspectrum_signed_word, tape_length );
+  buffer = libspectrum_new( libspectrum_signed_word, length );
 
   while( total_frames < length ) {
     error = internal_wav_read( reader, buffer + total_frames,
@@ -81,49 +90,55 @@ libspectrum_wav_read( libspectrum_tape *tape, const char *filename )
     total_frames += frames_read;
   }
 
-  block = libspectrum_tape_block_alloc( LIBSPECTRUM_TAPE_BLOCK_RAW_DATA );
-
-  libspectrum_tape_block_set_bit_length( block, 3500000 / sample_rate );
-  libspectrum_set_pause_ms( block, 0 );
-  libspectrum_tape_block_set_bits_in_last_byte(
-    block,
-    length % LIBSPECTRUM_BITS_IN_BYTE ?
-      length % LIBSPECTRUM_BITS_IN_BYTE : LIBSPECTRUM_BITS_IN_BYTE
-  );
-  data_length = tape_length / LIBSPECTRUM_BITS_IN_BYTE;
-  libspectrum_tape_block_set_data_length( block, data_length );
-
-  tape_buffer = libspectrum_new0( libspectrum_byte, data_length );
-
-  {
-    libspectrum_signed_word *from = buffer;
-    libspectrum_byte *to = tape_buffer;
-    size_t remaining = tape_length;
-
-    do {
-      libspectrum_byte val = 0;
-      int i;
-      for( i = 7; i >= 0; i-- ) {
-        if( *from++ > 0 ) val |= 1 << i;
+  /* Keep runs in samples: RLE playback carries fractional T-states from
+     one run to the next, just as it does for CSW recordings. */
+  pulses = libspectrum_buffer_alloc();
+  high = buffer[0] > 0;
+  run = 1;
+  for( i = 1; i <= length; i++ ) {
+    if( i < length && ( buffer[i] > 0 ) == high ) {
+      if( run == UINT32_MAX ) {
+        error = LIBSPECTRUM_ERROR_INVALID;
+        libspectrum_print_error( error,
+                                "libspectrum_wav_read: sample run too long" );
+        goto error;
       }
-      *to++ = val;
-    } while( ( remaining -= 8 ) > 0 );
+      run++;
+      continue;
+    }
+    if( run <= 0xff ) {
+      libspectrum_buffer_write_byte( pulses, run );
+    } else {
+      libspectrum_buffer_write_byte( pulses, 0 );
+      libspectrum_buffer_write_dword( pulses, run );
+    }
+    high = !high;
+    run = 1;
   }
 
-  libspectrum_tape_block_set_data( block, tape_buffer );
-  tape_buffer = NULL; /* block owns the buffer now */
+  block = libspectrum_tape_block_alloc( LIBSPECTRUM_TAPE_BLOCK_RLE_PULSE );
+  block->types.rle_pulse.sample_rate = sample_rate;
+  block->types.rle_pulse.scale = 3500000 / sample_rate;
+  block->types.rle_pulse.length = libspectrum_buffer_get_data_size( pulses );
+  block->types.rle_pulse.data =
+    libspectrum_new( libspectrum_byte, block->types.rle_pulse.length );
+  memcpy( block->types.rle_pulse.data, libspectrum_buffer_get_data( pulses ),
+          block->types.rle_pulse.length );
+
+  libspectrum_tape_block_set_level( block, buffer[0] > 0 );
   error = libspectrum_tape_append_block( tape, block );
   if( error ) goto error;
   block = NULL; /* tape owns the block now */
 
   internal_wav_close( reader );
   libspectrum_free( buffer );
+  libspectrum_buffer_free( pulses );
   return LIBSPECTRUM_ERROR_NONE;
 
 error:
   internal_wav_close( reader );
   libspectrum_free( buffer );
-  if( tape_buffer ) libspectrum_free( tape_buffer );
+  if( pulses ) libspectrum_buffer_free( pulses );
   if( block ) libspectrum_tape_block_free( block );
   return error;
 }

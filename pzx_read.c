@@ -29,6 +29,7 @@
 #include <string.h>
 
 #include "internals.h"
+#include "pzx_internals.h"
 
 /* Used for passing internal data around */
 
@@ -37,42 +38,6 @@ typedef struct pzx_context {
   libspectrum_word version;
 
 } pzx_context;
-
-/* Constants etc for each block type */
-
-#define PZX_HEADER "PZXT"
-struct info_t {
-
-  const char *id;
-  int archive_info_id;
-
-};
-
-/* Needs to be in strcmp  order */
-static struct info_t info_ids[] = {
-
-  { "Author",       0x02 },
-  { "Comment",      0xff },
-  { "Language",     0x04 },
-  { "Origin",       0x08 },
-  { "Price",        0x06 },
-  { "Protection",   0x07 },
-  { "Publisher",    0x01 },
-  { "Type",         0x05 },
-  { "Year",         0x03 },
-
-};
-
-#define PZX_PULSE  "PULS"
-
-#define PZX_DATA   "DATA"
-
-#define PZX_PAUSE  "PAUS"
-
-#define PZX_BROWSE "BRWS"
-
-#define PZX_STOP   "STOP"
-static const libspectrum_byte PZXF_STOP48 = 1;
 
 /* TODO: an extension to be similar to the TZX Custom Block Picture type */
 #define PZX_INLAY  "inly"
@@ -92,27 +57,11 @@ typedef libspectrum_error (*read_block_fn)( libspectrum_tape *tape,
 
 static libspectrum_error
 pzx_read_data( const libspectrum_byte **ptr, const libspectrum_byte *end,
-	       int count, size_t width, libspectrum_byte **data );
+               size_t count, size_t width, libspectrum_byte **data );
 
 static libspectrum_error
 pzx_read_string( const libspectrum_byte **ptr, const libspectrum_byte *end,
 		 char **dest );
-
-static int
-info_t_compar(const void *a, const void *b)
-{
-  const char *key = a;
-  const struct info_t *test = b;
-  return strcmp( key, test->id );
-}
-
-static int
-get_id_byte( char *info_tag ) {
-  struct info_t *info =
-    (struct info_t*)bsearch( info_tag, info_ids, ARRAY_SIZE( info_ids ),
-                             sizeof( struct info_t ), info_t_compar );
-  return info == NULL ? -1 : info->archive_info_id;
-}
 
 static libspectrum_error
 read_pzxt_block( libspectrum_tape *tape, const libspectrum_byte **buffer,
@@ -132,15 +81,15 @@ read_pzxt_block( libspectrum_tape *tape, const libspectrum_byte **buffer,
 
   if( data_length < 2 ) {
     libspectrum_print_error( LIBSPECTRUM_ERROR_CORRUPT,
-			     "read_pzxt_block: length %lu too short",
-			     (unsigned long)data_length );
+                             "read_pzxt_block: length %lu too short",
+                             (unsigned long)data_length );
     return LIBSPECTRUM_ERROR_CORRUPT;
   }
 
   ctx->version = (**buffer) << 8; (*buffer)++;
   ctx->version |= **buffer; (*buffer)++;
 
-  if( ctx->version < 0x0100 || ctx->version >= 0x0200 ) {
+  if( ( ctx->version >> 8 ) != PZX_VERSION_MAJOR ) {
     libspectrum_print_error( LIBSPECTRUM_ERROR_UNKNOWN,
 			     "read_pzxt_block: only version 1 pzx files are "
                              "supported" );
@@ -176,7 +125,7 @@ read_pzxt_block( libspectrum_tape *tape, const libspectrum_byte **buffer,
     }
 
     /* Get the ID byte */
-    id = get_id_byte( info_tag );
+    id = internal_pzx_archive_id( info_tag );
     
     /* Read in the string itself */
     error = pzx_read_string( buffer, block_end, &string );
@@ -255,8 +204,8 @@ read_data_block( libspectrum_tape *tape, const libspectrum_byte **buffer,
 
   /* Get the metadata */
   count = libspectrum_read_dword( buffer );
-  initial_level = !!(count & 0x80000000);
-  count &= 0x7fffffff;
+  initial_level = !!(count & PZX_LEVEL_FLAG);
+  count &= PZX_VALUE_MASK;
   count_bytes = libspectrum_bits_to_bytes( count );
   bits_in_last_byte =
     count % LIBSPECTRUM_BITS_IN_BYTE ?
@@ -318,14 +267,14 @@ read_next_pulse( const libspectrum_byte **buffer, const libspectrum_byte *end,
 
   *pulse_repeats = 1;
   *length = libspectrum_read_word( buffer );
-  if( *length > 0x8000 ) {
+  if( *length > PZX_DURATION_FLAG ) {
     if( ( end - (*buffer) ) < (ptrdiff_t)2 ) goto pzx_corrupt;
-    *pulse_repeats = *length & 0x7fff;
+    *pulse_repeats = *length & PZX_REPEAT_MAX;
     *length = libspectrum_read_word( buffer );
   }
-  if( *length >= 0x8000 ) {
+  if( *length >= PZX_DURATION_FLAG ) {
     if( ( end - (*buffer) ) < (ptrdiff_t)2 ) goto pzx_corrupt;
-    *length &= 0x7fff;
+    *length &= PZX_REPEAT_MAX;
     *length <<= 16;
     *length |= libspectrum_read_word( buffer );
   }
@@ -419,8 +368,8 @@ read_paus_block( libspectrum_tape *tape, const libspectrum_byte **buffer,
   block = libspectrum_tape_block_alloc( LIBSPECTRUM_TAPE_BLOCK_PAUSE );
 
   pause_tstates = libspectrum_read_dword( buffer );
-  initial_level = !!(pause_tstates & 0x80000000);
-  pause_tstates &= 0x7fffffff;
+  initial_level = !!(pause_tstates & PZX_LEVEL_FLAG);
+  pause_tstates &= PZX_VALUE_MASK;
 
   /* Set the pause length */
   libspectrum_set_pause_tstates( block, pause_tstates );
@@ -465,7 +414,7 @@ read_stop_block( libspectrum_tape *tape, const libspectrum_byte **buffer,
 
   flags = libspectrum_read_word( buffer );
 
-  if( flags == PZXF_STOP48 ) {
+  if( flags == PZX_STOP_48K ) {
     block = libspectrum_tape_block_alloc( LIBSPECTRUM_TAPE_BLOCK_STOP48 );
   } else {
     /* General stop is a 0 duration pause */
@@ -537,7 +486,7 @@ read_block( libspectrum_tape *tape, const libspectrum_byte **buffer,
   error = read_block_header( id, &data_length, buffer, end );
   if( error ) return error;
 
-  if( end - *buffer < data_length ) {
+  if( (size_t)( end - *buffer ) < data_length ) {
     libspectrum_print_error(
       LIBSPECTRUM_ERROR_CORRUPT,
       "read_block: block length goes beyond end of file"
@@ -609,23 +558,28 @@ internal_pzx_read( libspectrum_tape *tape, const libspectrum_byte *buffer,
 
 static libspectrum_error
 pzx_read_data( const libspectrum_byte **ptr, const libspectrum_byte *end,
-	       int count, size_t width, libspectrum_byte **data )
+               size_t count, size_t width, libspectrum_byte **data )
 {
-  size_t length = count * width;
-  /* Have we got enough bytes left in buffer? */
-  if( ( end - (*ptr) ) < (ptrdiff_t)(length) ) {
+  size_t length;
+
+  /* Check before multiplying: this also prevents count * width overflow.
+     Both pointers must refer to the same input buffer. */
+  if( *ptr > end ||
+      ( width && count > (size_t)( end - *ptr ) / width ) ) {
     libspectrum_print_error( LIBSPECTRUM_ERROR_CORRUPT,
 			     "pzx_read_data: not enough data in buffer" );
     return LIBSPECTRUM_ERROR_CORRUPT;
   }
 
-  /* Allocate memory for the data; the check for *length is to avoid
+  length = count * width;
+
+  /* Allocate memory for the data; the check for length is to avoid
      the implementation-defined behaviour of malloc( 0 ) */
   if( length ) {
     *data = libspectrum_new( libspectrum_byte, length );
     /* Copy the block data across, and move along */
     if( width == sizeof( libspectrum_word ) ) {
-      int i;
+      size_t i;
       libspectrum_word *dst = (libspectrum_word *) *data;
       for( i = 0; i < count; i++ ) {
         dst[i] = libspectrum_read_word( ptr );
@@ -646,7 +600,8 @@ pzx_read_string( const libspectrum_byte **ptr, const libspectrum_byte *end,
 {
   const libspectrum_byte *nul;
   size_t length;
-  char *ptr2;
+  char *ptr2, *utf8;
+  libspectrum_error error;
 
   /* Locate the NUL terminator within the available data; if absent, treat
      end-of-block as the string boundary */
@@ -663,5 +618,9 @@ pzx_read_string( const libspectrum_byte **ptr, const libspectrum_byte *end,
   /* Translate line endings */
   for( ptr2 = *dest; *ptr2; ptr2++ ) if( *ptr2 == '\r' ) *ptr2 = '\n';
 
+  error = internal_tape_text_convert( *dest, 2, &utf8 );
+  if( error ) return error;
+  libspectrum_free( *dest );
+  *dest = utf8;
   return LIBSPECTRUM_ERROR_NONE;
 }

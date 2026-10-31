@@ -1839,9 +1839,11 @@ read_zxpr_chunk( libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
 }
 
 static libspectrum_error
-read_if2r_chunk( libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
-		 const libspectrum_byte **buffer,
-		 const libspectrum_byte *end GCC_UNUSED, size_t data_length,
+read_if2r_chunk( libspectrum_snap *snap GCC_UNUSED,
+                 libspectrum_word version GCC_UNUSED,
+		 const libspectrum_byte **buffer GCC_UNUSED,
+		 const libspectrum_byte *end GCC_UNUSED,
+                 size_t data_length GCC_UNUSED,
                  szx_context *ctx GCC_UNUSED )
 {
 
@@ -2586,7 +2588,7 @@ read_chunk( libspectrum_snap *snap, libspectrum_word version,
   error = read_chunk_header( id, &data_length, buffer, end );
   if( error ) return error;
 
-  if( end - *buffer < data_length ) {
+  if( (size_t)( end - *buffer ) < data_length ) {
     libspectrum_print_error(
       LIBSPECTRUM_ERROR_CORRUPT,
       "szx_read_chunk: chunk length goes beyond end of file"
@@ -3526,7 +3528,7 @@ write_b128_chunk( libspectrum_buffer *buffer, libspectrum_buffer *data,
 
 static int
 compress_data( libspectrum_buffer *dest, const libspectrum_byte *src_data,
-               size_t src_data_length, int compress )
+               size_t src_data_length, int compress GCC_UNUSED )
 {
   libspectrum_byte *compressed_data = NULL;
   int use_compression = 0;

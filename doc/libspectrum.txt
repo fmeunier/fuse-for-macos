@@ -1,4 +1,4 @@
-libspectrum 1.7.0
+libspectrum 1.8.0
 =================
 
 libspectrum is a fairly simple library designed to make the handling
@@ -7,8 +7,8 @@ handles:
 
 * Snapshots: .z80, .szx, .sna (all read/write), .zxs, .sp., .snp and
   +D snapshots (read only).
-* Tape images: .tzx, .tap, .spc, .sta and .ltp (read/write) and
-  .pzx, Warajevo .tap, Z80Em and CSW version 1 (read only). 
+* Tape images: .tzx, .tap, .spc, .sta, .ltp and .pzx (read/write); CSW v1/v2
+  (read) and v2 (write); Warajevo .tap, Z80Em and WAV audio (read only).
 * Input recordings: .rzx (read/write).
 * Disk images: .dsk (both plain and extended), .d40, .d80, .fdi, .img, .mgt,
   .opd, .sad, .scl, .td0, .trd and .udi (identification only).
@@ -45,9 +45,10 @@ not be defined.
 
 Bzip2 compression is similarly covered by LIBSPECTRUM_SUPPORTS_BZ2_COMPRESSION.
 
-WAV file support is covered by LIBSPECTRUM_SUPPORTS_WAV.
-LIBSPECTRUM_SUPPORTS_AUDIOFILE remains defined as a deprecated compatibility
-alias for older code, but new code should use LIBSPECTRUM_SUPPORTS_WAV.
+WAV file input is always supported. LIBSPECTRUM_SUPPORTS_WAV is defined
+and non-zero in every build.
+LIBSPECTRUM_SUPPORTS_AUDIOFILE is a deprecated compatibility alias;
+use LIBSPECTRUM_SUPPORTS_WAV.
 
 Compression helpers
 ===================
@@ -678,10 +679,21 @@ Free the memory used by a `libspectrum_creator' structure.
 libspectrum_error
 libspectrum_creator_set_program( libspectrum_creator *creator,
 				 const char *program )
-const libspectrum_byte*
-libspectrum_creator_program( libspectrum_creator *creator )
+const char*
+libspectrum_creator_program( const libspectrum_creator *creator )
 
-Set and retrieve the name of the program which created this file.
+Set and retrieve the creator's program name as NUL-terminated UTF-8.
+The setter replaces malformed sequences with `?' and retains at most
+31 bytes without splitting a UTF-8 character.
+
+SZX creator names are written as UTF-8 in their zero-padded 32-byte field.
+This is libspectrum's convention; the SZX specification does not define a
+character set. The snapshot reader does not expose SZX creator metadata.
+RZX specifies ASCII: output names are transliterated where iconv supports
+it, otherwise substituted with `?', then limited to the 20-byte field and
+zero-padded. RZX input names retain ASCII, replacing non-ASCII bytes with
+`?'. These conversions do not change the caller's creator object. Creator
+custom data remains binary and is not converted.
 
 libspectrum_error libspectrum_creator_set_major( libspectrum_creator *creator,
 						 libspectrum_word major )
@@ -1153,8 +1165,8 @@ is `LIBSPECTRUM_ID_UNKNOWN', guess the file format via
 `libspectrum_identify_file'; `filename' is generally used only to help
 with the identification process and can be set to NULL (or anything
 else) if `type' is not `LIBSPECTRUM_ID_UNKNOWN' unless the tape is a
-WAV file where the underlying audiofile library will reread the
-file and will not use the buffer. Tape images compressed with
+WAV file, where the selected audio backend reads the file by filename
+rather than using the buffer. Tape images compressed with
 bzip2 or gzip will be automatically and transparently decompressed.
 
 libspectrum_error
@@ -1165,6 +1177,83 @@ Take the snapshot in `tape and serialise it as a `type' format file
 into `*buffer'. On entry, '*buffer' is assumed to be allocated
 '*length' bytes, and will grow if necessary; if '*length' is zero,
 '*buffer' can be uninitialised on entry.
+
+PZX output (LIBSPECTRUM_ID_TAPE_PZX) writes PZX version 1.0. It supports
+PULSE_SEQUENCE, DATA_BLOCK, PAUSE, STOP48, COMMENT (as BRWS), ARCHIVE_INFO
+(as PZXT) and CONCAT blocks, and converts ROM, TURBO, PURE_DATA, PURE_TONE,
+PULSES, RAW_DATA, RLE_PULSE, TZX_CSW and GENERALISED_DATA blocks.
+MESSAGE, HARDWARE and CUSTOM blocks are omitted, including message timing
+and all custom identifiers and payloads. They remain unchanged in the source
+tape but cannot be recovered from the PZX output. Omitted blocks still count
+in source jump offsets.
+SET_SIGNAL_LEVEL affects subsequent conversion without emitting a chunk.
+Paired, non-nested groups become BRWS points at their starts; ends are omitted.
+Conversion preserves existing pulse polarity and total duration. The existing
+post-data pulse is stored in DATA.tail, up to its 65535-T-state limit. Any
+remainder is stored in a PAUS block at the same level, without adding time
+or forcing the remainder low. A zero post-data duration produces a zero tail
+and no PAUS. Native DATA tails are unchanged. Zero-duration PAUSE means STOP.
+Leading archive information supplies the initial PZXT header and title,
+rather than following an empty header. Later archive and concatenation
+boundaries remain separate. Adjacent equal-duration pulse runs are coalesced
+within each PULS block, retaining zero pulses and block polarity resets.
+Repeat counts greater than 32767 are split without changing pulse parity.
+Pulse and pause durations must fit 31 bits, DATA pulse/tail lengths must
+fit 16 bits, and the DATA bit count must fit 31 bits. Unrepresentable
+values return LIBSPECTRUM_ERROR_INVALID; unsupported block types and
+archive information IDs return LIBSPECTRUM_ERROR_UNKNOWN. No partial PZX
+output is written on failure, and writing does not move playback. Existing
+output allocations are reused from their beginning, not appended to.
+
+Legacy conversion and unspecified pause levels use independent playback
+inspection, so conversion time is proportional to the number of pulses.
+Native-only output with explicit levels does not require playback.
+Currently, DATA blocks with zero-pulse bit sequences can be written only
+on that native-only path: playback inspection cannot handle them.
+JUMP and finite, non-nested LOOP_START/LOOP_END paths are flattened in
+execution order. Jump offsets must fit signed 16 bits and count all source
+blocks, including metadata. Loop counts must be 2..65535. Jumps may skip a whole loop but may
+not enter or leave its body. Groups must remain paired and non-nested along
+the expanded path. Skipped source blocks and structures are still validated.
+Tapes with control flow are limited to 65536 source-block visits (including
+control and metadata blocks) and 64 MiB of expanded PZX output. Invalid
+targets, malformed structures, cycles and excessive expansion return
+LIBSPECTRUM_ERROR_INVALID. STOP and STOP48 markers are retained, with the
+following tape content also converted. Selections and calls/returns are not
+flattened; unsupported blocks return LIBSPECTRUM_ERROR_UNKNOWN.
+Unknown PZX blocks/keys already discarded or normalised by the reader
+cannot be reconstructed by the writer.
+
+Prototype TAP export recognises Fuse-style PZX pulse recordings of standard
+ROM blocks. It requires at least 256 pilot pulses, ordered sync pulses,
+paired data pulses within 5% of standard timing, complete bytes and a valid
+XOR checksum. Flags must be 00 or FF; flag-00 headers must contain 19 bytes.
+Recognition spans pulse chunks and accepts ROM tails and silence between
+blocks. Timing, polarity, pauses and metadata cannot be retained in TAP.
+Unrecognised or incomplete recordings fail without exposing partial output.
+This deliberately narrow prototype does not decode native PZX DATA blocks,
+mixed decoded/recorded tapes, custom loaders or control-flow blocks, and does
+not change the existing export path for tapes without native PZX waveforms.
+
+When writing TZX, PZX-style PULSE_SEQUENCE and DATA_BLOCK blocks use
+Generalised Data Blocks (ID 0x19). Explicit-level PAUSE blocks use ordinary
+TZX pauses (ID 0x20) when low and exactly representable as 1..65535 whole
+milliseconds. High holds, fractional milliseconds and longer explicit holds
+use GDB; zero-duration pauses remain ordinary stop blocks regardless of level.
+Symbol flags carry polarity directly; no automatic Set Signal Level or CSW
+blocks are needed. Long holds use 16-bit pieces with continuation symbols.
+Symbol repetitions are split at 65535, and alphabets exceeding 256 symbols
+start another GDB without resetting the waveform. Zero-duration PZX pulses
+are normalised into empty symbols that carry their net level change, rather
+than inserted into a GDB pulse sequence where zero denotes its terminator.
+DATA with nonzero bit pulse sequences uses four symbols (bit value and
+starting level) and a packed two-bit symbol stream. Other DATA encodings
+use the general waveform path. Tails preserve their exact duration and level.
+Browse and stop commands remain between the corresponding waveform blocks;
+zero-duration PAUSE still means unconditional stop. TZX-origin blocks keep
+their existing conversion paths. Unrepresentable waveform values or TZX
+metadata lengths return an error instead of truncating fields. Failed TZX
+writing does not expose partial output or move the caller's playback position.
 
 libspectrum_error
 libspectrum_tape_get_next_edge( libspectrum_tape_edge *edge,
@@ -1383,6 +1472,7 @@ LIBSPECTRUM_TAPE_BLOCK_PURE_TONE	0x12
 LIBSPECTRUM_TAPE_BLOCK_PULSES		0x13
 LIBSPECTRUM_TAPE_BLOCK_PURE_DATA	0x14
 LIBSPECTRUM_TAPE_BLOCK_RAW_DATA		0x15
+LIBSPECTRUM_TAPE_BLOCK_TZX_CSW		0x18
 
 LIBSPECTRUM_TAPE_BLOCK_GENERALISED_DATA 0x19
 
@@ -1420,6 +1510,63 @@ LIBSPECTRUM_TAPE_BLOCK_DATA_BLOCK       A block of data without pilot or sync
 					specified
 
 These values are defined in the `libspectrum_tape_type' enumeration.
+
+TZX_CSW is the native TZX CSW Recording block (ID 0x18). It retains the
+sample rate, RLE pulse data, pause, compression type (1 = RLE, 2 = Z-RLE),
+and claimed pulse count. In memory the pulse data is always uncompressed
+RLE: reading a Z-RLE block requires zlib. If a caller selects compression
+2 on a block created in memory but zlib is unavailable, writing uses
+compression 1 (uncompressed RLE) instead. CSW pulse data consists
+of one byte per pulse, or a zero byte followed by a little-endian dword
+for a long pulse. The claimed pulse count is available for inspection;
+TZX output writes a count derived from the stored pulse data.
+
+RLE_PULSE is the generic block for scale-only recordings, standalone CSW
+files and WAV audio. Loading CSW or WAV produces one RLE_PULSE block with
+an exact sample rate and explicit initial level. CSW retains its header
+polarity; WAV uses the level of its first decoded sample (positive is
+high, zero or negative is low). WAV sample runs are encoded as RLE
+counts, including the final run.
+Exact-rate playback carries fractional T-states between runs, so elapsed
+time is floor(total samples * 3500000 / sample_rate).
+
+For RLE_PULSE, the level accessor specifies the initial run level:
+-1 preserves the existing playback convention, 0 forces low and 1 forces
+high. New blocks default to -1. An explicit level overrides the incoming
+level without inserting a pulse or consuming time. Without an explicit
+level, exact-rate RLE playback starts at the incoming level without an
+initial toggle; scale-only blocks retain their legacy pulse behaviour.
+
+Saving exact-rate RLE_PULSE as TZX emits a TZX_CSW block rather than a
+Direct Recording block, preceded by Set Signal Level when the recording
+has an explicit initial level. A scale-only RLE_PULSE still converts to
+Direct Recording. Native TZX RAW_DATA blocks retain their integer
+T-states-per-sample timing and original direct-recording representation.
+TZX CSW has no polarity field: its first pulse inherits the current tape
+level. A zero pause adds no edge or level change of its own (the final
+pulse's boundary edge is still played); a nonzero pause ends low.
+Avoid adding Set Signal Level immediately before a CSW block in an existing
+TZX tape, as this can conceal a boundary edge.
+
+Standalone CSW writing produces version 2 files. An isolated exact-rate
+RLE_PULSE or pause-free TZX_CSW recording keeps its original rate and sample
+counts. Other tapes use 3500000 Hz (one sample per T-state), avoiding integer
+scale approximation and preserving the rendered timing exactly. PZX-style
+pulse, DATA and explicit-level PAUSE blocks are rendered directly, including
+empty bit sequences. The first timed run determines header polarity, and
+adjacent durations at the same level are merged; zero-duration transitions
+only affect the levels of subsequent runs. The header stores the actual
+number of runs, not their encoded byte length. Output is Z-RLE when zlib is
+available and there are pulses, otherwise RLE.
+
+CSW cannot retain metadata, browse points or stop commands. Rendering ends
+after the first unconditional stop, including any duration carried by its
+terminal event; conditional 48K stops are ignored. Control-flow blocks
+encountered before that stop are rejected rather than selecting a path or
+risking an infinite loop. A merged run exceeding 4294967295 samples, an
+unrepresentable pulse count, or malformed recording data returns an error.
+Writing does not move playback, and failures leave allocated output intact.
+
 The `concatenation' block (0x5a) is recognised on input, but just
 skipped; hence it will never appear in a libspectrum_tape_block.
 
@@ -1499,8 +1646,47 @@ libspectrum_error
 libspectrum_tape_block_set_<name>( libspectrum_tape_block *block,
 				   size_t index, <type> new_value )
 
+Tape text encodings
+
+libspectrum uses NUL-terminated UTF-8 for tape metadata: GROUP_START,
+COMMENT, MESSAGE, ARCHIVE_INFO and SELECT `text'/`texts' fields. Callers
+must supply UTF-8 to their setters.
+
+Readers and writers convert between UTF-8 and the format's character set:
+
+  TZX: Windows-1252 (CP1252), following real-world usage. The specification
+       names ISO-8859-1 (Latin-1).
+  PZX: UTF-8.
+
+On export, unsupported characters are transliterated where iconv supports
+it, otherwise replaced with `?'. Invalid character sequences are also
+replaced with `?'. Undefined CP1252 bytes are handled by the platform's
+converter when available; their conversion and transliteration may vary
+by platform. Metadata line
+endings are LF in the API and CR in TZX files. Writing leaves caller text
+unchanged; format length limits apply to the converted bytes.
+
+ZX Spectrum strings are a separate encoding, present in tape data such as
+ROM header filenames and BASIC programs, in Microdrive cartridge/file
+names, and in snapshot memory. These
+remain raw bytes, not UTF-8 metadata. Use libspectrum_zx_string_to_utf8()
+to render Spectrum strings, including graphics characters and BASIC tokens.
+
+CUSTOM identifiers, custom payloads and other binary data are not converted.
+CSW's encoding-application description is ASCII; it is not exposed as tape
+metadata by libspectrum.
+
+For TZX_CSW, sample_rate gives the exact samples per second, while scale
+is only an integer tstates-per-sample approximation. A zero sample_rate
+on a generic RLE_PULSE means playback instead uses scale. The pause
+accessors are in milliseconds and tstates respectively; when creating
+or changing a TZX_CSW block, set both consistently. Its compression
+accessor selects the format written to TZX, not the in-memory encoding
+(which is always uncompressed RLE). The data pointer belongs to the
+block, as with other tape data accessors.
+
 The parameters, their types, and the LIBSPECTRUM_TAPE_BLOCK_* types
-for which it is relevant are:
+for which they are relevant are:
 
 libspectrum_dword bit_length		RAW_DATA
 
@@ -1527,6 +1713,8 @@ size_t count				PURE_TONE
 libspectrum_byte* data			CUSTOM
 					PURE_DATA
 					RAW_DATA
+					RLE_PULSE
+					TZX_CSW
 					ROM
 					TURBO
 					DATA_BLOCK
@@ -1534,6 +1722,8 @@ libspectrum_byte* data			CUSTOM
 size_t data_length			CUSTOM
 					PURE_DATA
 					RAW_DATA
+					RLE_PULSE
+					TZX_CSW
 					ROM
 					TURBO
 					DATA_BLOCK
@@ -1555,6 +1745,7 @@ libspectrum_dword pause			GENERALISED_DATA
 					RAW_DATA
 					ROM
 					TURBO
+					TZX_CSW
 
 libspectrum_dword pause_tstates		GENERALISED_DATA
 					MESSAGE
@@ -1563,6 +1754,7 @@ libspectrum_dword pause_tstates		GENERALISED_DATA
 					RAW_DATA
 					ROM
 					TURBO
+					TZX_CSW
 
 libspectrum_dword pilot_length		TURBO
 
@@ -1574,6 +1766,16 @@ libspectrum_word pilot_symbols		GENERALISED_DATA
 
 libspectrum_tape_generalised_data_symbol_table
 pilot_table				GENERALISED_DATA
+
+libspectrum_dword scale			RLE_PULSE
+					TZX_CSW
+
+libspectrum_dword sample_rate		RLE_PULSE
+					TZX_CSW
+
+libspectrum_dword csw_pulses		TZX_CSW
+
+libspectrum_byte csw_compression	TZX_CSW
 
 libspectrum_dword pulse_length		LENGTH
 
@@ -1602,6 +1804,7 @@ int values[]				HARDWARE
 
 int level				DATA_BLOCK
 					PAUSE
+					RLE_PULSE
 					SET_SIGNAL_LEVEL
 
 libspectrum_byte bit0_pulse_count	DATA_BLOCK

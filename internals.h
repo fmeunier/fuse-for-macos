@@ -114,6 +114,26 @@ libspectrum_print_error( libspectrum_error error, const char *format, ... )
 void libspectrum_make_room( libspectrum_byte **dest, size_t requested,
 			    libspectrum_byte **ptr, size_t *allocated );
 
+/* Decode four bytes without advancing the pointer. The caller must ensure
+   that all four bytes are available. */
+static inline libspectrum_dword
+libspectrum_read_dword_le( const libspectrum_byte *buffer )
+{
+  return  (libspectrum_dword)buffer[0]        |
+         ((libspectrum_dword)buffer[1] <<  8) |
+         ((libspectrum_dword)buffer[2] << 16) |
+         ((libspectrum_dword)buffer[3] << 24);
+}
+
+static inline libspectrum_dword
+libspectrum_read_dword_be( const libspectrum_byte *buffer )
+{
+  return ((libspectrum_dword)buffer[0] << 24) |
+         ((libspectrum_dword)buffer[1] << 16) |
+         ((libspectrum_dword)buffer[2] <<  8) |
+          (libspectrum_dword)buffer[3];
+}
+
 /* Read and write (d)words */
 libspectrum_word libspectrum_read_word( const libspectrum_byte **buffer );
 libspectrum_dword libspectrum_read_dword( const libspectrum_byte **buffer );
@@ -170,7 +190,7 @@ libspectrum_write_snap_page( libspectrum_buffer *buffer,
                              libspectrum_snap *snap, int page );
 
 /* Sizes of some of the arrays in the snap structure */
-#define SNAPSHOT_RAM_PAGES 16
+#define SNAPSHOT_RAM_PAGES 64
 #define SNAPSHOT_SLT_PAGES 256
 #define SNAPSHOT_ZXATASP_PAGES 32
 #define SNAPSHOT_ZXCF_PAGES 64
@@ -261,11 +281,21 @@ internal_tap_write( libspectrum_buffer *buffer, libspectrum_tape *tape,
                     libspectrum_id_t type );
 
 libspectrum_error
+internal_tap_write_pzx( libspectrum_buffer *buffer, libspectrum_tape *tape );
+
+libspectrum_error
 internal_tzx_read( libspectrum_tape *tape, const libspectrum_byte *buffer,
 		   const size_t length );
 
 libspectrum_error
 internal_tzx_write( libspectrum_buffer *buffer, libspectrum_tape *tape );
+
+libspectrum_error
+internal_tzx_write_pzx_block( libspectrum_buffer *buffer,
+                              libspectrum_tape_block *block );
+
+libspectrum_error
+internal_pzx_write( libspectrum_buffer *buffer, libspectrum_tape *tape );
 
 libspectrum_error
 internal_warajevo_read( libspectrum_tape *tape,
@@ -391,6 +421,11 @@ extern const int LIBSPECTRUM_BITS_IN_BYTE;
 
 char*
 libspectrum_safe_strdup( const char *src );
+
+/* Metadata text conversion: 0 UTF-8 to CP1252, 1 CP1252 to UTF-8,
+   2 UTF-8 sanitisation, 3 UTF-8 to ASCII. The caller owns the result. */
+libspectrum_error internal_tape_text_convert( const char *text, int mode,
+                                             char **result );
 
 /* glib replacement functions */
 

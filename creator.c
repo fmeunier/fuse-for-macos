@@ -59,9 +59,17 @@ libspectrum_error
 libspectrum_creator_set_program( libspectrum_creator *creator,
 				 const char *program )
 {
+  char *utf8;
+  size_t length;
+  internal_tape_text_convert( program, 2, &utf8 );
+  length = strlen( utf8 );
+  if( length >= sizeof( creator->program ) ) {
+    length = sizeof( creator->program ) - 1;
+    while( length && ( (unsigned char)utf8[length] & 0xc0 ) == 0x80 ) length--;
+  }
   memset( creator->program, 0, sizeof( creator->program ) );
-  snprintf( (char*)creator->program, sizeof( creator->program ), "%s",
-	    program );
+  memcpy( creator->program, utf8, length );
+  libspectrum_free( utf8 );
   return LIBSPECTRUM_ERROR_NONE;
 }
 

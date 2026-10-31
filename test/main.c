@@ -70,6 +70,7 @@ main( int argc, char *argv[] )
        i++, test++ ) {
     printf( "Test %d (%s): %s... ", (int)i + 1, test->name,
             test->description );
+    fflush( stdout );
     if( test->active ) {
       tests_done++;
       switch( test->test() ) {
@@ -98,6 +99,7 @@ main( int argc, char *argv[] )
       tests_skipped++;
       printf( "skipped\n" );
     }
+    fflush( stdout );
 
   }
 
