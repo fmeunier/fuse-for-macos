@@ -65,10 +65,6 @@
 extern keysyms_map_t unicode_keysyms_map[];
 extern keysyms_map_t recreated_keysyms_map[];
 
-#include "sound/sfifo.h"
-
-extern sfifo_t sound_fifo;
-
 @implementation Emulator
 
 static Emulator *instance = nil;
@@ -103,10 +99,25 @@ static Emulator *instance = nil;
   }
 
   while( !fuse_exiting ) {
+    NSAutoreleasePool *iteration_pool = [[NSAutoreleasePool alloc] init];
+    BOOL audio_driven = !isPaused && sound_enabled;
+
+    /* Audio admission paces active playback. Service pending commands before
+       each complete frame, without waiting for the next timer tick. Paused
+       and silent execution retain the blocking run loop and timer path. */
     [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
-        beforeDate:[NSDate distantFuture]];
+        beforeDate:audio_driven ? [NSDate distantPast] : [NSDate distantFuture]];
+
+    /* Commands may have paused, stopped or reconfigured audio. Recheck after
+       servicing them; sound teardown and production stay on this thread. */
+    if( !fuse_exiting && !isPaused && sound_enabled ) {
+      spectrum_do_frame();
+      time = CFAbsoluteTimeGetCurrent();
+    }
+    [iteration_pool drain];
   }
 
+  [self stopEmulationTimer];
   [serverConnection invalidate];
 
   fuse_end();
@@ -159,43 +170,33 @@ static Emulator *instance = nil;
 {
   CFTimeInterval nowTime = CFAbsoluteTimeGetCurrent();
   CFTimeInterval deltaTime = nowTime - time;
-  if (deltaTime <= 1.0) { /* skip pauses */
+  /* Audio-driven frames run in connectWithPorts:, not in timer callbacks. */
+  if( !fuse_exiting && !isPaused && !sound_enabled &&
+      deltaTime > 0.0 && deltaTime <= 1.0 ) { /* skip pauses */
     [self updateEmulationForTimeDelta:deltaTime];
   }
   time = nowTime;
 
-  /* A breakpoint's `exit' command sets fuse_exiting in the middle of
-     emulation. Timers don't make -runMode:beforeDate: return, so the loop in
-     -connectWithPorts: would never see the flag; stop the run loop so it
-     does. */
-  if( fuse_exiting ) {
-    [self stopEmulationTimer];
+  /* Timers don't make -runMode:beforeDate: return. Fastloading can re-enable
+     sound inside this callback while the owner loop is still waiting until
+     distantFuture. End that turn so audio-driven execution can resume without
+     an unrelated input event. Likewise, expose a debugger exit immediately. */
+  if( fuse_exiting ) [self stopEmulationTimer];
+  if( fuse_exiting || ( !isPaused && sound_enabled ) )
     CFRunLoopStop( CFRunLoopGetCurrent() );
-  }
 }
 
 /* given a delta time in seconds, update overall emulation state */
 -(void) updateEmulationForTimeDelta:(CFTimeInterval)deltaTime
 {
-  if( sound_enabled ) {
-    int too_long = 0;
-    /* emulate until fifo is full or it takes more than a frames-worth of
-       time to do a frame because we will never catch up */
-    while( ( sfifo_producer_space( &sound_fifo ) >=
-             ((sound_stereo_ay != SOUND_STEREO_AY_NONE)+1) * 2 * sound_framesiz ) && !too_long ) {
-      CFTimeInterval startTime = CFAbsoluteTimeGetCurrent();
-      spectrum_do_frame();
-      CFTimeInterval endTime = CFAbsoluteTimeGetCurrent();
-      if( (endTime - startTime) > 
-          (0.8 * sound_framesiz / (float)settings_current.sound_freq ) ) 
-        too_long = 1;
-    }
+  if( fuse_exiting || isPaused || sound_enabled ) return;
+
   /* If we're fastloading, keep running frames until we have used up 95% of
-     the timer interval */
-  } else if( settings_current.fastload && timer_fastloading_active() ) {
+     the timer interval. */
+  if( settings_current.fastload && timer_fastloading_active() ) {
     int done = 0;
     CFTimeInterval startTime = CFAbsoluteTimeGetCurrent();
-    while( !done ) {
+    while( !done && !fuse_exiting && !sound_enabled ) {
       spectrum_do_frame();
       CFTimeInterval endTime = CFAbsoluteTimeGetCurrent();
       if( (endTime - startTime) > (0.95 * timerInterval) ) 
