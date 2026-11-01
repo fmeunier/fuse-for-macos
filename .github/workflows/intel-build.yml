@@ -74,10 +74,14 @@ jobs:
           # Build without matching a runnable host; ARCHS still limits output to x86_64.
           xcodebuild "${common[@]}" -scheme Fuse -configuration Deployment \
             -destination 'generic/platform=macOS' build
-          # Tests need the native Mac, not a generic destination. Do not filter its CPU subtype.
+          # Build hostless XCTest code without Xcode's x86_64h destination matching.
           xcodebuild "${common[@]}" -scheme FuseQuickLookTests -configuration Development \
-            -destination 'platform=macOS,name=My Mac' \
-            -resultBundlePath "$INTEL_ROOT/QuickLook.xcresult" test
+            -destination 'generic/platform=macOS' build-for-testing
+          # Execute the x86_64 bundle on the verified native Intel host; do not skip tests.
+          tests="$INTEL_ROOT/products/Development/FuseQuickLookTests.xctest"
+          file "$tests/Contents/MacOS/FuseQuickLookTests"
+          set -o pipefail
+          xcrun xctest "$tests" 2>&1 | tee "$INTEL_ROOT/QuickLook-tests.log"
 
       - name: Run standalone Z80 core tests natively
         run: |
@@ -211,6 +215,6 @@ jobs:
         with:
           name: Intel-x86_64-test-results
           path: |
-            build-intel-x86_64/QuickLook.xcresult
+            build-intel-x86_64/QuickLook-tests.log
             build-intel-x86_64/z80.actual
           if-no-files-found: ignore
