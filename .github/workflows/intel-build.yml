@@ -1,0 +1,209 @@
+name: Optional Intel proof build
+
+# Proof artifacts only: no release, appcast, notarization, or Apple credentials.
+# Runner availability: https://docs.github.com/en/actions/reference/runners/github-hosted-runners
+# ARM build.yml, project defaults, feeds, and release targets remain unchanged.
+# Release publishing must wait for successful native CI AND recorded manual acceptance.
+# Cocoa --unittests requires the null UI and cannot run in this app; use coretest below.
+# Empty SUFeedURL leaves sparkleUpdaterController nil: startup is skipped and
+# validateMenuItem: disables Check for Updates (FuseController.m).
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: intel-proof-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  intel:
+    runs-on: macos-15-intel
+    timeout-minutes: 60
+    env:
+      INTEL_ROOT: ${{ github.workspace }}/build-intel-x86_64
+      HOMEBREW_NO_AUTO_UPDATE: "1"
+      HOMEBREW_NO_INSTALL_CLEANUP: "1"
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      - name: Verify native Intel host
+        run: |
+          test "$(uname -m)" = x86_64
+          test "$(sysctl -in sysctl.proc_translated 2>/dev/null || true)" != 1
+          sw_vers
+          xcodebuild -version
+
+      - name: Cache Intel Homebrew downloads only
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Caches/Homebrew/downloads
+          key: macos-15-x86_64-brew-${{ hashFiles('.github/workflows/intel-build.yml') }}
+          restore-keys: |
+            macos-15-x86_64-brew-
+
+      - name: Install build tools
+        run: |
+          brew install ruby autoconf automake libtool
+          export PATH="$(brew --prefix ruby)/bin:$PATH"
+          gem install jekyll bundler
+          echo "$(brew --prefix ruby)/bin" >> "$GITHUB_PATH"
+          ruby -e 'puts Gem.bindir' >> "$GITHUB_PATH"
+
+      - name: Generate, build and run native Quick Look tests
+        run: |
+          make -C fusepb
+          common=(
+            -project fusepb/Fuse.xcodeproj
+            -destination 'platform=macOS,arch=x86_64'
+            -derivedDataPath "$INTEL_ROOT/DerivedData"
+            "SYMROOT=$INTEL_ROOT/products" "OBJROOT=$INTEL_ROOT/objects"
+            "FUSE_REPO_ROOT=$GITHUB_WORKSPACE"
+            "FUSE_SCRIPTS_ROOT=$GITHUB_WORKSPACE/fusepb/scripts"
+            "FUSE_DEPS_ROOT=$GITHUB_WORKSPACE/fusepb/deps"
+            "FUSE_THIRD_PARTY_ROOT=$GITHUB_WORKSPACE/fusepb/deps/third_party"
+            ARCHS=x86_64 ONLY_ACTIVE_ARCH=NO MACOSX_DEPLOYMENT_TARGET=13.0
+            CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM=
+            SPARKLE_FEED_URL=
+          )
+          # Command-line settings override project settings and LocalSigning.xcconfig.
+          xcodebuild "${common[@]}" -scheme Fuse -configuration Deployment build
+          xcodebuild "${common[@]}" -scheme FuseQuickLookTests -configuration Development \
+            -resultBundlePath "$INTEL_ROOT/QuickLook.xcresult" test
+
+      - name: Run standalone Z80 core tests natively
+        run: |
+          deps="$INTEL_ROOT/objects/Fuse.build/DerivedSources/deps"
+          xcrun clang -arch x86_64 -mmacosx-version-min=13.0 -DCORETEST -Wl,-dead_strip \
+            -Ifusepb -Ifuse -Ifuse/z80 \
+            -I"$deps/libspectrum-prefix/include" \
+            -I"$deps/libgcrypt-prefix/include" -I"$deps/libgpg-error-prefix/include" \
+            fuse/z80/coretest.c fuse/z80/z80.c fuse/z80/z80_ops.c \
+            "$deps/libspectrum-prefix/lib/libspectrum.a" \
+            "$deps/libgcrypt-prefix/lib/libgcrypt.a" \
+            "$deps/libgpg-error-prefix/lib/libgpg-error.a" \
+            -lz -lbz2 -liconv -o "$INTEL_ROOT/coretest"
+          "$INTEL_ROOT/coretest" fuse/z80/tests/tests.in > "$INTEL_ROOT/z80.actual"
+          diff -u fuse/z80/tests/tests.expected "$INTEL_ROOT/z80.actual"
+
+      - name: Ad-hoc sign nested components and app
+        run: |
+          app="$INTEL_ROOT/products/Deployment/Fuse.app"
+          # Reuse only embedding/signing helpers, never ARM packaging or Sparkle staging.
+          sparkle=$(find "$INTEL_ROOT/DerivedData/SourcePackages/artifacts" \
+            -path '*/macos-arm64_x86_64/Sparkle.framework' -type d -print -quit)
+          test -n "$sparkle"
+          make embed-sparkle resign-sparkle FUSE_APP="$app" \
+            SPARKLE_SOURCE_FRAMEWORK="$sparkle" CODE_SIGN_IDENTITY=- DEVELOPMENT_TEAM=
+          codesign --force --sign - --options runtime \
+            "$app/Contents/Library/Spotlight/FuseImporter.mdimporter"
+          for extension in FuseThumbnailExtension FusePreviewExtension; do
+            codesign --force --sign - --options runtime \
+              --entitlements fusepb/FuseQuickLookExtension.entitlements \
+              "$app/Contents/PlugIns/$extension.appex"
+          done
+          codesign --force --sign - --options runtime \
+            --entitlements fusepb/Fuse.entitlements "$app"
+
+      - name: Verify artifact architecture, minimum OS, linkage and signatures
+        run: |
+          python3 - <<'PY'
+          import os, pathlib, plistlib, re, subprocess
+          app = pathlib.Path(os.environ['INTEL_ROOT']) / 'products/Deployment/Fuse.app'
+          def output(*args):
+              return subprocess.check_output(args, text=True, stderr=subprocess.STDOUT)
+          def version(s):
+              return tuple((list(map(int, s.split('.'))) + [0, 0])[:3])
+          with (app / 'Contents/Info.plist').open('rb') as f:
+              info = plistlib.load(f)
+          assert not info.get('SUFeedURL'), 'Sparkle feed must be absent or empty'
+          assert version(info['LSMinimumSystemVersion']) <= (13, 0, 0)
+          required = [
+              'Contents/MacOS/Fuse',
+              'Contents/Library/Spotlight/FuseImporter.mdimporter/Contents/MacOS/FuseImporter',
+              'Contents/PlugIns/FuseThumbnailExtension.appex/Contents/MacOS/FuseThumbnailExtension',
+              'Contents/PlugIns/FusePreviewExtension.appex/Contents/MacOS/FusePreviewExtension',
+          ]
+          for name in required:
+              assert (app / name).is_file(), name
+          count = 0
+          for path in app.rglob('*'):
+              if path.is_symlink() or not path.is_file():
+                  continue
+              kind = output('file', '-b', str(path))
+              if 'Mach-O' not in kind:
+                  continue
+              count += 1
+              assert 'x86_64' in kind, (path, kind)
+              if 'Sparkle.framework' not in path.parts:
+                  assert 'universal' not in kind.lower() and 'arm64' not in kind, (path, kind)
+              loads = output('otool', '-arch', 'x86_64', '-l', str(path))
+              minimum = []
+              for block in loads.split('Load command '):
+                  if re.search(r'cmd LC_(BUILD_VERSION|VERSION_MIN_MACOSX)\b', block):
+                      minimum += re.findall(r'^\s*(?:minos|version) (\d+\.\d+(?:\.\d+)?)$', block, re.M)
+              assert minimum and all(version(v) <= (13, 0, 0) for v in minimum), (path, minimum)
+              links = output('otool', '-arch', 'x86_64', '-L', str(path))
+              print(path.relative_to(app), kind.strip(), links, sep='\n')
+              # Reject runner-local libraries and rpaths, including Intel Homebrew.
+              for text in (loads, links):
+                  assert not any(p in text for p in ('/opt/homebrew', '/usr/local', '/Users/', '/opt/hostedtoolcache')), path
+              for line in links.splitlines()[1:]:
+                  dependency = line.strip().split(' (')[0]
+                  assert dependency.startswith(('@rpath/', '@loader_path/', '@executable_path/', '/usr/lib/', '/System/Library/')), (path, dependency)
+              subprocess.run(['codesign', '--verify', '--strict', str(path)], check=True)
+          assert count >= len(required)
+          subprocess.run(['codesign', '--verify', '--deep', '--strict', str(app)], check=True)
+          for name in required:
+              assert 'Signature=adhoc' in output('codesign', '-dv', str(app / name))
+          print(f'Verified {count} Mach-O files; Sparkle feed is empty.')
+          PY
+
+      - name: Zip verified app (unnotarized, testing only)
+        run: |
+          app="$INTEL_ROOT/products/Deployment/Fuse.app"
+          version=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$app/Contents/Info.plist")
+          mkdir -p "$INTEL_ROOT/artifacts"
+          ditto -c -k --sequesterRsrc --keepParent "$app" \
+            "$INTEL_ROOT/artifacts/Fuse-$version-intel.zip"
+          # Round-trip the archive and verify the extracted signature too.
+          ditto -x -k "$INTEL_ROOT/artifacts/Fuse-$version-intel.zip" "$INTEL_ROOT/extracted"
+          codesign --verify --deep --strict "$INTEL_ROOT/extracted/Fuse.app"
+          cat >> "$GITHUB_STEP_SUMMARY" <<'SUMMARY'
+          ## Intel proof artifact — UNNOTARIZED
+          Ad-hoc signed, macOS 13+ target; no automatic updates or release publication.
+          Native build, Quick Look, Z80, bundle/signature and archive checks passed.
+          **Not yet tested:** physical Intel Mac compatibility, macOS 13 runtime,
+          Gatekeeper approval, Metal, audio, keyboard, fullscreen, snapshot/tape
+          loading and saving, installed Quick Look integration, and absence of
+          updater startup/prompts/ARM offers (Check for Updates should be disabled).
+
+          Before publishing, record the workflow run/SHA, Intel Mac model, macOS
+          version and pass/fail/unsupported results for each case above in bd.
+          Download using a browser (retain quarantine), extract with Archive Utility,
+          move Fuse.app to Applications, attempt launch, then use System Settings >
+          Privacy & Security > Open Anyway and confirm Open, only if you trust it.
+          Record successful launch through that process; do not disable Gatekeeper
+          or strip quarantine. A CI ditto round-trip is NOT this acceptance test.
+          Manual release packaging/publication remains deferred until acceptance.
+          SUMMARY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Fuse-intel-x86_64-unnotarized
+          path: build-intel-x86_64/artifacts/*.zip
+          if-no-files-found: error
+          compression-level: 0
+
+      - name: Upload test diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Intel-x86_64-test-results
+          path: |
+            build-intel-x86_64/QuickLook.xcresult
+            build-intel-x86_64/z80.actual
+          if-no-files-found: ignore
