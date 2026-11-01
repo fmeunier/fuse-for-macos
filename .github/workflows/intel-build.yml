@@ -58,26 +58,29 @@ jobs:
           make -C fusepb
           common=(
             -project fusepb/Fuse.xcodeproj
-            -destination 'platform=macOS,arch=x86_64'
             -derivedDataPath "$INTEL_ROOT/DerivedData"
             "SYMROOT=$INTEL_ROOT/products" "OBJROOT=$INTEL_ROOT/objects"
             "FUSE_REPO_ROOT=$GITHUB_WORKSPACE"
             "FUSE_SCRIPTS_ROOT=$GITHUB_WORKSPACE/fusepb/scripts"
             "FUSE_DEPS_ROOT=$GITHUB_WORKSPACE/fusepb/deps"
             "FUSE_THIRD_PARTY_ROOT=$GITHUB_WORKSPACE/fusepb/deps/third_party"
-            ARCHS=x86_64 ONLY_ACTIVE_ARCH=NO MACOSX_DEPLOYMENT_TARGET=13.0
+            ARCHS=x86_64 ONLY_ACTIVE_ARCH=NO MACOSX_DEPLOYMENT_TARGET=14.4
             CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM=
             SPARKLE_FEED_URL=
           )
           # Command-line settings override project settings and LocalSigning.xcconfig.
-          xcodebuild "${common[@]}" -scheme Fuse -configuration Deployment build
+          # Build without matching a runnable host; ARCHS still limits output to x86_64.
+          xcodebuild "${common[@]}" -scheme Fuse -configuration Deployment \
+            -destination 'generic/platform=macOS' build
+          # Tests need the native Mac, not a generic destination. Do not filter its CPU subtype.
           xcodebuild "${common[@]}" -scheme FuseQuickLookTests -configuration Development \
+            -destination 'platform=macOS,name=My Mac' \
             -resultBundlePath "$INTEL_ROOT/QuickLook.xcresult" test
 
       - name: Run standalone Z80 core tests natively
         run: |
           deps="$INTEL_ROOT/objects/Fuse.build/DerivedSources/deps"
-          xcrun clang -arch x86_64 -mmacosx-version-min=13.0 -DCORETEST -Wl,-dead_strip \
+          xcrun clang -arch x86_64 -mmacosx-version-min=14.4 -DCORETEST -Wl,-dead_strip \
             -Ifusepb -Ifuse -Ifuse/z80 \
             -I"$deps/libspectrum-prefix/include" \
             -I"$deps/libgcrypt-prefix/include" -I"$deps/libgpg-error-prefix/include" \
@@ -120,7 +123,7 @@ jobs:
           with (app / 'Contents/Info.plist').open('rb') as f:
               info = plistlib.load(f)
           assert not info.get('SUFeedURL'), 'Sparkle feed must be absent or empty'
-          assert version(info['LSMinimumSystemVersion']) <= (13, 0, 0)
+          assert version(info['LSMinimumSystemVersion']) == (14, 4, 0)
           required = [
               'Contents/MacOS/Fuse',
               'Contents/Library/Spotlight/FuseImporter.mdimporter/Contents/MacOS/FuseImporter',
@@ -145,7 +148,9 @@ jobs:
               for block in loads.split('Load command '):
                   if re.search(r'cmd LC_(BUILD_VERSION|VERSION_MIN_MACOSX)\b', block):
                       minimum += re.findall(r'^\s*(?:minos|version) (\d+\.\d+(?:\.\d+)?)$', block, re.M)
-              assert minimum and all(version(v) <= (13, 0, 0) for v in minimum), (path, minimum)
+              assert minimum and all(version(v) <= (14, 4, 0) for v in minimum), (path, minimum)
+              if 'Sparkle.framework' not in path.parts:
+                  assert all(version(v) == (14, 4, 0) for v in minimum), (path, minimum)
               links = output('otool', '-arch', 'x86_64', '-L', str(path))
               print(path.relative_to(app), kind.strip(), links, sep='\n')
               # Reject runner-local libraries and rpaths, including Intel Homebrew.
@@ -174,9 +179,9 @@ jobs:
           codesign --verify --deep --strict "$INTEL_ROOT/extracted/Fuse.app"
           cat >> "$GITHUB_STEP_SUMMARY" <<'SUMMARY'
           ## Intel proof artifact — UNNOTARIZED
-          Ad-hoc signed, macOS 13+ target; no automatic updates or release publication.
+          Ad-hoc signed, macOS 14.4+ target; no automatic updates or release publication.
           Native build, Quick Look, Z80, bundle/signature and archive checks passed.
-          **Not yet tested:** physical Intel Mac compatibility, macOS 13 runtime,
+          **Not yet tested:** physical Intel Mac compatibility, macOS 14.4 runtime,
           Gatekeeper approval, Metal, audio, keyboard, fullscreen, snapshot/tape
           loading and saving, installed Quick Look integration, and absence of
           updater startup/prompts/ARM offers (Check for Updates should be disabled).
