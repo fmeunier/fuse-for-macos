@@ -166,12 +166,15 @@ jobs:
                   assert all(version(v) == (14, 4, 0) for v in minimum), (path, minimum)
               links = output('otool', '-arch', 'x86_64', '-L', str(path))
               print(path.relative_to(app), kind.strip(), links, sep='\n')
-              # Reject runner-local libraries and rpaths, including Intel Homebrew.
-              for text in (loads, links):
-                  assert not any(p in text for p in ('/opt/homebrew', '/usr/local', '/Users/', '/opt/hostedtoolcache')), path
-              for line in links.splitlines()[1:]:
-                  dependency = line.strip().split(' (')[0]
-                  assert dependency.startswith(('@rpath/', '@loader_path/', '@executable_path/', '/usr/lib/', '/System/Library/')), (path, dependency)
+              # Inspect runtime paths only: otool headers contain the input filename,
+              # which legitimately lives under /Users/runner during verification.
+              runtime_paths = [line.strip().split(' (')[0] for line in links.splitlines()[1:]]
+              for block in loads.split('Load command '):
+                  if re.search(r'cmd LC_RPATH\b', block):
+                      runtime_paths += re.findall(r'^\s*path (.+) \(offset \d+\)$', block, re.M)
+              for runtime_path in runtime_paths:
+                  assert not any(p in runtime_path for p in ('/opt/homebrew', '/usr/local', '/Users/', '/opt/hostedtoolcache')), (path, runtime_path)
+                  assert runtime_path.startswith(('@rpath/', '@loader_path/', '@executable_path/', '/usr/lib/', '/System/Library/')), (path, runtime_path)
               subprocess.run(['codesign', '--verify', '--strict', str(path)], check=True)
           assert count >= len(required)
           subprocess.run(['codesign', '--verify', '--deep', '--strict', str(app)], check=True)
