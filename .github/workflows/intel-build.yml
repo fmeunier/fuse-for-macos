@@ -114,7 +114,10 @@ jobs:
               --entitlements fusepb/FuseQuickLookExtension.entitlements \
               "$app/Contents/PlugIns/$extension.appex"
           done
-          codesign --force --sign - --options runtime \
+          # Ad-hoc signatures have no Team ID. Hardened runtime library validation
+          # would reject linked Sparkle even when its updater is disabled.
+          # This opt-in, unnotarized Intel app does not need hardened runtime.
+          codesign --force --sign - --options 0 \
             --entitlements fusepb/Fuse.entitlements "$app"
 
       - name: Verify artifact architecture, minimum OS, linkage and signatures
@@ -180,6 +183,9 @@ jobs:
           subprocess.run(['codesign', '--verify', '--deep', '--strict', str(app)], check=True)
           for name in required:
               assert 'Signature=adhoc' in output('codesign', '-dv', str(app / name))
+          signature = output('codesign', '-dv', str(app))
+          flags = re.search(r'^CodeDirectory .*flags=0x([0-9a-fA-F]+)', signature, re.M)
+          assert flags and not (int(flags.group(1), 16) & 0x10000), 'Intel ad-hoc app must not enable hardened runtime'
           print(f'Verified {count} Mach-O files; Sparkle feed is empty.')
           PY
 
@@ -197,6 +203,7 @@ jobs:
           ## Intel proof artifact — UNNOTARIZED
           Ad-hoc signed, macOS 14.4+ target; no automatic updates or release publication.
           Native build, Quick Look, Z80, bundle/signature and archive checks passed.
+          A launch smoke test of the extracted app must also pass before upload.
           **Not yet tested:** physical Intel Mac compatibility, macOS 14.4 runtime,
           Gatekeeper approval, Metal, audio, keyboard, fullscreen, snapshot/tape
           loading and saving, installed Quick Look integration, and absence of
@@ -212,6 +219,33 @@ jobs:
           Manual release packaging/publication remains deferred until acceptance.
           SUMMARY
 
+      - name: Smoke test extracted app startup on native Intel
+        run: |
+          python3 - <<'PY'
+          import os, pathlib, subprocess
+          root = pathlib.Path(os.environ['INTEL_ROOT'])
+          log_path = root / 'App-launch.log'
+          with log_path.open('w') as log:
+              process = subprocess.Popen([str(root / 'extracted/Fuse.app/Contents/MacOS/Fuse')],
+                                         stdout=log, stderr=subprocess.STDOUT)
+              try:
+                  result = process.wait(timeout=10)
+              except subprocess.TimeoutExpired:
+                  # Surviving startup catches dyld/signing failures, not full GUI acceptance.
+                  process.terminate()
+                  try:
+                      process.wait(timeout=5)
+                  except subprocess.TimeoutExpired:
+                      process.kill()
+                      process.wait()
+              else:
+                  print(log_path.read_text())
+                  raise SystemExit(f'App exited during launch smoke test: {result}')
+          print(log_path.read_text())
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
+              summary.write('Extracted app survived a 10-second native Intel launch smoke test.\n')
+          PY
+
       - uses: actions/upload-artifact@v4
         with:
           name: Fuse-intel-x86_64-unnotarized
@@ -226,5 +260,6 @@ jobs:
           name: Intel-x86_64-test-results
           path: |
             build-intel-x86_64/QuickLook-tests.log
+            build-intel-x86_64/App-launch.log
             build-intel-x86_64/z80.actual
           if-no-files-found: ignore
