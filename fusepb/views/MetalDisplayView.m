@@ -12,6 +12,7 @@
 
 #include <math.h>
 
+#include "DisplayPixelConversion.h"
 #include "display.h"
 #include "input.h"
 #include "settings.h"
@@ -48,11 +49,14 @@ typedef enum {
 @public
   id <MTLBuffer> buffer;
   id <MTLTexture> texture;
+  NSMutableData *converted_pixels;
+  NSUInteger texture_stride;
   DisplayFramebuffer framebuffer;
   DisplayFramebufferSlotState state;
 }
 -(id) initWithDevice:(id <MTLDevice>)device
          framebuffer:(const DisplayFramebuffer *)source;
+-(void) prepareTexture;
 @end
 
 @implementation DisplayFramebufferSlot
@@ -64,12 +68,17 @@ typedef enum {
   NSUInteger alignment;
   NSUInteger natural_stride;
   NSUInteger aligned_stride;
+  BOOL use_rgb565_texture;
 
   self = [super init];
   if( !self ) return nil;
 
-  alignment = [device minimumLinearTextureAlignmentForPixelFormat:
-               MTLPixelFormatB5G6R5Unorm];
+  /* Packed RGB565 textures are an Apple GPU capability, not a CPU feature.
+     In particular, Rosetta still uses the Apple GPU and can keep this path. */
+  use_rgb565_texture = [device supportsFamily:MTLGPUFamilyApple1];
+  alignment = use_rgb565_texture ?
+    [device minimumLinearTextureAlignmentForPixelFormat:MTLPixelFormatB5G6R5Unorm] :
+    sizeof( uint16_t );
   natural_stride = source->storage_width * sizeof( uint16_t );
   aligned_stride = ( natural_stride + alignment - 1 ) / alignment * alignment;
   buffer = [device newBufferWithLength:aligned_stride * source->storage_height
@@ -79,12 +88,30 @@ typedef enum {
     return nil;
   }
 
-  texture_descriptor = [MTLTextureDescriptor
-    texture2DDescriptorWithPixelFormat:MTLPixelFormatB5G6R5Unorm
-    width:source->storage_width height:source->storage_height mipmapped:NO];
-  [texture_descriptor setUsage:MTLTextureUsageShaderRead];
-  texture = [buffer newTextureWithDescriptor:texture_descriptor offset:0
-                                 bytesPerRow:aligned_stride];
+  if( use_rgb565_texture ) {
+    texture_descriptor = [MTLTextureDescriptor
+      texture2DDescriptorWithPixelFormat:MTLPixelFormatB5G6R5Unorm
+      width:source->storage_width height:source->storage_height mipmapped:NO];
+    [texture_descriptor setUsage:MTLTextureUsageShaderRead];
+    [texture_descriptor setStorageMode:[buffer storageMode]];
+    texture = [buffer newTextureWithDescriptor:texture_descriptor offset:0
+                                   bytesPerRow:aligned_stride];
+  } else {
+    /* Keep the emulator's RGB565 storage, but upload ordinary BGRA textures.
+       The default texture storage mode also supports Intel/AMD managed memory. */
+    texture_stride = source->storage_width * sizeof( uint32_t );
+    converted_pixels = [[NSMutableData alloc]
+      initWithLength:texture_stride * source->storage_height];
+    if( !converted_pixels ) {
+      [self release];
+      return nil;
+    }
+    texture_descriptor = [MTLTextureDescriptor
+      texture2DDescriptorWithPixelFormat:MTLPixelFormatBGRA8Unorm
+      width:source->storage_width height:source->storage_height mipmapped:NO];
+    [texture_descriptor setUsage:MTLTextureUsageShaderRead];
+    texture = [device newTextureWithDescriptor:texture_descriptor];
+  }
   if( !texture ) {
     [self release];
     return nil;
@@ -104,8 +131,24 @@ typedef enum {
   return self;
 }
 
+-(void) prepareTexture
+{
+  if( !converted_pixels ) return;
+
+  /* Called on the main thread with this slot IN_FLIGHT: neither the emulator
+     nor an earlier GPU command can still be modifying or sampling this slot. */
+  display_rgb565_to_bgra8888( [converted_pixels mutableBytes], texture_stride,
+                            framebuffer.backing_storage, framebuffer.stride,
+                            framebuffer.storage_width, framebuffer.storage_height );
+  [texture replaceRegion:MTLRegionMake2D( 0, 0, framebuffer.storage_width,
+                                        framebuffer.storage_height )
+             mipmapLevel:0 withBytes:[converted_pixels bytes]
+             bytesPerRow:texture_stride];
+}
+
 -(void) dealloc
 {
+  [converted_pixels release];
   pig_dirty_close( framebuffer.dirty_regions );
   [texture release];
   [buffer release];
@@ -207,6 +250,9 @@ get_offset( int window_width, int window_height, int image_width,
     [self release];
     return nil;
   }
+
+  if( ![metal_device supportsFamily:MTLGPUFamilyApple1] )
+    NSLog( @"Using BGRA framebuffer upload on %@", [metal_device name] );
 
   self = [super initWithFrame:frameRect device:metal_device];
   [metal_device release];
@@ -381,6 +427,7 @@ get_offset( int window_width, int window_height, int image_width,
     return;
   }
 
+  [slot prepareTexture];
   command_buffer = [command_queue commandBuffer];
   command_encoder = [command_buffer renderCommandEncoderWithDescriptor:render_pass_descriptor];
   slot_framebuffer = slot ? &slot->framebuffer : NULL;
