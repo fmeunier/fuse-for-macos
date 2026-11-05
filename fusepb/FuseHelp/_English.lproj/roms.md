@@ -20,10 +20,39 @@ Currah μSpeech. The Currah μSpeech interface requires both the μSpeech
 interface ROM and the SP0256-AL2 speech ROM. These ROM files are not supplied
 with Fuse for macOS.
 
-The SP0256-AL2 ROM should be named `sp0256-al2.rom`; the ROM expected by Fuse
-has CRC-32 `b504ac15`. An alternative authorised ROM distributed by Joe Zbiciak
-has CRC-32 `df8de0b0`; when using that ROM, bit ordering in the data bytes must
-be reversed.
+The SP0256-AL2 ROM expected by Fuse has CRC-32 `b504ac15`. An alternative
+authorised ROM distributed by Joe Zbiciak has CRC-32 `df8de0b0`; when using
+that ROM, bit ordering in the data bytes must be reversed.
+
+## Missing ROM files
+
+Fuse can emulate Spectrum clones such as the Pentagon and Scorpion series,
+but their ROM files are not distributed with Fuse because there is no clear
+permission allowing their distribution. Some peripheral ROMs are also not
+supplied. To use these machines or interfaces, you must provide the required
+ROM files and configure them in *Fuse Preferences > ROM*.
+
+ROMs for the Pentagon and Scorpion series, Didaktik and Opus disk interfaces,
+Multiface interfaces, Currah μSpeech and μSource, and Sinclair Interface 1
+must be supplied separately. Choose the appropriate ROM image for each machine or
+interface. Its filename does not need to match Fuse's default filename, and
+you do not need to rename it before selecting it.
+
+If Fuse cannot find a readable default ROM file, the field appears blank with
+*Select ROM file…* in its place. Fuse retains the default filename internally;
+the blank field does not mean that the machine needs no ROM. A custom path
+remains visible even if its file cannot be found.
+
+Click *Choose…* to locate the required ROM, or enter its path in the field.
+Hover over a field to see whether its ROM file is missing. Fields which do
+not apply to the selected machine are blank and disabled.
+
+*Reset* removes your custom ROM selection and returns to the default ROM.
+If that ROM is not available, the field stays blank: you still
+need to choose a ROM file. Reset does not install missing ROMs. Clearing a
+field also returns to the default when you close Preferences.
+
+After changing a ROM, reset the Spectrum for the change to take effect.
 
 ## Copyrights
 

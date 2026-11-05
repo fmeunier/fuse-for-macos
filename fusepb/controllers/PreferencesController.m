@@ -53,6 +53,7 @@
 #include "settings_cocoa.h"
 #include "sound.h"
 #include "machine.h"
+#include "utils.h"
 #include "ui.h"
 #include "ui/scaler/scaler.h"
 #include "ui/uidisplay.h"
@@ -252,6 +253,27 @@ cocoa_machine_ids( void )
   return machine_ids;
 }
 
+BOOL cocoa_machine_rom_file_exists( const char *filename );
+
+BOOL
+cocoa_machine_rom_file_exists( const char *filename )
+{
+  char path[ PATH_MAX ];
+  NSString *resolved_path;
+  NSFileManager *file_manager;
+  BOOL is_directory;
+
+  if( filename == NULL || !*filename ) return NO;
+  if( utils_find_file_path( filename, path, UTILS_AUXILIARY_ROM ) )
+    return NO;
+
+  file_manager = [NSFileManager defaultManager];
+  resolved_path = [file_manager stringWithFileSystemRepresentation:path
+                                                          length:strlen( path )];
+  return [file_manager fileExistsAtPath:resolved_path isDirectory:&is_directory] &&
+         !is_directory && [file_manager isReadableFileAtPath:resolved_path];
+}
+
 BOOL
 cocoa_video_machine_is_timex_enabled( void )
 {
@@ -409,32 +431,40 @@ cocoa_video_machine_is_timex_disabled( void )
 - (void)showWindow:(id)sender
 {
   [[EmulationSessionController instance] pause];
-  
-  /* Values in Fuse may have been updated, put them in saved settings */
-  settings_write_config( &settings_current );
 
-  if( machineRoms ) {
-    [machineRoms release];
-    machineRoms = nil;
+  @try {
+    /* Values in Fuse may have been updated, put them in saved settings */
+    settings_write_config( &settings_current );
+
+    if( machineRoms ) {
+      [machineRoms release];
+      machineRoms = nil;
+    }
+
+    machineRoms = settings_set_rom_array( &settings_current );
+    [machineRoms retain];
+
+    [self configurePreferencesRootContainerView];
+
+    [super showWindow:sender];
+
+    [preferencesRootContainerView schedulePeripheralsWarmup];
+
+    [self fixPhantomTypistMode];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                           selector:@selector(handleWillClose:)
+                               name:NSWindowWillCloseNotification
+                             object:[self window]];
+
+    [NSApp runModalForWindow:[self window]];
+  } @finally {
+    /* Balance our pause even if setup fails before the window opens. */
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                  name:NSWindowWillCloseNotification
+                                object:nil];
+    [[EmulationSessionController instance] unpause];
   }
-
-  machineRoms = settings_set_rom_array( &settings_current );
-  [machineRoms retain];
-
-  [self configurePreferencesRootContainerView];
-
-  [super showWindow:sender];
-
-  [preferencesRootContainerView schedulePeripheralsWarmup];
-
-  [self fixPhantomTypistMode];
-
-  [[NSNotificationCenter defaultCenter] addObserver:self
-		 selector:@selector(handleWillClose:)
-			 name:@"NSWindowWillCloseNotification"
-		   object:[self window]];
-
-  [NSApp runModalForWindow:[self window]];
 }
 
 - (void)fixPhantomTypistMode
@@ -491,8 +521,6 @@ cocoa_video_machine_is_timex_disabled( void )
   joystick_init( NULL );
 
   periph_posthook();
-
-  [[EmulationSessionController instance] unpause];
 }
 
 - (IBAction)chooseFile:(id)sender

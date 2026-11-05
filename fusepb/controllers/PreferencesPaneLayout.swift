@@ -32,6 +32,9 @@ func cocoa_machine_names_bridge() -> Unmanaged<AnyObject>?
 @_silgen_name("cocoa_machine_ids")
 func cocoa_machine_ids_bridge() -> Unmanaged<AnyObject>?
 
+@_silgen_name("cocoa_machine_rom_file_exists")
+func cocoa_machine_rom_file_exists_bridge(_ filename: UnsafePointer<CChar>?) -> Bool
+
 @_silgen_name("cocoa_string_media_phantom_typist_mode")
 func cocoa_string_media_phantom_typist_mode_bridge(_ value: UnsafePointer<CChar>?) -> Unmanaged<AnyObject>?
 

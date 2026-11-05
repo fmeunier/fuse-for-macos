@@ -174,7 +174,7 @@
 		B61F468709121DF100C8096C /* RollbackController.m in Sources */ = {isa = PBXBuildFile; fileRef = B63F994A077182B4004D6DFA /* RollbackController.m */; };
 		B61F468909121DF100C8096C /* ts2068.c in Sources */ = {isa = PBXBuildFile; fileRef = B6F060A5078FB55400CD5D95 /* ts2068.c */; };
 		B61F468A09121DF100C8096C /* sfifo.c in Sources */ = {isa = PBXBuildFile; fileRef = B6F06100078FC2C900CD5D95 /* sfifo.c */; };
-		B61F468B09121DF100C8096C /* PreferencesController.m in Sources */ = {isa = PBXBuildFile; fileRef = B650F73F07E7CD3F00E4F3AF /* PreferencesController.m */; };
+		B61F468B09121DF100C8096C /* PreferencesController.m in Sources */ = {isa = PBXBuildFile; fileRef = B650F73F07E7CD3F00E4F3AF /* PreferencesController.m */; settings = {COMPILER_FLAGS = "-fobjc-exceptions"; }; };
 		B61F468C09121DF100C8096C /* ScalerNameToIdTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = B67F3C1507ED1C9D0045339F /* ScalerNameToIdTransformer.m */; };
 		B61F468D09121DF100C8096C /* MachineScalerIsEnabled.m in Sources */ = {isa = PBXBuildFile; fileRef = B67F3C5007ED34530045339F /* MachineScalerIsEnabled.m */; };
 		B61F468E09121DF100C8096C /* MachineNameToIdTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = B67F3CC407EE0A130045339F /* MachineNameToIdTransformer.m */; };

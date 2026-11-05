@@ -32,6 +32,7 @@ func romPreferencesPane(model: ROMPreferencesModel,
 final class ROMPreferencesModel: ObservableObject {
   @Published private(set) var machineRows: [ROMMachineRow] = []
   @Published private(set) var selectedMachineIndex: Int?
+  @Published private(set) var missingROMFiles: [String] = []
 
   private weak var machineRomsController: NSArrayController?
   private var cancellables: Set<AnyCancellable> = []
@@ -49,12 +50,14 @@ final class ROMPreferencesModel: ObservableObject {
   func refreshSelection() {
     guard let machineRomsController else {
       selectedMachineIndex = nil
+      missingROMFiles = []
       objectWillChange.send()
       return
     }
 
     let selectionIndex = machineRomsController.selectionIndex
     selectedMachineIndex = selectionIndex == NSNotFound ? nil : selectionIndex
+    refreshMissingROMFiles()
     objectWillChange.send()
   }
 
@@ -65,10 +68,18 @@ final class ROMPreferencesModel: ObservableObject {
 
   func romValue(for entry: ROMEntry) -> Binding<String> {
     Binding {
-      self.selectedValue(forKey: entry.romKey)
+      let value = self.selectedValue(forKey: entry.romKey)
+      let defaultValue = self.selectedValue(forKey: entry.defaultROMKey)
+      return self.isROMMissing(entry) && value == defaultValue ? "" : value
     } set: { newValue in
       self.setSelectedValue(newValue, forKey: entry.romKey)
     }
+  }
+
+  func isROMMissing(_ entry: ROMEntry) -> Bool {
+    guard isEntryEnabled(entry) else { return false }
+    let value = selectedValue(forKey: entry.romKey)
+    return value.isEmpty || missingROMFiles.contains(value)
   }
 
   func isEntryEnabled(_ entry: ROMEntry) -> Bool {
@@ -87,6 +98,22 @@ final class ROMPreferencesModel: ObservableObject {
       return ROMMachineRow(index: index, title: name, objectID: ObjectIdentifier(row))
     }
     objectWillChange.send()
+  }
+
+  private func refreshMissingROMFiles() {
+    guard let row = selectedMachineDictionary() else {
+      missingROMFiles = []
+      return
+    }
+
+    missingROMFiles = romEntries.compactMap { entry in
+      let filename = row[entry.romKey] as? String ?? ""
+      guard !filename.isEmpty else { return nil }
+      let exists = filename.withCString {
+        cocoa_machine_rom_file_exists_bridge( $0 )
+      }
+      return exists ? nil : filename
+    }
   }
 
   private func selectedMachineDictionary() -> NSMutableDictionary? {
@@ -113,6 +140,7 @@ final class ROMPreferencesModel: ObservableObject {
 
   private func setSelectedValue(_ value: String, forKey key: String) {
     selectedMachineDictionary()?.setValue(value, forKey: key)
+    refreshMissingROMFiles()
     objectWillChange.send()
   }
 }
@@ -146,23 +174,29 @@ struct ROMPaneView: View {
       HStack(alignment: .top, spacing: 20) {
         machinesPanel
 
-        Grid(alignment: .leading, horizontalSpacing: 8, verticalSpacing: 12) {
-          ForEach(romEntries) { entry in
-            GridRow {
-              Text(entry.title)
-              TextField("", text: model.romValue(for: entry))
-                .frame(width: 265)
+        VStack(alignment: .leading, spacing: 8) {
+          Grid(alignment: .leading, horizontalSpacing: 8, verticalSpacing: 12) {
+            ForEach(romEntries) { entry in
+              GridRow {
+                Text(entry.title)
+                TextField(model.isEntryEnabled(entry) ? "Select ROM file…" : "",
+                          text: model.romValue(for: entry))
+                  .frame(width: 265)
+                  .help(model.isROMMissing(entry) ? "ROM file not found. Select a ROM file." : "ROM file path")
+                  .accessibilityLabel(entry.title)
+                  .accessibilityHint(model.isROMMissing(entry) ? "ROM file not found. Select a ROM file." : "")
+                  .disabled(!model.isEntryEnabled(entry))
+                Button("Choose...") {
+                  chooseROM(entry)
+                }
+                .frame(minWidth: 74, alignment: .leading)
                 .disabled(!model.isEntryEnabled(entry))
-              Button("Choose...") {
-                chooseROM(entry)
+                Button("Reset") {
+                  resetROM(entry)
+                }
+                .frame(minWidth: 52, alignment: .leading)
+                .disabled(!model.isEntryEnabled(entry))
               }
-              .frame(minWidth: 74, alignment: .leading)
-              .disabled(!model.isEntryEnabled(entry))
-              Button("Reset") {
-                resetROM(entry)
-              }
-              .frame(minWidth: 52, alignment: .leading)
-              .disabled(!model.isEntryEnabled(entry))
             }
           }
         }
