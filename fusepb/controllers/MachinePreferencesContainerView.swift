@@ -25,11 +25,12 @@ private let fallbackMachineOptions = [
   MachinePreferenceOption(id: "se", name: "Spectrum SE"),
 ]
 
-func machinePreferencesPane() -> AnyView {
-  AnyView(MachinePreferencesView())
+func machinePreferencesPane(model: ROMPreferencesModel) -> AnyView {
+  AnyView(MachinePreferencesView(model: model))
 }
 
 private struct MachinePreferencesView: View {
+  @ObservedObject var model: ROMPreferencesModel
   @AppStorage("machine") private var machine = "48"
 
   private let machineOptions = availableMachineOptions()
@@ -40,6 +41,7 @@ private struct MachinePreferencesView: View {
         ForEach(machineOptions) { option in
           Text(option.name)
             .tag(option.id)
+            .selectionDisabled(model.unavailableMachines.contains(option.id))
         }
       }
       .labelsHidden()

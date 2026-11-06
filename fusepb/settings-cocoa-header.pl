@@ -65,6 +65,8 @@ print << 'CODE';
 #define FUSE_SETTINGS_COCOA_H
 
 #import <Foundation/NSArray.h>
+#import <Foundation/NSUserDefaults.h>
+#import <Foundation/NSString.h>
 
 #include "settings.h"
 
@@ -105,5 +107,35 @@ settings_get_rom_array( settings_info *settings, NSArray *machineroms );
 NSInteger
 machineroms_compare( id dict1, id dict2, void *context );
 
-#endif				/* #ifndef FUSE_SETTINGS_COCOA_H */
+CODE
+
+print << 'CODE';
+/* Startup preflight cannot use Machine objects before machine_init().
+   Generate the same machine/slot relationships directly from settings.dat.
+   Each slot includes the default fallback used by the core ROM loader. */
+static inline NSArray *
+cocoa_startup_rom_candidates( NSString *machine_id, NSUserDefaults *defaults )
+{
+CODE
+
+my %machine_roms;
+foreach my $name ( sort keys %options ) {
+  if( $name =~ /^rom_(.*)_\d$/ ) {
+    push @{ $machine_roms{$1} }, $name;
+  }
+}
+foreach my $machine ( sort keys %machine_roms ) {
+  print "  if( [machine_id isEqualToString:\@\"$machine\"] ) return \@[\n";
+  foreach my $name ( @{ $machine_roms{$machine} } ) {
+    my $key = $options{$name}->{configfile};
+    my $default = $options{$name}->{default};
+    print "    \@[ [defaults stringForKey:\@\"$key\"] ?: \@\"\", \@$default ],\n";
+  }
+  print "  ];\n";
+}
+print << 'CODE';
+  return nil;
+}
+
+#endif                          /* #ifndef FUSE_SETTINGS_COCOA_H */
 CODE

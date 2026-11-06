@@ -253,6 +253,16 @@ cocoa_machine_ids( void )
   return machine_ids;
 }
 
+NSString *cocoa_rom_row_machine_id( NSDictionary *row );
+
+NSString *
+cocoa_rom_row_machine_id( NSDictionary *row )
+{
+  Machine *machine = [row objectForKey:@"machine"];
+  const char *identifier = machine ? machine_get_id( [machine machineType] ) : NULL;
+  return identifier ? @(identifier) : nil;
+}
+
 BOOL cocoa_machine_rom_file_exists( const char *filename );
 
 BOOL

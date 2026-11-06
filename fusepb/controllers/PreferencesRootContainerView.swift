@@ -76,6 +76,7 @@ final class PreferencesRootContainerView: NSView {
   @objc(selectPaneWithIdentifier:)
   func selectPane(withIdentifier identifier: NSString) {
     selectedPane = PreferencesPaneIdentifier(rawValue: identifier as String) ?? .general
+    romModel.refreshSelection()
     updateRootView()
   }
 
@@ -153,7 +154,7 @@ final class PreferencesRootContainerView: NSView {
         }
       )
     case .machine:
-      paneView = machinePreferencesPane()
+      paneView = machinePreferencesPane(model: romModel)
     case .video:
       paneView = videoPreferencesPane()
     }
@@ -167,7 +168,7 @@ final class PreferencesRootContainerView: NSView {
   }
 
   private func makePeripheralsPaneView() -> AnyView {
-    peripheralsPreferencesPane { [weak self] tag in
+    peripheralsPreferencesPane(model: romModel) { [weak self] tag in
       self?.sendAction("chooseFile:", tag: tag)
     }
   }

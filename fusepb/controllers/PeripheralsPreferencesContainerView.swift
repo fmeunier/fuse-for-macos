@@ -40,15 +40,16 @@ private enum PrinterFileType: Int {
   case text = 1
 }
 
-func peripheralsPreferencesPane(chooseFileAction: @escaping (Int) -> Void) -> AnyView {
+func peripheralsPreferencesPane(model: ROMPreferencesModel, chooseFileAction: @escaping (Int) -> Void) -> AnyView {
   AnyView(
-    PeripheralsPreferencesView { fileType in
+    PeripheralsPreferencesView(model: model) { fileType in
       chooseFileAction(fileType.rawValue)
     }
   )
 }
 
 private struct PeripheralsPreferencesView: View {
+  @ObservedObject var model: ROMPreferencesModel
   @AppStorage("interface1") private var interface1 = false
   @AppStorage("simpleide") private var simpleIDE = false
   @AppStorage("zxatasp") private var zxatasp = false
@@ -93,7 +94,8 @@ private struct PeripheralsPreferencesView: View {
 
   private let chooseFileAction: (PrinterFileType) -> Void
 
-  init(chooseFileAction: @escaping (PrinterFileType) -> Void) {
+  init(model: ROMPreferencesModel, chooseFileAction: @escaping (PrinterFileType) -> Void) {
+    self.model = model
     self.chooseFileAction = chooseFileAction
   }
 
@@ -124,7 +126,9 @@ private struct PeripheralsPreferencesView: View {
         VStack(alignment: .leading, spacing: 8) {
           Toggle("+3 Detect Speedlock", isOn: $plus3DetectSpeedlock)
           Toggle("Beta autoboot in 48K", isOn: $beta12848Boot)
+            .disabled(isUnavailable(MassStorageInterface.beta128))
           Toggle("DISCiPLE inhibit", isOn: $discipleInhibit)
+            .disabled(isUnavailable(MassStorageInterface.disciple))
           Toggle("DivIDE write protect", isOn: $divideWriteProtect)
           Toggle("DivMMC write protect", isOn: $divMMCWriteProtect)
           Toggle("Spectranet disable", isOn: $spectranetDisable)
@@ -169,6 +173,7 @@ private struct PeripheralsPreferencesView: View {
           )
 
           Toggle("Multiface One stealth", isOn: $multiface1Stealth)
+            .disabled(isUnavailable(MultifaceType.multifaceOne))
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .topLeading)
@@ -339,6 +344,34 @@ private struct PeripheralsPreferencesView: View {
     return formatter
   }
 
+  private func isUnavailable<Option>(_ option: Option) -> Bool {
+    let key: String?
+    switch option {
+    case let storage as MassStorageInterface:
+      switch storage {
+      case .beta128: key = "beta128"
+      case .currahUSource: key = "usource"
+      case .disciple: key = "disciple"
+      case .didaktik80: key = "didaktik80"
+      case .interface1: key = "interface1"
+      case .opusDiscovery: key = "opus"
+      case .plusD: key = "plusd"
+      default: key = nil
+      }
+    case let sound as ExternalSoundInterface:
+      key = sound == .uspeech ? "uspeech" : nil
+    case let multiface as MultifaceType:
+      switch multiface {
+      case .multifaceOne: key = "multiface1"
+      case .multiface128: key = "multiface128"
+      case .multiface3: key = "multiface3"
+      case .none: key = nil
+      }
+    default: key = nil
+    }
+    return key.map { model.unavailablePeripherals.contains($0) } ?? false
+  }
+
   private func radioGroup<Option: Hashable & RawRepresentable>(
     title: String,
     selection: Binding<Option>,
@@ -348,6 +381,7 @@ private struct PeripheralsPreferencesView: View {
       ForEach(options, id: \.self) { option in
         Text(option.rawValue)
           .tag(option)
+          .selectionDisabled(isUnavailable(option))
       }
     }
     .labelsHidden()

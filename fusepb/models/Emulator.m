@@ -45,6 +45,7 @@
 #include "psg.h"
 #include "rzx.h"
 #include "settings.h"
+#include "settings_cocoa.h"
 #include "simpleide.h"
 #include "screenshot.h"
 #include "sound.h"
@@ -64,6 +65,44 @@
 
 extern keysyms_map_t unicode_keysyms_map[];
 extern keysyms_map_t recreated_keysyms_map[];
+
+BOOL cocoa_machine_rom_file_exists( const char *filename );
+
+static BOOL
+cocoa_preflight_saved_machine( int argc, char **argv )
+{
+  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+  NSString *machine_id = [defaults stringForKey:@"machine"];
+  NSArray *slots;
+  int i;
+
+  /* Only the saved choice is subject to this check. Explicit command-line
+     machine selection and snapshot loading retain their core semantics. */
+  for( i = 1; i < argc; i++ ) {
+    if( !strcmp( argv[i], "--" ) ) break;
+    if( !strcmp( argv[i], "--machine" ) ||
+        !strncmp( argv[i], "--machine=", 10 ) ||
+        !strncmp( argv[i], "-m", 2 ) ) return NO;
+  }
+
+  if( !machine_id || [machine_id isEqualToString:@"48"] ) return NO;
+  slots = cocoa_startup_rom_candidates( machine_id, defaults );
+  for( NSArray *candidates in slots ) {
+    BOOL found = NO;
+    for( NSString *path in candidates ) {
+      if( cocoa_machine_rom_file_exists( [path UTF8String] ) ) {
+        found = YES;
+        break;
+      }
+    }
+    if( !found ) {
+      /* Leave a missing 48K ROM to the normal initialization error path. */
+      [defaults setObject:@"48" forKey:@"machine"];
+      return YES;
+    }
+  }
+  return NO;
+}
 
 @implementation Emulator
 
@@ -94,8 +133,24 @@ static Emulator *instance = nil;
     CFRelease( run_loop );
   });
 
+  if( cocoa_preflight_saved_machine( ac, av ) ) {
+    ui_error( UI_ERROR_INFO,
+      "The saved startup machine has missing ROM files. Starting Spectrum 48K instead." );
+  }
+
   if( fuse_init( ac, av ) ) {
     fprintf( stderr, "%s: error initialising -- giving up!\n", fuse_progname );
+    fuse_exiting = 1;
+    /* Wait for acknowledgement before shutdown can terminate the app. */
+    dispatch_sync( dispatch_get_main_queue(), ^{
+      NSAlert *alert = [[NSAlert alloc] init];
+      [alert setAlertStyle:NSAlertStyleCritical];
+      [alert setMessageText:@"Fuse could not start"];
+      [alert setInformativeText:@"The emulator could not be initialized. Check any preceding error messages for details. Fuse will now quit."];
+      [alert addButtonWithTitle:@"Quit"];
+      [alert runModal];
+      [alert release];
+    });
   }
 
   while( !fuse_exiting ) {

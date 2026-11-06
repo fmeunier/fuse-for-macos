@@ -33,9 +33,17 @@ final class ROMPreferencesModel: ObservableObject {
   @Published private(set) var machineRows: [ROMMachineRow] = []
   @Published private(set) var selectedMachineIndex: Int?
   @Published private(set) var missingROMFiles: [String] = []
+  @Published private(set) var unavailableMachines: Set<String> = []
+  @Published private(set) var unavailablePeripherals: Set<String> = []
 
   private weak var machineRomsController: NSArrayController?
   private var cancellables: Set<AnyCancellable> = []
+
+  init() {
+    NotificationCenter.default.publisher(for: NSWindow.didBecomeKeyNotification)
+      .sink { [weak self] _ in self?.refreshSelection() }
+      .store(in: &cancellables)
+  }
 
   func configure(machineRomsController: NSArrayController?) {
     self.machineRomsController = machineRomsController
@@ -48,6 +56,7 @@ final class ROMPreferencesModel: ObservableObject {
   }
 
   func refreshSelection() {
+    refreshAvailability()
     guard let machineRomsController else {
       selectedMachineIndex = nil
       missingROMFiles = []
@@ -67,12 +76,17 @@ final class ROMPreferencesModel: ObservableObject {
   }
 
   func romValue(for entry: ROMEntry) -> Binding<String> {
-    Binding {
-      let value = self.selectedValue(forKey: entry.romKey)
-      let defaultValue = self.selectedValue(forKey: entry.defaultROMKey)
-      return self.isROMMissing(entry) && value == defaultValue ? "" : value
+    /* A field may commit after selection changes. Keep its original row. */
+    let row = selectedMachineDictionary()
+    return Binding {
+      let value = row?[entry.romKey] as? String ?? ""
+      let defaultValue = row?[entry.defaultROMKey] as? String ?? ""
+      let exists = !value.isEmpty && value.withCString { cocoa_machine_rom_file_exists_bridge($0) }
+      return !exists && value == defaultValue ? "" : value
     } set: { newValue in
-      self.setSelectedValue(newValue, forKey: entry.romKey)
+      guard let row, row[entry.defaultROMKey] != nil else { return }
+      row[entry.romKey] = newValue
+      self.refreshSelection()
     }
   }
 
@@ -83,7 +97,7 @@ final class ROMPreferencesModel: ObservableObject {
   }
 
   func isEntryEnabled(_ entry: ROMEntry) -> Bool {
-    selectedMachineValue(forKey: entry.romKey) != nil
+    selectedMachineValue(forKey: entry.defaultROMKey) != nil
   }
 
   func refreshMachineRows() {
@@ -100,6 +114,35 @@ final class ROMPreferencesModel: ObservableObject {
     objectWillChange.send()
   }
 
+  /* These checks describe configured files, not ROMs supplied by snapshots. */
+  func refreshAvailability() {
+    let rows = machineRomsController?.arrangedObjects as? [NSMutableDictionary] ?? []
+    var machines: Set<String> = []
+    var peripherals: Set<String> = []
+    var fileAvailability: [String: Bool] = [:]
+
+    for row in rows {
+      let missing = romEntries.contains { entry in
+        guard row[entry.defaultROMKey] != nil else { return false }
+        let filename = row[entry.romKey] as? String ?? ""
+        if filename.isEmpty { return true }
+        if let exists = fileAvailability[filename] { return !exists }
+        let exists = filename.withCString { cocoa_machine_rom_file_exists_bridge($0) }
+        fileAvailability[filename] = exists
+        return !exists
+      }
+      guard missing else { continue }
+      if let key = row["special_type"] as? String {
+        peripherals.insert(key)
+      } else if let id = cocoa_rom_row_machine_id_bridge(row)?.takeUnretainedValue() as? String {
+        machines.insert(id)
+      }
+    }
+
+    unavailableMachines = machines
+    unavailablePeripherals = peripherals
+  }
+
   private func refreshMissingROMFiles() {
     guard let row = selectedMachineDictionary() else {
       missingROMFiles = []
@@ -107,6 +150,7 @@ final class ROMPreferencesModel: ObservableObject {
     }
 
     missingROMFiles = romEntries.compactMap { entry in
+      guard row[entry.defaultROMKey] != nil else { return nil }
       let filename = row[entry.romKey] as? String ?? ""
       guard !filename.isEmpty else { return nil }
       let exists = filename.withCString {
@@ -138,11 +182,6 @@ final class ROMPreferencesModel: ObservableObject {
     (selectedMachineValue(forKey: key) as? String) ?? ""
   }
 
-  private func setSelectedValue(_ value: String, forKey key: String) {
-    selectedMachineDictionary()?.setValue(value, forKey: key)
-    refreshMissingROMFiles()
-    objectWillChange.send()
-  }
 }
 
 struct ROMMachineRow: Identifiable {
