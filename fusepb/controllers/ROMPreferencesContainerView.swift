@@ -60,14 +60,12 @@ final class ROMPreferencesModel: ObservableObject {
     guard let machineRomsController else {
       selectedMachineIndex = nil
       missingROMFiles = []
-      objectWillChange.send()
       return
     }
 
     let selectionIndex = machineRomsController.selectionIndex
     selectedMachineIndex = selectionIndex == NSNotFound ? nil : selectionIndex
     refreshMissingROMFiles()
-    objectWillChange.send()
   }
 
   func selectMachine(_ row: ROMMachineRow) {
@@ -103,7 +101,6 @@ final class ROMPreferencesModel: ObservableObject {
   func refreshMachineRows() {
     guard let rows = machineRomsController?.arrangedObjects as? [NSMutableDictionary] else {
       machineRows = []
-      objectWillChange.send()
       return
     }
 
@@ -111,7 +108,6 @@ final class ROMPreferencesModel: ObservableObject {
       let name = row["display_name"] as? String ?? ""
       return ROMMachineRow(index: index, title: name, objectID: ObjectIdentifier(row))
     }
-    objectWillChange.send()
   }
 
   /* These checks describe configured files, not ROMs supplied by snapshots. */
