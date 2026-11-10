@@ -553,13 +553,15 @@ overlay_item_state( ui_statusbar_state state )
 
   if( stop_requested || [event isARepeat] ) return;
   characters = [event charactersIgnoringModifiers];
-  if( ![characters length] ) return;
+  /* Recreated keyboard packets must reach the physical-keycode decoder even
+     when the active layout supplies no character (for example, a dead key). */
 
   /* Snapshot AppKit events on the main thread. Passing NSEvent through
      NSConnection creates a proxy whose property reads can block the
      emulator waiting for the main thread during modal UI or shutdown. */
   [proxy_emulator keyChange:[event keyCode]
-                 character:[characters characterAtIndex:0] type:type];
+                 character:([characters length] ? [characters characterAtIndex:0] : 0)
+                      type:type];
 }
 
 -(void) keyDown:(NSEvent *)event

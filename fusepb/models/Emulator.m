@@ -920,6 +920,10 @@ static Emulator *instance = nil;
 -(oneway void) keyChange:(unsigned short)keyCode character:(unichar)character
                    type:(input_event_type)type
 {
+  /* Preserve normal keyboard handling of characterless events, but allow
+     Recreated packets to be decoded by physical keycode first. */
+  if( !character && !settings_current.recreated_spectrum ) return;
+
   if( NO == commandDown ) {
     input_key fuse_keysym;
     enum events event_type;
@@ -930,6 +934,7 @@ static Emulator *instance = nil;
            (fuse_keysym = [self otherKeysymsRemap:keyCode inHash:recreated_keysyms_hash]) != INPUT_KEY_NONE) ) {
       fuse_keysym = keysyms_remap( keyCode );
       if( fuse_keysym == INPUT_KEY_NONE ) {
+        if( !character ) return;
         fuse_keysym = [self otherKeysymsRemap:character
                                        inHash:unicode_keysyms_hash];
       }
